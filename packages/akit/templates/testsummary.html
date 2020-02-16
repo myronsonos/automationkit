@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .section-header {
+                background: lightgrey;
+            }
+
+            .section-body {
+                background: white;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .section-footer {
+                background: white;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .color-error {
+                color: maroon;
+            }
+
+            .color-fail {
+                color: red;
+            }
+
+            .color-pass {
+                color: green;
+            }
+
+            .color-skip {
+                color: gray;
+            }
+
+            .color-warn {
+                color: orange;
+            }
+
+            .summary-label {
+                text-align: right;
+                min-width: 60px;
+                font-weight: bolder;
+                font-size: 14pt;
+                padding-right: 10px;
+            }
+
+            .summary-value {
+                text-align: left;
+                min-width: 80px;
+                font-size: 14pt;
+                padding-left: 10px;
+                padding-right: 40px;
+            }
+
+            .summary-row {
+                display: flex;
+                flex-direction: row nowrap;
+                text-align: left;
+            }
+
+            .summary-table {
+                table-layout: fixed;
+                padding-left: 50px;
+                padding-right: 50px;
+            }
+
+            .summary-title {
+                text-align: center;
+            }
+
+            .body-title {
+                text-align: center;
+            }
+
+            .imp-error-headers {
+                font-weight: bolder;
+                font-size: 14pt;
+                display: flex;
+                flex-direction: row nowrap;
+                flex-grow: 1;
+                border: black;
+                border-style: solid;
+                border-width: 1.5px;
+                background: lightgrey;
+            }
+
+            .imp-error-hdr-filename {
+                width: 100%;
+                text-align: center;
+                font-size: 14pt;
+                font-weight: bolder;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .ierr-item-row {
+                display: block;
+                width: 100%;
+            }
+
+            .ierr-item-hdr {
+                width: 100%;
+                display: flex;
+                flex-direction: row nowrap;
+            }
+
+            .ierr-item-hdr-filename {
+                width: 100%;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .imp-error-table {
+                display: block;
+                flex-grow: 1;
+                border: black;
+                border-style: solid;
+                border-width: 1.5px;
+                padding-top: 5px;
+                padding-left: 5px;
+            }
+
+            .results-headers {
+                font-weight: bolder;
+                font-size: 14pt;
+                display: flex;
+                flex-direction: row nowrap;
+                flex-grow: 1;
+                border: black;
+                border-style: solid;
+                border-width: 1.5px;
+                background: lightgrey;
+            }
+
+            .results-table {
+                display: block;
+                flex-grow: 1;
+                border: black;
+                border-style: solid;
+                border-width: 1.5px;
+                padding-top: 5px;
+                padding-left: 5px;
+            }
+
+            .results-hdr-start {
+                width: 180px;
+                text-align: center;
+                font-size: 14pt;
+                font-weight: bolder;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .results-hdr-name {
+                text-align: center;
+                font-size: 14pt;
+                font-weight: bolder;
+                min-width: 180px;
+                flex-grow: 1;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .results-hdr-e {
+                text-align: center;
+                font-size: 14pt;
+                font-weight: bolder;
+                width: 60px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .results-hdr-f {
+                text-align: center;
+                font-size: 14pt;
+                font-weight: bolder;
+                width: 60px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .results-hdr-s {
+                text-align: center;
+                font-size: 14pt;
+                font-weight: bolder;
+                width: 60px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .results-hdr-p {
+                text-align: center;
+                font-size: 14pt;
+                font-weight: bolder;
+                width: 60px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .ritem-row {
+                display: block;
+                width: 100%;
+            }
+
+            .ritem-hdr {
+                width: 100%;
+                display: flex;
+                flex-direction: row nowrap;
+            }
+
+            .ritem-hdr-start {
+                width: 180px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .ritem-hdr-name {
+                min-width: 180px;
+                flex-grow: 1;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .ritem-hdr-e {
+                text-align: center;
+                width: 60px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .ritem-hdr-f {
+                text-align: center;
+                width: 60px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .ritem-hdr-s {
+                text-align: center;
+                width: 60px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .ritem-hdr-p {
+                text-align: center;
+                width: 60px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .dtl-body {
+                background: whitesmoke;
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+
+            .dtl-hdr-row {
+                display: flex;
+                flex-direction: row nowrap;
+            }
+
+            .dtl-hdr-stop-l {
+                font-weight: bolder;
+                padding-left: 20px;
+            }
+
+            .dtl-hdr-stop-v {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .dtl-hdr-inst-l {
+                font-weight: bolder;
+                padding-left: 20px;
+            }
+
+            .dtl-hdr-inst-v {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .doc-hdr {
+                text-align: center;
+                background: darkolivegreen;
+                color: white;
+            }
+
+            .doc-content {
+                border-style: inset;
+            }
+
+            .e-list-hdr {
+                text-align: center;
+                background: maroon;
+                color: white;
+            }
+
+            .e-list {
+                display: flex;
+                flex-flow: column;
+                padding-left: 20px;
+            }
+
+            .f-list-hdr {
+                text-align: center;
+                background: red;
+                color: white;
+            }
+
+            .f-list {
+                display: flex;
+                flex-flow: column;
+                padding-left: 20px;
+                padding-right: 20px;
+                border-style: inset;
+            }
+
+            .ff-list {
+                display: flex;
+                flex-flow: column;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .ff-row {
+                display: flex;
+                flex-flow: row;
+            }
+
+            .ff-icon {
+
+            }
+
+            .ff-name {
+                padding-left: 20px;
+            }
+
+            .icon-bug {
+                width :18px;
+                height :18px;
+                background-repeat : no-repeat;
+                background-image : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAQAAAD8x0bcAAAAe0lEQVR4AbWNAQaAQBBF3xUCiE5R90okYdVcp0PEAoJu0Bm6wrZWUk2LovfhmRnz+YWU5vCalEcqHC0FCcZbRYQZt2ciQo87pUPhIrkgjGFoER8bfES4IWEhyt/XWVVn9S+j6szHOmG5rJcwUxSsx8lKToSMksGn9PYLG+n7ZdlRNxOkAAAAAElFTkSuQmCC)
+            }
+
+            .icon-file {
+                width :24px;
+                height :24px;
+                background-repeat : no-repeat;
+                background-image : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAPUlEQVR4AWMgFYyCI0D8n0K8DZ8F/6mBCVtAJhiMFmDysWG6WTBM42A0DkbjYDQO6F9cr6aC4ZdJ8vMoAABDma5Nf316QQAAAABJRU5ErkJggg==)
+            }
+
+            .icon-folder {
+                width :24px;
+                height :24px;
+                background-repeat : no-repeat;
+                background-image : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAV0lEQVR4Ae3NMQ6AMAxDUbggvRKnbPfCOWI8ZEOZnKGq8qU3efCxVNVFnRC4SeolxPQTIyTo1MKDJE98oAcXDUJ1UAfmTpG5DQ8mIcmkX40GQTSo0SJVH6+QhcXQlIzJAAAAAElFTkSuQmCC)
+            }
+
+        </style>
+        <script type="text/javascript">
+
+            var g_testrun_complete = false;
+            var g_display_mode = "LIST";
+            var g_filter_mode = "NONE";
+            var g_summary = null;
+            var g_results = null;
+            var g_catalog = null;
+            var g_import_errors = null;
+
+            var g_counter_passed = 1;
+            var g_counter_failed = 2;
+            var g_counter_errors = 3;
+            var g_counter_skipped = 4;
+            var g_counter_total = 10;
+
+            async function load_json(url) {
+                var promise = new Promise((resolve, reject) => {
+                    var xmlhttp = new XMLHttpRequest();
+                    
+                    xmlhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            var robj = JSON.parse(this.responseText);
+                            resolve(robj);
+                        }
+                    };
+
+                    xmlhttp.onerror = function (){
+                        reject(this.statusText);
+                    };
+
+                    xmlhttp.open("GET", url, true);
+                    xmlhttp.send();
+
+                });
+
+                return promise;
+            }
+
+            async function load_json_stream(url) {
+                var promise = new Promise((resolve, reject) => {
+                    var xmlhttp = new XMLHttpRequest();
+                    
+                    xmlhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            var json_objects = [];
+
+                            var split_responses = this.responseText.split("\30");
+                            var srlength = split_responses.length;
+                            while (srlength > 0) {
+                                var ritem = split_responses.pop();
+                                if (ritem.length > 0) {
+                                    var robj = JSON.parse(ritem);
+                                    json_objects.unshift(robj);
+                                }
+                                srlength = srlength - 1;
+                            }
+
+                            resolve(json_objects);
+                        }
+                    };
+
+                    xmlhttp.onerror = function (){
+                        reject(this.statusText);
+                    };
+
+                    xmlhttp.open("GET", url, true);
+                    xmlhttp.send();
+
+                });
+
+                return promise;
+            }
+
+            async function load_summary() {
+                g_summary = await load_json("testrun_summary.json");
+            }
+
+            async function load_results() {
+                var results = await load_json_stream("testrun_results.jsos");
+
+                var counter_passed = 0;
+                var counter_errors = 0;
+                var counter_failed = 0;
+                var counter_skipped = 0;
+
+                if (g_display_mode == "LIST") {
+                    g_results = [];
+
+                    if (g_filter_mode == "NONE") {
+                        var rcount = results.length;
+                        while(rcount > 0) {
+                            var ritem = results.shift();
+                            if (ritem.rtype == "TEST") {
+                                var detail = ritem.detail;
+
+                                if (!detail.hasOwnProperty("skipped")) {
+                                    detail.skipped = [];
+                                }
+
+                                if (detail.skipped.length > 0) {
+                                    counter_skipped += 1;
+                                }
+                                else if (detail.errors.length > 0) {
+                                    detail.passed = false;
+                                    counter_errors += 1;
+                                }
+                                else if (detail.failures.length > 0) {
+                                    detail.passed = false;
+                                    counter_failed += 1;
+                                }
+                                else {
+                                    detail.passed = true;
+                                    counter_passed += 1;
+                                }
+
+                                g_results.push(ritem);
+                            }
+
+                            rcount = rcount - 1;
+                        }
+                    } else {
+                        var filter_status = g_filter_mode;
+                        var rcount = results.length;
+                        while(rcount > 0) {
+                            var ritem = results.shift();
+                            if ((ritem.rtype == "TEST") && (ritem.result == filter_status)) {
+                                g_results.push(ritem);
+                            }
+                            rcount = rcount - 1;
+                        }
+                    }
+                } else {
+                    //TODO: Add code to create tree based g_results
+                }
+
+                g_counter_passed = counter_passed;
+                g_counter_errors = counter_errors;
+                g_counter_failed = counter_failed;
+                g_counter_skipped = counter_skipped;
+
+            }
+
+            async function load_import_errors() {
+                g_import_errors = await load_json_stream("import_errors.jsos")
+            }
+
+            async function load_catalog() {
+                g_catalog = await load_json("catalog.json");
+            }
+
+            function create_result_item_content(ritem) {
+                var resultElement = document.createElement("details");
+                resultElement.classList.add("ritem-row");
+                var summaryContainer = document.createElement("summary");
+                summaryContainer.classList.add("ritem-hdr")
+
+                var summaryStart = document.createElement("div");
+                summaryStart.innerHTML = ritem.start;
+                summaryStart.classList.add("ritem-hdr-start");
+                summaryContainer.appendChild(summaryStart);
+
+                var summaryName = document.createElement("div");
+                summaryName.innerHTML = ritem.name;
+                summaryName.classList.add("ritem-hdr-name");
+                summaryContainer.appendChild(summaryName);
+
+                var detail = ritem.detail;
+
+                var summaryE = document.createElement("div");
+                summaryE.innerHTML = detail.errors.length;
+                summaryE.classList.add("ritem-hdr-e");
+                summaryContainer.appendChild(summaryE);
+
+                var summaryF = document.createElement("div");
+                summaryF.innerHTML = detail.failures.length;
+                summaryF.classList.add("ritem-hdr-f");
+                summaryContainer.appendChild(summaryF);
+
+                var summaryS = document.createElement("div");
+                summaryS.innerHTML = detail.skipped.length;
+                summaryS.classList.add("ritem-hdr-s");
+                summaryContainer.appendChild(summaryS);
+
+                var summaryP = document.createElement("div");
+                summaryP.innerHTML = detail.passed ? 1 : 0;
+                summaryP.classList.add("ritem-hdr-p");
+                summaryContainer.appendChild(summaryP);
+
+                var detailContainer = document.createElement("div");
+                detailContainer.classList.add("dtl-body");
+                detailContainer.appendChild(document.createElement("br"));
+
+                var otherDetail = document.createElement("div");
+                otherDetail.classList.add("dtl-hdr-row");
+
+                var stopLabel = document.createElement("div");
+                stopLabel.innerHTML = "Stop";
+                stopLabel.classList.add("dtl-hdr-stop-l");
+                otherDetail.appendChild(stopLabel);
+                var stopValue = document.createElement("div");
+                stopValue.innerHTML = ritem.stop;
+                stopValue.classList.add("dtl-hdr-stop-v");
+                otherDetail.appendChild(stopValue);
+
+                var instLabel = document.createElement("div");
+                instLabel.innerHTML = "InstId";
+                instLabel.classList.add("dtl-hdr-inst-l");
+                otherDetail.appendChild(instLabel);
+                var instValue = document.createElement("div");
+                instValue.classList.add("dtl-hdr-inst-v");
+                instValue.innerHTML = ritem.instance;
+                otherDetail.appendChild(instValue);
+
+                detailContainer.appendChild(otherDetail);
+                detailContainer.appendChild(document.createElement("br"));
+
+                if (detail.hasOwnProperty("documentation")) {
+                    var docsHeader = document.createElement("h3");
+                    docsHeader.classList.add("doc-hdr");
+                    docsHeader.innerHTML = "DOCUMENTATION"
+                    detailContainer.appendChild(docsHeader);
+                    
+                    var docContent = document.createElement("pre");
+                    docContent.classList.add("doc-content");
+                    docContent.innerHTML = detail.documentation;
+                    detailContainer.appendChild(docContent);
+                }
+
+                if (detail.errors.length > 0) {
+                    var errorList =  detail.errors;
+                    var errorsHeader = document.createElement("h3");
+                    errorsHeader.classList.add("e-list-hdr");
+
+                    errorsHeader.innerHTML = "ERRORS";
+                    detailContainer.appendChild(errorsHeader);
+
+                    errorsTable = document.createElement("div");
+                    errorsTable.classList.add("e-list");
+                    for (var eidx in errorList) {
+                        var eitem = errorList[eidx];
+                        var preElement = document.createElement("pre");
+                        var msg = "";
+                        for (var lidx in eitem) {
+                            var lstr = eitem[lidx];
+                            msg = msg + lstr + "\n";
+                        }
+                        preElement.innerHTML = msg;
+                        errorsTable.appendChild(preElement);
+                    }
+                    detailContainer.appendChild(errorsTable);
+
+                    detailContainer.appendChild(document.createElement("br"));
+                }
+
+                if (detail.failures.length > 0) {
+                    var failuresList =  detail.failures;
+                    var failuresHeader = document.createElement("h3");
+                    failuresHeader.classList.add("f-list-hdr");
+
+                    failuresHeader.innerHTML = "FAILURES";
+                    detailContainer.appendChild(failuresHeader);
+
+                    failuresTable = document.createElement("div");
+                    failuresTable.classList.add("f-list");
+                    for (var fidx in failuresList) {
+                        var fitem = failuresList[fidx];
+                        var preElement = document.createElement("pre");
+                        var msg = "";
+                        for (var lidx in fitem) {
+                            var lstr = fitem[lidx];
+                            msg = msg + lstr + "\n";
+                        }
+                        preElement.innerHTML = msg;
+                        failuresTable.appendChild(preElement);
+                    }
+                    detailContainer.appendChild(failuresTable);
+
+                    detailContainer.appendChild(document.createElement("br"));
+                }
+
+                resultElement.appendChild(detailContainer);
+                resultElement.appendChild(document.createElement("br"));
+
+                resultElement.appendChild(summaryContainer);
+
+                return resultElement;
+            }
+
+            function create_results_content_as_list() {
+                var result_table_body = document.getElementById("test-results-body");
+                for (var idx in g_results) {
+                    var ritem = g_results[idx];
+                    var eitem = create_result_item_content(ritem);
+                    result_table_body.appendChild(eitem);
+                }
+            }
+
+            function create_results_content_as_tree() {
+                
+            }
+
+            function create_import_error_item_content(imp_err_item) {
+
+                var imp_err_item_row = document.createElement("details");
+                imp_err_item_row.classList.add("ierr-item-hdr");
+
+                var summary_item = document.createElement("summary");
+                summary_item.classList.add('ierr-item-hdr');
+                var filename_item = document.createElement('div');
+                filename_item.classList.add('ierr-item-hdr-filename');
+                filename_item.innerHTML = imp_err_item.filename;
+                summary_item.appendChild(filename_item);
+
+                var detail_body = document.createElement('div');
+                detail_body.classList.add("dtl-body");
+
+                var stack_trace_hdr = document.createElement('h3');
+                stack_trace_hdr.classList.add('f-list-hdr');
+                stack_trace_hdr.innerHTML = "Stack Trace";
+                detail_body.appendChild(stack_trace_hdr);
+
+                var st_list = document.createElement('div');
+                st_list.classList.add('ff-list');
+                detail_body.appendChild(st_list);
+
+                var st_row = document.createElement('div');
+                st_row.classList.add('ff-row');
+                st_content = document.createElement('pre');
+                var trace = imp_err_item.trace;
+                var msg = "";
+                for (var lidx in trace) {
+                    var lstr = trace[lidx];
+                    msg = msg + lstr + "\n";
+                }
+                st_content.innerHTML = msg;
+                st_row.appendChild(st_content);
+                st_list.appendChild(st_row);
+
+                imp_err_item_row.appendChild(st_list);
+                imp_err_item_row.appendChild(summary_item);
+
+                return imp_err_item_row;
+
+            }
+
+            function refresh_summary() {
+                if (g_summary.hasOwnProperty("build") && g_summary.build != null) {
+                    document.getElementById("summary-build").innerHTML = g_summary.build;
+                }
+                if (g_summary.hasOwnProperty("branch") && g_summary.branch != null) {
+                    document.getElementById("summary-branch").innerHTML = g_summary.branch;
+                }
+                if (g_summary.hasOwnProperty("flavor") && g_summary.flavor != null) {
+                    document.getElementById("summary-flavor").innerHTML = g_summary.flavor;
+                }
+                if (g_summary.hasOwnProperty("landscape") && g_summary.landscape != null) {
+                    document.getElementById("summary-landscape").innerHTML = g_summary.landscape;
+                }
+                if (g_summary.hasOwnProperty("start") && g_summary.start != null) {
+                    document.getElementById("summary-start").innerHTML = g_summary.start;
+                }
+                if (g_summary.hasOwnProperty("stop") && g_summary.stop != null) {
+                    document.getElementById("summary-stop").innerHTML = g_summary.stop;
+                }
+                if (g_summary.hasOwnProperty("result") && g_summary.result != null) {
+                    document.getElementById("summary-status").innerHTML = g_summary.result;
+                }
+                if (g_summary.hasOwnProperty("detail") && g_summary.detail != null) {
+                    detail = g_summary.detail;
+
+                    if (detail.hasOwnProperty("errors") && (detail.errors != null)) {
+                        g_counter_errors = detail.errors;
+                    }
+                    if (detail.hasOwnProperty("failed") && (detail.failed != null)) {
+                        g_counter_failed = detail.failed;
+                    }
+                    if (detail.hasOwnProperty("skipped") && (detail.skipped != null)) {
+                        g_counter_skipped = detail.skipped;
+                    }
+                    if (detail.hasOwnProperty("passed") && (detail.passed != null)) {
+                        g_counter_passed = detail.passed;
+                    }
+                    if (detail.hasOwnProperty("total") && (detail.total != null)) {
+                        g_counter_total = detail.total;
+                    } else {
+                        g_counter_total = g_counter_errors + g_counter_failed + g_counter_skipped + g_counter_passed;
+                    }
+                }
+                else {
+                    g_counter_total = g_counter_errors + g_counter_failed + g_counter_skipped + g_counter_passed;
+                }
+
+                document.getElementById("summary-error").innerHTML = g_counter_errors;
+                document.getElementById("summary-fail").innerHTML = g_counter_failed;
+                document.getElementById("summary-skip").innerHTML = g_counter_skipped;
+                document.getElementById("summary-pass").innerHTML = g_counter_passed;
+                document.getElementById("summary-total").innerHTML = g_counter_total;
+            }
+
+            function refresh_import_errors() {
+                var ierrbody = document.getElementById("import-errors-body");
+
+                for (var idx in g_import_errors) {
+                    var imp_err_item = g_import_errors[idx];
+                    var eitem = create_import_error_item_content(imp_err_item);
+                    ierrbody.appendChild(eitem);
+                }
+            }
+
+            function refresh_catalog() {
+
+                var container = document.getElementById("container-folders");
+                var folders_list = g_catalog.folders;
+                for (var idx in folders_list) {
+                    var nxt = folders_list[idx];
+
+                    var nxtRow = document.createElement("div");
+                    nxtRow.classList.add('ff-row');
+
+                    var iconCont = document.createElement("div");
+                    iconCont.classList.add('ff-icon');
+                    var imgElmnt = document.createElement("img");
+                    imgElmnt.classList.add("icon-folder");
+                    iconCont.appendChild(imgElmnt);
+                    nxtRow.appendChild(iconCont);
+
+                    var linkCont = document.createElement("div");
+                    linkCont.classList.add('ff-name');
+                    var linkElmnt = document.createElement("a");
+                    linkElmnt.href = nxt;
+                    linkElmnt.innerHTML = nxt;
+                    linkCont.appendChild(linkElmnt);
+                    nxtRow.appendChild(linkCont);
+
+                    container.appendChild(nxtRow);
+                }
+
+                var container = document.getElementById("container-files");
+                var file_list = g_catalog.files;
+                for (var idx in file_list) {
+                    var nxt = file_list[idx];
+
+                    var nxtRow = document.createElement("div");
+                    nxtRow.classList.add('ff-row');
+
+                    var iconCont = document.createElement("div");
+                    iconCont.classList.add('ff-icon');
+                    var imgElmnt = document.createElement("img");
+                    imgElmnt.classList.add("icon-file");
+                    iconCont.appendChild(imgElmnt);
+                    nxtRow.appendChild(iconCont);
+
+                    var linkCont = document.createElement("div");
+                    linkCont.classList.add('ff-name');
+                    var linkElmnt = document.createElement("a");
+                    linkElmnt.href = nxt;
+                    linkElmnt.innerHTML = nxt;
+                    linkCont.appendChild(linkElmnt);
+                    nxtRow.appendChild(linkCont);
+
+                    container.appendChild(nxtRow);
+                }
+            }
+
+            async function refresh_page() {
+                await load_summary();
+                await load_results();
+                await load_import_errors();
+                await load_catalog();
+
+                var result_content = null;
+                
+                if (g_display_mode == "LIST") {
+                    result_content = await create_results_content_as_list();
+                } else {
+                    result_content = await create_results_content_as_tree();
+                }
+                
+
+                if (result_content != null) {
+                    var resultsContainer = document.getElementById("test-results-body");
+                    resultsContainer.innerHTML = "";
+                    resultsContainer.appendChild(result_content);
+                }
+
+                await refresh_summary();
+                await refresh_import_errors();
+                await refresh_catalog();
+            }
+
+            refresh_page().then(function() {
+                console.log("Page loaded");
+            }, function(err) {
+                console.log("ERROR:\n" + err);
+            });
+
+        </script>
+    </head>
+    <body>
+        <div class='section-header'>
+            <h1 id='summary-title' class='summary-title'>Test Title</h1>
+            <table class='summary-table'>
+                <tbody>
+                    <tr class='summary-row' >
+                        <td class='summary-label'>Branch</td><td id='summary-branch' class='summary-value'>blah</td>
+                        <td class='summary-label'>Build</td><td id='summary-build' class='summary-value'>1.0.0.1.169</td>
+                        <td class='summary-label'>Flavor</td><td id='summary-flavor' class='summary-value'>release</td>
+                        <td class='summary-label'>Landscape</td><td id='summary-landscape' class='summary-value'>Automation Rig 2</td>
+                    </tr>
+                    <tr></tr>
+                    <tr class='summary-row'>
+                        <td class='summary-label'>Start</td><td id='summary-start' class='summary-value'>2019-09-21 22:43:07.863278</td>
+                        <td class='summary-label'>Stop</td><td id='summary-stop' class='summary-value'>2019-09-21 22:43:08.195637</td>
+                        <td class='summary-label'>Status</td><td id='summary-status' class='summary-value'>RUNNING</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <br />
+            <table class='summary-table'>
+                    <tbody>
+                        <tr class='summary-row'>
+                            <td class='summary-label'>Errors</td><td id='summary-error' class='summary-value color-error'>0</td>
+                            <td class='summary-label'>Failed</td><td id='summary-fail' class='summary-value color-fail'>0</td>
+                            <td class='summary-label'>Skipped</td><td id='summary-skip' class='summary-value color-skip'>0</td>
+                            <td class='summary-label'>Passed</td><td id='summary-pass' class='summary-value color-pass'>0</td>
+                            <td class='summary-label'>Total</td><td id='summary-total' class='summary-value'>0</td>
+                        </tr>
+                        <tr class='summary-row'>
+                            <td class='summary-label'></td><td class='summary-value'></td>
+                            <td class='summary-label'></td><td class='summary-value'></td>
+                            <td class='summary-label'></td><td class='summary-value'></td>
+                            <td class='summary-label'></td><td class='summary-value'></td>
+                            <td class='summary-label'>Score</td><td class='summary-value'>100.0</td>
+                        </tr>
+                    </tbody>
+                </table>
+        </div>
+        <br />
+        <div class='section-body'>
+            <h2 id='test-results-title' class='body-title'>Test Cases</h2>
+            <div id='test-results-header' class='results-headers'>
+                <div class='results-hdr-start'>Start</div>
+                <div class='results-hdr-name'>Test Name</div>
+                <div class='results-hdr-e'>E</div>
+                <div class='results-hdr-f'>F</div>
+                <div class='results-hdr-s'>S</div>
+                <div class='results-hdr-p'>P</div>
+            </div>
+            <div id='test-results-body' class='results-table'>
+            </div>
+            <br />
+            <h2 id='import-errors-title' class='body-title'>Import Failures</h2>
+            <div id='test-results-header' class='imp-error-headers'>
+                <div class='imp-error-hdr-filename'>Filename</div>
+            </div>
+            <div id='import-errors-body' class='imp-error-table' >
+                
+            </div>
+        </div>
+        <br />
+        <div class='section-footer'>
+            <h2>Folders</h2>
+            <div id='container-folders' class='ff-list'>
+                
+            </div>
+            <br/>
+            <h2>Files</h2>
+            <div id='container-files' class='ff-list'>
+                
+            </div>
+        </div>
+    </body>
+</html>

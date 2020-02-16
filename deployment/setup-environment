@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Establish the base repository reference directory
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPOSITORY_DIR="$( dirname $THIS_DIR )"
+
+echo "THIS_DIR=$THIS_DIR"
+echo "REPOSITORY_DIR=$REPOSITORY_DIR"
+
+# Setup our local directory
+LOCAL_DIR="$REPOSITORY_DIR/_local"
+if [ ! -d $LOCAL_DIR ]; then
+    mkdir $LOCAL_DIR
+fi
+
+# Run the dependency checks on the system
+#APT_DEPENDENCIES="build-essential python3 python3-dev python-setuptools python3-pip virtualenv"
+#if [ "$(dpkg -s $APT_DEPENDENCIES; echo $?)" != 0 ]; then
+#    sudo apt install $APT_DEPENDENCIES
+# fi
+
+REQUIREMENTS_FILE="$REPOSITORY_DIR/requirements.txt"
+INITIALIZED_FILE="$LOCAL_DIR/initialized"
+VIRTUAL_ENV_DIR="$LOCAL_DIR/venv"
+
+echo "VIRTUAL_ENV_DIR=$REPOSITORY_DIR"
+
+DEV_ENV_FILE="$LOCAL_DIR/development.env"
+if [ ! -f $DEV_ENV_FILE ]; then
+    REPOSITORY_NAME="Automation Kit"
+    REPOSITORY_DIRECTORY="$REPOSITORY_DIR"
+    REPORT_PREFIX="akit"
+    DEVELOPER_MODE="TRUE"
+    PYTHONPATH="$REPOSITORY_DIRECTORY/packages:$REPOSITORY_DIRECTORY/service"
+fi
+
+if [ "$1" == "reset" ]; then
+    rm -fr $VIRTUAL_ENV_DIR
+    rm -f $INITIALIZED_FILE
+fi
+
+if [ ! -f $INITIALIZED_FILE ]; then
+
+    virtualenv -p python3 $VIRTUAL_ENV_DIR
+
+    source $VIRTUAL_ENV_DIR/bin/activate
+
+    # Install pylint into the virtual environment
+    pip install pylint
+    pip install coverage
+    pip install paramiko
+    pip install sqlalchemy
+    pip install sqlalchemy_utils
+
+    # Install dependencies into the virtual environment
+    pip install -r $REQUIREMENTS_FILE
+
+    touch $INITIALIZED_FILE
+
+    # Exit the virtual environment
+    deactivate
+fi

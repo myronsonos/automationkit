@@ -1,0 +1,49 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/packages"
+            },
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Python: Internal Tests",
+            "type": "python",
+            "request": "launch",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/packages"
+            },
+            "program": "${workspaceFolder}/packages/akit/testrunner.py",
+            "args": [
+                "--root=${workspaceFolder}/testroot",
+                "--include=internal"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Python: Example Job",
+            "type": "python",
+            "request": "launch",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/packages"
+            },
+            "program": "${workspaceFolder}/packages/akit/testrunner.py",
+            "args": [
+                "--root=${workspaceFolder}/testroot",
+                "--job=jobs.jobexample@ExampleJob"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        }
+    ]
+}
