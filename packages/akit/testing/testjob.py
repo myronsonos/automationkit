@@ -19,11 +19,13 @@ __status__ = "Development" # Prototype, Development or Production
 import os
 import uuid
 
+from akit.environment.context import ContextUser
+
 from akit.recorders import JsonResultRecorder
 from akit.results import ResultContainer, ResultType
 from akit.testing.testsequencer import TestSequencer
 
-class TestJob:
+class TestJob(ContextUser):
     """
         The :class:`TestJob` spans the execution of all :class:`TestPack` and organizes the
         flow of execution of test packs.  It allows for the sequencing of the execution of test
@@ -55,12 +57,11 @@ class TestJob:
             cls._instance = super(TestJob, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, context, logger, testroot, includes=None, excludes=None, test_module=None, parser=None):
+    def __init__(self, logger, testroot, includes=None, excludes=None, test_module=None, parser=None):
         """
             Constructor for a :class:`TestJob`.  It initializes the member variables based on the parameters passed
             from the entry point function and the class member data declared on :class:`TestJob` derived classes.
         """
-        self._context = context
         self._logger = logger
         self._testroot = testroot
 
@@ -93,7 +94,7 @@ class TestJob:
             Called at the beginning of a test job in order to setup the recording of test results.
         """
 
-        env = self._context.lookup("/environment")
+        env = self.context.lookup("/environment")
 
         self._test_results_dir = env["output_directory"]
         self._starttime = env["starttime"]
@@ -110,7 +111,7 @@ class TestJob:
         """
         result_code = 0
 
-        with TestSequencer(self._context, self._testroot, includes=self.includes, excludes=self.excludes) as tseq:
+        with TestSequencer(self._testroot, includes=self.includes, excludes=self.excludes) as tseq:
 
             # Discover the Tests, Integrations and Scopes
             count = tseq.discover(test_module=self._test_module)

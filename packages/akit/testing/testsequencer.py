@@ -26,11 +26,12 @@ import sys
 import uuid
 
 import akit.environment.activate
+from akit.environment.context import ContextUser
 
 from akit.mixins.scope import DefaultScopeMixIn, ScopeMixIn
+from akit.mixins.scope import is_scope_mixin
 from akit.results import ResultContainer, ResultType
 from akit.testing.testcollector import TestCollector
-from akit.mixins.scope import is_scope_mixin
 
 
 logger = logging.getLogger("AKIT")
@@ -42,9 +43,9 @@ class TEST_SEQUENCER_PHASES:
     Graph = 3
     Traversal = 4
 
-class TestSequencer:
+class TestSequencer(ContextUser):
 
-    def __init__(self, context, root, job=None, includes=[], excludes=[]):
+    def __init__(self, root, job=None, includes=[], excludes=[]):
         """
             Creates a 'TestSequencer' object which is used to discover the tests and control the flow of a test run.
 
@@ -59,7 +60,6 @@ class TestSequencer:
             :type excludes: list. 
 
         """
-        self._context = context
         self._root = root
         self._job = job
         self._includes = includes

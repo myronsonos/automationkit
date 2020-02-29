@@ -78,11 +78,10 @@ class TestContainer:
         self._instance_id = str(uuid.uuid4())
         self._recorder = recorder
         self._cleanup_steps = []
-
         return
 
     @property
-    def instance_id(self):
+    def instance_id(self): -> str
         return self._instance_id
 
     @property
@@ -90,12 +89,12 @@ class TestContainer:
         return self._scope_type
 
     @property
-    def testname(self):
+    def testname(self): -> str
         tcls = self.__class__
         tname = "%s@%s#%s" % (tcls.__module__, tcls.__name__, self._testmethod.__name__)
         return tname
 
-    def in_scope(self, expected):
+    def in_scope(self, expected): -> bool
         yes_in_scope = self._scope_type == expected
         return yes_in_scope
 

@@ -24,7 +24,7 @@ import time
 
 FORMAT_DATETIME = "%Y-%m-%dT%H:%M:%S"
 
-def format_time_with_fractional(tsecs):
+def format_time_with_fractional(tsecs): -> str
     sec_comp = int(tsecs)
     frac_comp = (tsecs - sec_comp) * 1000
     dtstr = "%s.%03d" % (time.strftime(FORMAT_DATETIME, time.gmtime(sec_comp)), frac_comp)

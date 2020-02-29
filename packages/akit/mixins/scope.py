@@ -21,6 +21,7 @@ __status__ = "Development" # Prototype, Development or Production
 #__license__ = ""
 
 import inspect
+import weakref
 
 from akit.environment.context import ContextUser
 
@@ -63,7 +64,12 @@ class ScopeMixIn(ContextUser):
             scope_leaf = (scope_type.__module__ + "." + scope_type.__name__).replace(".", "/")
             self.pathname = self.TEMPLATE_SCOPES_PREFIX % scope_leaf
 
-        self.context.insert(self.pathname, self)
+        # Create a weak reference to this scope in the global context and create a finalizer that
+        # will remove the weak reference when the scope object is destroyed
+        wref = weakref.ref(self)
+        weakref.finalize(self, scope_finalize, self.context, self.pathname)
+
+        self.context.insert(self.pathname, wref)
         return
 
     @classmethod
@@ -87,7 +93,7 @@ class ScopeMixIn(ContextUser):
         """
         return
 
-def is_scope_mixin(cls):
+def is_scope_mixin(cls): -> bool
     is_scopemi = False
     if inspect.isclass(cls) and cls is not ScopeMixIn and issubclass(cls, ScopeMixIn):
         is_scopemi = True
@@ -95,3 +101,7 @@ def is_scope_mixin(cls):
 
 def scope_compare(scope):
     return scope.weight
+
+def scope_finalize(context, pathname):
+    context.
+    return

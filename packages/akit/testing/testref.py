@@ -25,7 +25,7 @@ class TestRef:
         return
 
     @property
-    def test_name(self):
+    def test_name(self): -> str
         tc = self.testcls
         test_name = "%s@%s#%s" % (tc.__module__, tc.__name__, self.testmeth.__name__)
         return test_name

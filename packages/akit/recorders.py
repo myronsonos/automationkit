@@ -17,9 +17,11 @@ __status__ = "Development" # Prototype, Development or Production
 #__license__ = ""
 
 import collections
+import datetime
 import json
 import os
 import shutil
+import typing
 
 from datetime import datetime
 
@@ -49,7 +51,9 @@ class JsonResultRecorder:
             }
         }
     """
-    def __init__(self, title, runid, start, summary_filename, result_filename, branch=None, build=None, flavor=None):
+    def __init__(self, title: str, runid: str, start: datetime.datetime, summary_filename: str,
+                 result_filename: str, branch: typing.Optional[str]=None, build: typing.Optional[str]=None,
+                flavor: typing.Optional[str]=None):
         self._title = title
         self._runid = runid
         self._start = start

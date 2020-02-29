@@ -19,7 +19,7 @@ __status__ = "Development" # Prototype, Development or Production
 import json
 import os
 
-def find_testmodule_root(module):
+def find_testmodule_root(module): -> str
     """
         Finds the root directory that is associated with a given test module.
     """
@@ -33,7 +33,7 @@ def find_testmodule_root(module):
 
     return mod_dir
 
-def find_testmodule_fullname(module, root_path=None):
+def find_testmodule_fullname(module, root_path=None): -> str
     """
         Finds the root directory that is associated with a given test module and
         then uses the leaf path to a module to develop a full module name.
@@ -48,7 +48,7 @@ def find_testmodule_fullname(module, root_path=None):
 
     return testmodule_fullname
 
-def catalog_tree(rootdir):
+def catalog_tree(rootdir: str):
     """
         Adds json catalog files to a file system tree to help provide directory
         services to javascript in html files.
