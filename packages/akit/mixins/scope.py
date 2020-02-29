@@ -99,9 +99,6 @@ def is_scope_mixin(cls): -> bool
         is_scopemi = True
     return is_scopemi
 
-def scope_compare(scope):
-    return scope.weight
-
 def scope_finalize(context, pathname):
     context.
     return

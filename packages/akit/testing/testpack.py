@@ -16,7 +16,8 @@ __email__ = "myron.walker@automationmojo.com"
 __status__ = "Development" # Prototype, Development or Production
 #__license__ = ""
 
-class TestPack:
+from akit.mixins.scope import ScopeMixIn
+class TestPack(ScopeMixIn):
     """
               --------------
               |  TestPack  |
@@ -47,6 +48,7 @@ class TestPack:
     searchin = None
 
     context = None # The scopes associated with a testpack, scopes
+    test_references = None
 
     def acclimate(self, testlandscape):
         """
@@ -182,3 +184,6 @@ def is_testpack(cls): -> bool
     if inspect.isclass(cls) and cls is not TestPack and issubclass(cls, TestPack):
         is_testpack = True
     return is_testpack
+
+def testpack_compare(tpack):
+    return tpack.weight

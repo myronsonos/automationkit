@@ -26,10 +26,10 @@ import traceback
 from akit.compat import import_file
 
 from akit.mixins.integration import IntegrationMixIn, is_integration_mixin
-from akit.mixins.scope import DefaultScopeMixIn, ScopeMixIn, is_scope_mixin, scope_compare
-from akit.mixins.testpack import TestPackMixIn, is_testpack_mixin
+from akit.mixins.scope import ScopeMixIn, is_scope_mixin
 
 from akit.testing.testcontainer import TestContainer, inherits_from_testcontainer
+from akit.testing.testpack import TestPack, DefaultTestPack, is_testpack, testpack_compare
 from akit.testing.testref import TestRef
 from akit.testing.utilities import find_testmodule_root, find_testmodule_fullname
 
@@ -49,8 +49,6 @@ class TestCollector:
         self._test_module = test_module
         self._references = {}
         self._testpacks = []
-        self._leaf_scope_table = []
-        self._multi_leaf_scope_references = {}
         self._import_errors = []
         return
 
@@ -234,18 +232,21 @@ class TestCollector:
 
     def create_scope_table(self):
 
-        leaf_scopes = {}
+        # The testpack_table is filled with the top-level testpack types which
+        # also are the top level scopes associated with an object.
+        testpack_table = {}
 
         default_testpack_refs = []
 
-        # Walk through all the test references, for each test reference, find its immediate scopes
+        # Walk through all the test references. For each test reference, find its immediate testpack
+        # or if it doesn't have one assign it to the default testpack
         for ref_name, ref in self._references.items():
 
             # Go through all the parent objects and add the current test ref to each of the scope
             # classes found in the main class
             ref_testpacks = []
             for bcls in ref.testcls.__bases__:
-                if is_testpack_mixin(bcls):
+                if is_testpack(bcls):
                     ref_testpacks.append(bcls)
 
             # If we didn't find a TestPackMixIn derived object, then
@@ -257,35 +258,41 @@ class TestCollector:
             elif ref_leaf_testpack_count == 1:
                 leaf_testpack_cls = ref_testpacks[0]
 
-                mtpkey = leaf_testpack_cls.__module__ + "." + leaf_scope_cls.__name__
-                if mtpkey not in ScopeMixIn.test_references:
-                    test_references = []
-                    ScopeMixIn.test_references[mskey] = test_references
-                test_references = ScopeMixIn.test_references[mskey]
+                if leaf_testpack_cls.test_references is None:
+                    leaf_testpack_cls.test_references = {}
+
+                test_references = leaf_testpack_cls.test_references
                 test_references.append(ref)
 
-                if mskey not in leaf_scopes:
-                    leaf_scopes[mskey] = leaf_scope_cls
+                mtpkey = leaf_testpack_cls.__module__ + "." + leaf_testpack_cls.__name__
+                if mskey not in testpack_table:
+                    testpack_table[mskey] = leaf_testpack_cls
 
             else:
-                test_name = ref.test_name
-                logger.error("Multi-Scope Leaf references found in test %s" % test_name)
-                self._multi_leaf_scope_references[test_name] = ref
+                raise Exception("Assigning a TestCollection to more than one TestPack is not currently supported.")
 
-        # We need to go through all of the leaf scopes and walk the class hierarchy of each
+        # We need to go through all of the testpacks and walk the class hierarchy of each
         # and as we find a scope derived type, we need to add that type into a table based
-        # on its level in the class hierarcy.  The leaf scopes types are at level 0. We will
-        # be executing the scopes starting with level 0 and moving up based on usage. As we
-        # walk the tree we increment each scopes usage counter. When a scope exits, we can
+        # on its level in the class hierarcy.  The testpack type ensures we have one reference
+        # into the type hierarchy at level 0. We will be executing the scopes starting with
+        # level 0 and moving up based on usage.
+
+        # As we walk the tree we increment each scopes usage counter. When a scope exits, we can
         # decrement its reference count.  We will walk the full scope hierarchy as we run
-        # the tests associated with each leaf scope, however, we only execute the enter code
+        # the tests associated with each testpack, however, we only execute the enter code
         # when the scope is entered for the first time and we only execute the exit code when
         # the last reference count is removed.
-        for nxt_leaf_key, nxt_leaf_val in leaf_scopes.items():
+        for nxt_tpack_key, nxt_tpack_val in testpack_table.items():
+
+            # The tope TestPack will always have a reference count of 1
+            nxt_tpack_val.refcount = 1
+
+            # Preset the level to 0 and weight to 1
             level = 0
-            found_at_level = self._record_leaf_scope(nxt_leaf_val)
-            weight = found_at_level[0].refcount
-            while len(found_at_level) > 0:
+            weight = 1
+            
+            found_at_level = [nxt_tpack_val]
+            while True:
                 search_scopes = found_at_level
                 level += 1
                 found_at_level = []
@@ -294,16 +301,26 @@ class TestCollector:
                     found_at_level.extend(found_scopes)
                     for fscope in found_scopes:
                         weight += ((fscope.refcount) * (level + 1))
+
+                if len(found_at_level) == 0:
+                    break
+
+            # The weight of the TestPack is a combination of how deep the levels of scopes are under
+            # the TestPack and the number of scopes.  We try to optimize the ordering of running
+            # the TestPack(s) by weight
             nxt_leaf_val.weight = weight
 
-        if len(default_scope_refs) > 0:
-            mskey = DefaultScopeMixIn.__module__ + "." + DefaultScopeMixIn.__name__
-            DefaultScopeMixIn.test_references[mskey] = default_scope_refs
 
-        self._leaf_scope_table = list(leaf_scopes.values())
-        self._leaf_scope_table.sort(key=scope_compare, reverse=True)
 
-        return self._leaf_scope_table
+        if len(default_testpack_refs) > 0:
+            DefaultTestPack.test_references = default_testpack_refs
+
+        self._testpacks = list(testpack_table.values())
+
+        # Sort the testpack table by weight
+        self._testpacks.sort(key=testpack_compare, reverse=True)
+
+        return self._testpacks
 
     def expand_testpacks():
 
@@ -375,16 +392,6 @@ class TestCollector:
                     nxt_cls.refcount += 1
                 scopes_found.append(nxt_cls)
 
-        return scopes_found
-
-    def _record_leaf_scope(self, scope_cls):
-
-        if not hasattr(scope_cls, "refcount"):
-            setattr(scope_cls, "refcount", 1)
-        else:
-            scope_cls.refcount += 1
-
-        scopes_found = [scope_cls]
         return scopes_found
 
     def _root_directories(self):

@@ -134,7 +134,7 @@ class TestJob(ContextUser):
                 with JsonResultRecorder(title, runid, start, self._summary_filename, self._result_filename) as recorder:
                     # Traverse the execution graph
                     self._testpacks = tseq.testpacks
-                    result_code = tseq.execute_tests(runid, recorder, self.sequence)
+                    result_code = tseq.execute_testpacks(runid, recorder, self.sequence)
 
             else:
                 # We didn't find any tests so display a message, and set the return code to

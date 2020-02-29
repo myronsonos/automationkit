@@ -109,9 +109,7 @@ class TestSequencer(ContextUser):
 
         return testcount
 
-    def execute_tests(self, runid, recorder, sequencer):
-
-        scope_table = self._scope_table
+    def execute_testpacks(self, runid: str, recorder, sequencer):
 
         exit_code = 0
 
@@ -123,7 +121,7 @@ class TestSequencer(ContextUser):
         for tpack in sequencer:
             print(repr(tpack))
             #for leaf_scope in scope_table:
-            #    self._traverse_scope(leaf_scope, recorder, parent_inst=runid)
+            #    self._traverse_testpack(tpack, recorder, parent_inst=runid)
 
         return exit_code
 
@@ -131,7 +129,7 @@ class TestSequencer(ContextUser):
         
         return
 
-    def record_import_errors(self, outputfilename):
+    def record_import_errors(self, outputfilename: str):
 
         with open(outputfilename, 'w') as ief:
             for modname, filename, errmsg in self._import_errors:
@@ -144,9 +142,10 @@ class TestSequencer(ContextUser):
 
         return
 
-    def _traverse_scope(self, leaf_scope, recorder, parent_inst=None):
-        scope_key = leaf_scope.__module__ + "." + leaf_scope.__name__
-        logger.info("SCOPE ENTER: %s" % scope_key)
+    def _traverse_testpack(self, testpack, recorder, parent_inst=None):
+
+        scope_key = testpack.__module__ + "." + testpack.__name__
+        logger.info("TESTPACK ENTER: %s" % scope_key)
 
         try:
             res_inst = str(uuid.uuid4())
@@ -177,7 +176,7 @@ class TestSequencer(ContextUser):
                 #TODO: Handing exception logging here
                 pass
 
-            logger.info("SCOPE EXIT: %s" % scope_key)
+            logger.info("TESTPACK EXIT: %s" % scope_key)
 
         return
 
