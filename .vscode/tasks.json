@@ -28,7 +28,7 @@
             "options": {
                 "cwd": "${env:HOME}/aresults"
             },
-            "command": "python -m SimpleHTTPServer",
+            "command": "python3 -m http.server 8000",
             "problemMatcher": []
         }
     ]

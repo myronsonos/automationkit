@@ -7,6 +7,16 @@
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
 """
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@automationmojo.com"
+__status__ = "Development" # Prototype, Development or Production
+#__license__ = ""
+
 import fnmatch
 import inspect
 import logging
@@ -59,6 +69,7 @@ class TestSequencer:
         self._scopes = []
         self._scope_roots = []
         self._import_errors = []
+        self._testpacks = []
         return
 
     def __enter__(self):
@@ -70,6 +81,10 @@ class TestSequencer:
     @property
     def import_errors(self):
         return self._import_errors
+
+    @property
+    def testpacks(self):
+        return self._testpacks
 
     def collect_resources(self):
         
@@ -94,7 +109,7 @@ class TestSequencer:
 
         return testcount
 
-    def execute_tests(self, runid, recorder):
+    def execute_tests(self, runid, recorder, sequencer):
 
         scope_table = self._scope_table
 
@@ -102,11 +117,13 @@ class TestSequencer:
 
         res_name = "(root)"
 
-        root_container = ResultContainer(runid, res_name, ResultType.ROOTCONTAINER)
+        root_container = ResultContainer(runid, res_name, ResultType.JOB)
         recorder.record(root_container)
 
-        for leaf_scope in scope_table:
-             self._traverse_scope(leaf_scope, recorder, parent_inst=runid)
+        for tpack in sequencer:
+            print(repr(tpack))
+            #for leaf_scope in scope_table:
+            #    self._traverse_scope(leaf_scope, recorder, parent_inst=runid)
 
         return exit_code
 
@@ -134,7 +151,7 @@ class TestSequencer:
         try:
             res_inst = str(uuid.uuid4())
 
-            result_container = ResultContainer(res_inst, scope_key, ResultType.TESTCONTAINER, parent_inst=parent_inst)
+            result_container = ResultContainer(res_inst, scope_key, ResultType.TEST_CONTAINER, parent_inst=parent_inst)
             recorder.record(result_container)
 
             self._enter_leaf_scope(leaf_scope)

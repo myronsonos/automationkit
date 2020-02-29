@@ -1,15 +1,23 @@
 """
-    .. module:: akit.mixins.integration
+.. module:: akit.mixins.integration
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module containing the :class:`IntegrationMixIn` class and associated reflection methods.
 
-    A scope represents a predefined state that is reached by the execution of code.  The state represents a
-    requirement that is needed to be met in order for a task to be able to run.
+    The :class:`IntegrationMixIn` derived classes can be used to integraton automation resources and roles
+    into the test environment.
 
-    Scopes have a name that is like a file system path /environment/configuration
-
-    Scopes can contain state and they are deposited into the context in a leaf just like other nodes.
-
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
 """
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@automationmojo.com"
+__status__ = "Development" # Prototype, Development or Production
+#__license__ = ""
 
 import inspect
 

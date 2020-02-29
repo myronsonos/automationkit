@@ -1,11 +1,21 @@
 """
-.. module:: akit.testing.activate
+.. module:: akit.environment.activate
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that is utilized by test files to ensure the test environment is initialized in
                the correct order.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
+
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@automationmojo.com"
+__status__ = "Development" # Prototype, Development or Production
+#__license__ = ""
 
 # Force the default configuration to load if it is not already loaded
 import akit.environment.configuration

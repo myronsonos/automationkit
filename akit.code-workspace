@@ -11,8 +11,8 @@
         }
     ],
     "settings": {
-        "python.pythonPath": "./_local/venv/bin/python",
-        "python.envFile": "./_local/development.env",
+        "python.pythonPath": "/home/myron/source/automationkit/_local/venv/bin/python",
+        "python.envFile": "/home/myron/source/automationkit/_local/development.env",
         "python.linting.enabled": false
     }
 }

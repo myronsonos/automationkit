@@ -8,6 +8,15 @@
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
 
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@automationmojo.com"
+__status__ = "Development" # Prototype, Development or Production
+#__license__ = ""
+
 import fnmatch
 import inspect
 import os
@@ -18,9 +27,9 @@ from akit.compat import import_file
 
 from akit.mixins.integration import IntegrationMixIn, is_integration_mixin
 from akit.mixins.scope import DefaultScopeMixIn, ScopeMixIn, is_scope_mixin, scope_compare
+from akit.mixins.testpack import TestPackMixIn, is_testpack_mixin
 
 from akit.testing.testcontainer import TestContainer, inherits_from_testcontainer
-from akit.testing.testpack import TestPack
 from akit.testing.testref import TestRef
 from akit.testing.utilities import find_testmodule_root, find_testmodule_fullname
 
@@ -145,7 +154,7 @@ class TestCollector:
                         if fnmatch.fnmatch(pkgname, expr_package):
                             if expr_module is not None:
                                 for fname in filenames:
-                                    if fnmatch.fnmatch(fname, expr_module):
+                                    if fname.startswith(expr_module) or fnmatch.fnmatch(fname, expr_module):
                                         fbase, fext = os.path.splitext(fname)
                                         if fext == ".py" and fbase != "__init__":
                                             ffull = os.path.join(dirpath, fname)
@@ -164,7 +173,10 @@ class TestCollector:
         rootlen = len(self._root)
         for ifile in included_files:
             try:
-                mod = self._import_file_relative_to_root(ifile)
+                ifilebase, ifileext = os.path.splitext(ifile)
+                ifileleaf = ifilebase[rootlen:].strip("/")
+                modname = ifileleaf.replace("/", ".")
+                mod = import_file(modname, ifile)
                 test_class_coll = inspect.getmembers(mod, inherits_from_testcontainer)
                 for testclass_name, testclass_obj in test_class_coll:
                     tcobj_module_name = testclass_obj.__module__
@@ -224,29 +236,29 @@ class TestCollector:
 
         leaf_scopes = {}
 
-        default_scope_refs = []
+        default_testpack_refs = []
 
         # Walk through all the test references, for each test reference, find its immediate scopes
         for ref_name, ref in self._references.items():
 
             # Go through all the parent objects and add the current test ref to each of the scope
             # classes found in the main class
-            ref_scope_leafs = []
+            ref_testpacks = []
             for bcls in ref.testcls.__bases__:
-                if is_scope_mixin(bcls):
-                    ref_scope_leafs.append(bcls)
+                if is_testpack_mixin(bcls):
+                    ref_testpacks.append(bcls)
 
-            # If we didn't find a ScopeMixIn derived object, then
-            # add this test reference to the DefaultScopeMixIn
-            ref_leaf_scope_count = len(ref_scope_leafs)
-            if ref_leaf_scope_count == 0:
-                default_scope_refs.append(ref)
+            # If we didn't find a TestPackMixIn derived object, then
+            # add this test reference to the DefaultTestPackMixIn
+            ref_leaf_testpack_count = len(ref_testpacks)
+            if ref_leaf_testpack_count == 0:
+                default_testpack_refs.append(ref)
 
-            elif ref_leaf_scope_count == 1:
-                leaf_scope_cls = ref_scope_leafs[0]
+            elif ref_leaf_testpack_count == 1:
+                leaf_testpack_cls = ref_testpacks[0]
 
-                mskey = leaf_scope_cls.__module__ + "." + leaf_scope_cls.__name__
-                if mskey not in ScopeMixIn.test_references:
+                mtpkey = leaf_testpack_cls.__module__ + "." + leaf_scope_cls.__name__
+                if mtpkey not in ScopeMixIn.test_references:
                     test_references = []
                     ScopeMixIn.test_references[mskey] = test_references
                 test_references = ScopeMixIn.test_references[mskey]
@@ -323,7 +335,11 @@ class TestCollector:
                     if fext == ".py":
                         nxtfile_full = os.path.join(sdir, nxtfile)
                         try:
-                            mod = self._import_file_relative_to_root(nxtfile_full)
+                            ifilebase, ifileext = os.path.splitext(ifile)
+                            ifileleaf = ifilebase[rootlen:].strip("/")
+                            modname = ifileleaf.replace("/", ".")
+                            mod = import_file(modname, ifile)
+
                             test_class_coll = inspect.getmembers(mod, inherits_from_testcontainer)
                             for testclass_name, testclass_obj in test_class_coll:
                                 test_class_name = testclass_obj.__module__ + "@" + testclass_obj.__name__
@@ -347,15 +363,6 @@ class TestCollector:
             logger.error("TestPack: Import error filename=%r" % ifile)
 
         return
-
-    def _import_file_relative_to_root(self, ifile):
-
-        ifilebase, ifileext = os.path.splitext(ifile)
-        ifileleaf = ifilebase[rootlen:].strip("/")
-        modname = ifileleaf.replace("/", ".")
-        mod = import_file(modname, ifile)
-
-        return mod
 
     def _record_child_scopes_at_level(self, scope_cls, level):
         scopes_found = []

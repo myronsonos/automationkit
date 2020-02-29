@@ -111,7 +111,7 @@ def testrunner_main():
 
         result_code = 0
         with TestJobType(ctx, logger, test_root, includes=includes, excludes=excludes) as tjob:
-            result_code = tjob.sequence()
+            result_code = tjob.execute()
 
         exit(result_code)
 

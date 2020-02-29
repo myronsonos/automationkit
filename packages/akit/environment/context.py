@@ -1,5 +1,5 @@
 """
-.. module:: akit.context
+.. module:: akit.environment.context
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that contains the :class:`Context` object and :class:`ContextCursor` that
                are used to maintain the shared automation context.
@@ -7,8 +7,18 @@
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
 
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@automationmojo.com"
+__status__ = "Development" # Prototype, Development or Production
+#__license__ = ""
+
 import re
 import os
+import typing
 
 from datetime import datetime
 
@@ -18,7 +28,7 @@ from akit.environment.configuration import RUNTIME_CONFIGURATION
 
 REGEX_PATH_VALIDATOR = re.compile("/{1}([a-zA-Z0-9]+)")
 
-def validate_path_name(path):
+def validate_path_name(path: str): -> [str]
     parts = None
     mobj = REGEX_PATH_VALIDATOR.findall(path)
     if mobj is not None:
@@ -27,15 +37,15 @@ def validate_path_name(path):
 
 class ContextCursor:
 
-    def __init__(self, storeref):
+    def __init__(self, storeref: dict):
         self._storeref = storeref
         return
 
-    def fill_template(self, template):
+    def fill_template(self, template: str): -> str
         filled = template % self._storeref
         return filled
 
-    def insert(self, path, obj):
+    def insert(self, path: str, obj):
 
         if isinstance(path, list) or isinstance(path, tuple):
             path_parts = path
@@ -47,7 +57,7 @@ class ContextCursor:
     
         return
 
-    def lookup(self, path):
+    def lookup(self, path: str): -> typing.Any
         found_node = None
 
         if isinstance(path, list) or isinstance(path, tuple):
@@ -59,8 +69,21 @@ class ContextCursor:
         found_node = self._lookup(self._storeref, path, path_parts)
 
         return found_node
+    
+    def remove(self, path: str): -> typing.Any
+        found_node = None
 
-    def _insert(self, dref, path, path_parts, obj):
+        if isinstance(path, list) or isinstance(path, tuple):
+            path_parts = path
+            path = "/%s" %  "/".join(path_parts)
+        else:
+            path_parts = validate_path_name(path.rstrip("/"))
+
+        found_node = self._remove(self._storeref, path, path_parts)
+
+        return found_node 
+
+    def _insert(self, dref: dict, path: str, path_parts: [str], obj):
 
         if len(path_parts) > 0:
             leaf_name = path_parts[0]
@@ -76,7 +99,7 @@ class ContextCursor:
 
         return
 
-    def _lookup(self, dref, path, path_parts):
+    def _lookup(self, dref: dict, path: str, path_parts: [str]): -> typing.Any
 
         found_node = None
 
@@ -99,35 +122,58 @@ class ContextCursor:
 
         return found_node
 
-    def __contains__(self, key):
+    def _remove(self, dref, path: str, path_parts: [str]): -> typing.Any
+
+        found_node = None
+
+        if len(path_parts) > 0:
+            leaf_name = path_parts[0]
+            if leaf_name in dref:
+                found_node = dref[leaf_name]
+                if len(path_parts) > 1:
+                    if isinstance(found_node, dict):
+                        found_node = self._remove(found_node, path, path_parts[1:])
+                    else:
+                        LookupError("Context remove failure for path=%s" % path)
+                else:
+                    found_node = found_node
+                    del drev[leaf_name]
+            else:
+                raise LookupError("Context remove failure for path=%s" % path)
+        else:
+            raise ValueError("Invalid path=%s" % path)
+
+        return found_node
+
+    def __contains__(self, key: str): -> bool
         found = key in self._storeref
         return found
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str): -> typing.Any
         found_node = self._lookup(self._storeref, key, [key])
         return found_node
 
-    def __setitem__(self, key, val):
+    def __setitem__(self, key: str , val):
         self._insert(self._storeref, key, [key], val)
         return
 
-    def __repr__(self):
+    def __repr__(self): -> str
         return repr(self._storeref)
     
-    def __str__(self):
+    def __str__(self): -> str
         return str(self._storeref)
 
 class Context:
 
-    _instance = None
-    _store = {}
+    _instance: Context = None
+    _store: dict = {}
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super(Context, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
-    def insert(self, path, obj):
+    def insert(self, path: str, obj: typing.Any):
 
         if isinstance(path, list) or isinstance(path, tuple):
             path_parts = path
@@ -139,7 +185,7 @@ class Context:
     
         return
 
-    def lookup(self, path):
+    def lookup(self, path: str): -> typing.Any
         found_node = None
 
         if isinstance(path, list) or isinstance(path, tuple):
@@ -152,7 +198,20 @@ class Context:
 
         return found_node
 
-    def _insert(self, dref, path, path_parts, obj):
+    def remove(self, path: str): -> typing.Any
+        found_node = None
+
+        if isinstance(path, list) or isinstance(path, tuple):
+            path_parts = path
+            path = "/%s" %  "/".join(path_parts)
+        else:
+            path_parts = validate_path_name(path.rstrip("/"))
+
+        found_node = self._remove(self._storeref, path, path_parts)
+
+        return found_node
+
+    def _insert(self, dref, path, path_parts, obj): -> typing.Any
 
         if len(path_parts) > 0:
             leaf_name = path_parts[0]
@@ -168,7 +227,7 @@ class Context:
 
         return
 
-    def _lookup(self, dref, path, path_parts):
+    def _lookup(self, dref, path, path_parts): -> typing.Any
 
         found_node = None
 
@@ -191,11 +250,34 @@ class Context:
 
         return found_node
 
-    def __contains__(self, key):
+    def _remove(self, dref, path: str, path_parts: [str]): -> typing.Any
+
+        found_node = None
+
+        if len(path_parts) > 0:
+            leaf_name = path_parts[0]
+            if leaf_name in dref:
+                found_node = dref[leaf_name]
+                if len(path_parts) > 1:
+                    if isinstance(found_node, dict):
+                        found_node = self._remove(found_node, path, path_parts[1:])
+                    else:
+                        LookupError("Context remove failure for path=%s" % path)
+                else:
+                    found_node = found_node
+                    del drev[leaf_name]
+            else:
+                raise LookupError("Context remove failure for path=%s" % path)
+        else:
+            raise ValueError("Invalid path=%s" % path)
+
+        return found_node
+
+    def __contains__(self, key): -> bool
         found = key in self._storeref
         return found
 
-    def __getitem__(self, key):
+    def __getitem__(self, key): -> typing.Any
         found_node = self._lookup(self._store, [key])
         return found_node
 
@@ -217,4 +299,4 @@ context = Context()
 context.insert("/environment", default_environment)
 
 class ContextUser:
-    context = Context()
+    context: Conetxt = Context()

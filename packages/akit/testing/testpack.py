@@ -7,6 +7,15 @@
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
 
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@automationmojo.com"
+__status__ = "Development" # Prototype, Development or Production
+#__license__ = ""
+
 class TestPack:
     """
               --------------
@@ -41,7 +50,7 @@ class TestPack:
 
     def acclimate(self, testlandscape):
         """
-            API called by the test framework in order to acclimate the :class:`TestPack` to the :class:`.
+            API called by the test framework in order to acclimate the :class:`TestPack` to the :class:`TestLandscape`.
             When this method is called on a :class:`TestPack` it can analyze the testlandscape and configure
             internal state that can be used to determine which tests are applicable to the given test
             landscape.
@@ -160,3 +169,16 @@ class TestPack:
         return
 
 
+class DefaultTestPack(TestPack):
+    """
+        The :class:`DefaultTestPack` is utilized to provide a package container for collections of tests
+        that either share a common collection of foundation scopes or do not explicitly mixin a parent class
+        that is a subclass of :class:`ScopeMixIn`.
+    """
+    pathname = ""
+
+def is_testpack(cls):
+    is_testpack = False
+    if inspect.isclass(cls) and cls is not TestPack and issubclass(cls, TestPack):
+        is_testpack = True
+    return is_testpack

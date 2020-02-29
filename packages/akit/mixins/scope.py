@@ -10,6 +10,16 @@
 
 
 """
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@automationmojo.com"
+__status__ = "Development" # Prototype, Development or Production
+#__license__ = ""
+
 import inspect
 
 from akit.environment.context import ContextUser
@@ -76,14 +86,6 @@ class ScopeMixIn(ContextUser):
             managing.
         """
         return
-
-class DefaultScopeMixIn(ScopeMixIn):
-    """
-        The :class:`DefaultScopeMixIn` is utilized to provide a root scope for collections of tests that either
-        share a common collection of foundation scopes or do not explicitly mixin a parent class that is a subclass
-        of :class:`ScopeMixIn`.
-    """
-    pathname = ""
 
 def is_scope_mixin(cls):
     is_scopemi = False
