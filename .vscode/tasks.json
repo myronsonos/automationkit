@@ -15,7 +15,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/docs/dirhtml"
             },
-            "command": "/usr/local/bin/python3",
+            "command": "${workspaceFolder}/_local/venv/bin/python -m http.server 8001",
             "args": [
                 "-m",
                 "http.server"
@@ -28,7 +28,7 @@
             "options": {
                 "cwd": "${env:HOME}/aresults"
             },
-            "command": "python3 -m http.server 8000",
+            "command": "${workspaceFolder}/_local/venv/bin/python -m http.server 8000",
             "problemMatcher": []
         }
     ]
