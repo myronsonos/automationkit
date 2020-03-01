@@ -1,4 +1,3 @@
-
 """
 .. module:: akit.testing.testcontainer
     :platform: Darwin, Linux, Unix, Windows
@@ -70,9 +69,8 @@ class TestContainer:
 
     """
 
-    def __init__(self, testmethod, scope_type, recorder, *args, **kwargs):
+    def __init__(self, testmethod, recorder, *args, **kwargs):
         self._testmethod = testmethod
-        self._scope_type = scope_type
         self._args = args
         self._kwargs = kwargs
         self._instance_id = str(uuid.uuid4())
@@ -81,22 +79,14 @@ class TestContainer:
         return
 
     @property
-    def instance_id(self): -> str
+    def instance_id(self) -> str:
         return self._instance_id
 
     @property
-    def scope_type(self):
-        return self._scope_type
-
-    @property
-    def testname(self): -> str
+    def testname(self) -> str:
         tcls = self.__class__
         tname = "%s@%s#%s" % (tcls.__module__, tcls.__name__, self._testmethod.__name__)
         return tname
-
-    def in_scope(self, expected): -> bool
-        yes_in_scope = self._scope_type == expected
-        return yes_in_scope
 
     def run(self, parent_inst):
 

@@ -110,7 +110,7 @@ def testrunner_main():
             TestJobType = getattr(job_mod, job_class)
 
         result_code = 0
-        with TestJobType(ctx, logger, test_root, includes=includes, excludes=excludes) as tjob:
+        with TestJobType(logger, test_root, includes=includes, excludes=excludes) as tjob:
             result_code = tjob.execute()
 
         exit(result_code)

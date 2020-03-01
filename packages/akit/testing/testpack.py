@@ -16,7 +16,10 @@ __email__ = "myron.walker@automationmojo.com"
 __status__ = "Development" # Prototype, Development or Production
 #__license__ = ""
 
+import inspect
+
 from akit.mixins.scope import ScopeMixIn
+
 class TestPack(ScopeMixIn):
     """
               --------------
@@ -179,7 +182,7 @@ class DefaultTestPack(TestPack):
     """
     pathname = ""
 
-def is_testpack(cls): -> bool
+def is_testpack(cls) -> bool:
     is_testpack = False
     if inspect.isclass(cls) and cls is not TestPack and issubclass(cls, TestPack):
         is_testpack = True

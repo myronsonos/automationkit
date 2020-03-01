@@ -25,12 +25,12 @@ class TestRef:
         return
 
     @property
-    def test_name(self): -> str
+    def test_name(self) -> str:
         tc = self.testcls
         test_name = "%s@%s#%s" % (tc.__module__, tc.__name__, self.testmeth.__name__)
         return test_name
 
-    def create_instance(self, scope_type, recorder):
-        testinst = self.testcls(self.testmeth, scope_type, recorder)
+    def create_instance(self, recorder):
+        testinst = self.testcls(self.testmeth, recorder)
         return testinst
 

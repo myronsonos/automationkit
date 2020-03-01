@@ -93,12 +93,12 @@ class ScopeMixIn(ContextUser):
         """
         return
 
-def is_scope_mixin(cls): -> bool
+def is_scope_mixin(cls) -> bool:
     is_scopemi = False
     if inspect.isclass(cls) and cls is not ScopeMixIn and issubclass(cls, ScopeMixIn):
         is_scopemi = True
     return is_scopemi
 
 def scope_finalize(context, pathname):
-    context.
+    context.remove(pathname)
     return

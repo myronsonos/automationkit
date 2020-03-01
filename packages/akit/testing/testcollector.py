@@ -230,7 +230,7 @@ class TestCollector:
 
         return
 
-    def create_scope_table(self):
+    def collect_testpacks(self):
 
         # The testpack_table is filled with the top-level testpack types which
         # also are the top level scopes associated with an object.
@@ -259,14 +259,14 @@ class TestCollector:
                 leaf_testpack_cls = ref_testpacks[0]
 
                 if leaf_testpack_cls.test_references is None:
-                    leaf_testpack_cls.test_references = {}
+                    leaf_testpack_cls.test_references = []
 
                 test_references = leaf_testpack_cls.test_references
                 test_references.append(ref)
 
                 mtpkey = leaf_testpack_cls.__module__ + "." + leaf_testpack_cls.__name__
-                if mskey not in testpack_table:
-                    testpack_table[mskey] = leaf_testpack_cls
+                if mtpkey not in testpack_table:
+                    testpack_table[mtpkey] = leaf_testpack_cls
 
             else:
                 raise Exception("Assigning a TestCollection to more than one TestPack is not currently supported.")
@@ -308,7 +308,7 @@ class TestCollector:
             # The weight of the TestPack is a combination of how deep the levels of scopes are under
             # the TestPack and the number of scopes.  We try to optimize the ordering of running
             # the TestPack(s) by weight
-            nxt_leaf_val.weight = weight
+            nxt_tpack_val.weight = weight
 
 
 

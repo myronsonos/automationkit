@@ -28,7 +28,7 @@ import uuid
 import akit.environment.activate
 from akit.environment.context import ContextUser
 
-from akit.mixins.scope import DefaultScopeMixIn, ScopeMixIn
+from akit.mixins.scope import ScopeMixIn
 from akit.mixins.scope import is_scope_mixin
 from akit.results import ResultContainer, ResultType
 from akit.testing.testcollector import TestCollector
@@ -104,7 +104,7 @@ class TestSequencer(ContextUser):
         testcount = len(self._references)
         if testcount > 0:
             self._integrations = collector.collect_integrations()
-            self._scope_table = collector.create_scope_table()
+            self._testpacks = collector.collect_testpacks()
             self._import_errors = collector.import_errors
 
         return testcount
@@ -118,10 +118,8 @@ class TestSequencer(ContextUser):
         root_container = ResultContainer(runid, res_name, ResultType.JOB)
         recorder.record(root_container)
 
-        for tpack in sequencer:
-            print(repr(tpack))
-            #for leaf_scope in scope_table:
-            #    self._traverse_testpack(tpack, recorder, parent_inst=runid)
+        for tpack in sequencer():
+            self._traverse_testpack(tpack, recorder, parent_inst=runid) 
 
         return exit_code
 
@@ -144,66 +142,70 @@ class TestSequencer(ContextUser):
 
     def _traverse_testpack(self, testpack, recorder, parent_inst=None):
 
-        scope_key = testpack.__module__ + "." + testpack.__name__
-        logger.info("TESTPACK ENTER: %s" % scope_key)
+        testpack_key = testpack.__module__ + "." + testpack.__name__
+        logger.info("TESTPACK ENTER: %s" % testpack_key)
 
         try:
             res_inst = str(uuid.uuid4())
 
-            result_container = ResultContainer(res_inst, scope_key, ResultType.TEST_CONTAINER, parent_inst=parent_inst)
+            result_container = ResultContainer(res_inst, testpack_key, ResultType.TEST_CONTAINER, parent_inst=parent_inst)
             recorder.record(result_container)
 
-            self._enter_leaf_scope(leaf_scope)
+            self._enter_testpack(testpack)
 
-            if scope_key in ScopeMixIn.test_references:
-                test_references = ScopeMixIn.test_references[scope_key]
-                for tref in test_references:
+            for tref in testpack.test_references:
 
-                    try:
-                        # Create an instance of the test case using the test reference
-                        testinst = tref.create_instance(leaf_scope, recorder)
+                try:
+                    # Create an instance of the test case using the test reference
+                    testinst = tref.create_instance(recorder)
 
-                        # Run the test, it shouldn't raise any exceptions unless a stop
-                        # is raised or a framework exception occurs
-                        testinst.run(result_container.result_inst)
-                    except Exception as xcpt:
-                        pass
+                    # Run the test, it shouldn't raise any exceptions unless a stop
+                    # is raised or a framework exception occurs
+                    testinst.run(result_container.result_inst)
+                except Exception as xcpt:
+                    pass
 
         finally:
             try:
-                self._exit_leaf_scope(leaf_scope)
+                self._exit_testpack(testpack)
             except Exception as xcpt:
                 #TODO: Handing exception logging here
                 pass
 
-            logger.info("TESTPACK EXIT: %s" % scope_key)
+            logger.info("TESTPACK EXIT: %s" % testpack_key)
 
         return
 
-    def _enter_leaf_scope(self, leaf_scope):
+    def _enter_testpack(self, leaf_scope):
         rev_mro = list(leaf_scope.__mro__)
         rev_mro.reverse()
 
         for nxt_cls in rev_mro:
             if is_scope_mixin(nxt_cls):
-                nxt_cls.scope_enter()
-                if not hasattr(nxt_cls, "scope_enter_count"):
-                    nxt_cls.scope_enter_count = 1
-                else:
-                    nxt_cls.scope_enter_count += 1
+                # We only want to call scope_enter when we find the type it is directly
+                # implemented on
+                if "scope_enter" in nxt_cls.__dict__:
+                    nxt_cls.scope_enter()
+                    if not hasattr(nxt_cls, "scope_enter_count"):
+                        nxt_cls.scope_enter_count = 1
+                    else:
+                        nxt_cls.scope_enter_count += 1
 
         return
 
-    def _exit_leaf_scope(self, leaf_scope):
+    def _exit_testpack(self, leaf_scope):
         norm_mro = list(leaf_scope.__mro__)
 
         for nxt_cls in norm_mro:
             if is_scope_mixin(nxt_cls):
-                nxt_cls.scope_exit()
-                if hasattr(nxt_cls, "refcount"):
-                    nxt_cls.refcount -= 1
-                else:
-                    logger.error("ERROR: Every scope should have a 'refcount' class variable.")
+                # We only want to call scope_enter when we find the type it is directly
+                # implemented on
+                if "scope_exit" in nxt_cls.__dict__:
+                    nxt_cls.scope_exit()
+                    if hasattr(nxt_cls, "refcount"):
+                        nxt_cls.refcount -= 1
+                    else:
+                        logger.error("ERROR: Every scope should have a 'refcount' class variable.")
         return
 
 

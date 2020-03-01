@@ -21,11 +21,11 @@ from akit.environment.context import Context
 
 DIR_TESTRESULTS = None
 
-def get_expand_path(path: str): -> str
+def get_expand_path(path: str) -> str:
     exp_path = os.path.abspath(os.path.expandvars( os.path.expanduser(path)))
     return exp_path
 
-def get_path_for_testresults(): -> str
+def get_path_for_testresults() -> str:
     global DIR_TESTRESULTS
     if DIR_TESTRESULTS is None:
         ctx = Context()
