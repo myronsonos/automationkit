@@ -19,6 +19,11 @@ class AKitError(Exception):
         The base error object for Automation Kit errors.
     """
 
+class AKitSemanticError(AKitError):
+    """
+        The base error object for Automation Kit errors.
+    """
+
 class AKitInitialConnectivityError(AKitError):
     """
         This error is raised when an IntegrationMixIn object is unable to establish an initial level of

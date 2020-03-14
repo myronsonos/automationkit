@@ -10,6 +10,15 @@
             "problemMatcher": []
         },
         {
+            "label": "Test Result Server",
+            "type": "shell",
+            "options": {
+                "cwd": "${env:HOME}/aresults"
+            },
+            "command": "${workspaceFolder}/_local/venv/bin/python -m http.server 8000",
+            "problemMatcher": []
+        },
+        {
             "label": "Documentation Server",
             "type": "shell",
             "options": {
@@ -20,15 +29,6 @@
                 "-m",
                 "http.server"
             ],
-            "problemMatcher": []
-        },
-        {
-            "label": "Test Result Server",
-            "type": "shell",
-            "options": {
-                "cwd": "${env:HOME}/aresults"
-            },
-            "command": "${workspaceFolder}/_local/venv/bin/python -m http.server 8000",
             "problemMatcher": []
         }
     ]

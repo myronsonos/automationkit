@@ -13,7 +13,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
 __email__ = "myron.walker@automationmojo.com"
 __status__ = "Development" # Prototype, Development or Production
-#__license__ = ""
+__license__ = "MIT"
 
 import os
 
@@ -22,10 +22,25 @@ from akit.environment.context import Context
 DIR_TESTRESULTS = None
 
 def get_expand_path(path: str) -> str:
-    exp_path = os.path.abspath(os.path.expandvars( os.path.expanduser(path)))
+    """
+        Returns a path expanded using expanduser, expandvars and abspath for
+        the provided path.
+    """
+    exp_path = os.path.abspath(os.path.expandvars(os.path.expanduser(path)))
     return exp_path
 
+def get_path_for_artifacts(label) -> str:
+    """
+        Returns a path in the form (testresultdir)/artifacts/(label)
+    """
+    trdir = get_path_for_testresults()
+    afdir = os.path.join(trdir, "artifacts", label)
+    return afdir
+
 def get_path_for_testresults() -> str:
+    """
+        Returns a the timestamped path where test results and artifacts are deposited to
+    """
     global DIR_TESTRESULTS
     if DIR_TESTRESULTS is None:
         ctx = Context()
@@ -42,3 +57,4 @@ def get_path_for_testresults() -> str:
         DIR_TESTRESULTS = get_expand_path(testresult_path)
 
     return DIR_TESTRESULTS
+

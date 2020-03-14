@@ -23,6 +23,9 @@ is_python3 = sys.version_info[0] == 3
 is_python_pre_3_5 = (is_python3 and sys.version_info[1] < 5)
 
 def import_by_name(modulename):
+    """
+        Imports a module by name.
+    """
 
     mod = importlib.import_module(modulename)
     

@@ -18,6 +18,9 @@ from akit.environment.context import Context
 from akit.environment.variables import extend_path
 from akit.paths import get_path_for_testresults
 from akit.xlogging import LEVEL_NAMES, logging_initialize, getAutomatonKitLogger
+
+import akit.integration.landscaping
+
 from akit.testing.testjob import DefaultTestJob
 from akit.testing.testsequencer import TestSequencer
 from akit.recorders import JsonResultRecorder

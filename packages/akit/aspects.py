@@ -27,7 +27,6 @@ class RunPattern:
     RUN_WHILE_SUCCESS = 2
 
 class Aspects:
-    
     def __init__(self, run_pattern=RunPattern.SINGLE_RUN, completion_timeout=DEFAULT_COMPLETION_TIMEOUT, completion_interval=DEFAULT_COMPLETION_INTERVAL,
                        inactivity_timeout=DEFAULT_INACTIVITY_TIMEOUT, inactivity_interval=DEFAULT_INACTIVITY_INTERVAL):
         self.run_pattern = run_pattern

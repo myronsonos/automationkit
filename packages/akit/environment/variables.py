@@ -32,6 +32,10 @@ class VARIABLES:
     AKIT_JOBTYPE = "unknown"
     if "AKIT_JOBTYPE" in environ:
         AKIT_JOBTYPE = environ["AKIT_JOBTYPE"]
+    
+    AKIT_LANDSCAPE_MODULE = "somens.integration.somelandscape"
+    if "AKIT_LANDSCAPE_MODULE" in environ:
+        AKIT_LANDSCAPE_MODULE = environ["AKIT_LANDSCAPE_MODULE"]
 
 def extend_path(dir_to_add):
 
