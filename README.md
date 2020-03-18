@@ -16,7 +16,7 @@ The **Automation Kit** is designed for enterprise level distributed automation *
 * make it easier to share and reuse code
 
 ## Faster Classification of Issues
-One of the key philosophies behind the **Automation Kit** design is one of being able quickly and efficiently identify the nature of issues that come up during automation runs.  The **Automation Kit* initially classifies errors into one of four categories:
+One of the key philosophies behind the **Automation Kit** design is one of being able quickly and efficiently identify the nature of issues that come up during automation runs.  The **Automation Kit** initially classifies errors into one of four categories:
 
 * **Configuration** - We identify configuration issues quickly and classify the so as configuration related issues so as to ensure that we don't waist time troubleshooting configuration related issues.
 * **Environment** - The **Automation Kit** performs an initial diagnostic scan of the automation landscape and all the resources declared to be necessary to run a series of tasks or tests in order to provide indications of environmental failures as early as possible.  This is important to ensure that we do not generate noise in automation results that are not related to the automation tasks or tests that might fail.
