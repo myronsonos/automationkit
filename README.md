@@ -11,7 +11,7 @@ This section covers some of the important design features of the **Automation Ki
 ## Large Scale
 The **Automation Kit** is designed for enterprise level distributed automation *"at scale"*.  The term *"at scale"* refers not only to a larger collection of enterprise resources but also refers to the fact that the **Automation Kit** helps to setup patterns that will support working in a very large code base.  The size of a code base that you might see associated with large enterprise level projects.  The **Automation Kit** support working in large code bases by helping to establish good code organizational patterns and abstractions that support characteristics that:
 
-* make is easier to learn and work in the code base
+* make it easier to learn and work in the code base
 * make the code base easier to maintain
 * make it easier to share and reuse code
 
@@ -28,11 +28,11 @@ Having the initial classification of issues fall into one of these four categori
 ## Integration and Distributed Automation Support
 The **Automation Kit** comes with enterprise level integration and distributed automation capabilities.  The framework utilizes a customize-able set of classes that guides enterprise users through a process of creating a very robust integration object model based on the roles that enterprise resources play in an automation landscape.
 
-The declaration of custom automation landscape is as simple as setting a environment variable or passing a command line flag declaring the python module the custom landscape derived class.  The *Landscape* and *LandscapeDescription* derived classes work together to provide the **Automation Kit** with a description of the customized roles and integration mixin(s) that provide the connection between the tasks and test automation code.
+The declaration of a custom automation landscape is as simple as setting an environment variable or passing a command line flag declaring the python module that contains a custom landscape derived class.  The *Landscape* and *LandscapeDescription* derived classes work together to provide the **Automation Kit** with a description of the customized roles and integration mixin(s) that provide the connection between the tasks and test automation code.
 
 ## Task and Test Integration Declaration and Assurance
 The **Automation Kit** utilizes its object model to allow tasks and tests to provide information about their associated integration points and scopes of execution to that automation framework.  This integration declaration mechanism allows the automation framework to provide an early scan of the integration pathways and provide levels of assurance as to the stability of the automation landscape early in the automation process.  This is vitally important as it eliminates the waist and noise that are often associated with automation runs that are performed against an automation Landscape that has broken, mis-configured or missing resources.
 
 ## Automation Job, Scope and Flow Control 
-The **Automation Kit** allows enterprise users to organize and customize the ordering of automation scope engagements and the flow of an automation job.  This provide the automation engineer the ability to control the engagement of automation scopes of execution and allows for optimal use of time and overlapping of scopes of execution in a test run.
+The **Automation Kit** allows enterprise users to organize and customize the ordering of automation scope engagements and the flow of an automation job.  This provides the automation engineer the ability to control the engagement of automation scopes of execution and allows for optimal use of time and overlapping of scopes of execution in a test run.
 

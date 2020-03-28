@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/packages:${workspaceFolder}/thirdparty/coherence-src:${workspaceFolder}/thirdparty/gallery-src:${workspaceFolder}/thirdparty/commandtool-src:${workspaceFolder}/thirdparty/cddb-src:${workspaceFolder}/thirdparty/gdata-src/src"
+                "PYTHONPATH": "${workspaceFolder}/packages"
             },
             "program": "${file}",
             "console": "integratedTerminal",
@@ -20,7 +20,7 @@
             "type": "python",
             "request": "launch",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/packages:${workspaceFolder}/thirdparty/coherence-src:${workspaceFolder}/thirdparty/gallery-src:${workspaceFolder}/thirdparty/commandtool-src:${workspaceFolder}/thirdparty/cddb-src:${workspaceFolder}/thirdparty/gdata-src/src"
+                "PYTHONPATH": "${workspaceFolder}/packages"
             },
             "program": "${workspaceFolder}/packages/akit/scripts/testrunner.py",
             "args": [
@@ -35,7 +35,7 @@
             "type": "python",
             "request": "launch",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/packages:${workspaceFolder}/thirdparty/coherence-src:${workspaceFolder}/thirdparty/gallery-src:${workspaceFolder}/thirdparty/commandtool-src:${workspaceFolder}/thirdparty/cddb-src:${workspaceFolder}/thirdparty/gdata-src/src"
+                "PYTHONPATH": "${workspaceFolder}/packages"
             },
             "program": "${workspaceFolder}/packages/akit/scripts/testrunner.py",
             "args": [
