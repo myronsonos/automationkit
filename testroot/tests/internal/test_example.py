@@ -13,19 +13,18 @@ from akit.mixins.scope import ScopeMixIn
 from akit.testing.testpack import TestPack
 from akit.testing.testcontainer import TestContainer, PositiveTestContainer
 
-from integrations.exampleintegrations import ExampleIntegrationMixIn
 from scopes.examplescopes import ExampleScopeAMixIn, ExampleScopeAAMixIn, ExampleScopeABMixIn, ExampleScopeBMixIn
 
 
-class TestPackageAA(TestPack, ExampleIntegrationMixIn, ExampleScopeAAMixIn):
+class TestPackageAA(TestPack, ExampleScopeAAMixIn):
     """
     """
 
-class TestPackageAB(TestPack, ExampleIntegrationMixIn, ExampleScopeABMixIn):
+class TestPackageAB(TestPack, ExampleScopeABMixIn):
     """
     """
 
-class TestPackB(TestPack, ExampleIntegrationMixIn, ExampleScopeBMixIn):
+class TestPackB(TestPack, ExampleScopeBMixIn):
     """
     """
 

@@ -14,7 +14,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
 __email__ = "myron.walker@automationmojo.com"
 __status__ = "Development" # Prototype, Development or Production
-#__license__ = ""
+__license__ = ""
 
 import os
 import uuid
@@ -40,7 +40,7 @@ class TestJob(ContextUser):
         * Can be used to customize the sequencing of :class:`TestPack` runs.
     """
 
-    name = "" # Friendly name for the test job
+    title = "" # Friendly name for the test job
     description = "" # Description of the job
 
     includes = None # The test packs or tests that are included in this TestJob

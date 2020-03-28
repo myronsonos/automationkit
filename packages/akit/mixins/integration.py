@@ -17,7 +17,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
 __email__ = "myron.walker@automationmojo.com"
 __status__ = "Development" # Prototype, Development or Production
-#__license__ = ""
+__license__ = ""
 
 import inspect
 
@@ -33,14 +33,39 @@ class IntegrationMixIn(ContextUser):
 
     pathname = None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, role=None, **kwargs):
         """
             The default contructor for an :class:`IntegrationMixIn`.
         """
+        self._role = role
+
         if self.pathname is None:
             raise ValueError("The 'pathname' class member variable must be set to a unique name for each integration class type.")
 
         self.context.insert(self.pathname, self)
+        return
+
+    @property
+    def role(self):
+        """
+            Returns the current automation role assigned to the integration mixin.
+        """
+        return self._role
+
+    @role.setter
+    def role(self, role_val):
+        """
+            Assigns a new primary role to the integration mixin.
+        """
+        prev_role = self._role
+        self._role = role_val
+        self.on_role_changed(prev_role, role_val)
+        return
+
+    def on_role_changed(self, prev_role, new_role):
+        """
+            Implemented by derived classes in order to perform the changeover of roles.
+        """
         return
 
     @classmethod
@@ -83,7 +108,6 @@ class IntegrationMixIn(ContextUser):
             :param diag_folder: The output folder path where the diagnostic information should be written.
             :type diag_folder: str
         """
-        
         return
 
     @classmethod
@@ -94,7 +118,6 @@ class IntegrationMixIn(ContextUser):
 
             :raises :class:`akit.exceptins.AKitInitialConnectivityError`:
         """
-        
         return
 
 

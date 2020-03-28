@@ -13,7 +13,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
 __email__ = "myron.walker@automationmojo.com"
 __status__ = "Development" # Prototype, Development or Production
-#__license__ = ""
+__license__ = ""
 
 import os
 import sys
@@ -38,7 +38,11 @@ class VARIABLES:
         AKIT_LANDSCAPE_MODULE = environ["AKIT_LANDSCAPE_MODULE"]
 
 def extend_path(dir_to_add):
-
+    """
+        Extends the PYTHONPATH in the current python process and also modifies
+        'PYTHONPATH' so the child processes will also see inherit the extension
+        of 'PYTHONPATH'.
+    """
     found = False
 
     for nxt_item in sys.path:

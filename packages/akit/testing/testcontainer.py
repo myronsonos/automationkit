@@ -16,7 +16,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
 __email__ = "myron.walker@automationmojo.com"
 __status__ = "Development" # Prototype, Development or Production
-#__license__ = ""
+__license__ = ""
 
 import inspect
 import sys
@@ -69,9 +69,11 @@ class TestContainer:
 
     """
 
-    def __init__(self, testmethod, recorder, *args, **kwargs):
+    def __init__(self, testmethod, recorder, *args, extname=None, parameters=None, **kwargs):
         self._testmethod = testmethod
         self._args = args
+        self._extname = extname
+        self._parameters = parameters
         self._kwargs = kwargs
         self._instance_id = str(uuid.uuid4())
         self._recorder = recorder
@@ -87,6 +89,14 @@ class TestContainer:
         tcls = self.__class__
         tname = "%s@%s#%s" % (tcls.__module__, tcls.__name__, self._testmethod.__name__)
         return tname
+
+    @property
+    def extname(self):
+        return self._extname
+
+    @property
+    def parameters(self):
+        return self._parameters
 
     def run(self, parent_inst):
 

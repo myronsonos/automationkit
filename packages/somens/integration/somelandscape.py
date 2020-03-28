@@ -2,8 +2,8 @@
 from akit.integration.landscaping import Landscape, LandscapeDescription
 from akit.xlogging import getAutomatonKitLogger
 
-from somens.integration.clients.linuxclient import LinuxClientMixIn
-from somens.integration.clients.linuxclient import WindowsClientMixIn
+from somens.integration.clients.linuxclientmixin import LinuxClientMixIn
+from somens.integration.clients.windowsclientmixin import WindowsClientMixIn
 from somens.integration.cluster.clustermixin import ClusterMixIn
 from somens.integration.playback.playbackdevicemixin import PlaybackDeviceMixIn
 

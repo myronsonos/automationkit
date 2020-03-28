@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, Column, DateTime, VarChar
+from sqlalchemy import BigInteger, Column, DateTime, Text, VarChar
 from sqlalchemy.types import JSON
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -10,17 +10,18 @@ AutomationBase = declarative_base()
 
 
 class AutomationRun(AutomationBase):
-    __tablename__ = 'automation_run'
+    __tablename__ = 'automation_job'
 
-    id = Column('run_id', BigInteger, primary_key=True)
-    title =  Column('run_title', VarChar(1024), nullable=False)
-    instance = Column('run_instance', UUIDType, nullabe=False)
-    branch =  Column('run_branch', VarChar(1024), nullable=True)
-    build =  Column('run_build', VarChar(1024), nullable=True)
-    flavor =  Column('run_flavor', VarChar(1024), nullable=True)
-    start = Column('run_start', DateTime, nullable=False)
-    stop = Column('run_stop', DateTime, nullable=True)
-    detail = Column('run_detail', JSON, nullable=True)
+    id = Column('job_id', BigInteger, primary_key=True)
+    title =  Column('job_title', VarChar(1024), nullable=False)
+    description = Column('job_description', Text, nullable=False)
+    instance = Column('job_instance', UUIDType, nullable=False)
+    branch =  Column('job_branch', VarChar(1024), nullable=True)
+    build =  Column('job_build', VarChar(1024), nullable=True)
+    flavor =  Column('job_flavor', VarChar(1024), nullable=True)
+    start = Column('job_start', DateTime, nullable=False)
+    stop = Column('job_stop', DateTime, nullable=True)
+    detail = Column('job_detail', JSON, nullable=True)
 
     lscape_id = Column('lscape_id', BigInteger, ForeignKey("landscape.lscape_id"))
     lsscan_id = Column('lsscan_id', BigInteger, ForeignKey("landscape_scan.lsscan_id"))
@@ -46,7 +47,7 @@ class Task(AutomationBase):
 
     id = Column('task_id', BigInteger, primary_key=True)
     name =  Column('task_name', VarChar(1024), nullable=False)
-    exname = Column('task_exname', VarChar(1024), nullable=True)
+    extname = Column('task_extname', VarChar(1024), nullable=True)
     parameters = Column('task_parameters', Text, nullable=True)
     instance = Column('task_instance', UUIDType, nullable=False)
     parent = Column('task_parent', UUIDType, nullable=True)
@@ -56,7 +57,7 @@ class Task(AutomationBase):
     stop = Column('task_stop', DateTime, nullable=True)
     detail = Column('task_detail', JSON, nullable=True)
 
-    run_id = Column('run_id', BigInteger, ForeignKey("automation_run.run_id"))
+    run_id = Column('job_id', BigInteger, ForeignKey("automation_job.job_id"))
 
 class TaskContainer(AutomationBase):
     __tablename__ = 'task_container'
@@ -67,4 +68,5 @@ class TaskContainer(AutomationBase):
     parent = Column('tcont_parent', UUIDType, nullable=True)
     rtype = Column('tcont_rtype', String(50), nullable=False)
 
-    run_id = Column('run_id', BigInteger, ForeignKey("automation_run.run_id"))
+    run_id = Column('job_id', BigInteger, ForeignKey("automation_job.job_id"))
+

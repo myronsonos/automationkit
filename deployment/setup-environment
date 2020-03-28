@@ -52,6 +52,12 @@ if [ ! -f $INITIALIZED_FILE ]; then
     pip install sqlalchemy
     pip install sqlalchemy_utils
 
+    # Install test environment dependencies
+    pip install dbus-python
+    pip install feedparser
+    pip install tlslite-ng
+    pip install twisted
+
     # Install dependencies into the virtual environment
     pip install -r $REQUIREMENTS_FILE
 

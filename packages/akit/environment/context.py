@@ -14,7 +14,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Myron Walker"
 __email__ = "myron.walker@automationmojo.com"
 __status__ = "Development" # Prototype, Development or Production
-#__license__ = ""
+__license__ = ""
 
 import re
 import os
@@ -36,17 +36,33 @@ def validate_path_name(path: str) -> [str]:
     return parts
 
 class ContextCursor:
-
+    """
+        The :class:`ContextCursor` serves as cursor into the storage dictionary that
+        is used to store all the objects in the context.
+    """
     def __init__(self, storeref: dict):
         self._storeref = storeref
         return
 
     def fill_template(self, template: str) -> str:
+        """
+            Method that fills the provided template using the data items stored at the
+            level of the context pointed to by this :class:`ContextCursor`
+        """
         filled = template % self._storeref
         return filled
 
     def insert(self, path: str, obj: typing.Any):
+        """
+            Insert an object at the path specified.
 
+            :param path: Path where the object is to be inserted
+            :type path: str
+            :param obj: The object to insert
+            :type obj: Any
+
+            :raises: :class:`ValueError`
+        """
         if isinstance(path, list) or isinstance(path, tuple):
             path_parts = path
             path = "/%s" %  "/".join(path_parts)
@@ -58,6 +74,17 @@ class ContextCursor:
         return
 
     def lookup(self, path: str) -> typing.Any:
+        """
+            Lookup an object at the path specified.
+
+            :param path: Path where the desired object is located.
+            :type path: str
+
+            :returns: The object stored at the specified path.
+            :rtype: Any
+
+            :raises: :class:`LookupError`
+        """
         found_node = None
 
         if isinstance(path, list) or isinstance(path, tuple):
@@ -71,6 +98,17 @@ class ContextCursor:
         return found_node
     
     def remove(self, path: str) -> typing.Any:
+        """
+            Remove an object at the specified path
+
+            :param path: Path where the desired object is located.
+            :type path: str
+
+            :returns: The being removed from the specified path.
+            :rtype: Any
+
+            :raises: :class:`LookupError`
+        """
         found_node = None
 
         if isinstance(path, list) or isinstance(path, tuple):
@@ -164,7 +202,11 @@ class ContextCursor:
         return str(self._storeref)
 
 class Context:
-
+    """
+        The :class:`Context` object is a special dictionary derivative that utilizes a 'path'
+        style syntax to store and retrieve values and objects.  The :class:`Context` also provides
+        a storage facility that can be replicated or sharded across a distributed environment.
+    """
     _instance = None
     _store: dict = {}
 
@@ -174,7 +216,16 @@ class Context:
         return cls._instance
 
     def insert(self, path: str, obj: typing.Any):
+        """
+            Insert an object at the path specified.
 
+            :param path: Path where the object is to be inserted
+            :type path: str
+            :param obj: The object to insert
+            :type obj: Any
+
+            :raises: :class:`ValueError`
+        """
         if isinstance(path, list) or isinstance(path, tuple):
             path_parts = path
             path = "/%s" %  "/".join(path_parts)
@@ -186,6 +237,17 @@ class Context:
         return
 
     def lookup(self, path: str) -> typing.Any:
+        """
+            Lookup an object at the path specified.
+
+            :param path: Path where the desired object is located.
+            :type path: str
+
+            :returns: The object stored at the specified path.
+            :rtype: Any
+
+            :raises: :class:`LookupError`
+        """
         found_node = None
 
         if isinstance(path, list) or isinstance(path, tuple):
@@ -199,6 +261,17 @@ class Context:
         return found_node
 
     def remove(self, path: str) -> typing.Any:
+        """
+            Remove an object at the specified path
+
+            :param path: Path where the desired object is located.
+            :type path: str
+
+            :returns: The being removed from the specified path.
+            :rtype: Any
+
+            :raises: :class:`LookupError`
+        """
         found_node = None
 
         if isinstance(path, list) or isinstance(path, tuple):
