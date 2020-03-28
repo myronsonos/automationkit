@@ -49,6 +49,7 @@ echo
 echo "-------------------------------- SYSTEM PACKAGES --------------------------------------"
 
 function ensure_apt_dependencies() {
+    echo "INSTALLING: $1"
     read -a dependency_list <<< $1 # Split the dependency string on spaces into a bash array
 
     for nxt_dep in "${dependency_list[@]}"
@@ -68,15 +69,19 @@ function ensure_system_dependencies () {
     # Split off the system dependency install base on system type Linux, MacOS, Windows, etc
 
     # For now we only support Linux
-    ensure_apt_dependencies $dependencies
+    ensure_apt_dependencies "$dependencies"
 }
 
 # Run the dependency checks on the system
+echo "BASE DEPENDENCIES:"
 APT_BASE_DEPENDENCIES="build-essential python3 python3-dev python-setuptools python3-pip virtualenv"
-ensure_system_dependencies $APT_DEPENDENCIES
+ensure_system_dependencies "$APT_BASE_DEPENDENCIES"
+echo
 
+echo "THIRDPARTY DEPENDENCIES:"
 APT_THIRDPARTY_DEPENDENCIES="libcdio-dev libiso9660-dev swig"
-ensure_system_dependencies $APT_THIRDPARTY_DEPENDENCIES
+ensure_system_dependencies "$APT_THIRDPARTY_DEPENDENCIES"
+echo
 
 echo "---------------------------------------------------------------------------------------"
 
@@ -113,7 +118,6 @@ if [ ! -f $INITIALIZED_FILE ]; then
 
     pip install $REPOSITORY_DIR/thirdparty/coherence-src
 
-
     # Install dependencies into the virtual environment
     pip install -r $REQUIREMENTS_FILE
 
@@ -121,6 +125,8 @@ if [ ! -f $INITIALIZED_FILE ]; then
 
     # Exit the virtual environment
     deactivate
+else
+    echo "Virtual environment already intialized..."
 fi
 
 echo "---------------------------------------------------------------------------------------"
