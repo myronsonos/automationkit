@@ -25,7 +25,7 @@ class Receiver(object):
                         ['%r' % x for x in self.arguments]
                         ),
                 ', '.join(
-                        ['%s=%s' % (x, y) for x, y in self.keywords.iteritems()]
+                        ['%s=%s' % (x, y) for x, y in self.keywords.items()]
                         )
                 )
 

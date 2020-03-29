@@ -33,7 +33,7 @@ class Mirabeau(log.Loggable):
         # on the specified protocol.
         account = config['account']
 
-        if isinstance(account, basestring):
+        if isinstance(account, str):
             bus = dbus.SessionBus()
             account = bus.get_object(ACCOUNT_MANAGER, account)
             #account_obj = bus.get_object(ACCOUNT_MANAGER, account)

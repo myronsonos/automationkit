@@ -20,7 +20,12 @@ class Config(ConfigItem):
     def __init__(self, filename, root=None, preamble=False, element2attr_mappings=None):
         self.filename = filename
         self.element2attr_mappings = element2attr_mappings or {}
-        self.db = parse_xml(open(self.filename).read())
+
+        self.db = None
+        with open(self.filename, 'rb') as conff:
+            config_content = open(self.filename).read()
+            self.db = parse_xml(open(self.filename).read())
+
         self.config = self.db = ConvertXmlToDict(self.db.getroot())
         self.preamble = ''
         if preamble == True:
@@ -113,7 +118,7 @@ class XmlDictObject(dict, ConfigItem):
     @staticmethod
     def Wrap(x):
         if isinstance(x, dict):
-            return XmlDictObject((k, XmlDictObject.Wrap(v)) for (k, v) in x.iteritems())
+            return XmlDictObject((k, XmlDictObject.Wrap(v)) for (k, v) in x.items())
         elif isinstance(x, list):
             return [XmlDictObject.Wrap(v) for v in x]
         else:
@@ -122,7 +127,7 @@ class XmlDictObject(dict, ConfigItem):
     @staticmethod
     def _UnWrap(x):
         if isinstance(x, dict):
-            return dict((k, XmlDictObject._UnWrap(v)) for (k, v) in x.iteritems())
+            return dict((k, XmlDictObject._UnWrap(v)) for (k, v) in x.items())
         elif isinstance(x, list):
             return [XmlDictObject._UnWrap(v) for v in x]
         else:
@@ -136,11 +141,11 @@ def _ConvertDictToXmlRecurse(parent, dictitem, element2attr_mappings=None):
     assert type(dictitem) is not type([])
 
     if isinstance(dictitem, dict):
-        for (tag, child) in dictitem.iteritems():
+        for (tag, child) in dictitem.items():
             if str(tag) == '_text':
                 parent.text = str(child)
 ##             elif str(tag) == '_attrs':
-##                 for key, value in child.iteritems():
+##                 for key, value in child.items():
 ##                     parent.set(key, value)
             elif element2attr_mappings != None and tag in element2attr_mappings:
                 parent.set(element2attr_mappings[tag], child)

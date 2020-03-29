@@ -120,9 +120,9 @@ class DBRow(object):
 
     def as_dict(self):
         d = {}
-        for field_name, pos in self.fields.iteritems():
+        for field_name, pos in self.fields.items():
             d[field_name] = self.row[pos]
-        for field_name, field in self._extra_fields.iteritems():
+        for field_name, field in self._extra_fields.items():
             d[field_name] = field
         return d
 

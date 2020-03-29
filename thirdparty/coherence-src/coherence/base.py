@@ -10,6 +10,7 @@ import sys
 import traceback
 import copy
 import logging
+import typing
 
 from twisted.python import filepath, util
 from twisted.internet.tcp import CannotListenError
@@ -69,10 +70,10 @@ class SimpleRoot(resource.Resource, log.Loggable):
             request.setResponseCode(404)
             return static.Data('<html><p>No device for requested UUID: %s</p></html>' % name, 'text/html')
 
-    def listchilds(self, uri):
+    def listchilds(self, uri: bytes):
         self.info('listchilds %s', uri)
-        if uri[-1] != '/':
-            uri += '/'
+        if uri[-1] != b'/':
+            uri += b'/'
         cl = []
         for child in self.coherence.children:
             device = self.coherence.get_device_with_id(child)
@@ -86,7 +87,7 @@ class SimpleRoot(resource.Resource, log.Loggable):
             cl.append('<li><a href=%s%s>%s</a></li>' % (uri, child, child))
         return "".join(cl)
 
-    def render(self, request):
+    def render(self, request) -> bytes:
         result = """<html><head><title>Coherence</title></head><body>
 <a href="http://coherence.beebits.net">Coherence</a> - a Python DLNA/UPnP framework for the Digital Living<p>Hosting:<ul>%s</ul></p></body></html>""" % self.listchilds(request.uri)
         return result.encode('utf-8')
@@ -95,7 +96,7 @@ class SimpleRoot(resource.Resource, log.Loggable):
 class WebServer(log.Loggable):
     logCategory = 'webserver'
 
-    def __init__(self, ui, port, coherence):
+    def __init__(self, ui: string, port: int, coherence):
         log.Loggable.__init__(self)
         try:
             if ui != 'yes':
@@ -108,7 +109,7 @@ class WebServer(log.Loggable):
 
             from nevow import __version_info__, __version__
             if __version_info__ < (0, 9, 17):
-                self.warning("Nevow version %s too old, disabling WebUI", __version__)
+                self.warning("New version %s too old, disabling WebUI", __version__)
                 raise ImportError
 
             from nevow import appserver, inevow
@@ -465,7 +466,7 @@ class Coherence(log.Loggable):
         """ plugin is the object return by add_plugin """
         """ or an UUID string                         """
 
-        if isinstance(plugin, basestring):
+        if isinstance(plugin, str):
             try:
                 plugin = self.active_backends[plugin]
             except KeyError:
@@ -549,7 +550,7 @@ class Coherence(log.Loggable):
                 self.dbus.shutdown()
                 self.dbus = None
 
-            for backend in self.active_backends.itervalues():
+            for backend in self.active_backends.values():
                 backend.unregister()
             self.active_backends = {}
             # send service unsubscribe messages
@@ -639,34 +640,34 @@ class Coherence(log.Loggable):
         return [d for d in self.devices if d.manifestation == 'remote']
 
     def create_device(self, device_type, infos):
-        self.info("creating  %s %s", infos['ST'], infos['USN'])
-        if infos['ST'] == 'upnp:rootdevice':
-            self.info("creating upnp:rootdevice  %s", infos['USN'])
+        self.info("creating  %s %s", infos[b'ST'], infos[b'USN'])
+        if infos[b'ST'] == 'upnp:rootdevice':
+            self.info("creating upnp:rootdevice  %s", infos[b'USN'])
             root = RootDevice(infos)
         else:
-            self.info("creating device/service  %s", infos['USN'])
-            root_id = infos['USN'][:-len(infos['ST']) - 2]
+            self.info("creating device/service  %s", infos[b'USN'])
+            root_id = infos[b'USN'][:-len(infos[b'ST']) - 2]
             root = self.get_device_with_id(root_id)
-            device = Device(infos, root)
+            device = Device(root)
         # fire this only after the device detection is fully completed
         # and we are on the device level already, so we can work with them instead with the SSDP announce
-        #if infos['ST'] == 'upnp:rootdevice':
-        #    self.callback("new_device", infos['ST'], infos)
+        #if infos[b'ST'] == 'upnp:rootdevice':
+        #    self.callback("new_device", infos[b'ST'], infos)
 
     def add_device(self, device):
         self.info("adding device %s %s %s", device.get_id(), device.get_usn(), device.friendly_device_type)
         self.devices.append(device)
 
     def remove_device(self, device_type, infos):
-        self.info("removed device %s %s", infos['ST'], infos['USN'])
-        device = self.get_device_with_usn(infos['USN'])
+        self.info("removed device %s %s", infos[b'ST'], infos[b'USN'])
+        device = self.get_device_with_usn(infos[b'USN'])
         if device:
-            louie.send('Coherence.UPnP.Device.removed', None, usn=infos['USN'])
+            louie.send('Coherence.UPnP.Device.removed', None, usn=infos[b'USN'])
             self.devices.remove(device)
             device.remove()
-            if infos['ST'] == 'upnp:rootdevice':
-                louie.send('Coherence.UPnP.RootDevice.removed', None, usn=infos['USN'])
-                self.callback("removed_device", infos['ST'], infos['USN'])
+            if infos[b'ST'] == 'upnp:rootdevice':
+                louie.send('Coherence.UPnP.RootDevice.removed', None, usn=infos[b'USN'])
+                self.callback("removed_device", infos[b'ST'], infos[b'USN'])
 
     def add_web_resource(self, name, sub):
         self.children[name] = sub

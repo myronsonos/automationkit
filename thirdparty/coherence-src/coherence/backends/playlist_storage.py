@@ -99,7 +99,7 @@ class PlaylistStore(AbstractBackendStore):
         return self.__class__.__name__
 
     def append(self, obj, parent):
-        if isinstance(obj, basestring):
+        if isinstance(obj, str):
             mimetype = 'directory'
         else:
             mimetype = obj['mimetype']

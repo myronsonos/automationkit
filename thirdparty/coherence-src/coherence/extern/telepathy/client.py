@@ -175,7 +175,7 @@ class Client(log.Loggable):
             self._text_channel_available()
             self.new_channels_cb(self.existing_client._channels)
             self._tubes = self.existing_client._pending_tubes
-            for path, tube in self._tubes.iteritems():
+            for path, tube in self._tubes.items():
                 self.connect_tube_signals(tube)
                 self.got_tube(tube)
         else:

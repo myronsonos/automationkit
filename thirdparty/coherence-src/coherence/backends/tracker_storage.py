@@ -91,7 +91,7 @@ class Container(BackendItem):
 
     def add_child(self, child):
         id = child.id
-        if isinstance(child.id, basestring):
+        if isinstance(child.id, str):
             _, id = child.id.split('.')
         self.children[id] = child
         if self.item.childCount != None:
@@ -146,12 +146,15 @@ class Artist(BackendItem):
 
     def sort_children(self):
         if self.sorted_children == None:
-            def childs_sort(x, y):
-                r = cmp(self.children[x].name, self.children[y].name)
-                return r
 
-            self.sorted_children = self.children.keys()
-            self.sorted_children.sort(cmp=childs_sort)
+            def child_key(obj):
+                return obj.name
+
+            sorted_values = list(self.children.values())
+            sorted_values.sort(key=child_key)
+
+            self.sorted_children = [lambda obj: obj.split('.')[1] for obj in sorted_values]
+
         return self.sorted_children
 
     def get_artist_all_tracks(self, start=0, request_count=0):
@@ -211,14 +214,13 @@ class Album(BackendItem):
             for key in self.sorted_children:
                 children.append(self.children[key])
         else:
-            def childs_sort(x, y):
-                r = cmp(self.children[x].track_nr, self.children[y].track_nr)
-                return r
+            def child_key(obj):
+                return obj.track_nr
 
-            self.sorted_children = self.children.keys()
-            self.sorted_children.sort(cmp=childs_sort)
-            for key in self.sorted_children:
-                children.append(self.children[key])
+            children = list(self.children.values())
+            children.sort(key=child_key)
+
+            self.sorted_children = [lambda obj: obj.split('.')[1] for obj in children]
 
         if end == 0:
             return children[start:]
@@ -572,10 +574,10 @@ class TrackerStore(BackendStore):
 
     def get_by_id(self, id):
         self.info("looking for id %r", id)
-        if isinstance(id, basestring):
+        if isinstance(id, str):
             id = id.split('@', 1)
             id = id[0]
-        if isinstance(id, basestring) and id.startswith('artist_all_tracks_'):
+        if isinstance(id, str) and id.startswith('artist_all_tracks_'):
             try:
                 return self.containers[id]
             except:
@@ -626,7 +628,10 @@ class TrackerStore(BackendStore):
                 self.videos += 1
                 videos.append(video_item)
 
-            videos.sort(cmp=lambda x, y: cmp(x.get_name().lower(), y.get_name().lower()))
+            def video_key(obj):
+                return obj.get_name().lower()
+            videos.sort(key=video_key)
+
             for video_item in videos:
                 self.containers[VIDEO_ALL_CONTAINER_ID].add_child(video_item)
 
@@ -673,7 +678,10 @@ class TrackerStore(BackendStore):
                 self.images += 1
                 images.append(image_item)
 
-            images.sort(cmp=lambda x, y: cmp(x.get_name().lower(), y.get_name().lower()))
+            def image_key(obj):
+                return obj.get_name().lower()
+            images.sort(key=image_key)
+
             for image_item in images:
                 self.containers[IMAGE_ALL_CONTAINER_ID].add_child(image_item)
 
@@ -723,7 +731,10 @@ class TrackerStore(BackendStore):
                 self.songs += 1
                 tracks.append(track_item)
 
-            tracks.sort(cmp=lambda x, y: cmp(x.get_name(), y.get_name()))
+            def track_key(obj):
+                return obj.get_name()
+            tracks.sort(key=track_key)
+
             for track_item in tracks:
                 self.containers[AUDIO_ALL_CONTAINER_ID].add_child(track_item)
 

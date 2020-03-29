@@ -9,6 +9,7 @@ from os.path import abspath
 from coherence.extern.et import parse_xml as et_parse_xml
 
 from coherence import SERVER_ID
+from coherence.compat import bytes_cast, str_cast
 
 from urllib.parse import unquote, urlsplit
 from urllib.parse import urlparse
@@ -28,7 +29,7 @@ from twisted.python import failure
 from twisted.python.util import InsensitiveDict
 
 def means_true(value):
-    if isinstance(value, basestring):
+    if isinstance(value, str):
         value = value.lower()
     return value in [True, 1, '1', 'true', 'yes', 'ok']
 
@@ -50,15 +51,15 @@ def parse_xml(data, encoding="utf-8"):
     return et_parse_xml(data, encoding)
 
 
-def parse_http_response(data):
+def parse_http_response(data: bytes) -> (bytes, dict, bytes):
     try:
-        header, content = data.split('\r\n\r\n')[0]
+        header, content = data.split(b'\r\n\r\n')[0]
     except ValueError:
         header = data.strip()
-        content = ''
+        content = b''
     lines = header.splitlines()
     cmd = lines.pop(0).split(None, 2)
-    lines = (l.split(':', 1) for l in lines if l)
+    lines = (l.split(b':', 1) for l in lines if l)
     headers = dict((h.strip().lower(), d.strip())
                    for (h, d) in lines)
     return cmd, headers, content
@@ -210,14 +211,14 @@ class Request(server.Request):
         self.site = self.channel.site
 
         # set various default headers
-        self.setHeader('server', SERVER_ID)
-        self.setHeader('date', http.datetimeToString())
-        self.setHeader('content-type', "text/html")
+        self.setHeader(b'server', bytes_cast(SERVER_ID))
+        self.setHeader(b'date', http.datetimeToString())
+        self.setHeader(b'content-type', b"text/html")
 
         # Resource Identification
-        url = self.path
+        url = str_cast(self.path)
 
-        #remove trailing "/", if ever
+        #remove trailing b"/", if ever
         url = url.rstrip('/')
 
         scheme, netloc, path, query, fragment = urlsplit(url)
@@ -225,7 +226,7 @@ class Request(server.Request):
         if path == "":
             self.postpath = []
         else:
-            self.postpath = map(unquote, path[1:].split('/'))
+            self.postpath = list(map(unquote, path[1:].split('/')))
 
         try:
             def deferred_rendering(r):

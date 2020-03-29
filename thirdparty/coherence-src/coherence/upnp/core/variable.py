@@ -115,7 +115,7 @@ class StateVariable(log.Loggable):
                         new_value = value
             else:
                 if self.data_type == 'string':
-                    if isinstance(value, basestring):
+                    if isinstance(value, str):
                         value = value.split(',')
                     if(isinstance(value, tuple) or
                        isinstance(value, set)):

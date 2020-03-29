@@ -8,7 +8,8 @@
 import getopt
 import sys
 import string
-import xmlrpclib
+
+from xmlrpc.client import Server
 
 command = "status"
 device = ''
@@ -48,51 +49,51 @@ for p in sys.argv[1:]:
     arguments[k] = v
 #print(('Arguments', arguments))
 
-s = xmlrpclib.Server('http://127.0.0.1:30020/RPC2')
+with Server("http://127.0.0.1:30020/RPC2") as sproxy:
 
-if command == "ping":
-    r = s.ping()
+    if command == "ping":
+        r = sproxy.ping()
 
-if command == "list_devices":
-    r = s.list_devices()
+    if command == "list_devices":
+        r = sproxy.list_devices()
 
-if command == "mute" and device != '':
-    r = s.mute_device(device)
+    if command == "mute" and device != '':
+        r = sproxy.mute_device(device)
 
-if command == "unmute" and device != '':
-    r = s.unmute_device(device)
+    if command == "unmute" and device != '':
+        r = sproxy.unmute_device(device)
 
-if command == "set_volume" and device != '':
-    r = s.set_volume(device, volume)
+    if command == "set_volume" and device != '':
+        r = sproxy.set_volume(device, volume)
 
-if command == "play" and device != '':
-    r = s.play(device)
+    if command == "play" and device != '':
+        r = sproxy.play(device)
 
-if command == "pause" and device != '':
-    r = s.pause(device)
+    if command == "pause" and device != '':
+        r = sproxy.pause(device)
 
-if command == "stop" and device != '':
-    r = s.stop(device)
+    if command == "stop" and device != '':
+        r = sproxy.stop(device)
 
-if command == "next" and device != '':
-    r = s.next(device)
+    if command == "next" and device != '':
+        r = sproxy.next(device)
 
-if command == "previous" and device != '':
-    r = s.previous(device)
+    if command == "previous" and device != '':
+        r = sproxy.previous(device)
 
-if command == "set_av_transport_uri" and device != '' and uri != '':
-    r = s.set_av_transport_uri(device, uri)
+    if command == "set_av_transport_uri" and device != '' and uri != '':
+        r = sproxy.set_av_transport_uri(device, uri)
 
-if command == "shutdown":
-    r = s.shutdown()
+    if command == "shutdown":
+        r = sproxy.shutdown()
 
-if command == "create_object" and device != '':
-    r = s.create_object(device, id, arguments)
+    if command == "create_object" and device != '':
+        r = sproxy.create_object(device, id, arguments)
 
-if command == "import_resource" and device != '':
-    r = s.import_resource(device, arguments['source_uri'], arguments['destination_uri'])
+    if command == "import_resource" and device != '':
+        r = sproxy.import_resource(device, arguments['source_uri'], arguments['destination_uri'])
 
-if command == "put_resource":
-    r = s.put_resource(arguments['url'], arguments['path'])
+    if command == "put_resource":
+        r = sproxy.put_resource(arguments['url'], arguments['path'])
 
 print(r)

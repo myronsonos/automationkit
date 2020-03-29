@@ -1028,7 +1028,7 @@ class ServiceControl(log.Loggable):
                 del kwargs['ContainerID']
 
         in_arguments = action.get_in_arguments()
-        for arg_name, arg in kwargs.iteritems():
+        for arg_name, arg in kwargs.items():
             if arg_name.find('X_') == 0:
                 continue
             l = [a for a in in_arguments if arg_name == a.get_name()]

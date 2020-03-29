@@ -44,6 +44,20 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": false
-        }
+        },
+        {
+            "name": "Coherence: Service",
+            "type": "python",
+            "request": "launch",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/thirdparty/coherence-src"
+            },
+            "program": "${workspaceFolder}/thirdparty/coherence-src/bin/coherence",
+            "args": [
+                "--configfile=${workspaceFolder}/thirdparty/coherence-src/docs/coherence.conf.example"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
     ]
 }

@@ -96,5 +96,5 @@ class TubeConnection(Connection, log.Loggable):
         if self.participants:
             # GetDBusNames already returned: fake a participant add event
             # immediately
-            added = list(self.participants.iteritems())
+            added = list(self.participants.items())
             callback(added, [])

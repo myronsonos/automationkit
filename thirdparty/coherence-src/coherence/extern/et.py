@@ -130,7 +130,7 @@ def parse_xml(data, encoding="utf-8", dump_invalid_data=False):
         pass
 
     # Guess from who we're getting this?
-    data = data.replace('\x00', '')
+    data = data.replace(b'\x00', b'')
     try:
         parser.feed(data)
     except Exception as error:
@@ -156,6 +156,6 @@ def textElementIfNotNone(parent, tag, namespace, text):
     """If text is not none, create a subelement with text content."""
     if text is None:
         return
-    if not isinstance(text, basestring):
+    if not isinstance(text, str):
         text = unicode(text)
     return textElement(parent, tag, namespace, text)

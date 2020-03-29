@@ -48,7 +48,7 @@ class TubePublisherMixin(object):
         self.info("local tube address: %r", address)
 
     def close_tubes(self):
-        for object_path, channel in self._tubes.iteritems():
+        for object_path, channel in self._tubes.items():
             channel.Close()
 
 

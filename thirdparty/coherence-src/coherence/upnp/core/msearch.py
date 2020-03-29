@@ -7,6 +7,8 @@
 import socket
 import time
 
+from typing import Tuple
+
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 from twisted.internet import task
@@ -14,6 +16,7 @@ from twisted.internet import task
 from coherence.upnp.core import utils
 import coherence.extern.louie as louie
 from coherence import log
+from coherence.compat import bytes_cast, str_cast
 from coherence.upnp.core.ssdp import SSDP_PORT, SSDP_ADDR
 
 
@@ -37,16 +40,23 @@ class MSearch(DatagramProtocol, log.Loggable):
         if self._port:
             self._port.stopListening()
 
-    def datagramReceived(self, data, endpoint):
+    def datagramReceived(self, data: bytes, endpoint: Tuple[str, int]):
         (host, port) = endpoint
-        cmd, headers, content = utils.parse_http_response(data)
+
+        resp_info, headers, content = utils.parse_http_response(data)
+        resp_proto, resp_code, resp_status = resp_info
         del content # we do not need the content
-        self.info('datagramReceived from %s:%d, protocol %s code %s', host, port, cmd[0], cmd[1])
-        if cmd[0].startswith('HTTP/1.') and cmd[1] == '200':
-            self.msg('for %r', headers['usn'])
-            if self.ssdp_server.service_seen(host, headers['st'], headers):
-                self.info('register as remote %(usn)s, %(st)s, %(location)s',
-                          headers)
+        
+        self.info('datagramReceived from %s:%d, protocol %s code %s', host, port, resp_proto, resp_code)
+
+        if resp_proto.startswith(b'HTTP/1.') and resp_code == b'200':
+            dev_svctype = headers[b'st']
+            dev_usn = headers[b'usn']
+            self.msg('for %r', dev_usn)
+            if self.ssdp_server.service_seen(host, dev_svctype, headers):
+                self.info('register as remote %(usn)s, %(st)s, %(location)s', headers)
+
+        return
 
         # make raw data available
         # send out the signal after we had a chance to register the device
@@ -59,13 +69,13 @@ class MSearch(DatagramProtocol, log.Loggable):
         self.discover()
 
     def discover(self):
-        req = ['M-SEARCH * HTTP/1.1',
-                'HOST: %s:%d' % (SSDP_ADDR, SSDP_PORT),
-                'MAN: "ssdp:discover"',
-                'MX: 5',
-                'ST: ssdp:all',
-                '', '']
-        req = '\r\n'.join(req)
+        req = [b'M-SEARCH * HTTP/1.1',
+                b'HOST: %s:%d' % (bytes_cast(SSDP_ADDR), SSDP_PORT),
+                b'MAN: "ssdp:discover"',
+                b'MX: 5',
+                b'ST: ssdp:all',
+                b'', b'']
+        req = b'\r\n'.join(req)
 
         try:
             self.transport.write(req, (SSDP_ADDR, SSDP_PORT))

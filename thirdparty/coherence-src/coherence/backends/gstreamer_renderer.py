@@ -127,7 +127,7 @@ class Player(log.Loggable):
         self.update_LC = LoopingCall(self.update)
 
     def _set_props(self, element, props):
-        for option, value in props.iteritems():
+        for option, value in props.items():
             value = self._py_value(value)
             element.set_property(option, value)
 

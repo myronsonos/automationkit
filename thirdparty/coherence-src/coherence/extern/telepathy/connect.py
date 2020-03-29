@@ -13,7 +13,7 @@ from twisted.internet import defer
 
 
 def to_dbus_account(account):
-    for key, value in account.iteritems():
+    for key, value in account.items():
         if value.lower() in ("false", "true"):
             value = bool(value)
         else:

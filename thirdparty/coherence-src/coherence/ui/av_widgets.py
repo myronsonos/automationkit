@@ -630,7 +630,7 @@ class TreeWidget(object):
                         break
 
                 def reply_subscribe(udn, service, r):
-                    for k, v in r.iteritems():
+                    for k, v in r.items():
                         self.state_variable_change(udn, service, k, v)
 
                 s = self.bus.get_object(BUS_NAME + '.service', service)

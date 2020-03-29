@@ -201,7 +201,7 @@ class CoherencePlugin(rb.Plugin, log.Loggable):
         del self.shell
         del self.coherence
 
-        for usn, source in self.sources.iteritems():
+        for usn, source in self.sources.items():
             source.delete_thyself()
         del self.sources
         # uninstall twisted reactor? probably not, since other things may have used it

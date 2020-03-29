@@ -93,7 +93,7 @@ def build_soap_call(method, arguments, is_response=False,
                     float: 'xsd:float',
                     bool: 'xsd:boolean'}
 
-        for arg_name, arg_val in arguments.iteritems():
+        for arg_name, arg_val in arguments.items():
             arg_type = type_map[type(arg_val)]
             if arg_type == 'xsd:string' and type(arg_val) == unicode:
                 arg_val = arg_val.encode('utf-8')

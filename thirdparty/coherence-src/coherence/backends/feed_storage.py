@@ -145,7 +145,7 @@ class FeedStore(BackendStore):
 
     def get_by_id(self, id):
         """returns the item according to the DIDLite id"""
-        if isinstance(id, basestring):
+        if isinstance(id, str):
             id = id.split('@', 1)
             id = id[0]
         try:

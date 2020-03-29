@@ -57,7 +57,7 @@ class Container(BackendItem):
 
     def add_child(self, child):
         id = child.id
-        if isinstance(child.id, basestring):
+        if isinstance(child.id, str):
             _, id = child.id.split('.')
         self.children[id] = child
         if self.item.childCount != None:
@@ -292,7 +292,7 @@ class DVBDStore(BackendStore):
 
     def get_by_id(self, id):
         self.info("looking for id %r", id)
-        if isinstance(id, basestring):
+        if isinstance(id, str):
             id = id.split('@', 1)
             id = id[0]
 

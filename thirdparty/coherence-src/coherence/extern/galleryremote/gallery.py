@@ -90,7 +90,7 @@ class Gallery:
         url = self.url
         if (len(request) > 0):
             url += '?'
-            for key, value in request.iteritems():
+            for key, value in request.items():
                 url += '%s=%s&' % (key, value)
         headers = None
         if self.cookie != '':

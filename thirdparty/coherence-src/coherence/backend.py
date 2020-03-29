@@ -167,7 +167,7 @@ class BackendStore(Backend):
 
             therefore a
 
-            if isinstance(id, basestring):
+            if isinstance(id, str):
                 id = id.split('@',1)
                 id = id[0]
 
@@ -347,9 +347,9 @@ class Container(BackendItem):
 
         self.sorted = False
 
-        def childs_sort(x, y):
-            return cmp(x.name, y.name)
-        self.sorting_method = childs_sort
+        def child_key(obj):
+            return obj.name
+        self.sorting_key = child_key
 
     def register_child(self, child, external_id=None):
         id = self.store.append_item(child)
@@ -379,7 +379,7 @@ class Container(BackendItem):
 
     def get_children(self, start=0, end=0):
         if self.sorted == False:
-            self.children.sort(cmp=self.sorting_method)
+            self.children.sort(key=self.sorting_key)
             self.sorted = True
         if end != 0:
             return self.children[start:end]
@@ -595,9 +595,12 @@ class AbstractBackendStore (BackendStore):
         item.store = None
 
     def get_by_id(self, id):
-        if isinstance(id, basestring):
+        if isinstance(id, str):
             id = id.split('@', 1)
             id = id[0].split('.')[0]
+        if isinstance(id, bytes):
+            id = id.split(b'@', 1)
+            id = id[0].split(b'.')[0]
         try:
             return self.store[int(id)]
         except (ValueError, KeyError):

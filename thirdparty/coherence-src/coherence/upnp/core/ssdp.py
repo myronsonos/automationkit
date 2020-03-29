@@ -16,12 +16,15 @@ import sys
 import time
 import socket
 
+from typing import Tuple
+
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor, error
 from twisted.internet import task
 from twisted.web.http import datetimeToString
 
 from coherence import log, SERVER_ID
+from coherence.compat import bytes_cast, str_cast
 from coherence.upnp.core import utils
 import coherence.extern.louie as louie
 
@@ -30,25 +33,27 @@ SSDP_ADDR = '239.255.255.250'
 
 
 class SSDPServer(DatagramProtocol, log.Loggable):
-    """A class implementing a SSDP server.  The notifyReceived and
-    searchReceived methods are called when the appropriate type of
-    datagram is received by the server."""
+    """
+        A class implementing a SSDP server.  The notifyReceived and searchReceived methods
+        are called when the appropriate type of datagram is received by the server.
+    """
     logCategory = 'ssdp'
 
-    def __init__(self, test=False, interface=''):
+    def __init__(self, test: bool = False, interface: str = ''):
         # Create SSDP server
         log.Loggable.__init__(self)
+
+        self.__test = test
+
         self._known = {}
         self._callbacks = {}
-        self.__test = test
         self.active_calls = []
         self._resend_notify_loop = None
         self._expire_loop = None
         self._port = None
         if not self.__test:
             try:
-                self._port = reactor.listenMulticast(SSDP_PORT, self,
-                                                    listenMultiple=True)
+                self._port = reactor.listenMulticast(SSDP_PORT, self, listenMultiple=True)
                 #self.port.setLoopbackMode(1)
                 self._port.joinGroup(SSDP_ADDR, interface=interface)
             except error.CannotListenError as err:
@@ -58,20 +63,31 @@ class SSDPServer(DatagramProtocol, log.Loggable):
                            "second one.")
 
             self._resend_notify_loop = task.LoopingCall(self._resendNotify)
+
             # notify every 777 seconds (~ 13 Minutes)
             self._resend_notify_loop.start(777.0, now=False)
 
             self._expire_loop = task.LoopingCall(self._expire)
+
             # expire every 333 seconds (~ 5.5 Minutes)
             self._expire_loop.start(333.0, now=False)
 
+        return
+
     def stopNotifying(self):
+        """
+            Stops the notification loop and stops listening for events.
+        """
         if self._resend_notify_loop and self._resend_notify_loop.running:
             self._resend_notify_loop.stop()
         if self._port:
             self._port.stopListening()
+        return
 
     def shutdown(self):
+        """
+            Shuts down the services
+        """
         for call in reactor.getDelayedCalls():
             if call.func == self.__send__discovery_request:
                 call.cancel()
@@ -84,108 +100,128 @@ class SSDPServer(DatagramProtocol, log.Loggable):
                 if self._known[st]['MANIFESTATION'] == 'local':
                     self.doByebye(st)
 
-    def datagramReceived(self, data, endpoint):
-        """Handle a received multicast datagram."""
+    def datagramReceived(self, data: bytes, endpoint: Tuple[str, int]):
+        """
+            Handle a received multicast datagram.
+        """
         (host, port) = endpoint
-        cmd, headers, content = utils.parse_http_response(data)
-        cmd = cmd[:2] # we are interested in only the first two elements
+
+        resp_info, headers, content = utils.parse_http_response(data)
+        resp_proto, resp_code, resp_status = resp_info
         del content # we do not need the content
-        self.info('SSDP command %s %s - from %s:%d', cmd[0], cmd[1], host, port)
+
+        self.info('SSDP command %s %s - from %s:%d', resp_proto, resp_code, host, port)
         self.debug('with headers: %s', headers)
-        if cmd == ['M-SEARCH', '*']:
+        if resp_proto == 'M-SEARCH' and resp_code == b'*':
             # SSDP discovery
             self._discoveryRequest(headers, (host, port))
-        elif cmd == ['NOTIFY', '*']:
+        elif resp_proto == b'NOTIFY' and resp_code == b'*':
             # SSDP presence
             self._notifyReceived(headers, (host, port))
         else:
-            self.warning('Unknown SSDP command %s %s', *cmd)
+            self.warning('Unknown SSDP command %s %s', esp_proto, resp_code)
 
         # make raw data available
         # send out the signal after we had a chance to register the device
         louie.send('UPnP.SSDP.datagram_received', None, data, host, port)
 
-    def register(self, manifestation, usn, st, location,
-                        server=SERVER_ID,
-                        cache_control='max-age=1800',
-                        silent=False,
-                        host=None):
-        """Register a service or device that this SSDP server will
-        respond to."""
+        return
+
+    def register(self, manifestation: bytes, usn: bytes, st: bytes, location: bytes,
+                       server: bytes = SERVER_ID, cache_control: bytes = b'max-age=1800',
+                       silent: bool = False, host: bytes = None):
+        """
+            Register a service or device that this SSDP server will respond to."""
 
         self.info('Registering %s (%s)', st, location)
 
         self._known[usn] = {
-            'USN': usn, # Unique Service Name
-            'LOCATION': location,
-            'ST': st, # Service Type
-            'EXT': '',
-            'SERVER': server,
-            'CACHE-CONTROL': cache_control,
-            'MANIFESTATION': manifestation,
-            'SILENT': silent,
-            'HOST': host,
-            'last-seen': time.time(),
-            }
+            b'USN': bytes_cast(usn), # Unique Service Name
+            b'LOCATION': bytes_cast(location),
+            b'ST': bytes_cast(st), # Service Type
+            b'EXT': b'',
+            b'SERVER': bytes_cast(server),
+            b'CACHE-CONTROL': bytes_cast(cache_control),
+            b'MANIFESTATION': bytes_cast(manifestation),
+            b'SILENT': silent,
+            b'HOST': bytes_cast(host),
+            b'last-seen': time.time(),
+        }
+
         self.debug('%r', self._known[usn])
 
         if manifestation == 'local':
             self.doNotify(usn)
 
         if st == 'upnp:rootdevice':
-            louie.send('Coherence.UPnP.SSDP.new_device', None,
-                       device_type=st, infos=self._known[usn])
+            louie.send('Coherence.UPnP.SSDP.new_device', None, device_type=st, infos=self._known[usn])
             #self.callback("new_device", st, self._known[usn])
 
-    def unRegister(self, usn):
+        return
+
+    def unRegister(self, usn: bytes):
         if not self._isKnown(usn):
             return
         self.info("Un-registering %s", usn)
-        st = self._known[usn]['ST']
+        st = self._known[usn][b'ST']
         if st == 'upnp:rootdevice':
             louie.send('Coherence.UPnP.SSDP.removed_device', None,
                        device_type=st, infos=self._known[usn])
             #self.callback("removed_device", st, self._known[usn])
+
         del self._known[usn]
 
-    def isKnown(self, usn):
+        return
+
+    def isKnown(self, usn: bytes) -> bool:
+        """
+            Checks to see if a service name is known.
+        """
         return usn in self._known
 
-    def service_seen(self, host, service_type, headers):
+    def service_seen(self, host: bytes, service_type: bytes, headers: dict) -> bool:
         """
-        Mark a service as been seen. If the service is not yet known,
-        automatically register it.
+        Mark a service as been seen. If the service is not yet known, automatically register it.
 
         Returns True, if the service was unknown.
         """
-        try:
-            self._known[headers['usn']]['last-seen'] = time.time()
-        except KeyError:
-            self.register('remote', headers['usn'], service_type,
-                          headers['location'], headers['server'],
-                          headers['cache-control'], host=host)
-            return True
+        dev_usn = headers[b'usn']
+        dev_server = headers[b'server']
+        dev_location = headers[b'location']
+        dev_cachecont = headers[b'cache-control']
+
+        known = False
+        if dev_usn in self._known:
+            self._known[dev_usn][b'last-seen'] = time.time()
+            known = True
         else:
-            self.debug('updating last-seen for %r', headers['usn'])
-            return False
+            self.register('remote', dev_usn, service_type,
+                          dev_location, dev_server,
+                          dev_cachecont, host=host)
+
+        self.debug('updating last-seen for %r', dev_usn)
+
+        return known
 
     def _notifyReceived(self, headers, endpoint):
-        """Process a presence announcement.  We just remember the
-        details of the SSDP service announced."""
+        """
+            Process a presence announcement.  We just remember the details of the SSDP
+            service announced.
+        """
         (host, port) = endpoint
 
-        self.info('Notification from (%s,%d) for %s', host, port, headers['nt'])
+        self.info('Notification from (%s,%d) for %s', host, port, headers[b'nt'])
         self.debug('Notification headers: %s', headers)
 
-        if headers['nts'] == 'ssdp:alive':
-            self.service_seen(host, headers['nt'], headers)
-        elif headers['nts'] == 'ssdp:byebye':
-            self.unRegister(headers['usn'])
+        if headers[b'nts'] == b'ssdp:alive':
+            self.service_seen(host, headers[b'nt'], headers)
+        elif headers[b'nts'] == b'ssdp:byebye':
+            self.unRegister(headers[b'usn'])
         else:
-            self.warning('Unknown subtype %s for notification type %s',
-                         headers['nts'], headers['nt'])
+            self.warning('Unknown subtype %s for notification type %s', headers[b'nts'], headers[b'nt'])
         louie.send('Coherence.UPnP.Log', None, 'SSDP', host,
-                   'Notify %s for %s' % (headers['nts'], headers['usn']))
+                   'Notify %s for %s' % (headers[b'nts'], headers[b'usn']))
+        return
 
     def __send__discovery_request(self, response, destination, delay, usn):
         self.info('send discovery response delayed by %ds for %s to %r',
@@ -194,84 +230,89 @@ class SSDPServer(DatagramProtocol, log.Loggable):
             self.transport.write(response, destination)
         except (AttributeError, socket.error) as msg:
             self.info("failure sending out byebye notification: %r", msg)
+        return
 
     def _discoveryRequest(self, headers, endpoint):
-        """Process a discovery request.  The response must be sent to
-        the address specified by endpoint."""
+        """
+            Process a discovery request.  The response must be sent to the address specified by endpoint.
+        """
         (host, port) = endpoint
 
-        self.info('Discovery request from (%s,%d) for %s',
-                  host, port, headers['st'])
-        louie.send('Coherence.UPnP.Log', None, 'SSDP', host,
-                   'M-Search for %s' % headers['st'])
+        self.info('Discovery request from (%s,%d) for %s', host, port, headers[b'st'])
+        louie.send('Coherence.UPnP.Log', None, 'SSDP', host, 'M-Search for %s' % headers[b'st'])
+
         # Do we know about this service?
         for known in self._known.values():
-            if known['MANIFESTATION'] == 'remote':
+            if known[b'MANIFESTATION'] == b'remote':
                 continue
-            elif known['SILENT'] and headers['st'] == 'ssdp:all':
+            elif known[b'SILENT'] and headers[b'st'] == b'ssdp:all':
                 continue
-            elif (headers['st'] == known['ST'] or
-                  headers['st'] == 'ssdp:all'):
+            elif headers[b'st'] == known[b'ST'] or headers[b'st'] == b'ssdp:all':
                 response = []
-                response.append('HTTP/1.1 200 OK')
-                for k, v in known.iteritems():
-                    if k not in ('MANIFESTATION', 'SILENT', 'HOST'):
+                response.append(b'HTTP/1.1 200 OK')
+                for k, v in known.items():
+                    if k not in (b'MANIFESTATION', b'SILENT', b'HOST'):
                         response.append('%s: %s' % (k, v))
-                response.append('DATE: %s' % datetimeToString())
-                response.extend(('', ''))
-                response = '\r\n'.join(response)
+                response.append(b'DATE: %s' % bytes_cast(datetimeToString()))
+                response.extend((b'', b''))
+                response = b'\r\n'.join(response)
 
-                delay = random.randint(0, int(headers['mx']))
+                delay = random.randint(0, int(headers[b'mx']))
                 reactor.callLater(delay, self.__send__discovery_request,
-                                  response, (host, port), delay, known['USN'])
+                                  response, (host, port), delay, known[b'USN'])
+        return
 
     def __build_response(self, cmd, usn):
-        resp = ['NOTIFY * HTTP/1.1',
-            'HOST: %s:%d' % (SSDP_ADDR, SSDP_PORT),
-            'NTS: %s' % cmd,
+        resp = [b'NOTIFY * HTTP/1.1',
+            b'HOST: %s:%d' % (bytes_cast(SSDP_ADDR), SSDP_PORT),
+            b'NTS: %s' % cmd,
             ]
         stcpy = self._known[usn].copy()
-        stcpy['NT'] = stcpy['ST']
-        for k in ('ST', 'MANIFESTATION', 'SILENT', 'HOST', 'last-seen'):
+        stcpy[b'NT'] = stcpy[b'ST']
+        for k in (b'ST', b'MANIFESTATION', b'SILENT', b'HOST', b'last-seen'):
             try:
                 # :fixme: this keys should always exist as we build the entry
                 del stcpy[k]
             except:
                 pass
-        resp.extend(': '.join(x) for x in stcpy.iteritems())
-        resp.extend(('', ''))
-        return '\r\n'.join(resp)
+        resp.extend(b': '.join(x) for x in stcpy.items())
+        resp.extend((b'', b''))
+        return b'\r\n'.join(resp)
 
     def doNotify(self, usn):
-        """Do notification"""
-        if self._known[usn]['SILENT']:
-            return
-        self.info('Sending alive notification for %s', usn)
-        resp = self.__build_response('ssdp:alive', usn)
-        self.debug('doNotify content %s', resp)
-        try:
-            # :fixme: why is this sent twice?
-            self.transport.write(resp, (SSDP_ADDR, SSDP_PORT))
-            self.transport.write(resp, (SSDP_ADDR, SSDP_PORT))
-        except (AttributeError, socket.error) as msg:
-            self.info("failure sending out alive notification: %r", msg)
+        """
+            Do notification
+        """
+        if usn in self._known and not self._known[usn][b'SILENT']:
+            self.info('Sending alive notification for %s', usn)
+            resp = self.__build_response(b'ssdp:alive', usn)
+            self.debug('doNotify content %s', str_cast(resp))
+            try:
+                # :fixme: why is this sent twice?
+                self.transport.write(resp, (SSDP_ADDR, SSDP_PORT))
+                self.transport.write(resp, (SSDP_ADDR, SSDP_PORT))
+            except (AttributeError, socket.error) as msg:
+                self.info("failure sending out alive notification: %r", msg)
+        return
 
     def doByebye(self, usn):
-        """Do byebye"""
+        """
+            Do byebye
+        """
         # :todo: unite with doNotify(). Why are there differences at all?
         self.info('Sending byebye notification for %s', usn)
-        resp = self.__build_response('ssdp:byebye', usn)
+        resp = self.__build_response(b'ssdp:byebye', usn)
         self.debug('doByebye content %s', resp)
         if self.transport:
             try:
                 self.transport.write(resp, (SSDP_ADDR, SSDP_PORT))
             except (AttributeError, socket.error) as msg:
-                self.info("failure sending out byebye notification: %r",
-                          msg)
+                self.info("failure sending out byebye notification: %r", msg)
+        return
 
     def _resendNotify(self):
-        for usn, entry in self._known.iteritems():
-            if entry['MANIFESTATION'] == 'local':
+        for usn, entry in self._known.items():
+            if entry[b'MANIFESTATION'] == b'local':
                 self.doNotify(usn)
 
     def _expire(self):
@@ -280,20 +321,20 @@ class SSDPServer(DatagramProtocol, log.Loggable):
         """
         self.debug("Checking devices/services are still valid")
         removable = []
-        for usn, entry in self._known.iteritems():
-            if entry['MANIFESTATION'] == 'local':
+        for usn, entry in self._known.items():
+            if entry[b'MANIFESTATION'] == b'local':
                 continue
-            expiry = int(entry['CACHE-CONTROL'].split('=')[1])
+            expiry = int(entry[b'CACHE-CONTROL'].split(b'=')[1])
             now = time.time()
-            last_seen = entry['last-seen']
+            last_seen = entry[b'last-seen']
             self.debug("Checking if %r is still valid - "
                        "last seen %d (+%d), now %d",
-                       entry['USN'], last_seen, expiry, now)
+                       entry[b'USN'], last_seen, expiry, now)
             if last_seen + expiry + 30 < now:
                 self.debug("Expiring: %r", entry)
-                if entry['ST'] == 'upnp:rootdevice':
-                    louie.send('Coherence.UPnP.SSDP.removed_device', None,
-                               device_type=entry['ST'], infos=entry)
+                if entry[b'ST'] == b'upnp:rootdevice':
+                    louie.send(b'Coherence.UPnP.SSDP.removed_device', None,
+                               device_type=entry[b'ST'], infos=entry)
                 removable.append(usn)
         for usn in removable:
             del self._known[usn]

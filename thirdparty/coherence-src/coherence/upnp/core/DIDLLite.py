@@ -76,37 +76,30 @@ class Resources(list):
 
     def __init__(self, *args, **kwargs):
         list.__init__(self, *args, **kwargs)
-        self.sort(cmp=self.p_sort)
+        self.sort(key=self.p_sort_key)
 
     def append(self, value):
         list.append(self, value)
-        self.sort(cmp=self.p_sort)
+        self.sort(key=self.p_sort_key)
 
-    def p_sort(self, x, y):
+    def p_sort_key(self, obj):
         """ we want the following order
-            http-get is always at the beginning
-            rtsp-rtp-udp the second
-            anything else after that
+            0: http-get is always at the beginning
+            1: rtsp-rtp-udp the second
+            2: anything else after that
+            3: no protocol info
         """
-        if x.protocolInfo == None:
-            return 1
-        if y.protocolInfo == None:
-            return -1
+        if obj.protocolInfo == None:
+            return "3:"
 
-        x_protocol = x.protocolInfo.split(':')[0]
-        y_protocol = y.protocolInfo.split(':')[0]
+        obj_protocol, obj_other = x.protocolInfo.split(':', 1)[0].lower()
 
-        x_protocol = x_protocol.lower()
-        y_protocol = y_protocol.lower()
-        if(x_protocol == y_protocol):
-            return 0
-        if(x_protocol == 'http-get'):
-            return -1
-        if(x_protocol == 'rtsp-rtp-udp' and y_protocol == 'http-get'):
-            return 1
-        if(x_protocol == 'rtsp-rtp-udp' and y_protocol != 'http-get'):
-            return -1
-        return 1
+        if obj_protocol == 'http-get':
+            return "0:%s" % obj_other
+        if obj_protocol == 'rtsp-rtp-udp':
+            return "1:%s" % obj_other
+
+        return "2:%s" % obj_other
 
     def get_matching(self, local_protocol_infos, protocol_type=None):
         result = []
@@ -720,7 +713,7 @@ class VideoItem(Item):
 
     def toElement(self, **kwargs):
         root = Item.toElement(self, **kwargs)
-        for attr_name, ns in self.valid_attrs.iteritems():
+        for attr_name, ns in self.valid_attrs.items():
             value = getattr(self, attr_name, None)
             if value:
                 textElement(root, attr_name, ns, value)
@@ -946,7 +939,7 @@ def element_to_didl(item):
     """ a helper method to create a DIDLElement out of one ET element
         or XML fragment string
     """
-    if not isinstance(item, basestring):
+    if not isinstance(item, str):
         item = ET.tostring(item)
     didl = """<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"
                          xmlns:dc="http://purl.org/dc/elements/1.1/"

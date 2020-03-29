@@ -495,7 +495,7 @@ class DBusService(dbus.service.Object, log.Loggable):
 
         self.subscribe()
         #interfaces = self._dbus_class_table[self.__class__.__module__ + '.' + self.__class__.__name__]
-        #for (name, funcs) in interfaces.iteritems():
+        #for (name, funcs) in interfaces.items():
         #    print((name, funcs))
         #    if 'destroy_object' in funcs:
         #        print("""removing 'destroy_object'""")
@@ -821,7 +821,7 @@ class DBusPontoon(dbus.service.Object, log.Loggable):
     def shutdown(self):
         louie.disconnect(self._device_detected, 'Coherence.UPnP.Device.detection_completed', louie.Any)
         louie.disconnect(self._device_removed, 'Coherence.UPnP.Device.removed', louie.Any)
-        for device_id, device in self.devices.iteritems():
+        for device_id, device in self.devices.items():
             device.shutdown()
         self.devices = {}
         self.remove_from_connection()
@@ -909,7 +909,7 @@ class DBusPontoon(dbus.service.Object, log.Loggable):
     @dbus.service.method(BUS_NAME, in_signature='sa{ss}', out_signature='s')
     def add_plugin(self, backend, arguments):
         kwargs = {}
-        for k, v in arguments.iteritems():
+        for k, v in arguments.items():
             kwargs[str(k)] = str(v)
         p = self.controlpoint.coherence.add_plugin(backend, **kwargs)
         return str(p.uuid)
@@ -929,7 +929,7 @@ class DBusPontoon(dbus.service.Object, log.Loggable):
         if function == None:
             return ""
         kwargs = {}
-        for k, v in arguments.iteritems():
+        for k, v in arguments.items():
             kwargs[str(k)] = unicode(v)
         function(**kwargs)
         return uuid

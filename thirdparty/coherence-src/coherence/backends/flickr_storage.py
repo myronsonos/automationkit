@@ -131,7 +131,7 @@ class FlickrItem(log.Loggable):
 
         if isinstance(obj, str):
             self.name = obj
-            if isinstance(self.id, basestring) and self.id.startswith('upload.'):
+            if isinstance(self.id, str) and self.id.startswith('upload.'):
                 self.mimetype = mimetype
             else:
                 self.mimetype = 'directory'
@@ -158,7 +158,7 @@ class FlickrItem(log.Loggable):
             self.mimetype = 'image/jpeg'
 
         self.parent = parent
-        if not (isinstance(self.id, basestring) and self.id.startswith('upload.')):
+        if not (isinstance(self.id, str) and self.id.startswith('upload.')):
             if parent:
                 parent.add_child(self, update=update)
 
@@ -171,7 +171,7 @@ class FlickrItem(log.Loggable):
             except:
                 self.flickr_id = None
             self.url = urlbase + str(self.id)
-        elif isinstance(self.id, basestring) and self.id.startswith('upload.'):
+        elif isinstance(self.id, str) and self.id.startswith('upload.'):
             self.url = urlbase + str(self.id)
             self.location = None
         else:
@@ -270,7 +270,7 @@ class FlickrItem(log.Loggable):
             return None
 
     def get_path(self):
-        if isinstance(self.id, basestring) and self.id.startswith('upload.'):
+        if isinstance(self.id, str) and self.id.startswith('upload.'):
             return '/tmp/' + self.id  # FIXME
         return self.url
 
@@ -636,7 +636,7 @@ class FlickrStore(BackendStore):
         return len(self.store)
 
     def get_by_id(self, id):
-        if isinstance(id, basestring) and id.startswith('upload.'):
+        if isinstance(id, str) and id.startswith('upload.'):
             self.info("get_by_id looking for %s", id)
             try:
                 item = self.uploads[id]
@@ -645,7 +645,7 @@ class FlickrStore(BackendStore):
             except:
                 return None
 
-        if isinstance(id, basestring):
+        if isinstance(id, str):
             id = id.split('@', 1)
             id = id[0]
         try:

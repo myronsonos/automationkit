@@ -139,7 +139,7 @@ class AllOrNothing:
         # we convert the blocks to strings since in Python, byte sequences are
         # always represented as strings.  This is more consistent with the
         # model that encryption and hash algorithms always operate on strings.
-        return map(long_to_bytes, blocks)
+        return list(map(long_to_bytes, blocks))
 
 
     def undigest(self, blocks):
@@ -158,7 +158,7 @@ class AllOrNothing:
 
         # blocks is a list of strings.  We need to deal with them as long
         # integers
-        blocks = map(bytes_to_long, blocks)
+        blocks = list(map(bytes_to_long, blocks))
 
         # Calculate the well-known key, to which the hash blocks are
         # encrypted, and create the hash cipher.

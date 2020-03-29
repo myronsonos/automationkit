@@ -618,10 +618,10 @@ class MediaStore(BackendStore):
 
     def get_by_id(self, id):
         self.info("get_by_id %s", id)
-        if isinstance(id, basestring):
+        if isinstance(id, str):
             id = id.split('@', 1)
             id = id[0].split('.')[0]
-        if isinstance(id, basestring) and id.startswith('artist_all_tracks_'):
+        if isinstance(id, str) and id.startswith('artist_all_tracks_'):
             try:
                 return self.containers[id]
             except:

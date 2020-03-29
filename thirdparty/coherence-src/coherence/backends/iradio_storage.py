@@ -229,19 +229,12 @@ class IRadioStore(AbstractBackendStore):
 
         # we will use a specific child items sorter
         # in order to get the sub-genre containers first
-        def childs_sort(x, y):
+        def child_key(obj):
             if x.__class__ == y.__class__:
-                return cmp(x.name, y.name)  # same class, we compare the names
+                return "1:%s" % obj.name  # same class, we compare the names
             else:
-                # the IRadioItem is deemed the lowest item class,
-                # other classes are compared by name (as usual)
-                if isinstance(x, IRadioItem):
-                    return 1
-                elif isinstance(y, IRadioItem):
-                    return -1
-                else:
-                    return cmp(x.name, y.name)
-        family_item.sorting_method = childs_sort
+                return "0:%s" % obj.name
+        family_item.sorting_key = child_key
 
         parent.add_child(family_item, external_id=genre)
         return family_item

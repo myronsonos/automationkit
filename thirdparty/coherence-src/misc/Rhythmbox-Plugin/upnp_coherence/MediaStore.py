@@ -100,9 +100,9 @@ class Playlist(BackendItem):
 
     def get_children(self, start=0, request_count=0):
         if self.children == None:
-            self.children = map(self._create_track_from_playlist_item,
+            self.children = list(map(self._create_track_from_playlist_item,
                                 # who knows what the other children/magic numbers mean
-                                self.source.get_children()[0].get_children()[1].get_children()[0].get_model())
+                                self.source.get_children()[0].get_children()[1].get_children()[0].get_model()))
         return self.children
 
     def _create_track_from_playlist_item(self, item):
@@ -153,13 +153,6 @@ class Album(BackendItem):
     def get_children(self, start=0, request_count=0):
         children = []
 
-        def track_sort(x, y):
-            entry = self.store.db.entry_lookup_by_id(x.id)
-            x_track = self.store.db.entry_get(entry, rhythmdb.PROP_TRACK_NUMBER)
-            entry = self.store.db.entry_lookup_by_id(y.id)
-            y_track = self.store.db.entry_get(entry, rhythmdb.PROP_TRACK_NUMBER)
-            return cmp(x_track, y_track)
-
         def collate (model, path, iter):
             self.info("Album get_children %r %r %r" % (model, path, iter))
             id = model.get(iter, 0)[0]
@@ -167,7 +160,11 @@ class Album(BackendItem):
 
         self.tracks_per_album_query.foreach(collate)
 
-        children.sort(cmp=track_sort)
+        def track_sort(obj):
+            entry = self.store.db.entry_lookup_by_id(obj.id)
+            x_track = self.store.db.entry_get(entry, rhythmdb.PROP_TRACK_NUMBER)
+            return x_track
+        children.sort(key=track_sort)
 
         if request_count == 0:
             return children[start:]
@@ -514,11 +511,6 @@ class MediaStore(BackendStore):
 
         self.info('children_albums')
 
-        def album_sort(x, y):
-            r = cmp(x.title, y.title)
-            self.info("sort %r - %r = %r", x.title, y.title, r)
-            return r
-
         def collate (model, path, iter):
             name = model.get(iter, 0)[0]
             priority = model.get(iter, 1)[0]
@@ -533,8 +525,11 @@ class MediaStore(BackendStore):
             self.album_query.foreach(collate)
             self.albums = albums
 
-        albums = self.albums.values()  # .sort(cmp=album_sort)
-        albums.sort(cmp=album_sort)
+        def album_sort(obj):
+            return obj.title
+
+        albums = list(self.albums.values())
+        albums.sort(key=album_sort)
         return albums
 
     def children_artists(self, parent_id):
@@ -558,11 +553,6 @@ class MediaStore(BackendStore):
     def children_playlists(self, killbug=False):
         playlists = []
 
-        def playlist_sort(x, y):
-            r = cmp(x.title, y.title)
-            self.info("sort %r - %r = %r", x.title, y.title, r)
-            return r
-
         def collate (model, path, iter, parent_path):
             parent = model.iter_parent(iter)
             if parent and model.get_path(parent) == parent_path:
@@ -577,6 +567,9 @@ class MediaStore(BackendStore):
             parent_path = self.playlist_model.get_path(parent)
             self.playlist_model.foreach(collate, parent_path)
             self.playlists = playlists
-            self.playlists.sort(cmp=playlist_sort)
+
+            def playlist_key(obj):
+                return obj.title
+            self.playlists.sort(key=playlist_key)
 
         return self.playlists

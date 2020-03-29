@@ -227,7 +227,7 @@ class AppleTrailersStore(BackendStore):
                 0, 'SourceProtocolInfo', ['http-get:*:video/quicktime:*', 'http-get:*:video/mp4:*'])
         self.container = Container(ROOT_ID, -1, self.name)
         trailers = self.trailers.values()
-        trailers.sort(cmp=lambda x, y: cmp(x.get_name().lower(), y.get_name().lower()))
+        trailers.sort(key=lambda obj: obj.get_name().lower())
         self.container.children = trailers
 
     def __repr__(self):

@@ -101,7 +101,7 @@ class RootDeviceXML(static.Data):
             textElement(d, 'X_DLNADOC', DEVICE_NS, 'M-DMR-1.50')
 
         if len(dlna_caps) > 0:
-            if isinstance(dlna_caps, basestring):
+            if isinstance(dlna_caps, str):
                 dlna_caps = [dlna_caps]
             for cap in dlna_caps:
                 textElement(d, 'X_DLNACAP', DEVICE_NS, cap)
@@ -177,7 +177,7 @@ class RootDeviceXML(static.Data):
         #if self.has_level(LOG_DEBUG):
         #    indent( root)
 
-        self.xml = """<?xml version="1.0" encoding="utf-8"?>""" + ET.tostring(root, encoding='utf-8')
+        self.xml = b"""<?xml version="1.0" encoding="utf-8"?>""" + ET.tostring(root, encoding='utf-8')
         static.Data.__init__(self, self.xml, 'text/xml')
 
 

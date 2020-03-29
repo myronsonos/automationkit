@@ -369,12 +369,12 @@ class Device(log.Loggable):
 class RootDevice(Device):
 
     def __init__(self, infos):
-        self.usn = infos['USN']
-        self.server = infos['SERVER']
-        self.st = infos['ST']
-        self.location = infos['LOCATION']
-        self.manifestation = infos['MANIFESTATION']
-        self.host = infos['HOST']
+        self.usn = infos[b'USN']
+        self.server = infos[b'SERVER']
+        self.st = infos[b'ST']
+        self.location = infos[b'LOCATION']
+        self.manifestation = infos[b'MANIFESTATION']
+        self.host = infos[b'HOST']
         self.root_detection_completed = False
         Device.__init__(self, None)
         louie.connect(self.device_detect, 'Coherence.UPnP.Device.detection_completed', self)

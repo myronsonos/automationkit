@@ -11,7 +11,7 @@ serverport = 30020                       # if not specified or set to 0
 controlpoint = yes                        # if set to yes coherence will activate its
                                           # internal ControlPoint
 
-web-ui = no                               # set this to yes to enable some interactive
+web-ui = yes                               # set this to yes to enable some interactive
                                           # Web-UI
 
 #use_dbus = yes                            # set this to yes to let Coherence signal
@@ -42,10 +42,10 @@ web-ui = no                               # set this to yes to enable some inter
 
 [plugins]
     [[FSStore]]
+        name = Coherence Test Content
     #    content = tests/content/audio,tests/content/video           # append more directories separated by commas
     #    version = 1
     #    #content = /data/audio/music
-        name = Coherence Test Content
     #    [[[icon]]]
     #        mimetype = image/png
     #        width = 120

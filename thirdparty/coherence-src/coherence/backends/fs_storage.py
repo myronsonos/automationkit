@@ -422,11 +422,11 @@ class FSItem(BackendItem):
         else:
             self.location = path
 
-    def get_name(self):
+    def get_name(self) -> str:
         if isinstance(self.location, FilePath):
-            name = self.location.basename().decode("utf-8", "replace")
+            name = self.location.basename()
         else:
-            name = self.location.decode("utf-8", "replace")
+            name = self.location
         return name
 
     def get_cover(self):
@@ -473,7 +473,7 @@ class FSStore(BackendStore):
         self.name = kwargs.get('name', DEFAULT_NAME)
         self.content = kwargs.get('content', None)
         if self.content != None:
-            if isinstance(self.content, basestring):
+            if isinstance(self.content, str):
                 self.content = [self.content]
             l = []
             for a in self.content:
@@ -534,12 +534,12 @@ class FSStore(BackendStore):
             if self.ignore_file_pattern.match(path):
                 continue
             try:
-                path = path.encode('utf-8')  # patch for #267
                 self.walk(path, parent, self.ignore_file_pattern)
             except Exception as msg:
                 self.warning('on walk of %r: %r', path, msg)
                 import traceback
-                self.debug(traceback.format_exc())
+                err_msg = traceback.format_exc()
+                self.debug(err_msg)
 
         self.wmc_mapping.update({'14': '0',
                                  '15': '0',
@@ -562,7 +562,7 @@ class FSStore(BackendStore):
     def get_by_id(self, id):
         #print(("get_by_id", id, type(id)))
         # we have referenced ids here when we are in WMC mapping mode
-        if isinstance(id, basestring):
+        if isinstance(id, str):
             id = id.split('@', 1)
             id = id[0]
         elif isinstance(id, int):

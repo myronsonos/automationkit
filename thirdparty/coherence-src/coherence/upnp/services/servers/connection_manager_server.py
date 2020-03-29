@@ -187,7 +187,7 @@ class ConnectionManagerServer(service.ServiceServer, resource.Resource):
     def set_variable(self, instance, variable_name, value, default=False):
         if(variable_name == 'SourceProtocolInfo' or
            variable_name == 'SinkProtocolInfo'):
-            if isinstance(value, basestring) and len(value) > 0:
+            if isinstance(value, str) and len(value) > 0:
                 value = [v.strip() for v in value.split(',')]
             without_dlna_tags = []
             for v in value:

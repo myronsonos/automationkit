@@ -178,7 +178,7 @@ class UI(basic.LineReceiver):
 
             def got_mx(result):
                 mx_list = result[0]
-                mx_list.sort(lambda x, y: cmp(x.payload.preference, y.payload.preference))
+                mx_list.sort(key=lambda obj: obj.payload.preference)
                 if len(mx_list) > 0:
                     import posix
                     import pwd

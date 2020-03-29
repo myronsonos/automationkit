@@ -204,7 +204,7 @@ class Gallery2Store(BackendStore):
         return self.__class__.__name__
 
     def append(self, obj, parent):
-        if isinstance(obj, basestring):
+        if isinstance(obj, str):
             mimetype = 'directory'
         else:
             mimetype = obj['mimetype']
@@ -237,7 +237,7 @@ class Gallery2Store(BackendStore):
         return len(self.store)
 
     def get_by_id(self, id):
-        if isinstance(id, basestring):
+        if isinstance(id, str):
             id = id.split('@', 1)
             id = id[0]
         try:

@@ -325,7 +325,7 @@ class LastFMStore(log.Loggable, Plugin):
         return str(self.__class__).split('.')[-1]
 
     def append(self, obj, parent):
-        if isinstance(obj, basestring):
+        if isinstance(obj, str):
             mimetype = 'directory'
         else:
             mimetype = obj['mimetype']
@@ -373,7 +373,7 @@ class LastFMStore(log.Loggable, Plugin):
         return len(self.store)
 
     def get_by_id(self, id):
-        if isinstance(id, basestring):
+        if isinstance(id, str):
             id = id.split('@', 1)
             id = id[0]
         id = int(id)

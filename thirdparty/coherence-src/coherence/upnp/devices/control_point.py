@@ -39,7 +39,7 @@ class DeviceQuery(object):
     def fire(self, device):
         if callable(self.callback):
             self.callback(device)
-        elif isinstance(self.callback, basestring):
+        elif isinstance(self.callback, str):
             louie.send(self.callback, None, device=device)
         self.fired = True
 

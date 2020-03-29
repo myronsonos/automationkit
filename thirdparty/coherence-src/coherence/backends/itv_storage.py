@@ -110,7 +110,7 @@ class Container(BackendItem):
 
     def add_child(self, child):
         id = child.id
-        if isinstance(child.id, basestring):
+        if isinstance(child.id, str):
             _, id = child.id.split('.')
         if self.children is None:
             self.children = []
@@ -120,11 +120,11 @@ class Container(BackendItem):
 
     def get_children(self, start=0, end=0):
         if self.sorted == False:
-            def childs_sort(x, y):
-                r = cmp(x.name, y.name)
-                return r
 
-            self.children.sort(cmp=childs_sort)
+            def child_key(obj):
+                return obj.name
+            self.children.sort(key=child_key)
+
             self.sorted = True
         if end != 0:
             return self.children[start:end]
@@ -233,7 +233,7 @@ class ITVStore(BackendStore):
         return len(self.store)
 
     def get_by_id(self, id):
-        if isinstance(id, basestring):
+        if isinstance(id, str):
             id = id.split('@', 1)
             id = id[0]
         try:

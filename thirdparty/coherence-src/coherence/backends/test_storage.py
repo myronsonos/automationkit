@@ -283,7 +283,7 @@ class Container(BackendItem):
     def add_child(self, child):
         print("ADD CHILD %r" % child)
         #id = child.id
-        #if isinstance(child.id, basestring):
+        #if isinstance(child.id, str):
         #    _,id = child.id.split('.')
         self.children.append(child)
         self.item.childCount += 1
@@ -292,11 +292,11 @@ class Container(BackendItem):
     def get_children(self, start=0, end=0):
         print("GET CHILDREN")
         if self.sorted == False:
-            def childs_sort(x, y):
-                r = cmp(x.name, y.name)
-                return r
 
-            self.children.sort(cmp=childs_sort)
+            def child_key(obj):
+                return obj.name
+            self.children.sort(key=child_key)
+
             self.sorted = True
         if end != 0:
             return self.children[start:end]
@@ -338,7 +338,7 @@ class TestStore(BackendStore):
             items = [items]
 
         for item in items:
-            if isinstance(item, basestring):
+            if isinstance(item, str):
                 xml = parse_xml(item)
                 print(xml.getroot())
                 item = {}

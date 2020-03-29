@@ -76,10 +76,10 @@ class MigrationService(gdata.apps.service.AppsService):
     mail_entry.rfc822_msg = migration.Rfc822Msg(text=(base64.b64encode(
         mail_message)))
     mail_entry.rfc822_msg.encoding = 'base64'
-    mail_entry.mail_item_property = map(
-        lambda x: migration.MailItemProperty(value=x), mail_item_properties)
-    mail_entry.label = map(lambda x: migration.Label(label_name=x),
-                           mail_labels)
+    mail_entry.mail_item_property = list(map(
+        lambda x: migration.MailItemProperty(value=x), mail_item_properties))
+    mail_entry.label = list(map(lambda x: migration.Label(label_name=x),
+                           mail_labels))
 
     try:
       return migration.MailEntryFromString(str(self.Post(mail_entry, uri)))
@@ -107,10 +107,10 @@ class MigrationService(gdata.apps.service.AppsService):
     mail_entry.rfc822_msg = migration.Rfc822Msg(text=(base64.b64encode(
         mail_message)))
     mail_entry.rfc822_msg.encoding = 'base64'
-    mail_entry.mail_item_property = map(
-        lambda x: migration.MailItemProperty(value=x), mail_item_properties)
-    mail_entry.label = map(lambda x: migration.Label(label_name=x),
-                           mail_labels)
+    mail_entry.mail_item_property = list(map(
+        lambda x: migration.MailItemProperty(value=x), mail_item_properties))
+    mail_entry.label = list(map(lambda x: migration.Label(label_name=x),
+                           mail_labels))
 
     self.mail_batch.AddBatchEntry(mail_entry)
 

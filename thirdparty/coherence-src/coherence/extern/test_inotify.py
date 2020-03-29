@@ -170,7 +170,7 @@ class TestINotify(unittest.TestCase):
             inotify.IN_ONESHOT: 'one_shot'
             }
 
-        for mask, value in FLAG_TO_HUMAN.iteritems():
+        for mask, value in FLAG_TO_HUMAN.items():
             self.assert_(inotify.flag_to_human(mask)[0], value)
 
         checkMask = inotify.IN_CLOSE_WRITE | inotify.IN_ACCESS | inotify.IN_OPEN
