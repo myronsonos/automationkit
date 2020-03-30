@@ -78,11 +78,6 @@ APT_BASE_DEPENDENCIES="build-essential python3 python3-dev python-setuptools pyt
 ensure_system_dependencies "$APT_BASE_DEPENDENCIES"
 echo
 
-echo "THIRDPARTY DEPENDENCIES:"
-APT_THIRDPARTY_DEPENDENCIES="libcdio-dev libiso9660-dev swig"
-ensure_system_dependencies "$APT_THIRDPARTY_DEPENDENCIES"
-echo
-
 echo "---------------------------------------------------------------------------------------"
 
 # -------------------------------------------------------------------------------------------
@@ -101,22 +96,10 @@ if [ ! -f $INITIALIZED_FILE ]; then
     pip install pylint
     pip install coverage
     pip install paramiko
+    pip install requests
     pip install sqlalchemy
     pip install sqlalchemy_utils
-
-    # Install thirdparty distributed test environment dependencies
-    pip install dbus-python
-    pip install feedparser
-    pip install pycdio
-    pip install twisted
-
-    # Install python3 thirdparty packages from source by order of dependency
-    pip install $REPOSITORY_DIR/thirdparty/cddb-src
-    pip install $REPOSITORY_DIR/thirdparty/commandtool-src
-    pip install $REPOSITORY_DIR/thirdparty/gallery-src
-    pip install $REPOSITORY_DIR/thirdparty/gdata-src
-
-    pip install $REPOSITORY_DIR/thirdparty/coherence-src
+    pip install ssdp
 
     # Install dependencies into the virtual environment
     pip install -r $REQUIREMENTS_FILE

@@ -742,7 +742,7 @@ class ServiceServer(log.Loggable):
                 self.info('%s has a missing callback for %s action %s, action disabled', self.id, implementation, name)
                 return
             else:
-                if((hasattr(self, 'implementation') and self.implementation == 'required') or
+                if((hasattr(self, 'implementation') and implementation == 'required') or
                     not hasattr(self, 'implementation')):
                     self.warning('%s has a missing callback for %s action %s, service disabled', self.id, implementation, name)
                 raise LookupError("missing callback")
@@ -796,15 +796,14 @@ class ServiceServer(log.Loggable):
                 # check for action in ServiceServer
                 callback = getattr(self, "upnp_%s" % name, None)
 
-            if(needs_callback == True and
-                callback == None):
+            if(needs_callback == True and callback == None):
                 # we have one or more 'A_ARG_TYPE_' variables
                 # issue a warning for now
                 if implementation == 'optional':
                     self.info('%s has a missing callback for %s action %s, action disabled', self.id, implementation, name)
                     continue
                 else:
-                    if((hasattr(self, 'implementation') and self.implementation == 'required') or
+                    if((hasattr(self, 'implementation') and implementation == 'required') or
                         not hasattr(self, 'implementation')):
                         self.warning('%s has a missing callback for %s action %s, service disabled', self.id, implementation, name)
                     raise LookupError("missing callback")
@@ -1057,4 +1056,5 @@ class ServiceControl(log.Loggable):
         d = defer.maybeDeferred(callit, *args, **kwargs)
         d.addCallback(self.get_action_results, action, instance)
         d.addErrback(got_error)
+
         return d

@@ -488,10 +488,11 @@ class MediaServer(log.Loggable, BasicDeviceMixin):
 
             def backend_ready(backend):
                 self.backend = backend
+                return
 
             def backend_failure(x):
-                self.warning('backend %s not installed, MediaServer activation aborted - %s', backend, x.getErrorMessage())
-                self.debug(x)
+                self.exception('backend %s not installed, MediaServer activation aborted - %s', backend, x.getErrorMessage())
+                return
 
             d.addCallback(backend_ready)
             d.addErrback(backend_failure)
@@ -521,7 +522,7 @@ class MediaServer(log.Loggable, BasicDeviceMixin):
             self.content_directory_server = ContentDirectoryServer(self, transcoding=transcoding)
             self._services.append(self.content_directory_server)
         except LookupError as msg:
-            self.warning('ContentDirectoryServer %s', msg)
+            self.exception('Failed at ContentDirectoryServer')
             raise LookupError(msg)
 
         try:
@@ -529,13 +530,13 @@ class MediaServer(log.Loggable, BasicDeviceMixin):
                                                         backend=FakeMediaReceiverRegistrarBackend())
             self._services.append(self.media_receiver_registrar_server)
         except LookupError as msg:
-            self.warning('MediaReceiverRegistrarServer (optional) %s', msg)
+            self.exception('Failed at MediaReceiverRegistrarServer (optional).')
 
         try:
             self.scheduled_recording_server = ScheduledRecordingServer(self)
             self._services.append(self.scheduled_recording_server)
         except LookupError as msg:
-            self.info('ScheduledRecordingServer %s', msg)
+            self.exception('Failed at ScheduledRecordingServer.')
 
         upnp_init = getattr(self.backend, "upnp_init", None)
         if upnp_init:

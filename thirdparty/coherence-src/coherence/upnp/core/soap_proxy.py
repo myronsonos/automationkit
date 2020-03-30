@@ -6,7 +6,7 @@
 from twisted.python import failure
 
 from coherence import log
-
+from coherence.compat import bytes_cast, bytes_convert, str_cast
 from coherence.extern.et import ET, namespace_map_update
 
 from coherence.upnp.core.utils import getPage, parse_xml
@@ -31,28 +31,34 @@ class SOAPProxy(log.Loggable):
 
     def __init__(self, url, namespace=None, envelope_attrib=None, header=None, soapaction=None):
         log.Loggable.__init__(self)
-        self.url = url
-        self.namespace = namespace
-        self.header = header
+        self.url = bytes_cast(url)
+        self.namespace = bytes_cast(namespace)
+        self.header = bytes_cast(header)
         self.action = None
-        self.soapaction = soapaction
-        self.envelope_attrib = envelope_attrib
+        self.soapaction = bytes_cast(soapaction)
+        self.envelope_attrib = bytes_cast(envelope_attrib)
 
     def callRemote(self, soapmethod, arguments):
-        soapaction = soapmethod or self.soapaction
-        if '#' not in soapaction:
-            soapaction = '#'.join((self.namespace[1], soapaction))
-        self.action = soapaction.split('#')[1]
 
-        self.info("callRemote %r %r %r %r", self.soapaction, soapmethod, self.namespace, self.action)
+        bytes_arguements = bytes_convert(arguments)
+        soapaction = bytes_cast(soapmethod or self.soapaction)
+        if b'#' not in soapaction:
+            soapaction = b'#'.join((self.namespace[1], soapaction))
 
-        headers = {'content-type': 'text/xml ;charset="utf-8"',
-                    'SOAPACTION': '"%s"' % soapaction, }
-        if 'headers' in arguments:
-            headers.update(arguments['headers'])
-            del arguments['headers']
+        self.action = soapaction.split(b'#')[1]
 
-        payload = soap_lite.build_soap_call("{%s}%s" % (self.namespace[1], self.action), arguments,
+        self.info("callRemote ns=%r sact=%r smeth=%r act=%r", self.namespace, self.soapaction, soapmethod, self.action)
+
+        # Prep the call, convert all the strings to bytes
+
+        headers = {
+            b'content-type': b'text/xml ;charset="utf-8"',
+            b'SOAPACTION': b'"%s"' % soapaction, }
+        if 'headers' in bytes_arguements:
+            headers.update(bytes_arguements[b'headers'])
+            del bytes_arguements[b'headers']
+
+        payload = soap_lite.build_soap_call("{%s}%s" % (self.namespace[1], self.action), bytes_arguements,
                                             encoding=None)
 
         self.info("callRemote soapaction:  %s %s", self.action, self.url)
@@ -71,9 +77,10 @@ class SOAPProxy(log.Loggable):
                 self.debug(traceback.format_exc())
             return error
 
-        return getPage(self.url, postdata=payload, method="POST",
-                        headers=headers
-                      ).addCallbacks(self._cbGotResult, gotError, None, None, [self.url], None)
+        page_result = getPage(self.url, postdata=payload, method="POST", headers=headers).addCallbacks(
+            self._cbGotResult, gotError, None, None, [self.url], None)
+
+        return page_result
 
     def _cbGotResult(self, result):
         #print(("_cbGotResult 1", result))

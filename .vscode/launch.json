@@ -50,7 +50,7 @@
             "type": "python",
             "request": "launch",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/thirdparty/coherence-src"
+                "PYTHONPATH": "${workspaceFolder}/thirdparty/coherence-src:${workspaceFolder}/thirdparty/twisted-src/src"
             },
             "program": "${workspaceFolder}/thirdparty/coherence-src/bin/coherence",
             "args": [

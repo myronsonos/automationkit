@@ -68,7 +68,7 @@ class Landscape:
             Initializes the Singleton initializer class
         """
         this_cls = type(self)
-        if this_cls._initialized:
+        if not this_cls._initialized:
             this_cls._initialized = True
             self.initialize()
         return

@@ -14,6 +14,8 @@ from datetime import datetime
 from email.utils import parsedate_tz
 from email.generator import _make_boundary
 
+from coherence.compat import bytes_cast, str_cast
+
 try:
     import hashlib
 
@@ -59,8 +61,9 @@ LOGIN_URL = "http://flickr.com/services/auth/"
 XMLRPC_URL = 'http://api.flickr.com/services/xmlrpc/'
 SOAP_URL = "http://api.flickr.com/services/soap/"
 UPLOAD_URL = "http://api.flickr.com/services/upload/"
-API_KEY = '837718c8a622c699edab0ea55fcec224'
-API_SECRET = '30a684822c341c3c'
+
+API_KEY = b'837718c8a622c699edab0ea55fcec224'
+API_SECRET = b'30a684822c341c3c'
 
 ROOT_CONTAINER_ID = 0
 INTERESTINGNESS_CONTAINER_ID = 100
@@ -106,8 +109,8 @@ class ProxyImage(ReverseProxyResource):
     def __init__(self, uri):
         self.uri = uri
         _, host_port, path, _, _ = urlsplit(uri)
-        if host_port.find(':') != -1:
-            host, port = tuple(host_port.split(':'))
+        if host_port.find(b':') != -1:
+            host, port = tuple(host_port.split(b':'))
             port = int(port)
         else:
             host = host_port
@@ -211,6 +214,7 @@ class FlickrItem(log.Loggable):
         if self.mimetype == 'directory':
             self.children = []
             self.update_id = 0
+        return
 
     def set_item_size_and_date(self):
 
@@ -418,7 +422,7 @@ class FlickrStore(BackendStore):
         self.wmc_mapping = {'16': 0}
 
         self.update_id = 0
-        self.flickr = Proxy(XMLRPC_URL)
+        self.flickr = Proxy(bytes_cast(XMLRPC_URL)) # we must pass a bytes object to Proxy
         self.flickr_api_key = API_KEY
         self.flickr_api_secret = API_SECRET
         self.store = {}
@@ -754,43 +758,45 @@ class FlickrStore(BackendStore):
             args['method'] = method
 
         self.debug('flickr_call %s %r', method, args)
+
         d = self.flickr.callRemote(method, args)
         d.addCallback(got_result, method)
         d.addErrback(got_error, method)
+
         return d
 
     def flickr_test_echo(self):
-        d = self.flickr_call('flickr.test.echo')
+        d = self.flickr_call(b'flickr.test.echo')
         return d
 
     def flickr_test_login(self):
-        d = self.flickr_call('flickr.test.login', signed=True)
+        d = self.flickr_call(b'flickr.test.login', signed=True)
         return d
 
     def flickr_auth_getFrob(self):
         api_sig = self.flickr_create_api_signature(method='flickr.auth.getFrob')
-        d = self.flickr_call('flickr.auth.getFrob', api_sig=api_sig)
+        d = self.flickr_call(b'flickr.auth.getFrob', api_sig=api_sig)
         return d
 
     def flickr_auth_getToken(self, frob):
         api_sig = self.flickr_create_api_signature(frob=frob, method='flickr.auth.getToken')
-        d = self.flickr_call('flickr.auth.getToken', frob=frob, api_sig=api_sig)
+        d = self.flickr_call(b'flickr.auth.getToken', frob=frob, api_sig=api_sig)
         return d
 
     def flickr_photos_getInfo(self, photo_id=None, secret=None):
         if secret:
-            d = self.flickr_call('flickr.photos.getInfo', photo_id=photo_id, secret=secret)
+            d = self.flickr_call(b'flickr.photos.getInfo', photo_id=photo_id, secret=secret)
         else:
-            d = self.flickr_call('flickr.photos.getInfo', photo_id=photo_id)
+            d = self.flickr_call(b'flickr.photos.getInfo', photo_id=photo_id)
         return d
 
     def flickr_photos_getSizes(self, photo_id=None):
         if self.flickr_authtoken != None:
             api_sig = self.flickr_create_api_signature(auth_token=self.flickr_authtoken, method='flickr.photos.getSizes', photo_id=photo_id)
-            d = self.flickr_call('flickr.photos.getSizes', auth_token=self.flickr_authtoken, photo_id=photo_id, api_sig=api_sig)
+            d = self.flickr_call(b'flickr.photos.getSizes', auth_token=self.flickr_authtoken, photo_id=photo_id, api_sig=api_sig)
         else:
             api_sig = self.flickr_create_api_signature(method='flickr.photos.getSizes', photo_id=photo_id)
-            d = self.flickr_call('flickr.photos.getSizes', photo_id=photo_id, api_sig=api_sig)
+            d = self.flickr_call(b'flickr.photos.getSizes', photo_id=photo_id, api_sig=api_sig)
         return d
 
     def flickr_interestingness(self, date=None, per_page=100):
@@ -798,7 +804,7 @@ class FlickrStore(BackendStore):
             date = time.strftime("%Y-%m-%d", time.localtime(time.time() - 86400))
         if per_page > 500:
             per_page = 500
-        d = self.flickr_call('flickr.interestingness.getList', extras='date_taken', per_page=per_page)
+        d = self.flickr_call(b'flickr.interestingness.getList', extras='date_taken', per_page=per_page)
         return d
 
     def flickr_recent(self, date=None, per_page=100):
@@ -806,12 +812,12 @@ class FlickrStore(BackendStore):
             date = time.strftime("%Y-%m-%d", time.localtime(time.time() - 86400))
         if per_page > 500:
             per_page = 500
-        d = self.flickr_call('flickr.photos.getRecent', extras='date_taken', per_page=per_page)
+        d = self.flickr_call(b'flickr.photos.getRecent', extras='date_taken', per_page=per_page)
         return d
 
     def flickr_notInSet(self, date=None, per_page=100):
         api_sig = self.flickr_create_api_signature(auth_token=self.flickr_authtoken, extras='date_taken', method='flickr.photos.getNotInSet')
-        d = self.flickr_call('flickr.photos.getNotInSet',
+        d = self.flickr_call(b'flickr.photos.getNotInSet',
                                     auth_token=self.flickr_authtoken,
                                     extras='date_taken',
                                     api_sig=api_sig)
@@ -820,20 +826,20 @@ class FlickrStore(BackendStore):
     def flickr_photosets(self, user_id=None, date=None, per_page=100):
         if user_id != None:
             api_sig = self.flickr_create_api_signature(auth_token=self.flickr_authtoken, method='flickr.photosets.getList', user_id=user_id)
-            d = self.flickr_call('flickr.photosets.getList',
+            d = self.flickr_call(b'flickr.photosets.getList',
                                     user_id=user_id,
                                     auth_token=self.flickr_authtoken,
                                     api_sig=api_sig)
         else:
             api_sig = self.flickr_create_api_signature(auth_token=self.flickr_authtoken, method='flickr.photosets.getList')
-            d = self.flickr_call('flickr.photosets.getList',
+            d = self.flickr_call(b'flickr.photosets.getList',
                                     auth_token=self.flickr_authtoken,
                                     api_sig=api_sig)
         return d
 
     def flickr_photoset(self, photoset, date=None, per_page=100):
         api_sig = self.flickr_create_api_signature(auth_token=self.flickr_authtoken, extras='date_taken', method='flickr.photosets.getPhotos', photoset_id=photoset.obj.get('id'))
-        d = self.flickr_call('flickr.photosets.getPhotos',
+        d = self.flickr_call(b'flickr.photosets.getPhotos',
                                     photoset_id=photoset.obj.get('id'),
                                     extras='date_taken',
                                     auth_token=self.flickr_authtoken,
@@ -842,7 +848,7 @@ class FlickrStore(BackendStore):
 
     def flickr_favorites(self, date=None, per_page=100):
         api_sig = self.flickr_create_api_signature(auth_token=self.flickr_authtoken, extras='date_taken', method='flickr.favorites.getList')
-        d = self.flickr_call('flickr.favorites.getList',
+        d = self.flickr_call(b'flickr.favorites.getList',
                                     auth_token=self.flickr_authtoken,
                                     extras='date_taken',
                                     api_sig=api_sig)
@@ -850,14 +856,14 @@ class FlickrStore(BackendStore):
 
     def flickr_contacts(self, date=None, per_page=100):
         api_sig = self.flickr_create_api_signature(auth_token=self.flickr_authtoken, method='flickr.contacts.getList')
-        d = self.flickr_call('flickr.contacts.getList',
+        d = self.flickr_call(b'flickr.contacts.getList',
                                     auth_token=self.flickr_authtoken,
                                     api_sig=api_sig)
         return d
 
     def flickr_contact_recents(self, contact, date=None, per_page=100):
         api_sig = self.flickr_create_api_signature(auth_token=self.flickr_authtoken, method='flickr.photos.getContactsPhotos', photoset_id=photoset.obj.get('id'))
-        d = self.flickr_call('flickr.photos.getContactsPhotos',
+        d = self.flickr_call(b'flickr.photos.getContactsPhotos',
                                     photoset_id=photoset.obj.get('id'),
                                     auth_token=self.flickr_authtoken,
                                     api_sig=api_sig)
