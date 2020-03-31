@@ -1,14 +1,26 @@
+"""
+.. module:: akit.integration.upnp.device.upnprootdevice
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module containing the :class:`UpnpRootDevice` class and associated diagnostic.
 
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+
+"""
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@automationmojo.com"
+__status__ = "Development" # Prototype, Development or Production
+__license__ = ""
 
 import requests
 import traceback
 
-from xml.etree.ElementTree import fromstring as parsefromstring
-from xml.etree.ElementTree import ElementTree
-
 from akit.integration.upnp.protocols.msearch import MSearchKeys
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
-from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE
 from akit.integration.upnp.xml.upnpdevice1 import UpnpDevice1Device, UpnpDevice1SpecVersion
 
 class UpnpRootDevice(UpnpDevice):
@@ -43,30 +55,21 @@ class UpnpRootDevice(UpnpDevice):
     def URLBase(self):
         return self._urlBase
 
-    def refresh_description(self):
+    def refresh_description(self, docNode, namespaces=None):
         """
         """
         try:
-            resp = requests.get(self._location)
-            if resp.status_code == 200:
-                xmlcontent = resp.content
-                docNode = parsefromstring(xmlcontent)
+            specVerNode = docNode.find("specVersion", namespaces=namespaces)
+            if specVerNode is not None:
+                self._process_version_node(specVerNode, namespaces=namespaces)
 
-                # {urn:schemas-upnp-org:device-1-0}root
-                defaultns = {"": UPNP_DEVICE1_NAMESPACE}
-                docTree = ElementTree(docNode)
+            baseURLNode = docNode.find("URLBase", namespaces=namespaces)
+            if baseURLNode is not None:
+                self._process_urlbase_node(baseURLNode, namespaces=namespaces)
 
-                specVerNode = docTree.find("specVersion", namespaces=defaultns)
-                if specVerNode is not None:
-                    self._process_version_node(specVerNode, namespaces=defaultns)
-
-                baseURLNode = docTree.find("URLBase", namespaces=defaultns)
-                if baseURLNode is not None:
-                    self._process_urlbase_node(baseURLNode, namespaces=defaultns)
-
-                devNode = docTree.find("device", namespaces=defaultns)
-                if devNode is not None:
-                    self._process_device_node(devNode, namespaces=defaultns)
+            devNode = docNode.find("device", namespaces=namespaces)
+            if devNode is not None:
+                self._process_device_node(devNode, namespaces=namespaces)
         except Exception as xcpt:
             err_msg = traceback.format_exc()
             print(err_msg)

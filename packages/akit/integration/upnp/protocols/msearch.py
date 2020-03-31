@@ -1,3 +1,21 @@
+"""
+.. module:: akit.integration.upnp.protocols.msearch
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module containing the :class:`MSearchRootDeviceProtocol` class and
+               associated diagnostic.
+
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+
+"""
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@automationmojo.com"
+__status__ = "Development" # Prototype, Development or Production
+__license__ = ""
 
 import ssdp
 import weakref
@@ -34,7 +52,7 @@ class MSearchRootDeviceProtocol(ssdp.SimpleServiceDiscoveryProtocol):
         reason = response.reason
         status_code = response.status_code
         version = response.version
-        headers = dict(response.headers)
+        headers = dict([ (k.upper(), v) for k, v in response.headers])
 
         # Process the packet
         location = headers[MSearchKeys.LOCATION]

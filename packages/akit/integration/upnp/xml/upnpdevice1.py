@@ -1,4 +1,21 @@
+"""
+.. module:: akit.integration.upnp.xml.upnpdevice1
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module containing the Xml classes used to process the Xml content
+               in a UPNP Device1 description document.
 
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+
+"""
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@automationmojo.com"
+__status__ = "Development" # Prototype, Development or Production
+__license__ = ""
 
 from xml.etree.ElementTree import fromstring as parsefromstring
 from xml.etree.ElementTree import ElementTree
@@ -195,7 +212,7 @@ class UpnpDevice1Device:
         self._iconList = None
         self._serviceList = None
 
-        self._processdevice_node(devNode, namespaces=namespaces)
+        self._process_device_node(devNode, namespaces=namespaces)
         return
 
     @property
@@ -262,7 +279,7 @@ class UpnpDevice1Device:
     def presentationURL(self):
         return self._presentationURL
 
-    def _processdevice_node(self, devNode, namespaces=None):
+    def _process_device_node(self, devNode, namespaces=None):
 
         for child in devNode:
             if child.tag == UpnpDevice1ElementTags.deviceType:
@@ -304,7 +321,7 @@ class UpnpDevice1Device:
     def _process_devicelist_node(self, listNode, namespaces=None):
         """
         """
-        self._deviceList = [ UpnpDevice1Device(child, namespaces=namespaces) for child in listNode ]
+        self._deviceList = [ self._process_embedded_device_node(child, namespaces=namespaces) for child in listNode ]
         return
 
     def _process_iconlist_node(self, listNode, namespaces=None):
@@ -312,6 +329,10 @@ class UpnpDevice1Device:
         """
         self._iconList = [ UpnpDevice1Icon(child, namespaces=namespaces) for child in listNode ]
         return
+
+    def _process_embedded_device_node(self, devNode, namespaces=None):
+        dev = UpnpDevice1Device(devNode, namespaces=namespaces)
+        return dev
 
     def _process_other_node(self, otherNode, namespaces=None):
         

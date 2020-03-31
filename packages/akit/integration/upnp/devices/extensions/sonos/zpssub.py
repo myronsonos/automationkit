@@ -21,14 +21,13 @@ from akit.extensible import LoadableExtension
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 
-class SonosDeviceZpS18(UpnpRootDevice, LoadableExtension):
+class SonosDeviceZpSub(UpnpRootDevice, LoadableExtension):
     """
     """
 
     MANUFACTURER = "Sonos, Inc."
-    MODEL_NUMBER = "S18"
-    MODEL_DESCRIPTION = "Sonos One Media Renderer"
-
+    MODEL_NUMBER = "Sub"
+    MODEL_DESCRIPTION = "Sonos Sub"
 
     def _consume_upnp_extra(self, extrainfo):
         self._extra = extrainfo

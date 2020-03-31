@@ -1,13 +1,34 @@
+"""
+.. module:: akit.integration.agents.upnpagent
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module containing the :class:`UpnpAgent` class and associated diagnostic.
 
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+
+"""
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@automationmojo.com"
+__status__ = "Development" # Prototype, Development or Production
+__license__ = ""
 
 import asyncio
+import requests
 import socket
 import ssdp
 import threading
 
+from xml.etree.ElementTree import fromstring as parsefromstring
+from xml.etree.ElementTree import ElementTree
+
 from akit.exceptions import AKitSemanticError
 from akit.integration.upnp.devices.upnpdevicefactory import UpnpDeviceFactory
 from akit.integration.upnp.protocols.msearch import MSearchKeys, MSearchRootDeviceProtocol
+from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE
 
 class UpnpAgent:
     """
@@ -71,8 +92,8 @@ class UpnpAgent:
         self._egate.wait(timeout=timeout)
         return
 
-    def _create_root_device(self, devicetype):
-        dev = self._factory.create_root_device_instance(devicetype)
+    def _create_root_device(self, manufacturer: str, modelNumber: str, modelDescription: str):
+        dev = self._factory.create_root_device_instance(manufacturer, modelNumber, modelDescription)
         return dev
 
     def _update_root_device(self, location, deviceinfo: dict):
@@ -81,18 +102,59 @@ class UpnpAgent:
         usn = deviceinfo[MSearchKeys.USN]
         devuuid = usn.split("::")[0]
         rootdev = None
-        try:
-            self._lock.acquire()
-            if location not in self._children:
-                rootdev = self._create_root_device(devuuid)
-                self._children[location] = rootdev
-                rootdev.initialize(location, deviceinfo)
-            else:
-                rootdev = self._children[location]
-        finally:
-            self._lock.release()
 
-        rootdev.refresh_description()
+        resp = requests.get(location)
+        if resp.status_code == 200:
+            xmlcontent = resp.content
+            docTree = ElementTree(parsefromstring(xmlcontent))
+
+            # {urn:schemas-upnp-org:device-1-0}root
+            defaultns = {"": UPNP_DEVICE1_NAMESPACE}
+
+            devNode = docTree.find("device", namespaces=defaultns)
+
+            manufacturer = None
+            modelNumber = None
+            modelDescription = None
+
+            manufacturerNode = devNode.find("manufacturer", namespaces=defaultns)
+            if manufacturerNode is not None:
+                manufacturer = manufacturerNode.text
+
+            modelNumberNode = devNode.find("modelNumber", namespaces=defaultns)
+            if modelNumberNode is not None:
+                modelNumber = modelNumberNode.text
+
+            modelDescNode = devNode.find("modelDescription", namespaces=defaultns)
+            if modelDescNode is not None:
+                modelDescription = modelDescNode.text
+
+            try:
+                # Acquire the lock before we decide if the location exists in the children table
+                self._lock.acquire()
+                if location not in self._children:
+                    try:
+                        # Unlock while we do some expensive stuff, we have already decided to
+                        # create the device
+                        self._lock.release()
+
+                        # We create the device
+                        rootdev = self._create_root_device(manufacturer, modelNumber, modelDescription)
+                        rootdev.initialize(location, deviceinfo)
+
+                        # Refresh the description
+                        rootdev.refresh_description(docTree.getroot(), namespaces=defaultns)
+                    finally:
+                        self._lock.acquire()
+
+                    # If the device is still not in the table, add it
+                    if location not in self._children:
+                        self._children[location] = rootdev
+                else:
+                    rootdev = self._children[location]
+            finally:
+                self._lock.release()
+
         return
 
     def _thread_entry(self):
