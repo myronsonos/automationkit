@@ -1,7 +1,7 @@
 """
-.. module:: akit.integration.upnp.devices.extensions.sonos.zps18
+.. module:: akit.integration.upnp.extensions.sonos.zps23
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the a Upnp device for a Sonos Zps18.
+    :synopsis: Module containing the a Upnp device for a Sonos Zps23.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
@@ -21,13 +21,13 @@ from akit.extensible import LoadableExtension
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 
-class SonosDeviceZpSub(UpnpRootDevice, LoadableExtension):
+class SonosDeviceZpS23(UpnpRootDevice, LoadableExtension):
     """
     """
 
     MANUFACTURER = "Sonos, Inc."
-    MODEL_NUMBER = "Sub"
-    MODEL_DESCRIPTION = "Sonos Sub"
+    MODEL_NUMBER = "S23"
+    MODEL_DESCRIPTION = "Sonos Port"
 
     def _consume_upnp_extra(self, extrainfo):
         self._extra = extrainfo

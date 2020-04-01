@@ -1,7 +1,7 @@
 """
-.. module:: akit.integration.upnp.device.upnpdevicefactory
+.. module:: akit.integration.upnp.upnpfactory
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the :class:`UpnpDeviceFactory` class and associated diagnostic.
+    :synopsis: Module containing the :class:`UpnpFactory` class and associated diagnostic.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
@@ -22,11 +22,14 @@ from akit.exceptions import AKitSemanticError
 
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
-from akit.integration.upnp.devices import extensions as extensions_module
+from akit.integration.upnp.services.upnpservice import UpnpService
+
+from akit.integration.upnp.extensions import devices as device_extensions
+from akit.integration.upnp.extensions import services as service_extensions
 
 from akit.extensible import collect_extensions_under_module
 
-class UpnpDeviceFactory:
+class UpnpFactory:
     """
     """
 
@@ -40,7 +43,7 @@ class UpnpDeviceFactory:
             their devicetype id.
         """
         if cls._instance is None:
-            cls._instance = super(UpnpDeviceFactory, cls).__new__(cls)
+            cls._instance = super(UpnpFactory, cls).__new__(cls)
         return cls._instance
 
     def __init__(self):
@@ -52,7 +55,9 @@ class UpnpDeviceFactory:
             this_cls._initialized = True
             self._embedded_device_registry = {}
             self._root_device_registry = {}
-            self._scan_for_extensions_under_module(extensions_module)
+            self._service_registry = {}
+            self._scan_for_device_extensions_under_module(device_extensions)
+            self._scan_for_service_extensions_under_module(service_extensions)
         return
 
     def create_embedded_device_instance(self, manufacturer:str, modelNumber: str, modelDescription: str):
@@ -70,22 +75,37 @@ class UpnpDeviceFactory:
                 deviceClass = self._root_device_registry[extkey]
         return deviceClass()
 
-    def _generate_extension_key(self, manufacturer:str, modelNumber: str, modelDescription: str):
-        extkey = "%s:%s:%s" % (manufacturer, modelNumber, modelDescription)
+    def _generate_extension_key(self, *parts):
+        extkey = ":".join(parts)
         return extkey
 
     def _register_root_device(self, extkey, extcls):
         if extkey not in self._root_device_registry:
             self._root_device_registry[extkey] = extcls
         else:
-            raise AKitSemanticError("An extension with the key=%r was already registered. (%s)" % (extkey, extcls))
+            raise AKitSemanticError("A root device extension with the key=%r was already registered. (%s)" % (extkey, extcls))
         return
 
-    def _scan_for_extensions_under_module(self, module):
+    def _register_service(self, extkey, extcls):
+        if extkey not in self._service_registry:
+            self._service_registry[extkey] = extcls
+        else:
+            raise AKitSemanticError("A service extension with the key=%r was already registered. (%s)" % (extkey, extcls))
+        return
+
+    def _scan_for_device_extensions_under_module(self, module):
         extcoll = collect_extensions_under_module(module, UpnpRootDevice)
         for extname, extcls in extcoll:
             if hasattr(extcls, "MANUFACTURER") and hasattr(extcls, "MODEL_NUMBER") and hasattr(extcls, "MODEL_DESCRIPTION"):
                 extkey = self._generate_extension_key(getattr(extcls, "MANUFACTURER"),
                     getattr(extcls, "MODEL_NUMBER"), getattr(extcls, "MODEL_DESCRIPTION"))
                 self._register_root_device(extkey, extcls)
+        return
+
+    def _scan_for_service_extensions_under_module(self, module):
+        extcoll = collect_extensions_under_module(module, UpnpService)
+        for extname, extcls in extcoll:
+            if (hasattr(extcls, "SERVICE_ID") and hasattr(extcls, "SERVICE_TYPE")):
+                extkey = self._generate_extension_key(getattr(extcls, "SERVICE_ID"), getattr(extcls, "SERVICE_TYPE"))
+                self._register_service(extkey, extcls)
         return

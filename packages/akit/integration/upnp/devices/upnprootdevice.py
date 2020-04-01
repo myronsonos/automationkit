@@ -26,7 +26,7 @@ from akit.integration.upnp.xml.upnpdevice1 import UpnpDevice1Device, UpnpDevice1
 class UpnpRootDevice(UpnpDevice):
     """
         The UPNP Root device is the base device for the hierarchy that is
-        associated with a unique network devices location.  The :class:`RootDevice`
+        associated with a unique network devices location.  The :class:`UpnpRootDevice`
         and its subdevices are linked by thier location url. 
 
         http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf

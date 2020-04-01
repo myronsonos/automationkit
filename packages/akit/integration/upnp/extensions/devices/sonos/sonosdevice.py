@@ -1,5 +1,5 @@
 """
-.. module:: akit.integration.upnp.devices.extensions.sonos.zps23
+.. module:: akit.integration.upnp.extensions.sonos.zps23
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the a Upnp device for a Sonos Zps23.
 

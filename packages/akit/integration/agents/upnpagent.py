@@ -26,7 +26,7 @@ from xml.etree.ElementTree import fromstring as parsefromstring
 from xml.etree.ElementTree import ElementTree
 
 from akit.exceptions import AKitSemanticError
-from akit.integration.upnp.devices.upnpdevicefactory import UpnpDeviceFactory
+from akit.integration.upnp.upnpfactory import UpnpFactory
 from akit.integration.upnp.protocols.msearch import MSearchKeys, MSearchRootDeviceProtocol
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE
 
@@ -51,7 +51,7 @@ class UpnpAgent:
     def __init__(self, iface):
         self._iface = iface
         self._name = "UpnpAgent - %s" % self._iface
-        self._factory = UpnpDeviceFactory()
+        self._factory = UpnpFactory()
         self._children = {}
         self._lock = threading.RLock()
         self._sgate = threading.Event()

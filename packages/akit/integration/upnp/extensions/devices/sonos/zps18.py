@@ -1,7 +1,7 @@
 """
-.. module:: akit.integration.upnp.devices.extensions.sonos.zps23
+.. module:: akit.integration.upnp.extensions.sonos.zps18
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the a Upnp device for a Sonos Zps23.
+    :synopsis: Module containing the a Upnp device for a Sonos Zps18.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
@@ -21,13 +21,13 @@ from akit.extensible import LoadableExtension
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 
-class SonosDeviceZpS14(UpnpRootDevice, LoadableExtension):
+class SonosDeviceZpS18(UpnpRootDevice, LoadableExtension):
     """
     """
 
     MANUFACTURER = "Sonos, Inc."
-    MODEL_NUMBER = "S14"
-    MODEL_DESCRIPTION = "Sonos Beam"
+    MODEL_NUMBER = "S18"
+    MODEL_DESCRIPTION = "Sonos One Media Renderer"
 
 
     def _consume_upnp_extra(self, extrainfo):
