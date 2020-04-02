@@ -16,6 +16,8 @@ __email__ = "myron.walker@automationmojo.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = ""
 
+from akit.exceptions import AKitNotOverloadedError
+
 from akit.integration.upnp.protocols.msearch import MSearchKeys
 
 class UpnpDevice:
@@ -34,49 +36,23 @@ class UpnpDevice:
             Creates a root device object.
         """
         super(UpnpDevice, self).__init__()
-        self._extra = {}
-        self._cachecontrol = None
-        self._ext = None
-        self._location = None
-        self._server = None
-        self._st = None
-        self._usn = None
+        
+        self._description = None
         return
 
     @property
-    def cachecontrol(self):
-        return self._cachecontrol
+    def description(self):
+        return self._description
 
-    @property
-    def ext(self):
-        return self._ext
-
-    @property
-    def extra(self):
-        return self._extra
-
-    @property
-    def location(self):
-        return self._location
-
-    @property
-    def server(self):
-        return self._server
-
-    def initialize(self, location: str, devinfo: dict):
-        """
-        """
-        self._location = location
-        self._cachecontrol = devinfo.pop(MSearchKeys.CACHE_CONTROL)
-        self._ext = devinfo.pop(MSearchKeys.EXT)
-        self._server = devinfo.pop(MSearchKeys.SERVER)
-        self._st = devinfo.pop(MSearchKeys.ST)
-        self._usn = devinfo.pop(MSearchKeys.USN)
-
-        self._consume_upnp_extra(devinfo)
+    def _populate_embedded_devices(self):
+        raise AKitNotOverloadedError("UpnpDevice._populate_embedded_devices: must be overridden.")
         return
 
-    def _consume_upnp_extra(self, extrainfo):
-        self._extra = extrainfo
+    def _populate_icons(self):
+        for icon in self._description.iconList:
+            pass
         return
 
+    def _populate_services(self):
+        raise AKitNotOverloadedError("UpnpDevice._populate_services: must be overridden.")
+        return

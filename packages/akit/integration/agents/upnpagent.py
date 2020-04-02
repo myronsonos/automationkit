@@ -143,7 +143,7 @@ class UpnpAgent:
                         rootdev.initialize(location, deviceinfo)
 
                         # Refresh the description
-                        rootdev.refresh_description(docTree.getroot(), namespaces=defaultns)
+                        rootdev.refresh_description(self._factory, docTree.getroot(), namespaces=defaultns)
                     finally:
                         self._lock.acquire()
 

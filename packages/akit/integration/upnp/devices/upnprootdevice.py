@@ -38,14 +38,48 @@ class UpnpRootDevice(UpnpDevice):
         """
         super(UpnpRootDevice, self).__init__()
 
-        self._description = None
+        self._extra = {}
+        self._cachecontrol = None
+        self._ext = None
+        self._location = None
+        self._server = None
+        self._st = None
+        self._usn = None
+
         self._specVersion = None
         self._urlBase = None
+
+        self._devices = []
+        self._services = []
         return
 
     @property
-    def description(self):
-        return self._description
+    def cachecontrol(self):
+        return self._cachecontrol
+
+    @property
+    def devices(self):
+        return self._devices
+
+    @property
+    def ext(self):
+        return self._ext
+
+    @property
+    def extra(self):
+        return self._extra
+
+    @property
+    def location(self):
+        return self._location
+
+    @property
+    def server(self):
+        return self._server
+
+    @property
+    def services(self):
+        return self._services
 
     @property
     def specVersion(self):
@@ -55,7 +89,20 @@ class UpnpRootDevice(UpnpDevice):
     def URLBase(self):
         return self._urlBase
 
-    def refresh_description(self, docNode, namespaces=None):
+    def initialize(self, location: str, devinfo: dict):
+        """
+        """
+        self._location = location
+        self._cachecontrol = devinfo.pop(MSearchKeys.CACHE_CONTROL)
+        self._ext = devinfo.pop(MSearchKeys.EXT)
+        self._server = devinfo.pop(MSearchKeys.SERVER)
+        self._st = devinfo.pop(MSearchKeys.ST)
+        self._usn = devinfo.pop(MSearchKeys.USN)
+
+        self._consume_upnp_extra(devinfo)
+        return
+
+    def refresh_description(self, factory, docNode, namespaces=None):
         """
         """
         try:
@@ -69,7 +116,7 @@ class UpnpRootDevice(UpnpDevice):
 
             devNode = docNode.find("device", namespaces=namespaces)
             if devNode is not None:
-                self._process_device_node(devNode, namespaces=namespaces)
+                self._process_device_node(factory, devNode, namespaces=namespaces)
         except Exception as xcpt:
             err_msg = traceback.format_exc()
             print(err_msg)
@@ -77,8 +124,42 @@ class UpnpRootDevice(UpnpDevice):
 
         return
 
-    def _process_device_node(self, devNode, namespaces=None):
+    def _consume_upnp_extra(self, extrainfo):
+        self._extra = extrainfo
+        return
+
+    def _populate_embedded_devices(self, factory):
+
+        for deviceInfo in self._description.deviceList:
+            manufacturer = deviceInfo.manufacturer
+            modelNumber = deviceInfo.modelNumber
+            modelDescription = deviceInfo.modelDescription
+
+            dev_inst = factory.create_root_device_instance(manufacturer, modelNumber, modelDescription)
+
+            self._devices.append(dev_inst)
+
+        return
+
+    def _populate_services(self, factory):
+
+        for serviceInfo in self._description.serviceList:
+            serviceId = serviceInfo.serviceId
+            serviceType = serviceInfo.serviceType
+
+            svc_inst = factory.create_service_instance(serviceId, serviceType)
+
+            self._services.append(svc_inst)
+
+        return
+
+    def _process_device_node(self, factory, devNode, namespaces=None):
         self._description = UpnpDevice1Device(devNode, namespaces=namespaces)
+
+        self._populate_services(factory)
+
+        self._populate_embedded_devices(factory)
+
         return
 
     def _process_urlbase_node(self, urlBaseNode, namespaces=None):
@@ -88,3 +169,4 @@ class UpnpRootDevice(UpnpDevice):
     def _process_version_node(self, verNode, namespaces=None):
         self._specVersion = UpnpDevice1SpecVersion(verNode, namespaces=namespaces)
         return
+

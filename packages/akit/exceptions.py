@@ -115,3 +115,20 @@ class AKitSkipError(AKitRuntimeError):
 # ==================================================================================
 #                           SEMANTIC RELATED ERRORS
 # ==================================================================================
+
+class AKitNotImplementedError(AKitSemanticError):
+    """
+        This error is raised when a method is called that has not yet been implemented. 
+    """
+    def __init__(self, reason):
+        AKitError.__init__(self, reason)
+        self.reason = reason
+        return
+class AKitNotOverloadedError(AKitSemanticError):
+    """
+        This error is raised when a method that must be overloaded has not been overridden. 
+    """
+    def __init__(self, reason):
+        AKitError.__init__(self, reason)
+        self.reason = reason
+        return

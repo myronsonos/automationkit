@@ -32,16 +32,22 @@ class UpnpEmbeddedDevice(UpnpDevice):
         http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf
     """
 
-    def __init__(self, devNode, namespaces=namespaces):
+    def __init__(self, description, namespaces=namespaces):
         """
             Creates a root device object.
         """
-        super(UpnpRootDevice, self).__init__()
+        super(UpnpEmbeddedDevice, self).__init__()
 
-        self._process_device_node(devNode, namespaces=namespaces)
+        self._decription = description
         return
 
-    def _process_device_node(self, devNode, namespaces=None):
-        raise AKitSemanticError("A UpnpEmbeddedDevice should not have another embedded device.")
+    def _populate_embedded_devices(self):
+        raise AKitSemanticError("Embedded devices inside an embedded device is currently not supported.")
         return
+
+    def _populate_services(self):
+        for service in self._description.serviceList:
+            pass
+        return
+
 
