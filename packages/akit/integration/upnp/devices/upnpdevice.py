@@ -18,7 +18,7 @@ __license__ = ""
 
 from akit.exceptions import AKitNotOverloadedError
 
-from akit.integration.upnp.protocols.msearch import MSearchKeys
+from akit.integration.upnp.upnpprotocol import MSearchKeys
 
 class UpnpDevice:
     """

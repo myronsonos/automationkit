@@ -17,17 +17,20 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = ""
 
 import asyncio
+import queue
 import requests
 import socket
 import ssdp
+import struct
 import threading
+import time
 
 from xml.etree.ElementTree import fromstring as parsefromstring
 from xml.etree.ElementTree import ElementTree
 
 from akit.exceptions import AKitSemanticError
 from akit.integration.upnp.upnpfactory import UpnpFactory
-from akit.integration.upnp.protocols.msearch import MSearchKeys, MSearchRootDeviceProtocol
+from akit.integration.upnp.upnpprotocol import MSearchKeys, UpnpProtocol
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE
 
 class UpnpAgent:
@@ -50,18 +53,21 @@ class UpnpAgent:
 
     def __init__(self, iface):
         self._iface = iface
-        self._name = "UpnpAgent - %s" % self._iface
         self._factory = UpnpFactory()
         self._children = {}
         self._lock = threading.RLock()
-        self._sgate = threading.Event()
-        self._egate = threading.Event()
-        self._thread = threading.Thread(name=self._name, target=self._thread_entry, daemon=True)
+        self._egate = None
+        self._listen_thread = None
+        self._notify_thread = None
+        self._notify_queue = None
+        self._response_thread = None
+        self._response_queue = None
 
-        self._loop = None
+        self._listen_loop = None
         self._connect = None
         self._transport = None
         self._protocol = None
+
         return
 
     def children(self):
@@ -72,24 +78,67 @@ class UpnpAgent:
     def begin_search(self):
         """
         """
-        notify = ssdp.SSDPRequest('M-SEARCH', headers=MSearchRootDeviceProtocol.HEADERS)
-        notify.sendto(self._transport, (MSearchRootDeviceProtocol.MULTICAST_ADDRESS, MSearchRootDeviceProtocol.PORT))
+        notify = ssdp.SSDPRequest('M-SEARCH', headers=UpnpProtocol.HEADERS)
+        notify.sendto(self._transport, (UpnpProtocol.MULTICAST_ADDRESS, UpnpProtocol.PORT))
         return
 
     def start(self):
         """
         """
-        if self._loop:
+        if self._listen_loop:
             raise AKitSemanticError("The UpnpAgent was already started.")
 
-        self._sgate.clear()
-        self._egate.clear()
-        self._thread.start()
-        self._sgate.wait()
+        self._egate = threading.Semaphore(3)
+
+        try:
+            sgate = threading.Event()
+
+            sgate.clear()
+            self._notify_thread = threading.Thread(name="UpnpAgent(%s) Notify" % self._iface, target=self._notify_thread_entry, 
+                                                   daemon=True, args=(sgate,))
+            self._notify_thread.start()
+            sgate.wait()
+
+            sgate.clear()
+            self._response_thread = threading.Thread(name="UpnpAgent(%s) Response" % self._iface, target=self._response_thread_entry,
+                                                    daemon=True, args=(sgate,))
+            self._response_thread.start()
+            sgate.wait()
+
+            sgate.clear()
+            self._listen_thread = threading.Thread(name="UpnpAgent(%s) Listen" % self._iface, target=self._listen_thread_entry,
+                                                   daemon=True, args=(sgate,))
+            self._listen_thread.start()
+            sgate.wait()
+        except:
+            for i in range(3):
+                self._egate.release()
+            raise
+
         return
 
     def wait(self, timeout=None):
-        self._egate.wait(timeout=timeout)
+        # We need to be able to get 3 acquires to ensure all three threads
+        # have exited
+        acquires = 0
+        try:
+            self._egate.acquire(timeout=timeout)
+            acquires += 1
+            try:
+                self._egate.acquire(timeout=timeout)
+                acquires += 1
+                try:
+                    self._egate.acquire(timeout=timeout)
+                    acquires += 1
+                except TimeoutError:
+                    if acquires > 0:
+                        self._egate.release()
+            except TimeoutError:
+                if acquires > 0:
+                    self._egate.release()
+        except TimeoutError:
+            if acquires > 0:
+                self._egate.release()
         return
 
     def _create_root_device(self, manufacturer: str, modelNumber: str, modelDescription: str):
@@ -152,39 +201,117 @@ class UpnpAgent:
                         self._children[location] = rootdev
                 else:
                     rootdev = self._children[location]
+                    # Refresh the description
+                    rootdev.refresh_description(self._factory, docTree.getroot(), namespaces=defaultns)
             finally:
                 self._lock.release()
 
         return
 
-    def _thread_entry(self):
+    def _listen_thread_entry(self, sgate):
 
-        def protocol_factory():
-            return MSearchRootDeviceProtocol(self)
-
-        self._loop = asyncio.new_event_loop()
-        self._connect = self._loop.create_datagram_endpoint(protocol_factory, family=socket.AF_INET)
-        self._transport, self._protocol = self._loop.run_until_complete(self._connect)
-
-        # Release the gate so the caller to 'start' will return
-        self._sgate.set()
+        self._egate.acquire()
 
         try:
-            self._loop.run_forever()
+            try:
+                self._listen_loop = asyncio.new_event_loop()
+
+                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+
+                multicast_address = UpnpProtocol.MULTICAST_ADDRESS
+                multicast_port = UpnpProtocol.PORT
+                multicast_group = ('0.0.0.0', UpnpProtocol.PORT)
+
+                # Set us up to be a member of the group, this allows us to receive all the packets
+                # that are sent to the group
+                req = struct.pack("=4sl", socket.inet_aton(multicast_address), socket.INADDR_ANY)
+                sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, req)
+                sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.INADDR_ANY)
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                sock.bind(multicast_group)
+
+                def protocol_factory():
+                    return UpnpProtocol(self._notify_queue, self._response_queue)
+
+                self._connect = self._listen_loop.create_datagram_endpoint(protocol_factory, sock=sock)
+                self._transport, self._protocol = self._listen_loop.run_until_complete(self._connect)
+
+            finally:
+                # Release the gate so the caller to 'start' will return
+                sgate.set()
+
+            self._listen_loop.run_forever()
         except KeyboardInterrupt as kerr:
             pass
+        finally:
+            if self._transport is not None:
+                self._transport.close()
+            if self._connect is not None:
+                self._connect.close()
 
-        self._transport.close()
-        self._loop.close()
-
-        self._egate.set()
+            self._egate.release()
 
         return
+
+    def _notify_thread_entry(self, sgate):
+
+        self._egate.acquire()
+
+        try:
+            sgate.set()
+
+            self._notify_queue = queue.Queue()
+            while True:
+                request, addr = self._notify_queue.get()
+
+                print(request)
+                print()
+
+                self._notify_queue.task_done()
+        finally:
+            self._egate.release()
+
+        return
+
+    def _response_thread_entry(self, sgate):
+
+        self._egate.acquire()
+
+        try:
+            sgate.set()
+
+            self._response_queue = queue.Queue()
+            while True:
+                response, addr = self._response_queue.get()
+
+                lines = str(response).splitlines(False)
+                for nxtline in lines:
+                    print("    %s" % nxtline)
+                print()
+
+                reason = response.reason
+                status_code = response.status_code
+                version = response.version
+                headers = dict([ (k.upper(), v) for k, v in response.headers])
+
+                # Process the packet
+                location = headers[MSearchKeys.LOCATION]
+
+                self._update_root_device(location, headers)
+
+                self._response_queue.task_done()
+        finally:
+            self._egate.release()
+
+        return
+
 
 
 if __name__ == "__main__":
     agent = UpnpAgent("wlo1")
     agent.start()
+    agent.begin_search()
+    time.sleep(60 * 5)
     agent.begin_search()
     agent.wait()
     pass

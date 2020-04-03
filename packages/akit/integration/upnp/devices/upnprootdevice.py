@@ -19,7 +19,7 @@ __license__ = ""
 import requests
 import traceback
 
-from akit.integration.upnp.protocols.msearch import MSearchKeys
+from akit.integration.upnp.upnpprotocol import MSearchKeys
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.xml.upnpdevice1 import UpnpDevice1Device, UpnpDevice1SpecVersion
 
@@ -49,8 +49,8 @@ class UpnpRootDevice(UpnpDevice):
         self._specVersion = None
         self._urlBase = None
 
-        self._devices = []
-        self._services = []
+        self._devices = {}
+        self._services = {}
         return
 
     @property
@@ -59,7 +59,7 @@ class UpnpRootDevice(UpnpDevice):
 
     @property
     def devices(self):
-        return self._devices
+        return self._devices.values()
 
     @property
     def ext(self):
@@ -79,7 +79,7 @@ class UpnpRootDevice(UpnpDevice):
 
     @property
     def services(self):
-        return self._services
+        return self._services.values()
 
     @property
     def specVersion(self):
@@ -135,10 +135,15 @@ class UpnpRootDevice(UpnpDevice):
             modelNumber = deviceInfo.modelNumber
             modelDescription = deviceInfo.modelDescription
 
-            dev_inst = factory.create_root_device_instance(manufacturer, modelNumber, modelDescription)
+            devkey = ":".join([manufacturer, modelNumber, modelDescription])
 
-            self._devices.append(dev_inst)
+            if devkey not in self._devices:
+                dev_inst = factory.create_embedded_device_instance(manufacturer, modelNumber, modelDescription)
+                self._devices[devkey] = dev_inst
+            else:
+                dev_inst = self._devices[devkey]
 
+            dev_inst.update_description(deviceInfo)
         return
 
     def _populate_services(self, factory):
@@ -147,10 +152,16 @@ class UpnpRootDevice(UpnpDevice):
             serviceId = serviceInfo.serviceId
             serviceType = serviceInfo.serviceType
 
-            svc_inst = factory.create_service_instance(serviceId, serviceType)
+            svckey = ":".join([serviceId, serviceType])
+            if svckey not in self._services:
+                svc_inst = factory.create_service_instance(serviceId, serviceType)
+                if svc_inst is not None:
+                    self._services[svckey] = svc_inst
+            else:
+                svc_inst = self._services[svckey]
 
-            self._services.append(svc_inst)
-
+            if svc_inst is not None:
+                svc_inst.update_description(serviceInfo)
         return
 
     def _process_device_node(self, factory, devNode, namespaces=None):

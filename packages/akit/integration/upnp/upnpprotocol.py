@@ -1,7 +1,7 @@
 """
 .. module:: akit.integration.upnp.protocols.msearch
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the :class:`MSearchProtocol` class and
+    :synopsis: Module containing the :class:`MSearchRootDeviceProtocol` class and
                associated diagnostic.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
@@ -32,7 +32,8 @@ class MSearchKeys:
     ST = "ST"
     USN = "USN"
 
-class MSearchProtocol(ssdp.SimpleServiceDiscoveryProtocol):
+
+class UpnpProtocol(ssdp.SimpleServiceDiscoveryProtocol):
 
     MULTICAST_ADDRESS = '239.255.255.250'
     PORT = 1900
@@ -43,7 +44,9 @@ class MSearchProtocol(ssdp.SimpleServiceDiscoveryProtocol):
         "MX": "1"
     }
 
-    def __init__(self):
+    def __init__(self, notifyQueue, responseQueue):
+        self._notifyQueue = notifyQueue
+        self._responseQueue = responseQueue
         return
 
     def datagram_received(self, data, addr):
@@ -51,7 +54,7 @@ class MSearchProtocol(ssdp.SimpleServiceDiscoveryProtocol):
 
         if data.startswith('HTTP/'):
             self.response_received(ssdp.SSDPResponse.parse(data), addr)
-        elif data.startswith('MSEARCH'):
+        elif data.startswith('M-SEARCH'):
             self.request_msearch(ssdp.SSDPRequest.parse(data), addr)
         elif data.startswith('NOTIFY'):
             self.request_notify(ssdp.SSDPRequest.parse(data), addr)
@@ -59,8 +62,7 @@ class MSearchProtocol(ssdp.SimpleServiceDiscoveryProtocol):
             self.request_other(ssdp.SSDPRequest.parse(data), addr)
 
     def response_received(self, response, addr):
-        print(request, addr)
-        print()
+        self._responseQueue.put_nowait((response, addr))
         return
 
     def request_msearch(self, request, addr):

@@ -21,6 +21,7 @@ import os
 from akit.exceptions import AKitSemanticError
 
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
+from akit.integration.upnp.devices.upnpembeddeddevice import UpnpEmbeddedDevice
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 from akit.integration.upnp.services.upnpservice import UpnpService
 
@@ -61,7 +62,7 @@ class UpnpFactory:
         return
 
     def create_embedded_device_instance(self, manufacturer:str, modelNumber: str, modelDescription: str):
-        deviceClass = UpnpDevice
+        deviceClass = UpnpEmbeddedDevice
         extkey = self._generate_extension_key(manufacturer, modelNumber, modelDescription)
         if extkey in self._embedded_device_registry:
             deviceClass = self._embedded_device_registry[extkey]

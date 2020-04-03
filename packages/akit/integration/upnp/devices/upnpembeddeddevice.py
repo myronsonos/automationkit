@@ -32,12 +32,16 @@ class UpnpEmbeddedDevice(UpnpDevice):
         http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf
     """
 
-    def __init__(self, description, namespaces=namespaces):
+    def __init__(self):
         """
             Creates a root device object.
         """
         super(UpnpEmbeddedDevice, self).__init__()
 
+        self._decription = None
+        return
+
+    def update_description(self, description):
         self._decription = description
         return
 
