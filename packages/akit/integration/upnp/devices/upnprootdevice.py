@@ -19,6 +19,8 @@ __license__ = ""
 import requests
 import traceback
 
+from urllib.parse import urlparse
+
 from akit.integration.upnp.upnpprotocol import MSearchKeys
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.xml.upnpdevice1 import UpnpDevice1Device, UpnpDevice1SpecVersion
@@ -47,6 +49,8 @@ class UpnpRootDevice(UpnpDevice):
         self._usn = None
 
         self._specVersion = None
+
+        self._host = None
         self._urlBase = None
 
         self._devices = {}
@@ -114,6 +118,13 @@ class UpnpRootDevice(UpnpDevice):
             if baseURLNode is not None:
                 self._process_urlbase_node(baseURLNode, namespaces=namespaces)
 
+            url_parts = urlparse(self._location)
+            self._host = url_parts.netloc
+
+            # If urlBase was not set we need to try to use the schema and host as the urlBase
+            if self._urlBase is None:
+                self._urlBase = "%s://%s" % (url_parts.scheme, self._host)
+
             devNode = docNode.find("device", namespaces=namespaces)
             if devNode is not None:
                 self._process_device_node(factory, devNode, namespaces=namespaces)
@@ -143,7 +154,7 @@ class UpnpRootDevice(UpnpDevice):
             else:
                 dev_inst = self._devices[devkey]
 
-            dev_inst.update_description(deviceInfo)
+            dev_inst.update_description(self._host, self._urlBase, deviceInfo)
         return
 
     def _populate_services(self, factory):
@@ -161,7 +172,7 @@ class UpnpRootDevice(UpnpDevice):
                 svc_inst = self._services[svckey]
 
             if svc_inst is not None:
-                svc_inst.update_description(serviceInfo)
+                svc_inst.update_description(self._host, self._urlBase, serviceInfo)
         return
 
     def _process_device_node(self, factory, devNode, namespaces=None):

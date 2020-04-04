@@ -39,9 +39,13 @@ class UpnpEmbeddedDevice(UpnpDevice):
         super(UpnpEmbeddedDevice, self).__init__()
 
         self._decription = None
+        self._host = None
+        self._baseUrl = None
         return
 
-    def update_description(self, description):
+    def update_description(self, host, baseUrl, description):
+        self._host = host
+        self._baseUrl = baseUrl
         self._decription = description
         return
 
