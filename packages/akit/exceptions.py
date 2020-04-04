@@ -82,6 +82,11 @@ class AKitResourceError(AKitLandscapeError):
 #                           RUNTIME RELATED ERRORS
 # ==================================================================================
 
+class AKitCommunicationsProtocolError(AKitRuntimeError):
+    """
+        This is the base error for exceptions that are related to communciations protocols
+    """
+
 class AKitOutOfScopeError(AKitRuntimeError):
     """
         This error is raised when a method is called on a ScopeMixIn that is not in scope.  A test can have,
@@ -132,3 +137,4 @@ class AKitNotOverloadedError(AKitSemanticError):
         AKitError.__init__(self, reason)
         self.reason = reason
         return
+

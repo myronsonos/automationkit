@@ -19,9 +19,9 @@ __license__ = ""
 
 
 from akit.extensible import LoadableExtension
-from akit.integration.upnp.services.upnpservice import UpnpService
+from akit.integration.upnp.services.upnpserviceproxy import UpnpServiceProxy
 
-class QueueService(UpnpService, LoadableExtension):
+class QueueService(UpnpServiceProxy, LoadableExtension):
     """
     """
 

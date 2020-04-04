@@ -32,6 +32,7 @@ from akit.exceptions import AKitSemanticError
 from akit.integration.upnp.upnpfactory import UpnpFactory
 from akit.integration.upnp.upnpprotocol import MSearchKeys, UpnpProtocol
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE
+from akit.networking.interfaces import get_ip_address
 
 class UpnpAgent:
     """
@@ -51,7 +52,7 @@ class UpnpAgent:
             # Put any initialization here.
         return cls._instance
 
-    def __init__(self, iface):
+    def __init__(self, iface=None):
         self._iface = iface
         self._factory = UpnpFactory()
         self._children = {}

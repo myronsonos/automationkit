@@ -23,7 +23,7 @@ from akit.exceptions import AKitSemanticError
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.devices.upnpembeddeddevice import UpnpEmbeddedDevice
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
-from akit.integration.upnp.services.upnpservice import UpnpService
+from akit.integration.upnp.services.upnpserviceproxy import UpnpServiceProxy
 
 from akit.integration.upnp.extensions import devices as device_extensions
 from akit.integration.upnp.extensions import services as service_extensions
@@ -113,7 +113,7 @@ class UpnpFactory:
         return
 
     def _scan_for_service_extensions_under_module(self, module):
-        extcoll = collect_extensions_under_module(module, UpnpService)
+        extcoll = collect_extensions_under_module(module, UpnpServiceProxy)
         for extname, extcls in extcoll:
             if (hasattr(extcls, "SERVICE_ID") and hasattr(extcls, "SERVICE_TYPE")):
                 extkey = self._generate_extension_key(getattr(extcls, "SERVICE_ID"), getattr(extcls, "SERVICE_TYPE"))

@@ -18,9 +18,9 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = ""
 
 from akit.extensible import LoadableExtension
-from akit.integration.upnp.services.upnpservice import UpnpService
+from akit.integration.upnp.services.upnpserviceproxy import UpnpServiceProxy
 
-class RenderingControlService(UpnpService, LoadableExtension):
+class RenderingControlService(UpnpServiceProxy, LoadableExtension):
     """
     """
 

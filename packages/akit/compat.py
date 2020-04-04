@@ -58,11 +58,11 @@ def import_file(name, loc):
     return mod
 
 def bytes_cast(val):
-    if isinstance(str):
+    if isinstance(val, str):
         val = val.encode('utf-8')
     return val
 
 def str_cast(val):
-    if isinstance(str):
+    if isinstance(val, bytes):
         val = val.decode('utf-8')
     return val

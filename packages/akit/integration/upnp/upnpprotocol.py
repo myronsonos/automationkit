@@ -72,7 +72,7 @@ class UpnpProtocol(ssdp.SimpleServiceDiscoveryProtocol):
 
     def request_notify(self, request, addr):
         print(request, addr)
-        print()
+        print() 
         return
 
     def request_other(self, request, addr):
