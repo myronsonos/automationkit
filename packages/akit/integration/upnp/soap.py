@@ -3,6 +3,7 @@
 from xml.etree.ElementTree import Element, SubElement, QName
 from xml.etree.ElementTree import tostring as xml_tostring
 from xml.etree.ElementTree import fromstring as xml_fromstring
+from xml.etree.ElementTree import register_namespace
 
 from akit.compat import bytes_cast, str_cast
 from akit.exceptions import AKitCommunicationsProtocolError
@@ -44,6 +45,8 @@ class SoapProcessor:
         return
 
     def create_request(self, action_name: str, arguments: dict, encoding=None, envelope_attrib=None, typed=None):
+
+        register_namespace('', None)
 
         if encoding is None:
             encoding = self._encoding
@@ -97,6 +100,8 @@ class SoapProcessor:
 
     def create_response(self, action_name: str, arguments: dict, encoding=None, envelope_attrib=None, typed=None):
 
+        register_namespace('', None)
+
         if encoding is None:
             encoding = self._encoding
         if envelope_attrib is None:
@@ -148,6 +153,8 @@ class SoapProcessor:
 
     def parse_response(self, action_name, content, encoding=None, envelope_attrib=None, typed=None):
 
+        register_namespace('', None)
+
         if encoding is None:
             encoding = self._encoding
         if envelope_attrib is None:
@@ -174,7 +181,7 @@ class SoapProcessor:
         if resp_body is None:
             msg = ('Returned XML did not include an element which matches namespace %r and tag name'
                    ' \'%sResponse\'.' % (typed, action_name))
-            print(msg + '\n' + xml_tostring(xml, pretty_print=True, short_empty_elements=False).decode('utf8'))
+            print(msg + '\n' + xml_tostring(xml, short_empty_elements=False).decode('utf8'))
             raise SOAPProtocolError(msg)
 
         # Sometimes devices return XML strings as their argument values without escaping them with

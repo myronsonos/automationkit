@@ -45,6 +45,8 @@ class UpnpProtocol(ssdp.SimpleServiceDiscoveryProtocol):
     }
 
     def __init__(self, notifyQueue, responseQueue):
+        if responseQueue is None:
+            print("oops")
         self._notifyQueue = notifyQueue
         self._responseQueue = responseQueue
         return
@@ -62,6 +64,8 @@ class UpnpProtocol(ssdp.SimpleServiceDiscoveryProtocol):
             self.request_other(ssdp.SSDPRequest.parse(data), addr)
 
     def response_received(self, response, addr):
+        if self._responseQueue is None:
+            print("oops")
         self._responseQueue.put_nowait((response, addr))
         return
 
