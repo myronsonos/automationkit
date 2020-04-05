@@ -33,7 +33,6 @@ class ContentDirectoryService(UpnpServiceProxy, LoadableExtension):
 
     def Browse(self, ObjectID: str = "0", BrowseFlag: str = "BrowseDirectChildren", Filter: str = "*", StartingIndex: int = 0, RequestedCount: int = 10, SortCriteria: str = None):
         """
-
         Returns:
             { 'Result': ?, 'NumberReturned': ?, 'TotalMatches': ?, 'UpdateID': ? }
         """
