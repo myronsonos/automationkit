@@ -24,6 +24,8 @@ class SonosDevice(UpnpRootDevice):
     """
 
     def __init__(self):
+        super(SonosDevice, self).__init__()
+
         self._bood_id = None
         self._boot_seq = None
         self._household = None

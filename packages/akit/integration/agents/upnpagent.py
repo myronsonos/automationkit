@@ -93,10 +93,20 @@ class UpnpAgent:
 
         return
 
+    @property
     def children(self):
         """
         """
-        return
+        children = []
+
+        self._lock.acquire()
+        try:
+            for nxtk, nxtv in self._children.items():
+                children.append(nxtv)
+        finally:
+            self._lock.release()
+
+        return children
 
     def begin_search(self):
         """

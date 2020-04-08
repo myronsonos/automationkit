@@ -18,10 +18,10 @@ __license__ = ""
 
 from akit.extensible import LoadableExtension
 
-from akit.integration.upnp.devices.upnpdevice import UpnpDevice
+from akit.integration.upnp.extensions.devices.sonos.sonosdevice import SonosDevice
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 
-class SonosDeviceZpS17(UpnpRootDevice, LoadableExtension):
+class SonosDeviceZpS17(SonosDevice, LoadableExtension):
     """
     """
 

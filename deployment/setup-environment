@@ -101,6 +101,12 @@ if [ ! -f $INITIALIZED_FILE ]; then
     pip install sqlalchemy_utils
     pip install ssdp
 
+    # Website and REST service dependencies
+    pip install gunicorn
+    pip install werkzeug==0.16.1
+    pip install flask
+    pip install flask-restplus
+
     # Install dependencies into the virtual environment
     pip install -r $REQUIREMENTS_FILE
 

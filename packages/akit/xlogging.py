@@ -156,4 +156,3 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
 
     return
 
-    

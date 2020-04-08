@@ -62,6 +62,10 @@ class UpnpRootDevice(UpnpDevice):
         return self._cachecontrol
 
     @property
+    def description(self):
+        return self._description
+
+    @property
     def devices(self):
         return self._devices.values()
 
@@ -92,6 +96,14 @@ class UpnpRootDevice(UpnpDevice):
     @property
     def URLBase(self):
         return self._urlBase
+
+    def to_dict(self):
+        dval = self._description.to_dict()
+        return dval
+
+    def to_json(self):
+        json_str = self._description.to_json()
+        return json_str
 
     def initialize(self, location: str, devinfo: dict):
         """

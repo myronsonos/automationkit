@@ -46,16 +46,14 @@
             "justMyCode": false
         },
         {
-            "name": "Coherence: Service",
+            "name": "Service: Automation Controller",
             "type": "python",
             "request": "launch",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/thirdparty/coherence-src:${workspaceFolder}/thirdparty/twisted-src/src"
+                "PYTHONPATH": "${workspaceFolder}/packages:${workspaceFolder}/service"
             },
-            "program": "${workspaceFolder}/thirdparty/coherence-src/bin/coherence",
-            "args": [
-                "--configfile=${workspaceFolder}/thirdparty/coherence-src/docs/coherence.conf.example"
-            ],
+            "program": "${workspaceFolder}/service/app_controller.py",
+            "args": [],
             "console": "integratedTerminal",
             "justMyCode": false
         },

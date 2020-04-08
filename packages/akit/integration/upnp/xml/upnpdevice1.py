@@ -17,7 +17,11 @@ __email__ = "myron.walker@automationmojo.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = ""
 
-from xml.etree.ElementTree import fromstring as parsefromstring
+import json
+
+from xml.etree.ElementTree import fromstring as xml_fromstring
+from xml.etree.ElementTree import tostring as xml_tostring
+from xml.etree.ElementTree import register_namespace
 from xml.etree.ElementTree import dump as dump_node
 from xml.etree.ElementTree import ElementTree
 
@@ -91,8 +95,34 @@ class UpnpDevice1Icon:
     def xmlNode(self):
         return self._iconNode
 
+    def to_dict(self):
+        dval = {
+            "depth": self.depth,
+            "height": self.height,
+            "id": self.id,
+            "url": self.url,
+            "mimetype": self.mimetype,
+            "width": self.width
+        }
+        return dval
+
+    def to_json(self):
+        dval = self.to_dict()
+        json_str = json.dumps(dval, indent=4)
+        return json_str
+
     def _find_value(self, path, namespaces=None):
-        rtnval = self._iconNode.find(path, namespaces=self._namespaces).text
+        rtnval = None
+        try:
+            valNode = self._iconNode.find(path, namespaces=self._namespaces)
+            if valNode is not None:
+                rtnval = valNode.text
+        except Exception as err:
+            print(str(err))
+            register_namespace('', None)
+            xmlcontent = xml_tostring(self._iconNode)
+            print(xmlcontent)
+            print("")
         return rtnval
 
 class UpnpDevice1Service:
@@ -139,6 +169,21 @@ class UpnpDevice1Service:
     def xmlNode(self):
         return self._svcNode
 
+    def to_dict(self):
+        dval = {
+            "controlURL": self.controlURL,
+            "eventSubURL": self.eventSubURL,
+            "SCPDURL": self.SCPDURL,
+            "serviceId": self.serviceId,
+            "serviceType": self.serviceType
+        }
+        return dval
+
+    def to_json(self):
+        dval = self.to_dict()
+        json_str = json.dumps(dval, indent=4)
+        return json_str
+
     def _find_value(self, path, namespaces=None):
         rtnval = None
         valNode = self._svcNode.find(path, namespaces=self._namespaces)
@@ -181,8 +226,30 @@ class UpnpDevice1SpecVersion:
     def xmlNode(self):
         return self._verNode
 
+    def to_dict(self):
+        dval = {
+            "major": self.major,
+            "minor": self.minor
+        }
+        return dval
+
+    def to_json(self):
+        dval = self.to_dict()
+        json_str = json.dumps(dval, indent=4)
+        return json_str
+
     def _find_value(self, path, namespaces=None):
-        rtnval = self._verNode.find(path, namespaces=self._namespaces).text
+        rtnval = None
+        try:
+            valNode = self._iconNode.find(path, namespaces=self._namespaces)
+            if valNode is not None:
+                rtnval = valNode.text
+        except Exception as err:
+            print(str(err))
+            register_namespace('', None)
+            xmlcontent = xml_tostring(self._iconNode)
+            print(xmlcontent)
+            print("")
         return rtnval
 
 
@@ -337,6 +404,57 @@ class UpnpDevice1Device:
     def xmlNode(self):
         return self._devNode
 
+    def to_dict(self):
+
+        icon_list = []
+        for icon in self.iconList:
+            dval = icon.to_dict()
+            icon_list.append(dval)
+
+        service_list = []
+        for svc in self.serviceList:
+            dval = svc.to_dict()
+            service_list.append(dval)
+
+        device_list = []
+        for dvc in self.deviceList:
+            dval = dvc.to_dict()
+            device_list.append(dval)
+
+        dval = {
+            "deviceType": self.deviceType,
+            "friendlyName": self.friendlyName,
+            "manufacturer": self.manufacturer,
+            "manufacturerURL": self.manufacturerURL,
+            "modelDescription": self.modelDescription,
+            "modelName": self.modelName,
+            "modelNumber": self.modelNumber,
+            "modelURL": self.modelURL,
+            "serialNumber": self.serialNumber,
+            "UDN": self.UDN,
+            "UPC": self.UPC,
+            "presentationURL": self.presentationURL,
+            "deviceList": device_list,
+            "iconList": icon_list,
+            "serviceList": service_list
+        }
+        return dval
+
+    def to_json(self):
+        dval = self.to_dict()
+        json_str = json.dumps(dval, indent=4)
+        return json_str
+
     def _find_value(self, path, namespaces=None):
-        rtnval = self._devNode.find(path, namespaces=self._namespaces).text
+        rtnval = None
+        try:
+            valNode = self._devNode.find(path, namespaces=self._namespaces)
+            if valNode is not None:
+                rtnval = valNode.text
+        except Exception as err:
+            print(str(err))
+            register_namespace('', None)
+            xmlcontent = xml_tostring(self._devNode)
+            print(xmlcontent)
+            print("")
         return rtnval
