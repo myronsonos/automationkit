@@ -2,8 +2,10 @@
 from flask_restplus import Namespace, Resource
 from flask_restplus.reqparse import RequestParser
 
+from akit.integration.landscaping import Landscape
 from akit.integration.agents.upnpagent import UpnpAgent
 
+landscape = Landscape()
 upnp_agent = UpnpAgent()
 
 DEVICES_NAMESPACE_PATH = "/devices"
@@ -17,16 +19,18 @@ class AllDevicesCollection(Resource):
         """
             Returns a list of devices
         """
-        items = []
+        expected_upnp_devices = landscape.get_upnp_devices()
+
+        found_upnp_devices = []
 
         for child in upnp_agent.children:
-            cinfo = child.to_dict()
-            items.append(cinfo)
+            cinfo = child.to_dict(brief=True)
+            found_upnp_devices.append(cinfo)
 
         rtndata = {
             "status": "success",
-            "items": items,
-            "count": len(items)
+            "expected": expected_upnp_devices,
+            "found": found_upnp_devices
         }
 
         return rtndata

@@ -37,7 +37,8 @@ from xml.etree.ElementTree import register_namespace
 
 from akit.integration import upnp as upnp_module
 
-from akit.exceptions import AKitSemanticError
+from akit.exceptions import AKitSemanticError, AKitTimeoutError
+
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 from akit.integration.upnp.upnpfactory import UpnpFactory
 from akit.integration.upnp.upnpprotocol import MSearchKeys, UpnpProtocol
@@ -75,21 +76,25 @@ class UpnpAgent:
         return cls._instance
 
     def __init__(self, iface=None):
-        self._iface = iface
-        self._factory = UpnpFactory()
-        self._children = {}
-        self._lock = threading.RLock()
-        self._egate = None
-        self._listen_thread = None
-        self._notify_thread = None
-        self._notify_queue = None
-        self._response_thread = None
-        self._response_queue = None
 
-        self._listen_loop = None
-        self._connect = None
-        self._transport = None
-        self._protocol = None
+        this_type = type(self)
+        if not this_type._initialized:
+            this_type._initialized = True
+            self._iface = iface
+            self._factory = UpnpFactory()
+            self._children = {}
+            self._lock = threading.RLock()
+            self._egate = None
+            self._listen_thread = None
+            self._notify_thread = None
+            self._notify_queue = None
+            self._response_thread = None
+            self._response_queue = None
+
+            self._listen_loop = None
+            self._connect = None
+            self._transport = None
+            self._protocol = None
 
         return
 
@@ -114,69 +119,6 @@ class UpnpAgent:
         notify = ssdp.SSDPRequest('M-SEARCH', headers=UpnpProtocol.HEADERS)
         notify.sendto(self._transport, (UpnpProtocol.MULTICAST_ADDRESS, UpnpProtocol.PORT))
         return
-
-    def start(self):
-        """
-        """
-        if self._listen_loop:
-            raise AKitSemanticError("The UpnpAgent was already started.")
-
-        self._egate = threading.Semaphore(3)
-
-        try:
-            sgate = threading.Event()
-
-            sgate.clear()
-            self._notify_thread = threading.Thread(name="UpnpAgent(%s) Notify" % self._iface, target=self._notify_thread_entry, 
-                                                   daemon=True, args=(sgate,))
-            self._notify_thread.start()
-            sgate.wait()
-
-            sgate.clear()
-            self._response_thread = threading.Thread(name="UpnpAgent(%s) Response" % self._iface, target=self._response_thread_entry,
-                                                    daemon=True, args=(sgate,))
-            self._response_thread.start()
-            sgate.wait()
-
-            sgate.clear()
-            self._listen_thread = threading.Thread(name="UpnpAgent(%s) Listen" % self._iface, target=self._listen_thread_entry,
-                                                   daemon=True, args=(sgate,))
-            self._listen_thread.start()
-            sgate.wait()
-        except:
-            for i in range(3):
-                self._egate.release()
-            raise
-
-        return
-
-    def wait(self, timeout=None):
-        # We need to be able to get 3 acquires to ensure all three threads
-        # have exited
-        acquires = 0
-        try:
-            self._egate.acquire(timeout=timeout)
-            acquires += 1
-            try:
-                self._egate.acquire(timeout=timeout)
-                acquires += 1
-                try:
-                    self._egate.acquire(timeout=timeout)
-                    acquires += 1
-                except TimeoutError:
-                    if acquires > 0:
-                        self._egate.release()
-            except TimeoutError:
-                if acquires > 0:
-                    self._egate.release()
-        except TimeoutError:
-            if acquires > 0:
-                self._egate.release()
-        return
-
-    def _create_root_device(self, manufacturer: str, modelNumber: str, modelDescription: str):
-        dev = self._factory.create_root_device_instance(manufacturer, modelNumber, modelDescription)
-        return dev
 
     def normalize_name(self, name):
         normal_chars = [ nc for nc in name if str.isalnum(nc) ]
@@ -273,6 +215,197 @@ class UpnpAgent:
 
         return
 
+    def start(self):
+        """
+        """
+        if self._listen_loop:
+            raise AKitSemanticError("The UpnpAgent was already started.")
+
+        self._egate = threading.Semaphore(3)
+
+        try:
+            sgate = threading.Event()
+
+            sgate.clear()
+            self._notify_thread = threading.Thread(name="UpnpAgent(%s) Notify" % self._iface, target=self._thread_entry_notify, 
+                                                   daemon=True, args=(sgate,))
+            self._notify_thread.start()
+            sgate.wait()
+
+            sgate.clear()
+            self._response_thread = threading.Thread(name="UpnpAgent(%s) Response" % self._iface, target=self._thread_entry_response,
+                                                    daemon=True, args=(sgate,))
+            self._response_thread.start()
+            sgate.wait()
+
+            sgate.clear()
+            self._listen_thread = threading.Thread(name="UpnpAgent(%s) Listen" % self._iface, target=self._thread_entry_listen,
+                                                   daemon=True, args=(sgate,))
+            self._listen_thread.start()
+            sgate.wait()
+        except:
+            for i in range(3):
+                self._egate.release()
+            raise
+
+        return
+
+    def wait_for_devices(self, upnp_hint_list: list, timeout: int = 300, retry: int = 30):
+
+        hint_list_len = len(upnp_hint_list)
+
+        have_count = 0
+        for upnp_hint in upnp_hint_list:
+            if "MACAddress" in upnp_hint:
+                have_count += 1
+
+        if have_count == hint_list_len:
+            # Collect all the MAC addresses for the upnp devices
+            mac_addresses = [ upnp_hint["MACAddress"] for upnp_hint in upnp_hint_list ]
+            self._wait_for_devices_by_mac_address(mac_addresses, timeout=timeout, retry=retry)
+            return
+
+        have_count = 0
+        for upnp_hint in upnp_hint_list:
+            if "serialNumber" in upnp_hint:
+                have_count += 1
+
+        if have_count == hint_list_len:
+            # Collect all the MAC addresses for the upnp devices
+            serial_numbers = [ upnp_hint["serialNumber"] for upnp_hint in upnp_hint_list ]
+            self._wait_for_devices_by_serial_number(serial_numbers, timeout=timeout, retry=retry)
+            return
+
+        # If the hints provided did not provide accurate enough information to perform the wait, raise
+        # an exceptions.
+        err_msg = "The upnp hints provided did not have a common supported lookup key. (MACAddress, serialNumber)"
+        raise AKitSemanticError(err_msg)
+
+    def wait_for_shutdown(self, timeout=None):
+        # We need to be able to get 3 acquires to ensure all three threads
+        # have exited
+        acquires = 0
+        try:
+            self._egate.acquire(timeout=timeout)
+            acquires += 1
+            try:
+                self._egate.acquire(timeout=timeout)
+                acquires += 1
+                try:
+                    self._egate.acquire(timeout=timeout)
+                    acquires += 1
+                except TimeoutError:
+                    if acquires > 0:
+                        self._egate.release()
+            except TimeoutError:
+                if acquires > 0:
+                    self._egate.release()
+        except TimeoutError:
+            if acquires > 0:
+                self._egate.release()
+        return
+
+    def _create_root_device(self, manufacturer: str, modelNumber: str, modelDescription: str):
+        dev = self._factory.create_root_device_instance(manufacturer, modelNumber, modelDescription)
+        return dev
+
+    def _thread_entry_listen(self, sgate):
+
+        self._egate.acquire()
+
+        try:
+            try:
+                self._listen_loop = asyncio.new_event_loop()
+
+                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+
+                multicast_address = UpnpProtocol.MULTICAST_ADDRESS
+                multicast_port = UpnpProtocol.PORT
+                multicast_group = ('0.0.0.0', UpnpProtocol.PORT)
+
+                # Set us up to be a member of the group, this allows us to receive all the packets
+                # that are sent to the group
+                req = struct.pack("=4sl", socket.inet_aton(multicast_address), socket.INADDR_ANY)
+                sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, req)
+                sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.INADDR_ANY)
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                sock.bind(multicast_group)
+
+                def protocol_factory():
+                    return UpnpProtocol(self._notify_queue, self._response_queue)
+
+                self._connect = self._listen_loop.create_datagram_endpoint(protocol_factory, sock=sock)
+                self._transport, self._protocol = self._listen_loop.run_until_complete(self._connect)
+
+            finally:
+                # Release the gate so the caller to 'start' will return
+                sgate.set()
+
+            self._listen_loop.run_forever()
+        except KeyboardInterrupt as kerr:
+            raise
+        finally:
+            if self._transport is not None:
+                self._transport.close()
+            if self._connect is not None:
+                self._connect.close()
+
+            self._egate.release()
+
+        return
+
+    def _thread_entry_notify(self, sgate):
+
+        self._egate.acquire()
+
+        try:
+            sgate.set()
+
+            self._notify_queue = queue.Queue()
+            while True:
+                request, addr = self._notify_queue.get()
+
+                print(request)
+                print()
+
+                self._notify_queue.task_done()
+        finally:
+            self._egate.release()
+
+        return
+
+    def _thread_entry_response(self, sgate):
+
+        self._egate.acquire()
+
+        try:
+            sgate.set()
+
+            self._response_queue = queue.Queue()
+            while True:
+                response, addr = self._response_queue.get()
+
+                lines = str(response).splitlines(False)
+                for nxtline in lines:
+                    print("    %s" % nxtline)
+                print()
+
+                reason = response.reason
+                status_code = response.status_code
+                version = response.version
+                headers = dict([ (k.upper(), v) for k, v in response.headers])
+
+                # Process the packet
+                location = headers[MSearchKeys.LOCATION]
+
+                self._update_root_device(location, headers)
+
+                self._response_queue.task_done()
+        finally:
+            self._egate.release()
+
+        return
+
     def _update_root_device(self, location, deviceinfo: dict):
         """
         """
@@ -293,7 +426,7 @@ class UpnpAgent:
             urlBase = None
             baseURLNode = devNode.find("URLBase", namespaces=namespaces)
             if baseURLNode is not None:
-                urlBase = urlBaseNode.text
+                urlBase = baseURLNode.text
 
             url_parts = urlparse(location)
             host = url_parts.netloc
@@ -351,104 +484,69 @@ class UpnpAgent:
 
         return
 
-    def _listen_thread_entry(self, sgate):
+    def _wait_for_devices_by_mac_address(self, mac_addresses: list, timeout: int = 300, retry: int = 30):
 
-        self._egate.acquire()
+        now_time = time.time()
+        begin_time = now_time
+        end_time = now_time + timeout
 
-        try:
-            try:
-                self._listen_loop = asyncio.new_event_loop()
+        while True:
+            not_found = [mac for mac in mac_addresses]
 
-                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+            for dev in self.children:
+                mac_addr = dev.MACAddress
+                if mac_addr is not None and mac_addr in not_found:
+                    not_found.remove(mac_addr)
 
-                multicast_address = UpnpProtocol.MULTICAST_ADDRESS
-                multicast_port = UpnpProtocol.PORT
-                multicast_group = ('0.0.0.0', UpnpProtocol.PORT)
+            # If we found all the devices, then break
+            if len(not_found) == 0:
+                break
 
-                # Set us up to be a member of the group, this allows us to receive all the packets
-                # that are sent to the group
-                req = struct.pack("=4sl", socket.inet_aton(multicast_address), socket.INADDR_ANY)
-                sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, req)
-                sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.INADDR_ANY)
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                sock.bind(multicast_group)
+            # Restart the search
+            self.begin_search()
 
-                def protocol_factory():
-                    return UpnpProtocol(self._notify_queue, self._response_queue)
+            time.sleep(retry)
 
-                self._connect = self._listen_loop.create_datagram_endpoint(protocol_factory, sock=sock)
-                self._transport, self._protocol = self._listen_loop.run_until_complete(self._connect)
-
-            finally:
-                # Release the gate so the caller to 'start' will return
-                sgate.set()
-
-            self._listen_loop.run_forever()
-        except KeyboardInterrupt as kerr:
-            pass
-        finally:
-            if self._transport is not None:
-                self._transport.close()
-            if self._connect is not None:
-                self._connect.close()
-
-            self._egate.release()
+            now_time = time.time()
+            if now_time > end_time:
+                err_msg = "Timeout waiting for devices to respond to M-SEARCH.  MACAddress List:\n"
+                for mac_addr in mac_addresses:
+                    err_msg = "%s    %s\n" % (err_msg, mac_addr)
+                raise AKitTimeoutError(err_msg)
 
         return
 
-    def _notify_thread_entry(self, sgate):
+    def _wait_for_devices_by_serial_number(self, serial_numbers: list, timeout: int = 300, retry: int = 30):
 
-        self._egate.acquire()
+        now_time = time.time()
+        begin_time = now_time
+        end_time = now_time + timeout
 
-        try:
-            sgate.set()
+        while True:
+            not_found = [ns for sn in serial_numbers]
 
-            self._notify_queue = queue.Queue()
-            while True:
-                request, addr = self._notify_queue.get()
+            for dev in self.children:
+                sn = dev.serialNumber
+                if sn is not None and sn in not_found:
+                    not_found.remove(sn)
 
-                print(request)
-                print()
+            # If we found all the devices, then break
+            if len(not_found) == 0:
+                break
 
-                self._notify_queue.task_done()
-        finally:
-            self._egate.release()
+            # Restart the search
+            self.begin_search()
 
-        return
+            time.sleep(retry)
 
-    def _response_thread_entry(self, sgate):
-
-        self._egate.acquire()
-
-        try:
-            sgate.set()
-
-            self._response_queue = queue.Queue()
-            while True:
-                response, addr = self._response_queue.get()
-
-                lines = str(response).splitlines(False)
-                for nxtline in lines:
-                    print("    %s" % nxtline)
-                print()
-
-                reason = response.reason
-                status_code = response.status_code
-                version = response.version
-                headers = dict([ (k.upper(), v) for k, v in response.headers])
-
-                # Process the packet
-                location = headers[MSearchKeys.LOCATION]
-
-                self._update_root_device(location, headers)
-
-                self._response_queue.task_done()
-        finally:
-            self._egate.release()
+            now_time = time.time()
+            if now_time > end_time:
+                err_msg = "Timeout waiting for devices to respond to M-SEARCH.  serialNumber List:\n"
+                for sn in serial_numbers:
+                    err_msg = "%s    %s\n" % (err_msg, sn)
+                raise AKitTimeoutError(err_msg)
 
         return
-
-
 
 if __name__ == "__main__":
     agent = UpnpAgent("wlo1")
@@ -456,6 +554,6 @@ if __name__ == "__main__":
     agent.begin_search()
     time.sleep(60 * 5)
     agent.begin_search()
-    agent.wait()
+    agent.wait_for_shutdown()
     pass
 

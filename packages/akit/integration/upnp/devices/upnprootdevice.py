@@ -17,6 +17,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = ""
 
 import requests
+import threading
 import traceback
 
 from urllib.parse import urlparse
@@ -55,6 +56,8 @@ class UpnpRootDevice(UpnpDevice):
 
         self._devices = {}
         self._services = {}
+
+        self._lock = threading.RLock()
         return
 
     @property
@@ -63,7 +66,13 @@ class UpnpRootDevice(UpnpDevice):
 
     @property
     def description(self):
-        return self._description
+        desc = None
+        self._lock.acquire()
+        try:
+            desc = self._description
+        finally:
+            self._lock.release()
+        return desc
 
     @property
     def devices(self):
@@ -82,12 +91,22 @@ class UpnpRootDevice(UpnpDevice):
         return self._location
 
     @property
+    def MACAddress(self):
+        desc = self.description
+        return desc.MACAddress
+
+    @property
     def server(self):
         return self._server
 
     @property
     def services(self):
         return self._services.values()
+
+    @property
+    def serialNumber(self):
+        desc = self.description
+        return desc.serialNumber
 
     @property
     def specVersion(self):
@@ -97,12 +116,12 @@ class UpnpRootDevice(UpnpDevice):
     def URLBase(self):
         return self._urlBase
 
-    def to_dict(self):
-        dval = self._description.to_dict()
+    def to_dict(self, brief=False):
+        dval = self._description.to_dict(brief=brief)
         return dval
 
-    def to_json(self):
-        json_str = self._description.to_json()
+    def to_json(self, brief=False):
+        json_str = self._description.to_json(brief=brief)
         return json_str
 
     def initialize(self, location: str, devinfo: dict):
@@ -151,9 +170,9 @@ class UpnpRootDevice(UpnpDevice):
         self._extra = extrainfo
         return
 
-    def _populate_embedded_devices(self, factory):
+    def _populate_embedded_devices(self, factory, description):
 
-        for deviceInfo in self._description.deviceList:
+        for deviceInfo in description.deviceList:
             manufacturer = deviceInfo.manufacturer
             modelNumber = deviceInfo.modelNumber
             modelDescription = deviceInfo.modelDescription
@@ -169,9 +188,9 @@ class UpnpRootDevice(UpnpDevice):
             dev_inst.update_description(self._host, self._urlBase, deviceInfo)
         return
 
-    def _populate_services(self, factory):
+    def _populate_services(self, factory, description):
 
-        for serviceInfo in self._description.serviceList:
+        for serviceInfo in description.serviceList:
             serviceId = serviceInfo.serviceId
             serviceType = serviceInfo.serviceType
 
@@ -188,11 +207,19 @@ class UpnpRootDevice(UpnpDevice):
         return
 
     def _process_device_node(self, factory, devNode, namespaces=None):
-        self._description = UpnpDevice1Device(devNode, namespaces=namespaces)
 
-        self._populate_services(factory)
+        description = UpnpDevice1Device(devNode, namespaces=namespaces)
 
-        self._populate_embedded_devices(factory)
+        self._populate_services(factory, description)
+
+        self._populate_embedded_devices(factory, description)
+
+        # Lock and then swap out the description
+        self._lock.acquire()
+        try:
+            self._description = description
+        finally:
+            self._lock.release()
 
         return
 

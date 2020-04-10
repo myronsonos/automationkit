@@ -17,9 +17,14 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = ""
 
 import inspect
+import json
+import traceback
 
 from akit.compat import import_by_name
 from akit.environment.variables import VARIABLES
+from akit.environment.context import Context
+from akit.exceptions import AKitConfigurationError
+from akit.paths import get_expand_path
 
 class LandscapeDescription:
     """
@@ -57,7 +62,7 @@ class Landscape:
         """
         if cls._instance is None:
             if cls._landscape_type is None:
-                cls._instance = super(Type, cls).__new__(cls)
+                cls._instance = super(Landscape, cls).__new__(cls)
             else:
                 cls._instance = super(Landscape, cls._landscape_type).__new__(cls._landscape_type)
             # Put any initialization here.
@@ -70,8 +75,27 @@ class Landscape:
         this_cls = type(self)
         if not this_cls._initialized:
             this_cls._initialized = True
+            self._landscape_info = None
             self.initialize()
         return
+
+    @property
+    def landscape_info(self):
+        return self._landscape_info
+
+    def get_upnp_devices(self):
+        """
+            Returns a list of MAC addresses from the 'devices' list.
+        """
+        upnp_device_list = []
+
+        pod_info = self.landscape_info["pod"]
+        for devinfo in pod_info["devices"]:
+            dev_type = devinfo["deviceType"]
+            if dev_type == "network/upnp":
+                upnp_device_list.append(devinfo)
+
+        return upnp_device_list
 
     def initialize(self):
         """
@@ -83,6 +107,17 @@ class Landscape:
         self._integrations = {}
 
         self.landscape_description.register_integration_points(self)
+
+        context = Context()
+        try:
+            landscape_file = get_expand_path(context.lookup("/environment/configuration/paths/landscape"))
+            with open(landscape_file, 'r') as lf:
+                lfcontent = lf.read()
+                self._landscape_info = json.loads(lfcontent)
+        except Exception as xcpt:
+            err_msg = "Error loading the landscape file from (%s)" % landscape_file
+            raise AKitConfigurationError(err_msg) from xcpt
+
         return
 
     def diagnostic(self, diaglabel, diags):
@@ -114,6 +149,9 @@ class Landscape:
         else:
             raise AKitSemanticError("A mixin with the role %r was already registered." % role)
 
+        return
+
+    def _validate_landscape(self, linfo):
         return
 
 def is_subclass_of_landscape(cand_type):

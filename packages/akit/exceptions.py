@@ -94,11 +94,6 @@ class AKitOutOfScopeError(AKitRuntimeError):
         each scope individually.
     """
 
-class AKitScopeEntryError(AKitRuntimeError):
-    """
-        This error is raised when a ScopeMixIn was unable to complete the entry of a scope.
-    """
-
 class AKitRequestStopError(AKitRuntimeError):
     """
         This error is raised when a test indicates it wants to stop an automation run.  The `TestSequencer`
@@ -107,15 +102,20 @@ class AKitRequestStopError(AKitRuntimeError):
         and will stop the test run if the runtime context indicates that stopping is allowed.
     """
 
+class AKitScopeEntryError(AKitRuntimeError):
+    """
+        This error is raised when a ScopeMixIn was unable to complete the entry of a scope.
+    """
+
 class AKitSkipError(AKitRuntimeError):
     """
         This error is raised when a test indicates it wants to be skipped while being run
     """
-    def __init__(self, reason):
-        AKitError.__init__(self, reason)
-        self.reason = reason
-        return
 
+class AKitTimeoutError(AKitRuntimeError):
+    """
+        This error is raised when a timeout occurs
+    """
 
 # ==================================================================================
 #                           SEMANTIC RELATED ERRORS

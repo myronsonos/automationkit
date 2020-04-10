@@ -44,7 +44,7 @@ class UpnpDevice:
     def description(self):
         return self._description
 
-    def _populate_embedded_devices(self):
+    def _populate_embedded_devices(self, factory, description):
         raise AKitNotOverloadedError("UpnpDevice._populate_embedded_devices: must be overridden.")
         return
 
@@ -53,6 +53,6 @@ class UpnpDevice:
             pass
         return
 
-    def _populate_services(self):
+    def _populate_services(self, factory, description):
         raise AKitNotOverloadedError("UpnpDevice._populate_services: must be overridden.")
         return

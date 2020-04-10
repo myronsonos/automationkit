@@ -29,8 +29,9 @@ RUNTIME_CONFIGURATION = {
         "logname": "%(jobtype)s.log"
     },
     "paths": {
-        "runresults": os.sep.join(("~", "aresults", "runresults", "%(starttime)s")),
-        "testresults": os.sep.join(("~", "aresults", "testresults", "%(starttime)s"))
+        "landscape": os.sep.join(("~", "akit", "config", "landscape.json")),
+        "runresults": os.sep.join(("~", "akit", "results", "runresults", "%(starttime)s")),
+        "testresults": os.sep.join(("~", "akit", "results", "testresults", "%(starttime)s"))
     }
 }
 

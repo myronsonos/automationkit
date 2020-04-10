@@ -32,6 +32,9 @@ output_dir, console_level, logfile_level = process_environment_options()
 from akit.environment.context import Context
 
 ctx = Context()
+
+# The environment element holds the resulting variables that are a result of the
+# startup process
 env = ctx.lookup("/environment")
 
 if env["jobtype"] == "unkownjob":

@@ -342,24 +342,25 @@ class UpnpDevice1Device:
         rtnval = self._find_value("friendlyName", namespaces=self._namespaces)
         return rtnval
 
+    @property
+    def MACAddress(self):
+        rtnval = self._find_value("MACAddress", namespaces=self._namespaces)
+        return rtnval
 
     @property
     def manufacturer(self):
         rtnval = self._find_value("manufacturer", namespaces=self._namespaces)
         return rtnval
 
-
     @property
     def manufacturerURL(self):
         rtnval = self._find_value("manufacturerURL", namespaces=self._namespaces)
         return rtnval
 
-
     @property
     def modelDescription(self):
         rtnval = self._find_value("modelDescription", namespaces=self._namespaces)
         return rtnval
-
 
     @property
     def modelName(self):
@@ -371,12 +372,10 @@ class UpnpDevice1Device:
         rtnval = self._find_value("modelNumber", namespaces=self._namespaces)
         return rtnval
 
-
     @property
     def modelURL(self):
         rtnval = self._find_value("modelURL", namespaces=self._namespaces)
         return rtnval
-
 
     @property
     def serialNumber(self):
@@ -388,12 +387,10 @@ class UpnpDevice1Device:
         rtnval = self._find_value("UDN", namespaces=self._namespaces)
         return rtnval
 
-
     @property
     def UPC(self):
         rtnval = self._find_value("UPC", namespaces=self._namespaces)
         return rtnval
-
 
     @property
     def presentationURL(self):
@@ -404,26 +401,12 @@ class UpnpDevice1Device:
     def xmlNode(self):
         return self._devNode
 
-    def to_dict(self):
-
-        icon_list = []
-        for icon in self.iconList:
-            dval = icon.to_dict()
-            icon_list.append(dval)
-
-        service_list = []
-        for svc in self.serviceList:
-            dval = svc.to_dict()
-            service_list.append(dval)
-
-        device_list = []
-        for dvc in self.deviceList:
-            dval = dvc.to_dict()
-            device_list.append(dval)
+    def to_dict(self, brief=False):
 
         dval = {
             "deviceType": self.deviceType,
             "friendlyName": self.friendlyName,
+            "MACAddress": self.MACAddress,
             "manufacturer": self.manufacturer,
             "manufacturerURL": self.manufacturerURL,
             "modelDescription": self.modelDescription,
@@ -433,15 +416,32 @@ class UpnpDevice1Device:
             "serialNumber": self.serialNumber,
             "UDN": self.UDN,
             "UPC": self.UPC,
-            "presentationURL": self.presentationURL,
-            "deviceList": device_list,
-            "iconList": icon_list,
-            "serviceList": service_list
+            "presentationURL": self.presentationURL
         }
+
+        if not brief:
+            device_list = []
+            for dvc in self.deviceList:
+                dval = dvc.to_dict()
+                device_list.append(dval)
+            dval["deviceList"] = device_list
+
+            icon_list = []
+            for icon in self.iconList:
+                dval = icon.to_dict()
+                icon_list.append(dval)
+            dval["iconList"] = icon_list
+
+            service_list = []
+            for svc in self.serviceList:
+                dval = svc.to_dict()
+                service_list.append(dval)
+            dval["serviceList"] = service_list
+
         return dval
 
-    def to_json(self):
-        dval = self.to_dict()
+    def to_json(self, brief=False):
+        dval = self.to_dict(brief=brief)
         json_str = json.dumps(dval, indent=4)
         return json_str
 

@@ -8,6 +8,9 @@ VERSION_NAMESPACE_PATH = "/%d" % VERSION_INTEGER
 API_TITLE = "Software Configuration Management"
 
 from .devices import publish_namespaces as devices_publish_namespaces
+from .jobqueue import publish_namespaces as jobqueue_publish_namespaces
+from .results import publish_namespaces as results_publish_namespaces
+from .status import publish_namespaces as status_publish_namespaces
 
 def apply_namespaces(bp):
 
@@ -21,6 +24,15 @@ def apply_namespaces(bp):
     api.add_namespace(ver_ns, VERSION_NAMESPACE_PATH)
 
     for ns_obj, ns_path in devices_publish_namespaces(VERSION_NAMESPACE_PATH):
+        api.add_namespace(ns_obj, ns_path)
+    
+    for ns_obj, ns_path in jobqueue_publish_namespaces(VERSION_NAMESPACE_PATH):
+        api.add_namespace(ns_obj, ns_path)
+
+    for ns_obj, ns_path in results_publish_namespaces(VERSION_NAMESPACE_PATH):
+        api.add_namespace(ns_obj, ns_path)
+
+    for ns_obj, ns_path in status_publish_namespaces(VERSION_NAMESPACE_PATH):
         api.add_namespace(ns_obj, ns_path)
 
     return

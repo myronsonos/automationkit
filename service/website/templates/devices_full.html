@@ -38,8 +38,8 @@
                     </div>
                     <div class="nav navbar-nav" style="padding-top: 10px">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-primary active"> Status </button>
-                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/devices';"> Devices </button>
+                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/';"> Status </button>
+                            <button type="button" class="btn btn-primary active"> Devices </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/jobs';"> Job Queue </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/results';"> Results </button>
                         </div>
@@ -51,7 +51,59 @@
             </nav>
         </div>
         <div id='section-body'>
-            
+            <div id='application'>
+                <b-card class="mb-3">
+                    <b-card-title>Expected Devices</b-card-title>
+                    <devices-list :device_list="expected"></devices-list>
+                </b-card>
+                <b-card class="mb-3">
+                    <b-card-title>Other Devices</b-card-title>
+                    <devices-list :device_list="other"></devices-list>
+                </b-card>
+            </div>
+            <!-- Load the Application-->
+            <script>
+                new window.Vue({
+                    el: '#application', 
+                    data: {
+                        expected: null,
+                        other: null
+                    },
+                    components: {
+                        'devices-list': window.httpVueLoader('/static/components/DeviceList.vue')
+                    },
+                    mounted () {
+                        var that = this;
+
+                        var qurl = "/api/1/devices";
+                        axios.get(qurl).then(
+                            (response) => {
+                                var expected_list = response.data.expected;
+                                var found_list = response.data.found;
+
+                                var found_lookup = {};
+                                for (fitem in found_list) {
+                                    found_lookup[fitem.MACAddress] = fitem;
+                                }
+
+                                for (eitem in expected_list) {
+                                    if (eitem.MACAddress in found_lookup) {
+                                        eitem.found = true;
+                                    }
+                                    else {
+                                        eitem.found = false;
+                                    }
+
+                                    delete found_lookup[eitem.MACAddress];
+                                }
+
+                                that.expected = expected_list;
+                                that.other = found_lookup.values();
+                            }
+                        );
+                    }
+                });
+            </script>
         </div>
         <div id='section-footer'>
         </div>
