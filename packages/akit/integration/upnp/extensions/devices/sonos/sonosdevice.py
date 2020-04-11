@@ -19,6 +19,133 @@ __license__ = ""
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 
+from akit.integration.upnp.xml.upnpdevice1 import UpnpDevice1Device
+
+class SonosUpnpDevice1Device(UpnpDevice1Device):
+    """
+    """
+
+    @property
+    def ampOnTime(self):
+        rtnval = self._find_value("ampOnTime", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def apiVersion(self):
+        rtnval = self._find_value("apiVersion", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def bassExtension(self):
+        rtnval = self._find_value("bassExtension", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def displayName(self):
+        rtnval = self._find_value("displayName", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def displayVersion(self):
+        rtnval = self._find_value("displayVersion", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def extraVersion(self):
+        rtnval = self._find_value("extraVersion", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def feature1(self):
+        rtnval = self._find_value("feature1", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def feature2(self):
+        rtnval = self._find_value("feature2", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def feature3(self):
+        rtnval = self._find_value("feature3", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def flash(self):
+        rtnval = self._find_value("flash", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def hardwareVersion(self):
+        rtnval = self._find_value("hardwareVersion", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def internalSpeakerSize(self):
+        rtnval = self._find_value("internalSpeakerSize", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def legacyCompatibleVersion(self):
+        rtnval = self._find_value("legacyCompatibleVersion", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def memory(self):
+        rtnval = self._find_value("memory", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def minApiVersion(self):
+        rtnval = self._find_value("minApiVersion", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def minCompatibleVersion(self):
+        rtnval = self._find_value("minCompatibleVersion", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def retailMode(self):
+        rtnval = self._find_value("retailMode", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def roomName(self):
+        rtnval = self._find_value("roomName", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def satGainOffset(self):
+        rtnval = self._find_value("satGainOffset", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def seriesid(self):
+        rtnval = self._find_value("seriesid", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def softwareVersion(self):
+        rtnval = self._find_value("softwareVersion", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def swGen(self):
+        rtnval = self._find_value("swGen", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def variant(self):
+        rtnval = self._find_value("variant", namespaces=self._namespaces)
+        return rtnval
+
+    @property
+    def zoneType(self):
+        rtnval = self._find_value("zoneType", namespaces=self._namespaces)
+        return rtnval
+
+
 class SonosDevice(UpnpRootDevice):
     """
     """
@@ -35,11 +162,11 @@ class SonosDevice(UpnpRootDevice):
         return
 
     @property
-    def boot_id(self):
+    def bootId(self):
         return self._bood_id
 
     @property
-    def boot_seq(self):
+    def bootSeq(self):
         return self._boot_seq
 
     @property
@@ -47,7 +174,7 @@ class SonosDevice(UpnpRootDevice):
         return self._household
 
     @property
-    def smart_speaker(self):
+    def smartSpeaker(self):
         return self._smart_speaker
 
     @property
@@ -55,7 +182,7 @@ class SonosDevice(UpnpRootDevice):
         return self._variant
 
     @property
-    def wifimode(self):
+    def wifiMode(self):
         return self._wifimode
 
     def _consume_upnp_extra(self, extrainfo):
@@ -76,8 +203,12 @@ class SonosDevice(UpnpRootDevice):
         self._extra = extrainfo
         return
 
+    def _create_device_description_node(self, devNode, namespaces=None):
+        dev_desc_node = SonosUpnpDevice1Device(devNode, namespaces=namespaces)
+        return dev_desc_node
+
     def _process_embedded_device_node(self, devNode, namespaces=None):
-        dev = UpnpDevice1Device(child, namespaces=namespaces)
+        dev = UpnpDevice1Device(devNode, namespaces=namespaces)
         return dev
 
     def _process_other_node(self, otherNode, namespaces=None):
@@ -86,3 +217,15 @@ class SonosDevice(UpnpRootDevice):
     def _process_servicelist_node(self, listNode, namespaces=None):
         self._process_servicelist_node(self, listNode, namespaces=namespaces)
         return
+
+    def to_dict(self, brief=False):
+        dval = super(SonosDevice, self).to_dict(brief=brief)
+
+        dval["bootId"] = self.bootId
+        dval["bootSeq"] = self.bootSeq
+        dval["household"] = self.household
+        dval["smartSpeaker"] = self.smartSpeaker
+        dval["variant"] = self.variant
+        dval["wifiMode"] = self.wifiMode
+
+        return dval

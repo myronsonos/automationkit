@@ -403,45 +403,52 @@ class UpnpDevice1Device:
 
     def to_dict(self, brief=False):
 
-        dval = {
-            "deviceType": self.deviceType,
-            "friendlyName": self.friendlyName,
-            "MACAddress": self.MACAddress,
-            "manufacturer": self.manufacturer,
-            "manufacturerURL": self.manufacturerURL,
-            "modelDescription": self.modelDescription,
-            "modelName": self.modelName,
-            "modelNumber": self.modelNumber,
-            "modelURL": self.modelURL,
-            "serialNumber": self.serialNumber,
-            "UDN": self.UDN,
-            "UPC": self.UPC,
-            "presentationURL": self.presentationURL
-        }
+        dval = {}
 
+        for nxt_child in self._devNode:
+            # We only use the generic value processing for
+            # children that are singular
+            if len(nxt_child) == 0:
+                nxt_tag_full = nxt_child.tag
+                start_index = nxt_tag_full.find("}") + 1
+                nxt_tag = nxt_tag_full[start_index:]
+                dval[nxt_tag] = nxt_child.text
+
+        firstIcon = None
         if not brief:
             device_list = []
             for dvc in self.deviceList:
-                dval = dvc.to_dict()
-                device_list.append(dval)
+                lival = dvc.to_dict()
+                device_list.append(lival)
             dval["deviceList"] = device_list
 
             icon_list = []
             for icon in self.iconList:
-                dval = icon.to_dict()
-                icon_list.append(dval)
+                lival = icon.to_dict()
+                icon_list.append(lival)
+                if firstIcon is None:
+                    firstIcon = lival
             dval["iconList"] = icon_list
 
             service_list = []
             for svc in self.serviceList:
-                dval = svc.to_dict()
-                service_list.append(dval)
+                lival = svc.to_dict()
+                service_list.append(lival)
             dval["serviceList"] = service_list
+        else:
+            for icon in self.iconList:
+                lival = icon.to_dict()
+                if firstIcon is None:
+                    firstIcon = lival
+                    break
+
+        dval["firstIcon"] = firstIcon
 
         return dval
 
     def to_json(self, brief=False):
         dval = self.to_dict(brief=brief)
+
         json_str = json.dumps(dval, indent=4)
         return json_str
 

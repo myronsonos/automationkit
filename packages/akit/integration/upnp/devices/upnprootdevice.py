@@ -53,6 +53,7 @@ class UpnpRootDevice(UpnpDevice):
 
         self._host = None
         self._urlBase = None
+        self._ip_address = None
 
         self._devices = {}
         self._services = {}
@@ -87,6 +88,10 @@ class UpnpRootDevice(UpnpDevice):
         return self._extra
 
     @property
+    def IPAddress(self):
+        return self._ip_address
+
+    @property
     def location(self):
         return self._location
 
@@ -118,6 +123,8 @@ class UpnpRootDevice(UpnpDevice):
 
     def to_dict(self, brief=False):
         dval = self._description.to_dict(brief=brief)
+        dval["URLBase"] = self.URLBase
+        dval["IPAddress"] = self.IPAddress
         return dval
 
     def to_json(self, brief=False):
@@ -137,10 +144,12 @@ class UpnpRootDevice(UpnpDevice):
         self._consume_upnp_extra(devinfo)
         return
 
-    def refresh_description(self, factory, docNode, namespaces=None):
+    def refresh_description(self, ipaddr, factory, docNode, namespaces=None):
         """
         """
         try:
+            self._ip_address = ipaddr
+
             specVerNode = docNode.find("specVersion", namespaces=namespaces)
             if specVerNode is not None:
                 self._process_version_node(specVerNode, namespaces=namespaces)
@@ -169,6 +178,10 @@ class UpnpRootDevice(UpnpDevice):
     def _consume_upnp_extra(self, extrainfo):
         self._extra = extrainfo
         return
+
+    def _create_device_description_node(self, devNode, namespaces=None):
+        dev_desc_node = UpnpDevice1Device(devNode, namespaces=namespaces)
+        return dev_desc_node
 
     def _populate_embedded_devices(self, factory, description):
 
@@ -208,7 +221,7 @@ class UpnpRootDevice(UpnpDevice):
 
     def _process_device_node(self, factory, devNode, namespaces=None):
 
-        description = UpnpDevice1Device(devNode, namespaces=namespaces)
+        description = self._create_device_description_node(devNode, namespaces=namespaces)
 
         self._populate_services(factory, description)
 

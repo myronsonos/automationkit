@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Automation Controller Service</title>
+        <title>Automation Pod - Devices</title>
         <meta charset="utf-8">
         <!-- Turn Off Caching of This Page -->
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Cache-Control" content="no-store" />
         <meta http-equiv="Pragma" content="no-cache" />
         <meta http-equiv="Expires" content="0" />
 
@@ -26,6 +26,16 @@
         <script src="/static/javascript/http-vue-loader.js"></script>
 
         <script src="/static/javascript/axios.js"></script>
+
+        <style>
+            .list-group-item.active>.card {
+                background: #007bff;
+                border-color: #007bff;
+            }
+        </style>
+        <!-- Load the Components -->
+        <script src="/static/components/deviceviewer.js"></script>
+
     </head>
     <body>
         <div id='section-header'>
@@ -33,12 +43,13 @@
                 <div class="container-fluid">
                     <div class="navbar-header">
                         <a class="navbar-brand" href="#">
-                            <span><img src="/static/icons/pie_chart-24px.svg" width="30" height="30" class="d-inline-block align-top" alt="" />Automation Controller</span>
+                            <span><img src="/static/icons/pie_chart-24px.svg" width="30" height="30"
+                                class="d-inline-block align-top" alt="" />Automation Pod</span>
                         </a>
                     </div>
                     <div class="nav navbar-nav" style="padding-top: 10px">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/';"> Status </button>
+                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/';"> Summary </button>
                             <button type="button" class="btn btn-primary active"> Devices </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/jobs';"> Job Queue </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/results';"> Results </button>
@@ -52,14 +63,12 @@
         </div>
         <div id='section-body'>
             <div id='application'>
-                <b-card class="mb-3">
-                    <b-card-title>Expected Devices</b-card-title>
-                    <devices-list :device_list="expected"></devices-list>
-                </b-card>
-                <b-card class="mb-3">
-                    <b-card-title>Other Devices</b-card-title>
-                    <devices-list :device_list="other"></devices-list>
-                </b-card>
+                <device-viewer title="Expected Devices"
+                    list_identifier="expected-devices-list" 
+                    v-bind:device_list="expected" ></device-viewer>
+                <device-viewer title="Other Devices"
+                    list_identifier="other-devices-list"
+                    v-bind:device_list="other"></device-viewer>
             </div>
             <!-- Load the Application-->
             <script>
@@ -68,9 +77,6 @@
                     data: {
                         expected: null,
                         other: null
-                    },
-                    components: {
-                        'devices-list': window.httpVueLoader('/static/components/DeviceList.vue')
                     },
                     mounted () {
                         var that = this;

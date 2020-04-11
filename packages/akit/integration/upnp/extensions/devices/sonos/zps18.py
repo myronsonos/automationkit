@@ -27,20 +27,4 @@ class SonosDeviceZpS18(SonosDevice, LoadableExtension):
 
     MANUFACTURER = "Sonos, Inc."
     MODEL_NUMBER = "S18"
-    MODEL_DESCRIPTION = "Sonos One Media Renderer"
-
-
-    def _consume_upnp_extra(self, extrainfo):
-        self._extra = extrainfo
-        return
-
-    def _process_embedded_device_node(self, devNode, namespaces=None):
-        dev = UpnpDevice1Device(child, namespaces=namespaces)
-        return dev
-
-    def _process_other_node(self, otherNode, namespaces=None):
-        return
-
-    def _process_servicelist_node(self, listNode, namespaces=None):
-        self._process_servicelist_node(self, listNode, namespaces=namespaces)
-        return
+    MODEL_DESCRIPTION = "Sonos One"

@@ -328,7 +328,12 @@ class UpnpAgent:
                 req = struct.pack("=4sl", socket.inet_aton(multicast_address), socket.INADDR_ANY)
                 sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, req)
                 sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.INADDR_ANY)
+
+                # Make sure other Automation processes can also bind to the UPNP address and port
+                # so they can also get responses.
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+                
                 sock.bind(multicast_group)
 
                 def protocol_factory():
@@ -398,7 +403,7 @@ class UpnpAgent:
                 # Process the packet
                 location = headers[MSearchKeys.LOCATION]
 
-                self._update_root_device(location, headers)
+                self._update_root_device(addr, location, headers)
 
                 self._response_queue.task_done()
         finally:
@@ -406,9 +411,10 @@ class UpnpAgent:
 
         return
 
-    def _update_root_device(self, location, deviceinfo: dict):
+    def _update_root_device(self, addr, location, deviceinfo: dict):
         """
         """
+        ip_addr = addr[0]
         usn = deviceinfo[MSearchKeys.USN]
         devuuid = usn.split("::")[0]
         rootdev = None
@@ -468,7 +474,7 @@ class UpnpAgent:
                         rootdev.initialize(location, deviceinfo)
 
                         # Refresh the description
-                        rootdev.refresh_description(self._factory, docTree.getroot(), namespaces=namespaces)
+                        rootdev.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
                     finally:
                         self._lock.acquire()
 
@@ -478,7 +484,7 @@ class UpnpAgent:
                 else:
                     rootdev = self._children[location]
                     # Refresh the description
-                    rootdev.refresh_description(self._factory, docTree.getroot(), namespaces=namespaces)
+                    rootdev.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
             finally:
                 self._lock.release()
 

@@ -4,7 +4,7 @@
         <title>Automation Controller Service</title>
         <meta charset="utf-8">
         <!-- Turn Off Caching of This Page -->
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Cache-Control" content="no-store" />
         <meta http-equiv="Pragma" content="no-cache" />
         <meta http-equiv="Expires" content="0" />
 
@@ -26,6 +26,10 @@
         <script src="/static/javascript/http-vue-loader.js"></script>
 
         <script src="/static/javascript/axios.js"></script>
+
+        <!-- Load the Components -->
+        <script src="/static/components/summaryviewer.js"></script>
+
     </head>
     <body>
         <div id='section-header'>
@@ -33,12 +37,13 @@
                 <div class="container-fluid">
                     <div class="navbar-header">
                         <a class="navbar-brand" href="#">
-                            <span><img src="/static/icons/pie_chart-24px.svg" width="30" height="30" class="d-inline-block align-top" alt="" />Automation Controller</span>
+                            <span><img src="/static/icons/pie_chart-24px.svg" width="30" height="30"
+                                class="d-inline-block align-top" alt="" />Automation Pod</span>
                         </a>
                     </div>
                     <div class="nav navbar-nav" style="padding-top: 10px">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-primary active"> Status </button>
+                            <button type="button" class="btn btn-primary active"> Summary </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/devices';"> Devices </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/jobs';"> Job Queue </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/results';"> Results </button>
