@@ -156,6 +156,59 @@ Vue.component('dev-detail-view', {
             default: "not-set"
         }
     },
+    computed: {
+        propertyList: function() {
+            var entries = [];
+
+            var sortedKeys = Object.keys(this.device).sort(function (a, b) {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+            });
+
+            sortedKeys = sortedKeys.filter(val => val != "serviceList");
+            sortedKeys = sortedKeys.filter(val => val != "serviceDescriptionList")
+            sortedKeys = sortedKeys.filter(val => val != "iconList")
+            sortedKeys = sortedKeys.filter(val => val != "deviceList")
+
+            var vidx = 0;
+            var vkeyCount = sortedKeys.length;
+            while(vidx < vkeyCount) {
+                var vkey = sortedKeys[vidx];
+                var vval = this.device[vkey];
+                entries.push([vkey, vval]);
+                vidx += 1;
+            }
+
+            return entries;
+        },
+        serviceDescriptionList: function () {
+            var sdlist = [];
+            
+            if ("serviceDescriptionList" in this.device) {
+                var serviceTable = {};
+                var serviceList = this.device["serviceDescriptionList"];
+
+                for (sidx in serviceList) {
+                    var svcObj = serviceList[sidx];
+                    serviceTable[svcObj["serviceType"]] = svcObj;
+                }
+
+                var sortedKeys = Object.keys(serviceTable).sort(function (a, b) {
+                    return a.toLowerCase().localeCompare(b.toLowerCase());
+                });
+
+                var vidx = 0;
+                var vkeyCount = sortedKeys.length;
+                while(vidx < vkeyCount) {
+                    var vkey = sortedKeys[vidx];
+                    var vval = serviceTable[vkey];
+                    sdlist.push([vkey, vval]);
+                    vidx += 1;
+                }
+            }
+
+            return sdlist;
+        }
+    },
     methods: {
         setDeviceDetail(mac) {
             this.mac = mac;
@@ -176,22 +229,42 @@ Vue.component('dev-detail-view', {
         <b-card title="Device Detail" v-bind:id="detail_identifier">
             <b-card-body>
                 <b-container>
-                    <dev-detail-node v-for="pval, pkey, pindex in device" 
-                        v-bind:detail_identifier="detail_identifier"
-                        v-bind:parent_identifier="detail_identifier"
-                        v-bind:self_identifier='detail_identifier + "-" + pkey'
-                        v-bind:mac='mac'
-                        v-bind:node_name="pkey"
-                        v-bind:node_value="pval"
-                        v-bind:key="pindex" >
-                    </dev-detail-node>
+                    <details>
+                        <summary><span class='h4'>Properties</span></summary>
+                        <b-container>
+                            <dev-detail-node-select v-for="[pkey, pval], pindex in propertyList" 
+                                v-bind:detail_identifier="detail_identifier"
+                                v-bind:parent_identifier="detail_identifier"
+                                v-bind:self_identifier='detail_identifier + "-" + pkey'
+                                v-bind:mac='mac'
+                                v-bind:node_name="pkey"
+                                v-bind:node_value="pval"
+                                v-bind:key="pindex" >
+                            </dev-detail-node-select>
+                        </b-container>
+                    </details>
+                    <details>
+                        <summary><span class='h4'>Services</span></summary>
+                        <b-container>
+                            <dev-detail-node-svc v-for="[pkey, pval], pindex in serviceDescriptionList" 
+                                v-bind:detail_identifier='detail_identifier'
+                                v-bind:parent_identifier='detail_identifier'
+                                v-bind:self_identifier='detail_identifier + "-" + pkey'
+                                v-bind:mac='mac'
+                                v-bind:node_name='pkey'
+                                v-bind:node_value='pval'
+                                v-bind:key="pindex">
+                            </dev-detail-node-svc>
+                        </b-container>
+                    </details>
                 </b-container>
             </b-card-body>
         </b-card>
         ` // End of Template
 });
 
-Vue.component('dev-detail-node', {
+
+Vue.component('dev-detail-node-select', {
     // The todo-item component now accepts a
     // "prop", which is like a custom attribute.
     // This prop is called todo.
@@ -223,21 +296,7 @@ Vue.component('dev-detail-node', {
         }
     },
     template: `
-        <dev-detail-node-svc-list v-if='node_name == "serviceDescriptionList"' 
-                            v-bind:detail_identifier='detail_identifier'
-                            v-bind:parent_identifier='parent_identifier'
-                            v-bind:self_identifier="self_identifier"
-                            v-bind:mac='mac'
-                            v-bind:node_name='node_name'
-                            v-bind:node_value='node_value'>
-        </dev-detail-node-svc-list>
-        <dev-detail-node-ignore v-else-if='node_name == "deviceList"'>
-        </dev-detail-node-ignore>
-        <dev-detail-node-ignore v-else-if='node_name == "iconList"'>
-        </dev-detail-node-ignore>
-        <dev-detail-node-ignore v-else-if='node_name == "serviceList"'>
-        </dev-detail-node-ignore>
-        <dev-detail-node-kv v-else-if='node_value == undefined'
+        <dev-detail-node-kv v-if='node_value == undefined'
                             v-bind:detail_identifier="detail_identifier"
                             v-bind:parent_identifier="parent_identifier"
                             v-bind:self_identifier="self_identifier"
@@ -383,7 +442,7 @@ Vue.component('dev-detail-node-icon-list', {
         ` // End of Template
 });
 
-Vue.component('dev-detail-node-svc-list', {
+Vue.component('dev-detail-node-svc', {
     // The todo-item component now accepts a
     // "prop", which is like a custom attribute.
     // This prop is called todo.
@@ -415,69 +474,61 @@ Vue.component('dev-detail-node-svc-list', {
         }
     },
     template: `
-        <b-container>
-            <details>
-                <summary><span class='h4'>Services</span></summary>
-                <b-container>
-                    <details v-for='svcVal, svcKey, svcIdx in node_value'>
-                        <summary><span class='h5'>{{ svcVal.serviceType }}</span></summary>
-                        <b-container>
-                            <b-row>
-                                <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
-                                    <span class='h5'>specVersion:</span>
-                                </b-col>
-                                <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ svcVal.specVersion.major }}, {{ svcVal.specVersion.minor }}</b-col>
-                            </b-row>
-                            <details v-if='svcVal.actionsTable'>
-                                <summary><span class='h5'>Actions</span></summary>
-                                <b-container>
-                                    <b-row v-for='vval, vkey, vidx in svcVal.actionsTable'>
-                                        <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
-                                            <span class='h5'>{{ vkey }}:</span>
-                                        </b-col>
-                                        <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ vval }}</b-col>
-                                    </b-row>
-                                </b-container>
-                            </details>
-                            <details v-if='svcVal.eventsTable'>
-                                <summary><span class='h5'>Events</span></summary>
-                                <b-container>
-                                    <b-row v-for='vval, vkey, vidx in svcVal.eventsTable'>
-                                        <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
-                                            <span class='h5'>{{ vkey }}:</span>
-                                        </b-col>
-                                        <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ vval }}</b-col>
-                                    </b-row>
-                                </b-container>
-                            </details>
-                            <details v-if='svcVal.typesTable'>
-                                <summary><span class='h5'>Types</span></summary>
-                                <b-container>
-                                    <b-row v-for='vval, vkey, vidx in svcVal.typesTable'>
-                                        <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
-                                            <span class='h5'>{{ vkey }}:</span>
-                                        </b-col>
-                                        <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ vval }}</b-col>
-                                    </b-row>
-                                </b-container>
-                            </details>
-                            <details v-if='svcVal.variablesTable'>
-                                <summary><span class='h5'>Variables</span></summary>
-                                <b-container>
-                                    <b-row v-for='vval, vkey, vidx in svcVal.variablesTable'>
-                                        <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
-                                            <span class='h5'>{{ vkey }}:</span>
-                                        </b-col>
-                                        <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ vval }}</b-col>
-                                    </b-row>
-                                </b-container>
-                            </details>
-                            
-                        </b-container>
-                    </details>
-                </b-container>
-            </details>
-        </b-container>
+        <details>
+            <summary><span class='h5'>{{ node_value.serviceType }}</span></summary>
+            <b-container>
+                <b-row>
+                    <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
+                        <span class='h5'>specVersion:</span>
+                    </b-col>
+                    <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ node_value.specVersion.major }}, {{ node_value.specVersion.minor }}</b-col>
+                </b-row>
+                <details v-if='Object.keys(node_value.actionsTable).length > 0'>
+                    <summary><span class='h5'>Actions</span></summary>
+                    <b-container>
+                        <b-row v-for='vval, vkey, vidx in node_value.actionsTable'>
+                            <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
+                                <span class='h5'>{{ vkey }}:</span>
+                            </b-col>
+                            <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ vval }}</b-col>
+                        </b-row>
+                    </b-container>
+                </details>
+                <details v-if='Object.keys(node_value.eventsTable).length > 0'>
+                    <summary><span class='h5'>Events</span></summary>
+                    <b-container>
+                        <b-row v-for='vval, vkey, vidx in node_value.eventsTable'>
+                            <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
+                                <span class='h5'>{{ vkey }}:</span>
+                            </b-col>
+                            <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ vval }}</b-col>
+                        </b-row>
+                    </b-container>
+                </details>
+                <details v-if='Object.keys(node_value.typesTable).length > 0'>
+                    <summary><span class='h5'>Types</span></summary>
+                    <b-container>
+                        <b-row v-for='vval, vkey, vidx in node_value.typesTable'>
+                            <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
+                                <span class='h5'>{{ vkey }}:</span>
+                            </b-col>
+                            <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ vval }}</b-col>
+                        </b-row>
+                    </b-container>
+                </details>
+                <details v-if='Object.keys(node_value.variablesTable).length > 0'>
+                    <summary><span class='h5'>Variables</span></summary>
+                    <b-container>
+                        <b-row v-for='vval, vkey, vidx in node_value.variablesTable'>
+                            <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
+                                <span class='h5'>{{ vkey }}:</span>
+                            </b-col>
+                            <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ vval }}</b-col>
+                        </b-row>
+                    </b-container>
+                </details>
+            </b-container>
+        </details>
         ` // End of Template
 
 });
@@ -521,67 +572,4 @@ Vue.component('dev-detail-node-unknown', {
             <b-col class='border-bottom border-dark' sytle="padding-left: 10px;">{{ node_value }}</b-col>
         </b-row>
         ` // End of Template
-});
-
-Vue.component('dev-detail-node-svc', {
-    // The todo-item component now accepts a
-    // "prop", which is like a custom attribute.
-    // This prop is called todo.
-    data: function () {
-        var dval = {
-            serviceType: "",
-            serviceId: "",
-            controlURL: "",
-            eventSubURL: "",
-            SCPDURL: ""
-        }
-        return dval;
-    },
-    props: {
-        detail_identifier: {
-            type: String,
-            default: "not-set"
-        },
-        parent_identifier: {
-            type: String,
-            default: "not-set"
-        },
-        self_identifier: {
-            type: String,
-            default: "not-set"
-        },
-        baseURL: {
-            type: String,
-            default: "not-set"
-        },
-        serviceInfo: {
-            type: Object,
-            default: function () {
-                return {};
-            }
-        }
-    },
-/*
-    watch: {
-        serviceInfo: function(val) {
-            this.serviceType = val.serviceType;
-            this.serviceId = val.serviceId;
-            this.controlURL = val.controlURL;
-            this.eventSubURL = val.eventSubURL;
-            this.SCPDURL = val.SCPDURL;
-
-            var fullURL = this.baseURL + this.SCPDURL;
-
-            axios.get(fullURL).then(
-                (response) => {
-                    var soapData = response.data;
-                    
-                }
-            );
-        }
-    },
-*/
-    template: `
-        
-        `  // End of Template
 });
