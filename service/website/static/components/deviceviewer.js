@@ -416,7 +416,67 @@ Vue.component('dev-detail-node-svc-list', {
     },
     template: `
         <b-container>
-            <h1 v-for="(svcval, svckey, svcidx) in node_value">{{ svcval.serviceType }}</h1>
+            <details>
+                <summary><span class='h4'>Services</span></summary>
+                <b-container>
+                    <details v-for='svcVal, svcKey, svcIdx in node_value'>
+                        <summary><span class='h5'>{{ svcVal.serviceType }}</span></summary>
+                        <b-container>
+                            <b-row>
+                                <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
+                                    <span class='h5'>specVersion:</span>
+                                </b-col>
+                                <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ svcVal.specVersion.major }}, {{ svcVal.specVersion.minor }}</b-col>
+                            </b-row>
+                            <details v-if='svcVal.actionsTable'>
+                                <summary><span class='h5'>Actions</span></summary>
+                                <b-container>
+                                    <b-row v-for='vval, vkey, vidx in svcVal.actionsTable'>
+                                        <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
+                                            <span class='h5'>{{ vkey }}:</span>
+                                        </b-col>
+                                        <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ vval }}</b-col>
+                                    </b-row>
+                                </b-container>
+                            </details>
+                            <details v-if='svcVal.eventsTable'>
+                                <summary><span class='h5'>Events</span></summary>
+                                <b-container>
+                                    <b-row v-for='vval, vkey, vidx in svcVal.eventsTable'>
+                                        <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
+                                            <span class='h5'>{{ vkey }}:</span>
+                                        </b-col>
+                                        <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ vval }}</b-col>
+                                    </b-row>
+                                </b-container>
+                            </details>
+                            <details v-if='svcVal.typesTable'>
+                                <summary><span class='h5'>Types</span></summary>
+                                <b-container>
+                                    <b-row v-for='vval, vkey, vidx in svcVal.typesTable'>
+                                        <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
+                                            <span class='h5'>{{ vkey }}:</span>
+                                        </b-col>
+                                        <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ vval }}</b-col>
+                                    </b-row>
+                                </b-container>
+                            </details>
+                            <details v-if='svcVal.variablesTable'>
+                                <summary><span class='h5'>Variables</span></summary>
+                                <b-container>
+                                    <b-row v-for='vval, vkey, vidx in svcVal.variablesTable'>
+                                        <b-col cols=3 class='text-right border-bottom border-dark' style='background: lightgray;'>
+                                            <span class='h5'>{{ vkey }}:</span>
+                                        </b-col>
+                                        <b-col class='border-bottom border-dark' sytle='padding-left: 10px;'>{{ vval }}</b-col>
+                                    </b-row>
+                                </b-container>
+                            </details>
+                            
+                        </b-container>
+                    </details>
+                </b-container>
+            </details>
         </b-container>
         ` // End of Template
 
@@ -455,7 +515,9 @@ Vue.component('dev-detail-node-unknown', {
     },
     template: `
         <b-row v-bind:id="self_identifier" >
-            <b-col cols=3 class='text-right border-bottom border-dark' style="background: lightgray;">{{ node_name }}:</b-col>
+            <b-col cols=3 class='text-right border-bottom border-dark' style="background: lightgray;">
+            <span class='h5'>{{ node_name }}:</span>
+            </b-col>
             <b-col class='border-bottom border-dark' sytle="padding-left: 10px;">{{ node_value }}</b-col>
         </b-row>
         ` // End of Template

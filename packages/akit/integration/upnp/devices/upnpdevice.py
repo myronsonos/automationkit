@@ -155,8 +155,8 @@ class UpnpDevice:
                 svcdesc["eventsTable"] = eventsTable
 
                 actionListNode = descDoc.find("actionList", namespaces=namespaces)
-                actionTable = self._process_node_action_list(actionListNode, namespaces=namespaces)
-                svcdesc["actionTable"] = actionTable
+                actionsTable = self._process_node_action_list(actionListNode, namespaces=namespaces)
+                svcdesc["actionsTable"] = actionsTable
             except:
                 print("Service Description Failure: %s" % sdurl)
                 raise
