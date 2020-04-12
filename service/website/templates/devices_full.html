@@ -32,7 +32,100 @@
                 background: #007bff;
                 border-color: #007bff;
             }
+
+            .dtl-row {
+                display: block;
+                width: 100%;
+            }
+
+            .dtl-hdr-body {
+                background: whitesmoke;
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+
+            .dtl-hdr-row {
+                display: flex;
+                flex-direction: row nowrap;
+            }
+
+            .dtl-hdr-stop-l {
+                font-weight: bolder;
+                padding-left:  20px;
+            }
+
+            .dtl-hdr-stop-v {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .dtl-hdr-inst-l {
+                font-weight: bolder;
+                padding-left:  20px;
+            }
+
+            .dtl-hdr-inst-v {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .dtl-body {
+                display: block;
+                flex-grow: 1;
+                border: black;
+                border-style: solid;
+                border-width: 1.5px;
+                padding-top: 5px;
+                padding-left: 5px;
+            }
+
+            .dtl-body-inline {
+                display: flex;
+                flex-direction: row nowrap;
+                flex-grow: 1;
+                border: black;
+                border-style: solid;
+                border-width: 1.5px;
+                padding-top: 5px;
+                padding-left: 5px;
+            }
+
+            .summary-label {
+                text-align: right;
+                min-width: 60px;
+                font-weight: bolder;
+                font-size: 14pt;
+                padding-right: 10;
+            }
+
+            .summary-value {
+                text-align: left;
+                min-width: 80px;
+                font-size: 14pt;
+                padding-left: 10px;
+                padding-right: 40px;
+            }
+
+            .summary-row {
+                display: flex;
+                flex-direction: row nowrap;
+                text-align: left;
+            }
+
+            .summary-table {
+                table-layout: fixed;
+                padding-left: 50px;
+                padding-right: 50px;
+            }
+
+            .summary-title {
+                text-align: center;
+            }
+
+
+
         </style>
+
         <!-- Load the Components -->
         <script src="/static/components/deviceviewer.js"></script>
 
@@ -64,10 +157,12 @@
         <div id='section-body'>
             <div id='application'>
                 <device-viewer title="Expected Devices"
-                    list_identifier="expected-devices-list" 
+                    list_identifier="exp-dev-list"
+                    detail_identifier="dev-det-view"
                     v-bind:device_list="expected" ></device-viewer>
                 <device-viewer title="Other Devices"
-                    list_identifier="other-devices-list"
+                    list_identifier="oth-dev-list"
+                    detail_identifier="oth-det-view"
                     v-bind:device_list="other"></device-viewer>
             </div>
             <!-- Load the Application-->
@@ -85,26 +180,10 @@
                         axios.get(qurl).then(
                             (response) => {
                                 var expected_list = response.data.expected;
-                                var found_list = response.data.found;
-
-                                var found_lookup = {};
-                                for (fitem in found_list) {
-                                    found_lookup[fitem.MACAddress] = fitem;
-                                }
-
-                                for (eitem in expected_list) {
-                                    if (eitem.MACAddress in found_lookup) {
-                                        eitem.found = true;
-                                    }
-                                    else {
-                                        eitem.found = false;
-                                    }
-
-                                    delete found_lookup[eitem.MACAddress];
-                                }
+                                var other_list = response.data.other;
 
                                 that.expected = expected_list;
-                                that.other = found_lookup.values();
+                                that.other = other_list.values();
                             }
                         );
                     }

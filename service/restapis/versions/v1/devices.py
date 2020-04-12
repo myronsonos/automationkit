@@ -83,16 +83,54 @@ class AllDevicesCollection(Resource):
                     url_base = cinfo.get("URLBase", None)
                     try_download_icon_to_cache(cache_dir, icon_url, url_base=url_base)
             else:
-                print("Has no MAC")
-                print("")
+                other_devices.append(cinfo)
 
         rtndata = {
             "status": "success",
             "expected": [ v for v in exp_device_table.values() ],
-            "found": other_devices
+            "other": other_devices
         }
 
         return rtndata
+
+@devices_ns.route("/<mac>")
+class DeviceDetail(Resource):
+
+   def get(self, mac):
+        """
+            Returns a list of devices
+        """
+
+        found_child = None
+        for child in upnp_agent.children:
+            cinfo = child.to_dict(brief=True)
+
+            if "MACAddress" in cinfo:
+                cmac = cinfo["MACAddress"]
+                if mac == cmac:
+                    found_child = child
+
+        found_dev = found_child.to_dict(brief=False)
+        firstIcon = found_dev.get("firstIcon", None)
+        if firstIcon is not None:
+            icon_url = firstIcon["url"]
+            replacement_url = "/static/images/cached/" + icon_url.lstrip("/")
+            found_dev["cachedIcon"] = replacement_url
+
+
+            cache_dir = os.path.join(DIR_STATIC, "images", "cached")
+            url_base = found_dev.get("URLBase", None)
+            try_download_icon_to_cache(cache_dir, icon_url, url_base=url_base)
+        else:
+            found_dev["cachedIcon"] = "/static/images/unknowndevice.png"
+
+        rtndata = {
+            "status": "success",
+            "device": found_dev
+        }
+
+        return rtndata
+
 
 def publish_namespaces(version_prefix):
     ns_list = [

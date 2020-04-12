@@ -19,7 +19,7 @@
             "label": "Test Result Server",
             "type": "shell",
             "options": {
-                "cwd": "${env:HOME}/aresults"
+                "cwd": "${env:HOME}/akit/results"
             },
             "command": "${workspaceFolder}/_local/venv/bin/python -m http.server 8000",
             "problemMatcher": []

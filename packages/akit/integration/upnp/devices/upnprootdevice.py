@@ -52,11 +52,9 @@ class UpnpRootDevice(UpnpDevice):
         self._specVersion = None
 
         self._host = None
-        self._urlBase = None
         self._ip_address = None
 
         self._devices = {}
-        self._services = {}
 
         self._lock = threading.RLock()
         return
@@ -117,20 +115,6 @@ class UpnpRootDevice(UpnpDevice):
     def specVersion(self):
         return self._specVersion
 
-    @property
-    def URLBase(self):
-        return self._urlBase
-
-    def to_dict(self, brief=False):
-        dval = self._description.to_dict(brief=brief)
-        dval["URLBase"] = self.URLBase
-        dval["IPAddress"] = self.IPAddress
-        return dval
-
-    def to_json(self, brief=False):
-        json_str = self._description.to_json(brief=brief)
-        return json_str
-
     def initialize(self, location: str, devinfo: dict):
         """
         """
@@ -175,6 +159,15 @@ class UpnpRootDevice(UpnpDevice):
 
         return
 
+    def to_dict(self, brief=False):
+        dval = super(UpnpRootDevice, self).to_dict(brief=brief)
+        dval["IPAddress"] = self.IPAddress
+        return dval
+
+    def to_json(self, brief=False):
+        json_str = super(UpnpRootDevice, self).to_json(brief=brief)
+        return json_str
+
     def _consume_upnp_extra(self, extrainfo):
         self._extra = extrainfo
         return
@@ -199,24 +192,6 @@ class UpnpRootDevice(UpnpDevice):
                 dev_inst = self._devices[devkey]
 
             dev_inst.update_description(self._host, self._urlBase, deviceInfo)
-        return
-
-    def _populate_services(self, factory, description):
-
-        for serviceInfo in description.serviceList:
-            serviceId = serviceInfo.serviceId
-            serviceType = serviceInfo.serviceType
-
-            svckey = ":".join([serviceId, serviceType])
-            if svckey not in self._services:
-                svc_inst = factory.create_service_instance(serviceId, serviceType)
-                if svc_inst is not None:
-                    self._services[svckey] = svc_inst
-            else:
-                svc_inst = self._services[svckey]
-
-            if svc_inst is not None:
-                svc_inst.update_description(self._host, self._urlBase, serviceInfo)
         return
 
     def _process_device_node(self, factory, devNode, namespaces=None):

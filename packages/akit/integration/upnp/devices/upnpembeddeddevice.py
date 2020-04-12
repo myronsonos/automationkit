@@ -39,35 +39,16 @@ class UpnpEmbeddedDevice(UpnpDevice):
         super(UpnpEmbeddedDevice, self).__init__()
 
         self._decription = None
-        self._host = None
-        self._baseUrl = None
         return
 
     def update_description(self, host, baseUrl, description):
         self._host = host
-        self._baseUrl = baseUrl
+        self._urlBase = baseUrl
         self._decription = description
         return
 
     def _populate_embedded_devices(self, factory, description):
         raise AKitSemanticError("Embedded devices inside an embedded device is currently not supported.")
-        return
-
-    def _populate_services(self, factory, description):
-        for serviceInfo in description.serviceList:
-            serviceId = serviceInfo.serviceId
-            serviceType = serviceInfo.serviceType
-
-            svckey = ":".join([serviceId, serviceType])
-            if svckey not in self._services:
-                svc_inst = factory.create_service_instance(serviceId, serviceType)
-                if svc_inst is not None:
-                    self._services[svckey] = svc_inst
-            else:
-                svc_inst = self._services[svckey]
-
-            if svc_inst is not None:
-                svc_inst.update_description(self._host, self._urlBase, serviceInfo)
         return
 
 

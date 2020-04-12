@@ -432,8 +432,8 @@ class UpnpDevice1Device:
 
             service_list = []
             for svc in self.serviceList:
-                lival = svc.to_dict()
-                service_list.append(lival)
+                lsval = svc.to_dict()
+                service_list.append(lsval)
             dval["serviceList"] = service_list
         else:
             for icon in self.iconList:

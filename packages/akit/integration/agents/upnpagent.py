@@ -120,6 +120,16 @@ class UpnpAgent:
         notify.sendto(self._transport, (UpnpProtocol.MULTICAST_ADDRESS, UpnpProtocol.PORT))
         return
 
+    def lookup_device_by_mac(self, mac):
+
+        found = None
+        for nxtdev in self.children:
+            if mac == nxtdev.MACAddress:
+                found = nxtdev
+                break
+
+        return found
+
     def normalize_name(self, name):
         normal_chars = [ nc for nc in name if str.isalnum(nc) ]
         normal_name = ''.join(normal_chars)

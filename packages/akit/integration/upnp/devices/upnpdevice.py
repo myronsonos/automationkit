@@ -16,9 +16,19 @@ __email__ = "myron.walker@automationmojo.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = ""
 
+from xml.etree.ElementTree import fromstring as xml_fromstring
+from xml.etree.ElementTree import tostring as xml_tostring
+from xml.etree.ElementTree import register_namespace
+from xml.etree.ElementTree import dump as dump_node
+from xml.etree.ElementTree import ElementTree
+
 from akit.exceptions import AKitNotOverloadedError
 
 from akit.integration.upnp.upnpprotocol import MSearchKeys
+
+import requests
+
+UPNP_SERVICE1_NAMESPACE = "urn:schemas-upnp-org:service-1-0"
 
 class UpnpDevice:
     """
@@ -38,11 +48,62 @@ class UpnpDevice:
         super(UpnpDevice, self).__init__()
         
         self._description = None
+        self._host = None
+        self._urlBase = None
+
+        self._services = {}
         return
 
     @property
     def description(self):
         return self._description
+
+    @property
+    def host(self):
+        return self._host
+
+    @property
+    def URLBase(self):
+        return self._urlBase
+
+    def get_service_description(self, service_type):
+
+        svc_content = None
+        devDesc = self.description
+        
+        for nxtsvc in devDesc.serviceList:
+            if nxtsvc.serviceType == service_type:
+                fullurl = self.URLBase.rstrip("/") + "/" + nxtsvc.SCPDURL.lstrip("/")
+
+                resp = requests.get(fullurl)
+                if resp.status_code == 200:
+                    svc_content = resp.text
+                    break
+
+        return svc_content
+
+    def to_dict(self, brief=False):
+        dval = self._description.to_dict(brief=brief)
+
+        dval["URLBase"] = self.URLBase
+
+        if not brief:
+            serviceDescList = []
+            serviceList = dval["serviceList"]
+            for svc_info in serviceList:
+                svc_type = svc_info["serviceType"]
+                sdurl = self._urlBase.rstrip("/") + "/" + svc_info["SCPDURL"].lstrip("/")
+                sdesc = self._process_full_service_description(sdurl)
+                sdesc["serviceType"] = svc_type
+                serviceDescList.append(sdesc)
+
+            dval["serviceDescriptionList"] = serviceDescList
+
+        return dval
+
+    def to_json(self, brief=False):
+        json_str = self._description.to_json(brief=brief)
+        return json_str
 
     def _populate_embedded_devices(self, factory, description):
         raise AKitNotOverloadedError("UpnpDevice._populate_embedded_devices: must be overridden.")
@@ -54,5 +115,118 @@ class UpnpDevice:
         return
 
     def _populate_services(self, factory, description):
-        raise AKitNotOverloadedError("UpnpDevice._populate_services: must be overridden.")
+
+        for serviceInfo in description.serviceList:
+            serviceId = serviceInfo.serviceId
+            serviceType = serviceInfo.serviceType
+
+            if serviceId not in self._services:
+                svc_inst = factory.create_service_instance(serviceId)
+                if svc_inst is not None:
+                    self._services[serviceId] = svc_inst
+            else:
+                svc_inst = self._services[serviceId]
+
+            if svc_inst is not None:
+                svc_inst.update_description(self._host, self._urlBase, serviceInfo)
         return
+
+    def _process_full_service_description(self, sdurl):
+        svcdesc = None
+
+        resp = requests.get(sdurl)
+        if resp.status_code == 200:
+            svcdesc = {}
+
+            namespaces = {"": UPNP_SERVICE1_NAMESPACE}
+
+            try:
+                xml_content = resp.text
+                descDoc = xml_fromstring(xml_content)
+
+                specVersionNode = descDoc.find("specVersion", namespaces=namespaces)
+                verInfo = self._process_node_spec_version(specVersionNode, namespaces=namespaces)
+                svcdesc["specVersion"] = verInfo
+
+                serviceStateTableNode = descDoc.find("serviceStateTable", namespaces=namespaces)
+                variablesTable, typesTable, eventsTable = self._process_node_state_table(serviceStateTableNode, namespaces=namespaces)
+                svcdesc["variablesTable"] = variablesTable
+                svcdesc["typesTable"] = typesTable
+                svcdesc["eventsTable"] = eventsTable
+
+                actionListNode = descDoc.find("actionList", namespaces=namespaces)
+                actionTable = self._process_node_action_list(actionListNode, namespaces=namespaces)
+                svcdesc["actionTable"] = actionTable
+            except:
+                print("Service Description Failure: %s" % sdurl)
+                raise
+
+        return svcdesc
+
+    def _process_node_action_list(self, actionListNode, namespaces=None):
+        actionTable = {}
+
+        actionNodeList = actionListNode.findall("action", namespaces=namespaces)
+        for actionNode in actionNodeList:
+            actionName = actionNode.find("name", namespaces=namespaces).text
+            actionArgs = {}
+
+            argumentListNode = actionNode.find("argumentList", namespaces=namespaces)
+            if argumentListNode is not None:
+                argumentNodeList = argumentListNode.findall("argument", namespaces=namespaces)
+                for argumentNode in argumentNodeList:
+                    argName = argumentNode.find("name", namespaces=namespaces).text
+                    argDirection = argumentNode.find("direction", namespaces=namespaces).text
+
+                    argRelStateVar = None
+                    argRelStateNode = argumentNode.find("relatedStateVariable", namespaces=namespaces)
+                    if argRelStateNode is not None:
+                        argRelStateVar = argRelStateNode.text
+
+                    actionArgs[argName] = {
+                        "name": argName,
+                        "direction": argDirection,
+                        "relatedStateVariable": argRelStateVar
+                        }
+
+            actionTable[actionName] = {
+                    "name": actionName,
+                    "arguments" : actionArgs
+                }
+
+        return actionTable
+
+    def _process_node_spec_version(self, specVersionNode, namespaces=None):
+        verInfo = {}
+
+        verInfo["major"] = specVersionNode.find("major", namespaces=namespaces).text
+        verInfo["minor"] = specVersionNode.find("minor", namespaces=namespaces).text
+
+        return verInfo
+
+    def _process_node_state_table(self, serviceStateTableNode, namespaces=None):
+        variablesTable = {}
+        typesTable = {}
+        eventsTable = {}
+
+        stateVariableList = serviceStateTableNode.findall("stateVariable", namespaces=namespaces)
+        for stateVariableNode in stateVariableList:
+            name = stateVariableNode.find("name", namespaces=namespaces).text
+            dataType = stateVariableNode.find("dataType", namespaces=namespaces).text
+
+            varInfo = { "name": name, "dataType": dataType}
+            if name.startswith("A_ARG_TYPE_"):
+                typesTable[name] = varInfo
+            else:
+                variablesTable[name] = varInfo
+
+                sendEvents = "no"
+                if "sendEvents" in stateVariableNode.attrib:
+                    sendEvents = stateVariableNode.attrib["sendEvents"]
+
+                if sendEvents == "yes":
+                    eventsTable[name] = varInfo
+
+        return variablesTable, typesTable, eventsTable
+
+    

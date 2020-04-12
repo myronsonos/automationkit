@@ -67,6 +67,7 @@ app.register_blueprint(redirect_apidoc)
 # this module.
 def controller_main():
 
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
     app.run(port=8888, debug=False)
 
     return
