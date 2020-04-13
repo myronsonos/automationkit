@@ -5,7 +5,7 @@ VERSION_INTEGER = 1
 
 VERSION_NAMESPACE_PATH = "/%d" % VERSION_INTEGER
 
-API_TITLE = "Software Configuration Management"
+API_TITLE = "Automation Pod"
 
 from .devices import publish_namespaces as devices_publish_namespaces
 from .jobqueue import publish_namespaces as jobqueue_publish_namespaces
