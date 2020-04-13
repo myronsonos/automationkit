@@ -31,6 +31,8 @@ class ResultsSummary(Resource):
 
         results = []
 
+        base_len = len(DIR_RESULTS)
+
         for dirpath, dirnames, filenames in os.walk(DIR_TESTRESULTS):
             if "testrun_summary.json" in filenames and "testsummary.html" in filenames:
                 testrun_summary_html_fullpath = os.path.join(dirpath, "testsummary.html")
@@ -42,7 +44,8 @@ class ResultsSummary(Resource):
                     summary_data = json.loads(summary_content)
 
                 if summary_data is not None:
-                    summary_data["htmlreport"] = testrun_summary_html_fullpath
+                    testrun_summary_html_leaf = "/logstore/" + testrun_summary_html_fullpath[base_len:].lstrip("/")
+                    summary_data["htmlreport"] = testrun_summary_html_leaf
                     results.append(summary_data)
 
         results = sorted(results, key=operator.itemgetter("start"), reverse=True)

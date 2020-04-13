@@ -46,16 +46,54 @@ Vue.component('test-result-item-card', {
             }
         }
     },
+    computed: {
+        summary_html_report: function () {
+            var report_url = window.location.protocol + "//" + window.location.host + this.test_result.htmlreport;
+            return report_url;
+        }
+    },
     template: `
         <b-card>
             <b-card-title>
                 <b-container>
                     <b-row>
-                        <b-col>{{ test_result.title }}</b-col>
+                        <b-col cols=4>{{ test_result.title }}</b-col>
                         <b-col cols=1>Start:</b-col>
-                        <b-col cols=3>{{ test_result.start }}</b-col>
+                        <b-col cols=3>{{ test_result.start.substring(0, test_result.start.length - 7 ) }}</b-col>
                         <b-col cols=1>Stop:</b-col>
-                        <b-col cols=3>{{ test_result.stop }}</b-col>
+                        <b-col cols=3>{{ test_result.stop.substring(0, test_result.stop.length - 7 ) }}</b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col cols=2>Branch:</b-col>
+                        <b-col cols=2>{{ test_result.branch }}</b-col>
+                        <b-col cols=2>Build:</b-col>
+                        <b-col cols=2>{{ test_result.build }}</b-col>
+                        <b-col cols=2>Flavor:</b-col>
+                        <b-col cols=2>{{ test_result.flavor }}</b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col>Errors:</b-col>
+                        <b-col>{{ test_result.detail.errors }}</b-col>
+                        <b-col>Failed:</b-col>
+                        <b-col>{{ test_result.detail.failed }}</b-col>
+                        <b-col>Skipped:</b-col>
+                        <b-col>{{ test_result.detail.skipped }}</b-col>
+                        <b-col>Passed:</b-col>
+                        <b-col>{{ test_result.detail.passed }}</b-col>
+                        <b-col>Total:</b-col>
+                        <b-col>{{ test_result.detail.total }}</b-col>
+                        <b-col cols=1>
+                            <b-badge v-if='test_result.result.toLowerCase() == "error"' variant="danger">{{ test_result.result }}</b-badge>
+                            <b-badge v-else-if='test_result.result.toLowerCase() == "failed"' variant="danger">{{ test_result.result }}</b-badge>
+                            <b-badge v-else-if='test_result.result.toLowerCase() == "passed"' variant="success">{{ test_result.result }}</b-badge>
+                            <b-badge v-else-if='test_result.result.toLowerCase() == "skipped"' variant="secondary">{{ test_result.result }}</b-badge>
+                            <b-badge v-else >{{ test_result.result }}</b-badge>
+                        </b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col>
+                            <b-link v-bind:href="summary_html_report">{{ summary_html_report }}</b-link>
+                        </b-col>
                     </b-row>
                 </b-container>
             </b-card-title>

@@ -20,6 +20,7 @@ from website import register_website_blueprints
 
 DIR_THIS = os.path.dirname(__file__)
 DIR_STATIC = os.path.join(DIR_THIS, "website", "static")
+DIR_RESULTS = os.path.expanduser(os.path.join("~", "akit", "results"))
 DIR_TEMPLATES = os.path.join(DIR_THIS, "website", "templates")
 
 logger = logging.getLogger("scms")
