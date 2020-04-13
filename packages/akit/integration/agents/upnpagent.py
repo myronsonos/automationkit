@@ -75,7 +75,7 @@ class UpnpAgent:
             # Put any initialization here.
         return cls._instance
 
-    def __init__(self, iface=None):
+    def __init__(self, iface=None, msearch_interval=60):
 
         this_type = type(self)
         if not this_type._initialized:
@@ -90,6 +90,11 @@ class UpnpAgent:
             self._notify_queue = None
             self._response_thread = None
             self._response_queue = None
+            self._tick_thread = None
+            self._msearch_interval = msearch_interval
+            self._msearch_lock = threading.RLock()
+
+            self._running = False
 
             self._listen_loop = None
             self._connect = None
@@ -116,8 +121,16 @@ class UpnpAgent:
     def begin_search(self):
         """
         """
-        notify = ssdp.SSDPRequest('M-SEARCH', headers=UpnpProtocol.HEADERS)
-        notify.sendto(self._transport, (UpnpProtocol.MULTICAST_ADDRESS, UpnpProtocol.PORT))
+        # Set this up to be a critical section of code so only one thread
+        # can use the transport to send at a time
+        self._msearch_lock.acquire()
+        try:
+            notify = ssdp.SSDPRequest('M-SEARCH', headers=UpnpProtocol.HEADERS)
+            notify.sendto(self._transport, (UpnpProtocol.MULTICAST_ADDRESS, UpnpProtocol.PORT))
+        except:
+            pass
+        finally:
+            self._msearch_lock.release()
         return
 
     def lookup_device_by_mac(self, mac):
@@ -231,10 +244,12 @@ class UpnpAgent:
         if self._listen_loop:
             raise AKitSemanticError("The UpnpAgent was already started.")
 
-        self._egate = threading.Semaphore(3)
+        self._egate = threading.Semaphore(4)
 
         try:
             sgate = threading.Event()
+
+            self._running = True
 
             sgate.clear()
             self._notify_thread = threading.Thread(name="UpnpAgent(%s) Notify" % self._iface, target=self._thread_entry_notify, 
@@ -253,11 +268,26 @@ class UpnpAgent:
                                                    daemon=True, args=(sgate,))
             self._listen_thread.start()
             sgate.wait()
+
+            sgate.clear()
+            self._tick_thread = threading.Thread(name="UpnpAgent(%s) Tick" % self._iface, target=self._thread_entry_tick,
+                                                   daemon=True, args=(sgate,))
+            self._tick_thread.start()
+            sgate.wait()
         except:
+            self._running = False
             for i in range(3):
                 self._egate.release()
             raise
 
+        return
+
+    def shutdown(self):
+        self._running = False
+        self.begin_search() # Trigger a search to wake up the threads
+        self._response_thread.join(timeout=5)
+        self._notify_thread.join(timeout=5)
+        self._listen_loop.stop()
         return
 
     def wait_for_devices(self, upnp_hint_list: list, timeout: int = 300, retry: int = 30):
@@ -304,6 +334,12 @@ class UpnpAgent:
                 try:
                     self._egate.acquire(timeout=timeout)
                     acquires += 1
+                    try:
+                        self._egate.acquire(timeout=timeout)
+                        acquires += 1
+                    except TimeoutError:
+                        if acquires > 0:
+                            self._egate.release()
                 except TimeoutError:
                     if acquires > 0:
                         self._egate.release()
@@ -357,6 +393,7 @@ class UpnpAgent:
                 sgate.set()
 
             self._listen_loop.run_forever()
+
         except KeyboardInterrupt as kerr:
             raise
         finally:
@@ -377,7 +414,7 @@ class UpnpAgent:
             sgate.set()
 
             self._notify_queue = queue.Queue()
-            while True:
+            while self._running:
                 request, addr = self._notify_queue.get()
 
                 print(request)
@@ -397,7 +434,7 @@ class UpnpAgent:
             sgate.set()
 
             self._response_queue = queue.Queue()
-            while True:
+            while self._running:
                 response, addr = self._response_queue.get()
 
                 lines = str(response).splitlines(False)
@@ -416,6 +453,31 @@ class UpnpAgent:
                 self._update_root_device(addr, location, headers)
 
                 self._response_queue.task_done()
+        finally:
+            self._egate.release()
+
+        return
+
+    def _thread_entry_tick(self, sgate):
+
+        self._egate.acquire()
+
+        try:
+            sgate.set()
+
+            msg = b"\r\n".join([  
+                b'M-SEARCH * HTTP/1.1',
+                b'Host:239.255.255.250:1900',
+                b'ST: upnp:rootdevice',
+                b'Man:"ssdp:discover"',
+                b'MX:1',
+                b''])
+
+            while self._running:
+                time.sleep(self._msearch_interval)
+
+                self.begin_search()
+
         finally:
             self._egate.release()
 

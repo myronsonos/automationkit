@@ -1,14 +1,23 @@
 
+import json
+import operator
+import os
+
 from flask_restplus import Namespace, Resource
 from flask_restplus.reqparse import RequestParser
 
+from akit.environment.context import Context
 from akit.integration.agents.upnpagent import UpnpAgent
 from akit.integration.landscaping import Landscape
 
+context = Context()
 landscape = Landscape()
 upnp_agent = UpnpAgent()
 
 RESULTS_NAMESPACE_PATH = "/results"
+
+DIR_RESULTS = os.path.expanduser(context.lookup("/environment/configuration/paths/results"))
+DIR_TESTRESULTS = os.path.join(DIR_RESULTS, "testresults")
 
 results_ns = Namespace("Results v1", description="APIs for information about results.")
 
@@ -19,33 +28,28 @@ class ResultsSummary(Resource):
         """
             Returns a job queue summary
         """
-        expected_upnp_devices = landscape.get_upnp_devices()
 
-        found_upnp_devices = []
+        results = []
 
-        for child in upnp_agent.children:
-            cinfo = child.to_dict(brief=True)
-            found_upnp_devices.append(cinfo)
+        for dirpath, dirnames, filenames in os.walk(DIR_TESTRESULTS):
+            if "testrun_summary.json" in filenames and "testsummary.html" in filenames:
+                testrun_summary_html_fullpath = os.path.join(dirpath, "testsummary.html")
+                testrun_summary_json_fullpath = os.path.join(dirpath, "testrun_summary.json")
+
+                summary_data = None
+                with open(testrun_summary_json_fullpath, 'r') as jf:
+                    summary_content = jf.read()
+                    summary_data = json.loads(summary_content)
+
+                if summary_data is not None:
+                    summary_data["htmlreport"] = testrun_summary_html_fullpath
+                    results.append(summary_data)
+
+        results = sorted(results, key=operator.itemgetter("start"), reverse=True)
 
         rtndata = {
             "status": "success",
-            "jobs": {
-                "current": {
-                    "job": "Grouping and Ungrouping",
-                    "progress": .5
-                },
-                "prev": {
-                    "job": "Playback",
-                    "progress": 1.0,
-                    "results": ""
-                }
-            },
-            "landscape":{
-                "pod": {
-                    "expected": expected_upnp_devices,
-                    "found": found_upnp_devices
-                }
-            }
+            "results": results
         }
 
         return rtndata

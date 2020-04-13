@@ -30,6 +30,7 @@ RUNTIME_CONFIGURATION = {
     },
     "paths": {
         "landscape": os.sep.join(("~", "akit", "config", "landscape.json")),
+        "results": os.sep.join(("~", "akit", "results")),
         "runresults": os.sep.join(("~", "akit", "results", "runresults", "%(starttime)s")),
         "testresults": os.sep.join(("~", "akit", "results", "testresults", "%(starttime)s"))
     }
