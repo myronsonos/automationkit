@@ -450,7 +450,13 @@ class UpnpAgent:
                 # Process the packet
                 location = headers[MSearchKeys.LOCATION]
 
-                self._update_root_device(addr, location, headers)
+                try:
+                    self._update_root_device(addr, location, headers)
+                except requests.exceptions.ConnectionError as cerr:
+                    # We can ignore connection errors, we may have UPNP devices on the
+                    # network that have invalid IP addresses.
+                    pass 
+
 
                 self._response_queue.task_done()
         finally:

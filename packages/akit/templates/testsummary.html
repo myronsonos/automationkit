@@ -770,32 +770,62 @@
                 }
             }
 
+            function render_file_element(container, name, ref) {
+                var nxtRow = document.createElement("div");
+                nxtRow.classList.add('ff-row');
+
+                var iconCont = document.createElement("div");
+                iconCont.classList.add('ff-icon');
+                var imgElmnt = document.createElement("img");
+                imgElmnt.classList.add("icon-file");
+                iconCont.appendChild(imgElmnt);
+                nxtRow.appendChild(iconCont);
+
+                var linkCont = document.createElement("div");
+                linkCont.classList.add('ff-name');
+                var linkElmnt = document.createElement("a");
+                linkElmnt.href = ref;
+                linkElmnt.innerHTML = name;
+                linkCont.appendChild(linkElmnt);
+                nxtRow.appendChild(linkCont);
+
+                container.appendChild(nxtRow);
+            }
+
+            function render_folder_element(container, name, ref) {
+
+                var nxtRow = document.createElement("div");
+                nxtRow.classList.add('ff-row');
+
+                var iconCont = document.createElement("div");
+                iconCont.classList.add('ff-icon');
+                var imgElmnt = document.createElement("img");
+                imgElmnt.classList.add("icon-folder");
+                iconCont.appendChild(imgElmnt);
+                nxtRow.appendChild(iconCont);
+
+                var linkCont = document.createElement("div");
+                linkCont.classList.add('ff-name');
+                var linkElmnt = document.createElement("a");
+                linkElmnt.href = ref;
+                linkElmnt.innerHTML = name;
+                linkCont.appendChild(linkElmnt);
+                nxtRow.appendChild(linkCont);
+
+                container.appendChild(nxtRow);
+
+            }
+
             function refresh_catalog() {
 
                 var container = document.getElementById("container-folders");
+                render_folder_element(container, "Parent", "..")
+
                 var folders_list = g_catalog.folders;
                 for (var idx in folders_list) {
                     var nxt = folders_list[idx];
 
-                    var nxtRow = document.createElement("div");
-                    nxtRow.classList.add('ff-row');
-
-                    var iconCont = document.createElement("div");
-                    iconCont.classList.add('ff-icon');
-                    var imgElmnt = document.createElement("img");
-                    imgElmnt.classList.add("icon-folder");
-                    iconCont.appendChild(imgElmnt);
-                    nxtRow.appendChild(iconCont);
-
-                    var linkCont = document.createElement("div");
-                    linkCont.classList.add('ff-name');
-                    var linkElmnt = document.createElement("a");
-                    linkElmnt.href = nxt;
-                    linkElmnt.innerHTML = nxt;
-                    linkCont.appendChild(linkElmnt);
-                    nxtRow.appendChild(linkCont);
-
-                    container.appendChild(nxtRow);
+                    render_folder_element(container, nxt, nxt)
                 }
 
                 var container = document.getElementById("container-files");
@@ -803,25 +833,7 @@
                 for (var idx in file_list) {
                     var nxt = file_list[idx];
 
-                    var nxtRow = document.createElement("div");
-                    nxtRow.classList.add('ff-row');
-
-                    var iconCont = document.createElement("div");
-                    iconCont.classList.add('ff-icon');
-                    var imgElmnt = document.createElement("img");
-                    imgElmnt.classList.add("icon-file");
-                    iconCont.appendChild(imgElmnt);
-                    nxtRow.appendChild(iconCont);
-
-                    var linkCont = document.createElement("div");
-                    linkCont.classList.add('ff-name');
-                    var linkElmnt = document.createElement("a");
-                    linkElmnt.href = nxt;
-                    linkElmnt.innerHTML = nxt;
-                    linkCont.appendChild(linkElmnt);
-                    nxtRow.appendChild(linkCont);
-
-                    container.appendChild(nxtRow);
+                    render_file_element(container, nxt, nxt)
                 }
             }
 
