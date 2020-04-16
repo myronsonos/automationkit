@@ -61,45 +61,54 @@ class UpnpAgent:
     """
     """
 
-    _instance = None
-    _initialized = False
+    _instance_table = {}
+    _initialized_table = {}
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, **kwargs):
         """
             Constructs new instances of the UpnpAgent object. The :class:`UpnpAgent`
             object is a singleton so following instantiations of the object will
             reference the existing singleton
         """
-        if cls._instance is None:
-            cls._instance = super(UpnpAgent, cls).__new__(cls)
-            # Put any initialization here.
-        return cls._instance
+        instanceid = "default"
+        if "instanceid" in kwargs:
+            instanceid = kwargs["instanceid"]
 
-    def __init__(self, iface=None, msearch_interval=60):
+        instance = None
+        if instanceid not in cls._instance_table:
+            instance = super(UpnpAgent, cls).__new__(cls)
+            cls._instance_table[instanceid] = instance
+            # Put any initialization here.
+        else:
+            instance = cls._instance_table[instanceid]
+        return instance
+
+    def __init__(self, instanceid="default", interfaces=None, msearch_interval=60):
 
         this_type = type(self)
-        if not this_type._initialized:
-            this_type._initialized = True
-            self._iface = iface
-            self._factory = UpnpFactory()
-            self._children = {}
-            self._lock = threading.RLock()
-            self._egate = None
-            self._listen_thread = None
-            self._notify_thread = None
-            self._notify_queue = None
-            self._response_thread = None
-            self._response_queue = None
-            self._tick_thread = None
-            self._msearch_interval = msearch_interval
-            self._msearch_lock = threading.RLock()
+        if instanceid not in this_type._initialized_table:
+                this_type._initialized_table[instanceid] = True
+                self._instanceid = instanceid
+                self._interfaces = interfaces
+                self._factory = UpnpFactory()
+                self._children = {}
+                self._lock = threading.RLock()
+                self._egate = None
+                self._listen_thread = None
+                self._notify_thread = None
+                self._notify_queue = None
+                self._response_thread = None
+                self._response_queue = None
+                self._tick_thread = None
+                self._msearch_interval = msearch_interval
+                self._msearch_lock = threading.RLock()
 
-            self._running = False
+                self._running = False
 
-            self._listen_loop = None
-            self._connect = None
-            self._transport = None
-            self._protocol = None
+                self._listen_loop = None
+                self._connect = None
+                self._transport = None
+                self._protocol = None
 
         return
 
@@ -252,25 +261,25 @@ class UpnpAgent:
             self._running = True
 
             sgate.clear()
-            self._notify_thread = threading.Thread(name="UpnpAgent(%s) Notify" % self._iface, target=self._thread_entry_notify, 
+            self._notify_thread = threading.Thread(name="UpnpAgent(%s) Notify" % self._interfaces, target=self._thread_entry_notify, 
                                                    daemon=True, args=(sgate,))
             self._notify_thread.start()
             sgate.wait()
 
             sgate.clear()
-            self._response_thread = threading.Thread(name="UpnpAgent(%s) Response" % self._iface, target=self._thread_entry_response,
+            self._response_thread = threading.Thread(name="UpnpAgent(%s) Response" % self._interfaces, target=self._thread_entry_response,
                                                     daemon=True, args=(sgate,))
             self._response_thread.start()
             sgate.wait()
 
             sgate.clear()
-            self._listen_thread = threading.Thread(name="UpnpAgent(%s) Listen" % self._iface, target=self._thread_entry_listen,
+            self._listen_thread = threading.Thread(name="UpnpAgent(%s) Listen" % self._interfaces, target=self._thread_entry_listen,
                                                    daemon=True, args=(sgate,))
             self._listen_thread.start()
             sgate.wait()
 
             sgate.clear()
-            self._tick_thread = threading.Thread(name="UpnpAgent(%s) Tick" % self._iface, target=self._thread_entry_tick,
+            self._tick_thread = threading.Thread(name="UpnpAgent(%s) Tick" % self._interfaces, target=self._thread_entry_tick,
                                                    daemon=True, args=(sgate,))
             self._tick_thread.start()
             sgate.wait()

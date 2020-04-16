@@ -97,6 +97,16 @@ class Landscape:
 
         return upnp_device_list
 
+    def get_upnp_device_lookup_table(self):
+        upnp_device_list = self.get_upnp_devices()
+
+        upnp_device_table = {}
+        for device in upnp_device_list:
+            usn = device["USN"]
+            upnp_device_table[usn] = device
+
+        return upnp_device_table
+
     def initialize(self):
         """
             Called by '__init__' once at the beginning of the lifetime of a Landscape derived

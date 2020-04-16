@@ -9,7 +9,7 @@ from sqlalchemy_utils.types.uuid as UUIDType
 AutomationBase = declarative_base()
 
 
-class AutomationRun(AutomationBase):
+class AutomationJob(AutomationBase):
     __tablename__ = 'automation_job'
 
     id = Column('job_id', BigInteger, primary_key=True)
@@ -70,3 +70,14 @@ class TaskContainer(AutomationBase):
 
     run_id = Column('job_id', BigInteger, ForeignKey("automation_job.job_id"))
 
+class WorkPackage(AutomationBase):
+    __tablename__ = 'work_package'
+
+    id = Column('wkpkg_id', BigInteger, primary_key=True)
+
+class WorkQueue(AutomationBase):
+    __tablename__ = 'work_package'
+
+    id = Column('wkq_id', BigInteger, primary_key=True)
+
+    wkpkg_id = Column('wkpkg_id', BigInteger, ForeignKey("automation_job.wkpkg_id"))
