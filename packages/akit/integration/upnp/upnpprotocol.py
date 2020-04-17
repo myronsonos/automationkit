@@ -92,42 +92,6 @@ class UpnpProtocol(ssdp.SimpleServiceDiscoveryProtocol):
         print()
         return
 
-class SearchComplete(Exception):
-    """
-        This is raised when the msearch is finished
-    """
-
-class InlineMSearchProtocol(ssdp.SimpleServiceDiscoveryProtocol):
-
-    def connection_lost(self, exc):
-        loop = asyncio.get_event_loop()
-        loop.stop()
-        return
-
-    def datagram_received(self, data, addr):
-        data = data.decode()
-        if data.startswith('HTTP/'):
-            response = ssdp.SSDPResponse.parse(data)
-
-            reason = response.reason
-            status_code = response.status_code
-            version = response.version
-            headers = dict([ (k.upper(), v) for k, v in response.headers])
-
-            usn = headers[MSearchKeys.USN]
-            if usn not in self._found_device_table:
-                self._found_device_table[usn] = headers
-
-            if usn in self._expected_device_table and usn not in self._matching_device_table:
-                self._matching_device_table[usn] = headers
-
-            if len(self._matching_device_table) == len(self._expected_device_table):
-                run_loop = asyncio.get_event_loop()
-                run_loop.stop()
-
-            print(response)
-
-        return
 
 def inline_msearch(expected_devices, response_timeout=30, retry_count=5):
     """
