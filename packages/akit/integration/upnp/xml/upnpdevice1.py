@@ -241,13 +241,13 @@ class UpnpDevice1SpecVersion:
     def _find_value(self, path, namespaces=None):
         rtnval = None
         try:
-            valNode = self._iconNode.find(path, namespaces=self._namespaces)
+            valNode = self._verNode.find(path, namespaces=self._namespaces)
             if valNode is not None:
                 rtnval = valNode.text
         except Exception as err:
             print(str(err))
             register_namespace('', None)
-            xmlcontent = xml_tostring(self._iconNode)
+            xmlcontent = xml_tostring(self._verNode)
             print(xmlcontent)
             print("")
         return rtnval

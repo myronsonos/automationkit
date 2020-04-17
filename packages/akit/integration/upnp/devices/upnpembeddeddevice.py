@@ -50,6 +50,3 @@ class UpnpEmbeddedDevice(UpnpDevice):
     def _populate_embedded_devices(self, factory, description):
         raise AKitSemanticError("Embedded devices inside an embedded device is currently not supported.")
         return
-
-
-

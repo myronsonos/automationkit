@@ -54,7 +54,7 @@ class UpnpRootDevice(UpnpDevice):
         self._host = None
         self._ip_address = None
 
-        self._devices = {}
+        self._device_descriptions = {}
 
         self._lock = threading.RLock()
         return
@@ -75,7 +75,7 @@ class UpnpRootDevice(UpnpDevice):
 
     @property
     def devices(self):
-        return self._devices.values()
+        return self._device_descriptions.values()
 
     @property
     def ext(self):
@@ -176,7 +176,7 @@ class UpnpRootDevice(UpnpDevice):
         dev_desc_node = UpnpDevice1Device(devNode, namespaces=namespaces)
         return dev_desc_node
 
-    def _populate_embedded_devices(self, factory, description):
+    def _populate_embedded_device_descriptions(self, factory, description):
 
         for deviceInfo in description.deviceList:
             manufacturer = deviceInfo.manufacturer
@@ -185,11 +185,11 @@ class UpnpRootDevice(UpnpDevice):
 
             devkey = ":".join([manufacturer, modelNumber, modelDescription])
 
-            if devkey not in self._devices:
+            if devkey not in self._device_descriptions:
                 dev_inst = factory.create_embedded_device_instance(manufacturer, modelNumber, modelDescription)
-                self._devices[devkey] = dev_inst
+                self._device_descriptions[devkey] = dev_inst
             else:
-                dev_inst = self._devices[devkey]
+                dev_inst = self._device_descriptions[devkey]
 
             dev_inst.update_description(self._host, self._urlBase, deviceInfo)
         return
@@ -198,9 +198,9 @@ class UpnpRootDevice(UpnpDevice):
 
         description = self._create_device_description_node(devNode, namespaces=namespaces)
 
-        self._populate_services(factory, description)
+        self._populate_services_descriptions(factory, description)
 
-        self._populate_embedded_devices(factory, description)
+        self._populate_embedded_device_descriptions(factory, description)
 
         # Lock and then swap out the description
         self._lock.acquire()

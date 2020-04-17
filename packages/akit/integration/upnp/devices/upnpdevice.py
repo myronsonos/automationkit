@@ -51,7 +51,7 @@ class UpnpDevice:
         self._host = None
         self._urlBase = None
 
-        self._services = {}
+        self._services_descriptions = {}
         return
 
     @property
@@ -105,7 +105,7 @@ class UpnpDevice:
         json_str = self._description.to_json(brief=brief)
         return json_str
 
-    def _populate_embedded_devices(self, factory, description):
+    def _populate_embedded_device_descriptions(self, factory, description):
         raise AKitNotOverloadedError("UpnpDevice._populate_embedded_devices: must be overridden.")
         return
 
@@ -114,18 +114,18 @@ class UpnpDevice:
             pass
         return
 
-    def _populate_services(self, factory, description):
+    def _populate_services_descriptions(self, factory, description):
 
         for serviceInfo in description.serviceList:
             serviceId = serviceInfo.serviceId
             serviceType = serviceInfo.serviceType
 
-            if serviceId not in self._services:
+            if serviceId not in self._services_descriptions:
                 svc_inst = factory.create_service_instance(serviceId)
                 if svc_inst is not None:
-                    self._services[serviceId] = svc_inst
+                    self._services_descriptions[serviceId] = svc_inst
             else:
-                svc_inst = self._services[serviceId]
+                svc_inst = self._services_descriptions[serviceId]
 
             if svc_inst is not None:
                 svc_inst.update_description(self._host, self._urlBase, serviceInfo)

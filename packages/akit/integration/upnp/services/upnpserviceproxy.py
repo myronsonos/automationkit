@@ -24,6 +24,8 @@ class UpnpServiceProxy:
         self._SCPDURL = None
         self._serviceId = None
         self._serviceType = None
+
+        self._validate_parameter_values = True
         return
 
     @property
@@ -54,7 +56,20 @@ class UpnpServiceProxy:
     def serviceType(self):
         return self._serviceType
 
-    def set_call_parameters(self, host, baseURL, controlURL, eventSubURL, serviceId=None, serviceType=None):
+    def proxy_update_description(self, host, baseURL, description):
+        self._host = host
+        self._baseURL = baseURL
+        self._description = description
+
+        self._controlURL = self._description.controlURL
+        self._eventSubURL = self._description.eventSubURL
+        self._SCPDURL = self._description.SCPDURL
+        self._serviceId = self._description.serviceId
+        self._serviceType = self._description.serviceType
+
+        return
+
+    def proxy_set_call_parameters(self, host, baseURL, controlURL, eventSubURL, serviceId=None, serviceType=None):
 
         self._host = host
 
@@ -72,20 +87,7 @@ class UpnpServiceProxy:
         self._serviceType = serviceType
         return
 
-    def update_description(self, host, baseURL, description):
-        self._host = host
-        self._baseURL = baseURL
-        self._description = description
-
-        self._controlURL = self._description.controlURL
-        self._eventSubURL = self._description.eventSubURL
-        self._SCPDURL = self._description.SCPDURL
-        self._serviceId = self._description.serviceId
-        self._serviceType = self._description.serviceType
-
-        return
-
-    def call_action(self, action_name: str, arguments: dict = {}, auth: dict = None, headers: dict = {} ):
+    def proxy_call_action(self, action_name: str, arguments: dict = {}, auth: dict = None, headers: dict = {} ):
 
         call_url = self.controlURL
         if self._baseURL is not None:
@@ -122,3 +124,12 @@ class UpnpServiceProxy:
         resp_dict = self._soap_processor.parse_response(action_name, resp_content, typed=self.serviceType)
 
         return resp_dict
+
+    def proxy_get_variable_value(self, var_name):
+        var_value = None
+
+        return var_value
+
+    def proxy_set_variable_value(self, var_name, var_value):
+
+        return
