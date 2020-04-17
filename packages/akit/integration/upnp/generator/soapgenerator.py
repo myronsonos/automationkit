@@ -94,7 +94,7 @@ def generate_upnp_service_proxy(destinationDir, serviceType, variablesTable, typ
     service_type_parts = serviceType.split(":")
     service_name = ":".join(service_type_parts[:-1])
 
-    class_name_base = service_type_parts[3]
+    class_name_base = service_type_parts[3] + service_type_parts[-1]
     class_name = class_name_base + "ServiceProxy"
     file_base = class_name.lower() + ".py"
 
