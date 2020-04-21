@@ -14,7 +14,7 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:TemperatureSetpoint:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:TemperatureSetpoint'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:TemperatureSetpoint'
 
 
     def get_Application(self):

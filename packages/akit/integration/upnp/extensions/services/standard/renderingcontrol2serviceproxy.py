@@ -14,7 +14,7 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RenderingControl:2'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:RenderingControl'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:RenderingControl'
 
 
     def get_BlueVideoBlackLevel(self):

@@ -14,7 +14,7 @@ class WANIPv6FirewallControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANIPv6FirewallControl:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:WANIPv6FirewallControl'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:WANIPv6FirewallControl'
 
 
     def get_FirewallEnabled(self):

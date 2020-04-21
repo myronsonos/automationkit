@@ -54,7 +54,10 @@ class UpnpRootDevice(UpnpDevice):
         self._host = None
         self._ip_address = None
 
+        self._devices = {}
         self._device_descriptions = {}
+
+        self._mode = None
 
         self._lock = threading.RLock()
         return
@@ -74,8 +77,12 @@ class UpnpRootDevice(UpnpDevice):
         return desc
 
     @property
-    def devices(self):
+    def device_descriptions(self):
         return self._device_descriptions.values()
+
+    @property
+    def devices(self):
+        return self._devices.values()
 
     @property
     def ext(self):
@@ -99,6 +106,10 @@ class UpnpRootDevice(UpnpDevice):
         return desc.MACAddress
 
     @property
+    def mode(self):
+        return self._mode
+
+    @property
     def server(self):
         return self._server
 
@@ -115,6 +126,10 @@ class UpnpRootDevice(UpnpDevice):
     def specVersion(self):
         return self._specVersion
 
+    @property
+    def USN(self):
+        return self._usn
+
     def initialize(self, location: str, devinfo: dict):
         """
         """
@@ -127,6 +142,10 @@ class UpnpRootDevice(UpnpDevice):
 
         self._consume_upnp_extra(devinfo)
         return
+
+    def lookup_device(self, device_type):
+        device = self._devices[device_type]
+        return device
 
     def refresh_description(self, ipaddr, factory, docNode, namespaces=None):
         """
@@ -159,9 +178,14 @@ class UpnpRootDevice(UpnpDevice):
 
         return
 
+    def switchModes(self, mode):
+        self._mode = mode
+        return
+
     def to_dict(self, brief=False):
         dval = super(UpnpRootDevice, self).to_dict(brief=brief)
         dval["IPAddress"] = self.IPAddress
+        dval["USN"] = self.USN
         return dval
 
     def to_json(self, brief=False):

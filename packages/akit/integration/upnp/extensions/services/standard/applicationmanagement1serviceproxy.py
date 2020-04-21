@@ -14,5 +14,5 @@ class ApplicationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ApplicationManagement:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:ApplicationManagement'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:ApplicationManagement'
 

@@ -14,7 +14,7 @@ class HVAC_FanOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:HVAC_FanOperatingMode:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:HVAC_FanOperatingMode'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:HVAC_FanOperatingMode'
 
 
     def get_FanStatus(self):

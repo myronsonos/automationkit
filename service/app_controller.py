@@ -9,9 +9,6 @@ from akit.integration.landscaping import Landscape
 
 landscape = Landscape()
 
-upnp_agent = UpnpAgent()
-upnp_agent.start()
-
 from flask import Flask, url_for
 from flask_restplus import apidoc
 
@@ -54,10 +51,12 @@ def swagger_static(filename):
     logger.critical("filename: %s" % filename)
     return static_url
 
-expected_upnp_devices = landscape.get_upnp_devices()
 
+upnp_agent = UpnpAgent()
+upnp_agent.start()
 upnp_agent.begin_search()
-upnp_agent.wait_for_devices(expected_upnp_devices)
+
+expected_upnp_devices = landscape.get_upnp_devices()
 
 app.register_blueprint(redirect_apidoc)
 

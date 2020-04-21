@@ -14,7 +14,7 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:FanSpeed:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:FanSpeed'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:FanSpeed'
 
 
     def get_DirectionStatus(self):

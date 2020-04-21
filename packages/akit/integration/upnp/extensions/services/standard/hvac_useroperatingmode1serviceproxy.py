@@ -14,7 +14,7 @@ class HVAC_UserOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:HVAC_UserOperatingMode:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:HVAC_UserOperatingMode'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:HVAC_UserOperatingMode'
 
 
     def get_ModeStatus(self):

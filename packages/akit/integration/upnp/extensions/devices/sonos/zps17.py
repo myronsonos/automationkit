@@ -29,6 +29,30 @@ class SonosDeviceZpS17(SonosDevice, LoadableExtension):
     MODEL_NUMBER = "S17"
     MODEL_DESCRIPTION = "Sonos Move"
 
-    def _consume_upnp_extra(self, extrainfo):
-        super(SonosDeviceZpS17, self)._consume_upnp_extra(extrainfo)
-        return
+    def serviceAlarmClock(self):
+        svc = self.lookup_service("urn:schemas-upnp-org:service:AlarmClock:1")
+        return svc
+    
+    def serviceDeviceProperties(self):
+        svc = self.lookup_service("urn:schemas-upnp-org:service:DeviceProperties:1")
+        return svc
+
+    def serviceGroupManagement(self):
+        svc = self.lookup_service("urn:schemas-upnp-org:service:GroupManagement:1")
+        return svc
+
+    def serviceMusicService(self):
+        svc = self.lookup_service("urn:schemas-upnp-org:service:MusicService:1")
+        return svc
+
+    def serviceSystemProperties(self):
+        svc = self.lookup_service("urn:schemas-upnp-org:service:SystemProperties:1")
+        return svc
+
+    def serviceQPlay(self):
+        svc = self.lookup_service("urn:schemas-upnp-org:service:QPlay:1")
+        return svc
+
+    def serviceZoneTopologyGroup(self):
+        svc = self.lookup_service("urn:schemas-upnp-org:service:ZoneTopologyGroup:1")
+        return svc

@@ -14,7 +14,7 @@ class WANEthernetLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANEthernetLinkConfig:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:WANEthernetLinkConfig'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:WANEthernetLinkConfig'
 
 
     def get_EthernetLinkStatus(self):

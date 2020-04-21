@@ -14,7 +14,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ScheduledRecording:2'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:ScheduledRecording'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:ScheduledRecording'
 
 
     def get_LastChange(self):

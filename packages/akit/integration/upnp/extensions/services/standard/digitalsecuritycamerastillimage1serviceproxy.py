@@ -14,7 +14,7 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:DigitalSecurityCameraStillImage:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:DigitalSecurityCameraStillImage'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:DigitalSecurityCameraStillImage'
 
 
     def get_AvailableCompressionLevels(self):

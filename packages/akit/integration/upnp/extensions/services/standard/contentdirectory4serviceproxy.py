@@ -14,7 +14,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ContentDirectory:4'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:ContentDirectory'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:ContentDirectory'
 
 
     def get_ContainerUpdateIDs(self):

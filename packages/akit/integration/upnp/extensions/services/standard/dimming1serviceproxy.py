@@ -14,7 +14,7 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Dimming:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:Dimming'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:Dimming'
 
 
     def get_IsRamping(self):

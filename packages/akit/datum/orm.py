@@ -1,9 +1,9 @@
-from sqlalchemy import BigInteger, Column, DateTime, Text, VarChar
+from sqlalchemy import BigInteger, Column, DateTime, String, Text, VarChar, ForeignKey
 from sqlalchemy.types import JSON
 
 from sqlalchemy.ext.declarative import declarative_base
 
-from sqlalchemy_utils.types.uuid as UUIDType
+from sqlalchemy_utils.types.uuid import UUIDType
 
 
 AutomationBase = declarative_base()
@@ -23,8 +23,8 @@ class AutomationJob(AutomationBase):
     stop = Column('job_stop', DateTime, nullable=True)
     detail = Column('job_detail', JSON, nullable=True)
 
-    lscape_id = Column('lscape_id', BigInteger, ForeignKey("landscape.lscape_id"))
-    lsscan_id = Column('lsscan_id', BigInteger, ForeignKey("landscape_scan.lsscan_id"))
+    lscape_id = Column('lscape_id', BigInteger, ForeignKey("landscape.lscape_id"), nullable=True)
+    lsscan_id = Column('lsscan_id', BigInteger, ForeignKey("landscape_scan.lsscan_id"), nullable=True)
 
 class Landscape(AutomationBase):
     __tablename__ = 'landscape'

@@ -14,7 +14,7 @@ class RadiusClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RadiusClient:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:RadiusClient'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:RadiusClient'
 
 
     def get_AuthenticationServerIPAddress(self):

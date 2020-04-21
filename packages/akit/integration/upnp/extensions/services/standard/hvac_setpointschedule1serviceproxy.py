@@ -14,7 +14,7 @@ class HVAC_SetpointSchedule1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:HVAC_SetpointSchedule:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:HVAC_SetpointSchedule'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:HVAC_SetpointSchedule'
 
 
     def get_EventsPerDay(self):

@@ -6,46 +6,46 @@ class LinuxClientMixIn(IntegrationMixIn):
         This is a mock playback device.
     """
 
-    pathname = None
+    pathbase = "clients/linux"
 
     def __init__(self, *args, **kwargs):
         """
-            The default contructor for an :class:`IntegrationMixIn`.
+            The default contructor for an :class:`LinuxClientMixIn`.
         """
-        if self.pathname is None:
-            raise ValueError("The 'pathname' class member variable must be set to a unique name for each integration class type.")
+        if self.pathbase is None:
+            raise ValueError("The 'pathbase' class member variable must be set to a unique name for each integration class type.")
 
-        self.context.insert(self.pathname, self)
+        self.context.insert(self.pathbase, self)
         return
 
     @classmethod
     def attach_to_environment(cls):
         """
-            This API is called so that the IntegrationMixIn can process configuration information.  The :class:`IntegrationMixIn`
-            will verify that it has a valid environment and configuration to run in.
+            This API is called so that this subclass of the IntegrationMixIn can process configuration information.
+            The :class:`IntegrationMixIn` will verify that it has a valid environment and configuration to run in.
 
             :raises :class:`akit.exceptions.AKitMissingConfigError`, :class:`akit.exceptions.AKitInvalidConfigError`:
         """
-        
+
         return
 
     @classmethod
     def collect_resources(cls):
         """
-            This API is called so the `IntegrationMixIn` can connect with a resource management
+            This API is called so that this subclass of the `IntegrationMixIn` can connect with a resource management
             system and gain access to the resources required for the automation run.
 
             :raises :class:`akit.exceptions.AKitResourceError`:
         """
-        
+
         return
 
     @classmethod
     def diagnostic(cls, diag_level, diag_folder):
         """
-            The API is called by the :class:`akit.sequencer.Sequencer` object when the automation sequencer is 
-            building out a diagnostic package at a diagnostic point in the automation sequence.  Example diagnostic
-            points are:
+            The API is called so that this subclass of the :class:`akit.sequencer.Sequencer` object when the automation
+            sequencer is building out a diagnostic package at a diagnostic point in the automation sequence.  Example
+            diagnostic points are:
 
             * pre-run
             * post-run
@@ -64,8 +64,8 @@ class LinuxClientMixIn(IntegrationMixIn):
     @classmethod
     def establish_connectivity(cls):
         """
-            This API is called so the `IntegrationMixIn` can establish connectivity with any compute or storage
-            resources.
+            This API is called so that this subclass of the `IntegrationMixIn` can establish connectivity with any
+            compute or storage resources.
 
             :raises :class:`akit.exceptins.AKitInitialConnectivityError`:
         """

@@ -14,7 +14,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WLANConfiguration:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:WLANConfiguration'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:WLANConfiguration'
 
 
     def get_AssociatedDeviceAuthenticationState(self):

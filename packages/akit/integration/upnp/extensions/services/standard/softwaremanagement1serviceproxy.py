@@ -14,7 +14,7 @@ class SoftwareManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:SoftwareManagement:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:SoftwareManagement'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:SoftwareManagement'
 
 
     def get_ActiveEUIDs(self):

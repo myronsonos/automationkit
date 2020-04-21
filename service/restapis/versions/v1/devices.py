@@ -57,18 +57,18 @@ class AllDevicesCollection(Resource):
 
         exp_device_table = {}
         for exp_dev in expected_upnp_devices:
-            exp_mac = exp_dev["MACAddress"]
-            exp_device_table[exp_mac] = exp_dev
+            exp_usn = exp_dev["USN"]
+            exp_device_table[exp_usn] = exp_dev
             exp_dev["cachedIcon"] = "/static/images/unknowndevice.png"
 
         other_devices = []
         for child in upnp_agent.children:
             cinfo = child.to_dict(brief=True)
 
-            if "MACAddress" in cinfo:
-                cmac = cinfo["MACAddress"]
-                if cmac in exp_device_table:
-                    exp_device_table[cmac] = cinfo
+            if "USN" in cinfo:
+                usn = cinfo["USN"]
+                if usn in exp_device_table:
+                    exp_device_table[usn] = cinfo
                 else:
                     other_devices.append(cinfo)
 
@@ -100,6 +100,9 @@ class DeviceDetail(Resource):
         """
             Returns a list of devices
         """
+        rtndata = {
+            "status": "failed"
+        }
 
         found_child = None
         for child in upnp_agent.children:
@@ -110,24 +113,25 @@ class DeviceDetail(Resource):
                 if mac == cmac:
                     found_child = child
 
-        found_dev = found_child.to_dict(brief=False)
-        firstIcon = found_dev.get("firstIcon", None)
-        if firstIcon is not None:
-            icon_url = firstIcon["url"]
-            replacement_url = "/static/images/cached/" + icon_url.lstrip("/")
-            found_dev["cachedIcon"] = replacement_url
+        if found_child is not None:
+            found_dev = found_child.to_dict(brief=False)
+            firstIcon = found_dev.get("firstIcon", None)
+            if firstIcon is not None:
+                icon_url = firstIcon["url"]
+                replacement_url = "/static/images/cached/" + icon_url.lstrip("/")
+                found_dev["cachedIcon"] = replacement_url
 
 
-            cache_dir = os.path.join(DIR_STATIC, "images", "cached")
-            url_base = found_dev.get("URLBase", None)
-            try_download_icon_to_cache(cache_dir, icon_url, url_base=url_base)
-        else:
-            found_dev["cachedIcon"] = "/static/images/unknowndevice.png"
+                cache_dir = os.path.join(DIR_STATIC, "images", "cached")
+                url_base = found_dev.get("URLBase", None)
+                try_download_icon_to_cache(cache_dir, icon_url, url_base=url_base)
+            else:
+                found_dev["cachedIcon"] = "/static/images/unknowndevice.png"
 
-        rtndata = {
-            "status": "success",
-            "device": found_dev
-        }
+            rtndata = {
+                "status": "success",
+                "device": found_dev
+            }
 
         return rtndata
 

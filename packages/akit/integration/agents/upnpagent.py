@@ -305,13 +305,13 @@ class UpnpAgent:
 
         have_count = 0
         for upnp_hint in upnp_hint_list:
-            if "MACAddress" in upnp_hint:
+            if "USN" in upnp_hint:
                 have_count += 1
 
         if have_count == hint_list_len:
             # Collect all the MAC addresses for the upnp devices
-            mac_addresses = [ upnp_hint["MACAddress"] for upnp_hint in upnp_hint_list ]
-            self._wait_for_devices_by_mac_address(mac_addresses, timeout=timeout, retry=retry)
+            usn_list = [ upnp_hint["USN"] for upnp_hint in upnp_hint_list ]
+            self._wait_for_devices_by_usn(usn_list, timeout=timeout, retry=retry)
             return
 
         have_count = 0
@@ -577,19 +577,19 @@ class UpnpAgent:
 
         return
 
-    def _wait_for_devices_by_mac_address(self, mac_addresses: list, timeout: int = 300, retry: int = 30):
+    def _wait_for_devices_by_usn(self, usn_list: list, timeout: int = 300, retry: int = 30):
 
         now_time = time.time()
         begin_time = now_time
         end_time = now_time + timeout
 
         while True:
-            not_found = [mac for mac in mac_addresses]
+            not_found = [usn for usn in usn_list]
 
             for dev in self.children:
-                mac_addr = dev.MACAddress
-                if mac_addr is not None and mac_addr in not_found:
-                    not_found.remove(mac_addr)
+                dev_usn = dev.USN
+                if dev_usn is not None and dev_usn in not_found:
+                    not_found.remove(dev_usn)
 
             # If we found all the devices, then break
             if len(not_found) == 0:
@@ -602,9 +602,9 @@ class UpnpAgent:
 
             now_time = time.time()
             if now_time > end_time:
-                err_msg = "Timeout waiting for devices to respond to M-SEARCH.  MACAddress List:\n"
-                for mac_addr in mac_addresses:
-                    err_msg = "%s    %s\n" % (err_msg, mac_addr)
+                err_msg = "Timeout waiting for devices to respond to M-SEARCH.  USN List:\n"
+                for usn in usn_list:
+                    err_msg = "%s    %s\n" % (err_msg, usn)
                 raise AKitTimeoutError(err_msg)
 
         return
@@ -616,7 +616,7 @@ class UpnpAgent:
         end_time = now_time + timeout
 
         while True:
-            not_found = [ns for sn in serial_numbers]
+            not_found = [sn for sn in serial_numbers]
 
             for dev in self.children:
                 sn = dev.serialNumber

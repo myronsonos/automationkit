@@ -14,5 +14,5 @@ class CallManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:CallManagement:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:CallManagement'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:CallManagement'
 

@@ -14,7 +14,7 @@ class AVTransport3ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:AVTransport:3'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:AVTransport'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:AVTransport'
 
 
     def get_AVTransportURI(self):

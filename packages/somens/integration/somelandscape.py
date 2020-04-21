@@ -2,10 +2,7 @@
 from akit.integration.landscaping import Landscape, LandscapeDescription
 from akit.xlogging import getAutomatonKitLogger
 
-from somens.integration.clients.linuxclientmixin import LinuxClientMixIn
-from somens.integration.clients.windowsclientmixin import WindowsClientMixIn
-from somens.integration.cluster.clustermixin import ClusterMixIn
-from somens.integration.playback.playbackdevicemixin import PlaybackDeviceMixIn
+from akit.integration.playback.playbackdevicemixin import PlaybackDeviceMixIn
 
 logger = getAutomatonKitLogger()
 
@@ -13,14 +10,7 @@ class SomeLandscapeDescription(LandscapeDescription):
 
     @classmethod
     def register_integration_points(cls, landscape):
-        landscape.register_integration_point("primary-linux", LinuxClientMixIn)
-        landscape.register_integration_point("secondary-linux", LinuxClientMixIn)
-
-        landscape.register_integration_point("primary-windows", WindowsClientMixIn)
-        landscape.register_integration_point("secondary-windows", WindowsClientMixIn)
-
-        landscape.register_integration_point("primary-cluster", ClusterMixIn)
-        landscape.register_integration_point("secondary-cluster", ClusterMixIn)
+        LandscapeDescription.register_integration_points(, landscape)
 
         landscape.register_integration_point("primary-playback", PlaybackDeviceMixIn)
         landscape.register_integration_point("secondary-playback", PlaybackDeviceMixIn)

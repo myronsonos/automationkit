@@ -14,7 +14,7 @@ class WANIPConnection2ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANIPConnection:2'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:WANIPConnection'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:WANIPConnection'
 
 
     def get_AutoDisconnectTime(self):

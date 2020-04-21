@@ -14,7 +14,7 @@ class Feeder1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Feeder:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:Feeder'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:Feeder'
 
 
     def get_EntireDocument(self):

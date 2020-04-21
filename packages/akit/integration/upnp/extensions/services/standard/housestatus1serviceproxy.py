@@ -14,7 +14,7 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:HouseStatus:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:HouseStatus'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:HouseStatus'
 
 
     def get_ActivityLevel(self):

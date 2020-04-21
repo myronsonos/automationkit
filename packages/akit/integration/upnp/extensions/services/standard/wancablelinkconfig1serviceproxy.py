@@ -14,7 +14,7 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANCableLinkConfig:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:WANCableLinkConfig'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:WANCableLinkConfig'
 
 
     def get_BPIEncryptionEnabled(self):

@@ -14,7 +14,7 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ConnectionManager:3'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:ConnectionManager'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:ConnectionManager'
 
 
     def get_ClockUpdateID(self):

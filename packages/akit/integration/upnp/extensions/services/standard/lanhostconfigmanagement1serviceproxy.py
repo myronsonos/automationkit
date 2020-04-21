@@ -14,7 +14,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:LANHostConfigManagement:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:LANHostConfigManagement'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:LANHostConfigManagement'
 
 
     def get_DHCPRelay(self):

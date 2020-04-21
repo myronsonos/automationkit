@@ -1,21 +1,59 @@
 
+
+from akit.integration.landscaping import Landscape
+from akit.integration.agents.upnpagent import UpnpAgent
+from akit.integration.upnp.upnpprotocol import inline_msearch
+
 from akit.mixins.integration import IntegrationMixIn
 
-class WindowsClientMixIn(IntegrationMixIn):
+class AutomationPodMixIn(IntegrationMixIn):
     """
         This is a mock playback device.
     """
 
-    pathname = None
+    pathbase = None
+
+    landscape = Landscape()
+
+    upnp_devices_expected = None
+    upnp_devices_found = None
+    upnp_devices_pool = None
+    upnp_devices_inuse = None
+
+    upnp_agent = None
 
     def __init__(self, *args, **kwargs):
         """
-            The default contructor for an :class:`IntegrationMixIn`.
+            The default contructor for an :class:`AutomationPodMixIn`.
         """
-        if self.pathname is None:
-            raise ValueError("The 'pathname' class member variable must be set to a unique name for each integration class type.")
+        if self.pathbase is None:
+            raise ValueError("The 'pathbase' class member variable must be set to a unique name for each integration class type.")
 
-        self.context.insert(self.pathname, self)
+        self.context.insert(self.pathbase, self)
+        return
+
+    def checkout_upnp_device(self, usn):
+        """
+            Checkout a device from the device pool by USN.
+        """
+        codev = None
+
+        if usn in self.upnp_devices_pool:
+            codev = self.upnp_devices_pool.pop(usn)
+            self.upnp_devices_inuse[usn] = codev
+
+        return codev
+
+    def checkin_upnp_device(self, codev):
+        """
+            Checkin a device to the device pool.
+        """
+        usn = codev["USN"]
+        
+        if usn in self.upnp_devices_inuse:
+            codev = self.upnp_devices_inuse.pop(usn)
+            self.upnp_devices_pool[usn] = codev
+
         return
 
     @classmethod
@@ -26,7 +64,15 @@ class WindowsClientMixIn(IntegrationMixIn):
 
             :raises :class:`akit.exceptions.AKitMissingConfigError`, :class:`akit.exceptions.AKitInvalidConfigError`:
         """
-        
+        cls.upnp_devices_expected = cls.landscape.get_upnp_devices()
+
+        # First do an inline search for devices with a timeout to make sure all the expected
+        # devices are visible.
+        found_devices, matching_devices = inline_msearch(cls.upnp_devices_expected)
+
+        # If the inline m-search was successful, then go ahead and startup the UpnpAgent
+        cls.upnp_agent = UpnpAgent()
+        cls.start()
         return
 
     @classmethod

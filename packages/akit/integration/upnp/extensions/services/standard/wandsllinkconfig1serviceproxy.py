@@ -14,7 +14,7 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANDSLLinkConfig:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:WANDSLLinkConfig'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:WANDSLLinkConfig'
 
 
     def get_ATMEncapsulation(self):

@@ -14,5 +14,5 @@ class Messaging2ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Messaging:2'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:Messaging'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:Messaging'
 

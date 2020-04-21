@@ -14,7 +14,7 @@ class Layer3Forwarding1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Layer3Forwarding:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:Layer3Forwarding'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:Layer3Forwarding'
 
 
     def get_DefaultConnectionService(self):

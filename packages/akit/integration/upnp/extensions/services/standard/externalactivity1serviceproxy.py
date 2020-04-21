@@ -14,7 +14,7 @@ class ExternalActivity1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ExternalActivity:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:ExternalActivity'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:ExternalActivity'
 
 
     def get_Activity(self):

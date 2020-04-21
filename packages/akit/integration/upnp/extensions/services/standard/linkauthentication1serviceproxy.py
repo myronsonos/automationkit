@@ -14,7 +14,7 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:LinkAuthentication:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:LinkAuthentication'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:LinkAuthentication'
 
 
     def get_AuthState(self):

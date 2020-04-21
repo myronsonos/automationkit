@@ -14,7 +14,7 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:WANCommonInterfaceConfig'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:WANCommonInterfaceConfig'
 
 
     def get_ActiveConnectionDeviceContainer(self):

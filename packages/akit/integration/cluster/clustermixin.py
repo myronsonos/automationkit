@@ -6,16 +6,16 @@ class ClusterMixIn(IntegrationMixIn):
         This is a mock playback device.
     """
 
-    pathname = None
+    pathbase = "cluster"
 
     def __init__(self, *args, **kwargs):
         """
             The default contructor for an :class:`IntegrationMixIn`.
         """
-        if self.pathname is None:
-            raise ValueError("The 'pathname' class member variable must be set to a unique name for each integration class type.")
+        if self.pathbase is None:
+            raise ValueError("The 'pathbase' class member variable must be set to a unique name for each integration class type.")
 
-        self.context.insert(self.pathname, self)
+        self.context.insert(self.pathbase , self)
         return
 
     @classmethod
@@ -26,7 +26,6 @@ class ClusterMixIn(IntegrationMixIn):
 
             :raises :class:`akit.exceptions.AKitMissingConfigError`, :class:`akit.exceptions.AKitInvalidConfigError`:
         """
-        
         return
 
     @classmethod

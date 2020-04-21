@@ -46,25 +46,32 @@ class IntegrationMixIn(ContextUser):
         return
 
     @property
+    def mode(self):
+        """
+            Returns the current mode any associated resource is operating in.
+        """
+        return self._mode
+
+    @mode.setter
+    def mode(self, value):
+        """
+            Sets the current mode any associated resource is operating in.
+        """
+        old_value = self._mode
+        self._mode = value
+        self.on_mode_changed(old_value, value)
+        return
+
+    @property
     def role(self):
         """
             Returns the current automation role assigned to the integration mixin.
         """
         return self._role
 
-    @role.setter
-    def role(self, role_val):
+    def on_mode_changed(self, prev_mode, new_mode):
         """
-            Assigns a new primary role to the integration mixin.
-        """
-        prev_role = self._role
-        self._role = role_val
-        self.on_role_changed(prev_role, role_val)
-        return
-
-    def on_role_changed(self, prev_role, new_role):
-        """
-            Implemented by derived classes in order to perform the changeover of roles.
+            Implemented by derived classes in order to perform the changeover of modes.
         """
         return
 

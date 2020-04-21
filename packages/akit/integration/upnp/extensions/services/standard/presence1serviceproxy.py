@@ -14,5 +14,5 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Presence:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:Presence'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:Presence'
 

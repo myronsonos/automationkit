@@ -14,5 +14,5 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:AddressBook:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:AddressBook'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:AddressBook'
 

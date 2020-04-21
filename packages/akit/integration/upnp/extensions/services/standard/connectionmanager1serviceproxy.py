@@ -14,7 +14,7 @@ class ConnectionManager1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ConnectionManager:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:ConnectionManager'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:ConnectionManager'
 
 
     def get_CurrentConnectionIDs(self):

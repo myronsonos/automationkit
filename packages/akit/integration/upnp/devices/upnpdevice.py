@@ -52,6 +52,7 @@ class UpnpDevice:
         self._urlBase = None
 
         self._services_descriptions = {}
+        self._services = {}
         return
 
     @property
@@ -61,6 +62,14 @@ class UpnpDevice:
     @property
     def host(self):
         return self._host
+
+    @property
+    def services(self):
+        return self._services.values()
+
+    @property
+    def services_descriptions(self):
+        return self._services_descriptions
 
     @property
     def URLBase(self):
@@ -81,6 +90,10 @@ class UpnpDevice:
                     break
 
         return svc_content
+
+    def lookup_service(self, service_type):
+        svc = self._services[service_type]
+        return svc
 
     def to_dict(self, brief=False):
         dval = self._description.to_dict(brief=brief)

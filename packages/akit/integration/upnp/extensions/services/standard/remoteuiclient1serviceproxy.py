@@ -14,5 +14,5 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RemoteUIClient:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:RemoteUIClient'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:RemoteUIClient'
 

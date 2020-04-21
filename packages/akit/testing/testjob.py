@@ -169,6 +169,27 @@ class TestJob(ContextUser):
         for tp in self._testpacks:
             yield tp
 
+    @classmethod
+    def user_interface_display_options(cls):
+        """
+            Overridden by derived TestJob classes in order to return a configuration user interface
+            description that provides information about a vue javascript component that meets the
+            interface requirements and will allow a user to input job configuration information that
+            can be packaged stored in a data store as a json object and later passed to a job in order
+            to configure the job.
+        """
+        return
+
+    @classmethod
+    def user_interface_edit_options(cls):
+        """
+            Overridden by derived TestJob classes in order to return a configuration user interface
+            description that provides information about a vue javascript component that meets the
+            interface requirements and will allow a user to input job configuration information that
+            can be packaged stored in a data store as a json object and later passed to a job in order
+            to configure the job.
+        """
+        return
 
 class DefaultTestJob(TestJob):
     name = "Test Job"

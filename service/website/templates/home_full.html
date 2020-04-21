@@ -56,7 +56,29 @@
             </nav>
         </div>
         <div id='section-body'>
-            
+            <div id='application' style='width: 100%;'>
+                <summary-viewer></summary-viewer>
+            </div>
+            <!-- Load the Application-->
+            <script>
+                new window.Vue({
+                    el: '#application', 
+                    data: {
+                        test_result_list: null,
+                    },
+                    mounted () {
+                        var that = this;
+
+                        var qurl = "/api/1/results";
+                        axios.get(qurl).then(
+                            (response) => {
+                                var test_result_list = response.data.results;
+                                that.test_result_list = test_result_list;
+                            }
+                        );
+                    }
+                });
+            </script>
         </div>
         <div id='section-footer'>
         </div>

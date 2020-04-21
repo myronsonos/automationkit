@@ -23,8 +23,12 @@ import traceback
 from akit.compat import import_by_name
 from akit.environment.variables import VARIABLES
 from akit.environment.context import Context
-from akit.exceptions import AKitConfigurationError
+from akit.exceptions import AKitConfigurationError, AKitSemanticError
 from akit.paths import get_expand_path
+
+from akit.integration.clients.linuxclientmixin import LinuxClientMixIn
+from akit.integration.clients.windowsclientmixin import WindowsClientMixIn
+from akit.integration.cluster.clustermixin import ClusterMixIn
 
 class LandscapeDescription:
     """
@@ -35,6 +39,14 @@ class LandscapeDescription:
 
     @classmethod
     def register_integration_points(cls, landscape):
+        landscape.register_integration_point("primary-linux", LinuxClientMixIn)
+        landscape.register_integration_point("secondary-linux", LinuxClientMixIn)
+
+        landscape.register_integration_point("primary-windows", WindowsClientMixIn)
+        landscape.register_integration_point("secondary-windows", WindowsClientMixIn)
+
+        landscape.register_integration_point("primary-cluster", ClusterMixIn)
+        landscape.register_integration_point("secondary-cluster", ClusterMixIn)
         return
 
     def load(self, landscapefile):
@@ -85,7 +97,7 @@ class Landscape:
 
     def get_upnp_devices(self):
         """
-            Returns a list of MAC addresses from the 'devices' list.
+            Returns a list of UPNP device information dictionaries.
         """
         upnp_device_list = []
 
@@ -98,6 +110,9 @@ class Landscape:
         return upnp_device_list
 
     def get_upnp_device_lookup_table(self):
+        """
+            Returns a USN lookup table for upnp devices.
+        """
         upnp_device_list = self.get_upnp_devices()
 
         upnp_device_table = {}
@@ -133,6 +148,11 @@ class Landscape:
     def diagnostic(self, diaglabel, diags):
         """
             Can be called in order to perform a diagnostic capture across the test landscape.
+
+            :param diaglabel: The label to use for the diagnostic.
+            :type diaglabel: str
+            :param diags: A dictionary of diagnostics to run.
+            :type diags: dict
         """
         return
     
@@ -146,16 +166,21 @@ class Landscape:
         """
         return
     
-    def register_integation_point(self, role, imixin):
+    def register_integration_point(self, role, mixin):
         """
             This method should be called from the attach_to_environment methods from individual mixins
             in order to register the base level integrations.  Integrations can be hierarchical so it
             is only necessary to register the root level integration mixins, the descendant mixins can
             be called from the root level mixins.
+
+            :param role: The name of a role to assign for a mixin.
+            :type role: str
+            :param mixin: The mixin to register for the associated role.
+            :type mixin: MixIn
         """
         if role not in self._integrations:
             self._ordered_roles.append(role)
-            self._integrations[role] = imixin
+            self._integrations[role] = mixin
         else:
             raise AKitSemanticError("A mixin with the role %r was already registered." % role)
 

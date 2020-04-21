@@ -14,7 +14,7 @@ class RADASync2ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RADASync:2'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:RADASync'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:RADASync'
 
 
     def get_SystemInfo(self):

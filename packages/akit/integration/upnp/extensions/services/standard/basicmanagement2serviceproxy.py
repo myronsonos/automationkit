@@ -14,7 +14,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:BasicManagement:2'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:BasicManagement'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:BasicManagement'
 
 
     def get_ActiveTestIDs(self):

@@ -14,7 +14,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:DigitalSecurityCameraSettings:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:DigitalSecurityCameraSettings'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:DigitalSecurityCameraSettings'
 
 
     def get_AutomaticWhiteBalance(self):

@@ -95,6 +95,7 @@ if [ ! -f $INITIALIZED_FILE ]; then
     # Install pylint into the virtual environment
     pip install pylint
     pip install coverage
+    pip install netifaces
     pip install paramiko
     pip install requests
     pip install sqlalchemy

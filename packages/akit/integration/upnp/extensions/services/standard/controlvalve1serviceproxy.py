@@ -14,7 +14,7 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     """
 
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ControlValve:1'
-    SERVICE_NAME = 'urn:schemas-upnp-org:service:ControlValve'
+    SERVICE_ID = 'urn:schemas-upnp-org:service:ControlValve'
 
 
     def get_ControlMode(self):

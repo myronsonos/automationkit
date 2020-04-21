@@ -38,7 +38,7 @@ class %(class_name)s(UpnpServiceProxy, LoadableExtension):
     \"""
 
     SERVICE_TYPE = '%(service_type)s'
-    SERVICE_NAME = '%(service_name)s'
+    SERVICE_ID = '%(service_id)s'
 
 """
 
@@ -92,7 +92,7 @@ def generate_upnp_service_proxy(destinationDir, serviceType, variablesTable, typ
         os.makedirs(destinationDir)
 
     service_type_parts = serviceType.split(":")
-    service_name = ":".join(service_type_parts[:-1])
+    service_id = ":".join(service_type_parts[:-1])
 
     class_name_base = service_type_parts[3] + service_type_parts[-1]
     class_name = class_name_base + "ServiceProxy"
@@ -102,7 +102,7 @@ def generate_upnp_service_proxy(destinationDir, serviceType, variablesTable, typ
         "class_name": class_name,
         "class_name_base": class_name_base,
         "service_type": serviceType,
-        "service_name": service_name
+        "service_id": service_id
     }
 
     dest_file_full = os.path.join(destinationDir, file_base)
