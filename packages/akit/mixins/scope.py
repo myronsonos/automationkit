@@ -93,11 +93,46 @@ class ScopeMixIn(ContextUser):
         """
         return
 
+
+class IteratorScopeMixIn(ContextUser):   
+    """
+        The :class:`IteratorScopeMixIn` object is the base object class that is used for interator scope declaration.
+        :class:`IteratorScopeMixIn` derived objects are used to insert a state iteration context into a test scope.
+    """
+
+    @classmethod
+    def iteration_initialize(cls):
+        """
+            This API is overridden by derived iterator scope mixins and is called by the sequencer at the start
+            of the use of a scope before the scope is entered for the first time.  It provides a hook for the
+            iteration scope to setup the iteration state for the iteration scope.
+        """
+        return
+    
+    @classmethod
+    def iteration_advance(cls):
+        """
+            The 'iteration_advance' API is overridden by derived iterator scope mixins and is called by the
+            sequencer after the scope exits.  This class level hook method is used by the sequencer to advance
+            the scope to the next iteration state.  The 'iteration_advance' API will return a 'True' result
+            when the advancement of the iteration state was successful and the scope can be re-entered for
+            execution.  The 'iteration_advance' API will return a 'False' when the advancement of the iteration
+            state has reached the end of its iteration cycle and the scope should not be re-entered.
+        """
+        return
+
 def is_scope_mixin(cls) -> bool:
     is_scopemi = False
     if inspect.isclass(cls) and cls is not ScopeMixIn and issubclass(cls, ScopeMixIn):
         is_scopemi = True
     return is_scopemi
+
+def is_iteration_scope_mixin(cls) -> bool:
+    is_iterscopemi = False
+    if inspect.isclass(cls) and cls is not ScopeMixIn and issubclass(cls, ScopeMixIn) and \
+        hasattr(cls, "iteration_initialize") and hasattr(cls, "iteration_advance"):
+        is_iterscopemi = True
+    return is_iterscopemi
 
 def scope_finalize(context, pathname):
     context.remove(pathname)
