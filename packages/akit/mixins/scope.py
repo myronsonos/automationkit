@@ -110,7 +110,7 @@ class IteratorScopeMixIn(ContextUser):
         return
     
     @classmethod
-    def iteration_advance(cls):
+    def iteration_advance(cls, iterctx):
         """
             The 'iteration_advance' API is overridden by derived iterator scope mixins and is called by the
             sequencer after the scope exits.  This class level hook method is used by the sequencer to advance

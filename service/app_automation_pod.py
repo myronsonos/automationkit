@@ -9,7 +9,7 @@ from akit.integration.landscaping import Landscape
 
 landscape = Landscape()
 
-from flask import Flask, url_for
+from flask import Flask, url_for, g
 from flask_restplus import apidoc
 
 from restapis import register_rest_blueprints
@@ -51,6 +51,14 @@ def swagger_static(filename):
     logger.critical("filename: %s" % filename)
     return static_url
 
+@app.teardown_appcontext
+def teardown_apoddb(obj):
+    session = g.pop('dbsession', None)
+
+    if session is not None:
+        session.close()
+
+    return
 
 upnp_agent = UpnpAgent()
 upnp_agent.start()
@@ -65,7 +73,7 @@ app.register_blueprint(redirect_apidoc)
 # install our service into NGINX and use Green Unicorn, the service
 # is launch by Green Unicorn by referencing the 'app' instance in
 # this module.
-def controller_main():
+def automation_pod_main():
 
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
     app.run(port=8888, debug=False)
@@ -73,4 +81,4 @@ def controller_main():
     return
 
 if __name__ == "__main__":
-    controller_main()
+    automation_pod_main()

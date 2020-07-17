@@ -1,0 +1,22 @@
+
+{
+    "title": "The title of the job",
+    "description": "A brief description of the job",
+    "branch": "",
+    "build": "",
+    "flavor": "",
+    "packet": {
+        "tasks": [
+            {
+                "type": "akit.tasking.command",
+                "input": {
+                    "program": "python3",
+                    "args": [
+                        ""
+                    ]
+                },
+                "assertion": ""
+            }
+        ]
+    }
+}

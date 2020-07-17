@@ -32,13 +32,12 @@
 
     </head>
     <body>
-        <div id='section-header'>
+        <section id='section-header'>
             <nav class="navbar navbar-light bg-light" style="padding-top: 10px">
                 <div class="container-fluid">
                     <div class="navbar-header">
                         <a class="navbar-brand" href="#">
-                            <span><img src="/static/icons/pie_chart-24px.svg" width="30" height="30"
-                                class="d-inline-block align-top" alt="" />Automation Pod</span>
+                            <h1>Automation Pod</h1>
                         </a>
                     </div>
                     <div class="nav navbar-nav" style="padding-top: 10px">
@@ -54,8 +53,8 @@
                     </ul>
                 </div>
             </nav>
-        </div>
-        <div id='section-body'>
+        </section>
+        <section id='section-body'>
             <div id='application' style='width: 100%;'>
                 <test-result-viewer
                     title="Test Results"
@@ -65,8 +64,12 @@
             <script>
                 new window.Vue({
                     el: '#application', 
-                    data: {
-                        test_result_list: null,
+                    data: function() {
+                        var dobj = {
+                            username: "{{ username }}",
+                            test_result_list: null
+                        };
+                        return dobj;
                     },
                     mounted () {
                         var that = this;
@@ -81,8 +84,8 @@
                     }
                 });
             </script>
-        </div>
-        <div id='section-footer'>
-        </div>
+        </section>
+        <section id='section-footer'>
+        </section>
     </body>
 </html>

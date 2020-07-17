@@ -4,6 +4,13 @@ Vue.component('device-viewer', {
     // The todo-item component now accepts a
     // "prop", which is like a custom attribute.
     // This prop is called todo.
+    data: function () {
+        var dobj  = {
+            device_filter: "*"
+        }
+
+        return dobj;
+    },
     props: {
         title: {
             type: String,
@@ -23,20 +30,57 @@ Vue.component('device-viewer', {
             }
         }
     },
+    computed: {
+        deviceFilterLabel() {
+            var filter_label = "Devices";
+
+            if (this.device_filter == "*") {
+                filter_label += " - All";
+            }
+            else if(this.device_filter == "expected") {
+                filter_label += " - Expected";
+            }
+            else if(this.device_filter == "other") {
+                filter_label += " - Other";
+            }
+            else {
+                filter_label += " - (error)";
+            }
+
+            return filter_label;
+        }
+    },
+    methods: {
+        setDeviceFilter(group) {
+            this.device_filter = group;
+        }
+    },
     template: `
-        <b-card >
-            <b-card-title>{{title}}</b-card-title>
-            <b-row>
-                <b-col sm="4" style="background: lightyellow;">
-                    <devices-list v-bind:list_identifier="list_identifier"
-                                  v-bind:detail_identifier="detail_identifier"
-                                  v-bind:device_list="device_list"></devices-list>
-                </b-col>
-                <b-col xl="8" style="background: pink;">
-                    <dev-detail-view v-bind:detail_identifier="detail_identifier" ></dev-detail-view>
-                </b-col>
-            </b-row>
-        </b-card>
+        <div style="display: flex; flex-direction: column; width: 100%">
+            <div style="display: flex; flex-direction: row; width: 100%">
+                <div style="flex-grow: 1;"></div>
+                <div><h2>{{title}}</h2></div>
+                <div style="flex-grow: 1;" >
+                    <div style="display: flex; flex-direction: row;">
+                        <div style="flex-grow: 1;"></div>
+                        <div>
+                            <b-dropdown id="device-filter-select" v-bind:text="deviceFilterLabel" class="m-md-2">
+                                <b-dropdown-item @click="setDeviceFilter('*');" >All</b-dropdown-item>
+                                <b-dropdown-item @click="setDeviceFilter('expected');">Expected</b-dropdown-item>
+                                <b-dropdown-item @click="setDeviceFilter('other');">Other</b-dropdown-item>
+                            </b-dropdown>
+                        </div>
+                        <div style="width: 20px"></div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <devices-list ref="devicesTable" v-bind:list_identifier="list_identifier"
+                    v-bind:detail_identifier="detail_identifier"
+                    v-bind:device_list="device_list"
+                    v-bind:filter_group="device_filter"></devices-list>
+            </div>
+        </div>
         ` // End of Template
 });
 
@@ -44,6 +88,49 @@ Vue.component('devices-list', {
     // The todo-item component now accepts a
     // "prop", which is like a custom attribute.
     // This prop is called todo.
+    data: function() {
+        var dobj  = {
+            fields: [
+                {
+                    key: 'cachedIcon',
+                    label: '',
+                    sortable: false
+                },
+                {
+                    key: 'modelName',
+                    label: 'Model Name',
+                    sortable: true
+                },
+                {
+                    key: 'modelNumber',
+                    label: 'Model #',
+                    sortable: true
+                },
+                {
+                    key: 'IPAddress',
+                    label: 'IP Address',
+                    sortable: true
+                },
+                {
+                    key: 'MACAddress',
+                    label: 'MAC Address',
+                    sortable: false
+                },
+                {
+                    key: 'softwareVersion',
+                    label: 'Version',
+                    sortable: false
+                },
+                {
+                    key: 'household',
+                    label: 'Household',
+                    sortable: false
+                }
+            ],
+            selected: []
+        }
+        return dobj;
+    },
     props: {
         list_identifier: {
             type: String,
@@ -55,17 +142,66 @@ Vue.component('devices-list', {
         },
         device_list: {
             default: function() {
-                return {}
+                return {};
+            }
+        },
+        filter_group: {
+            type: String,
+            default: function() {
+                return "*";
             }
         }
     },
+    computed: {
+        visibleDevices: function() {
+            var vdevices = [];
+
+            var device_list = this.device_list;
+            var filter_group = this.filter_group;
+
+            if (this.filter_group == "*") {
+                for (didx in device_list) {
+                    vdevices.push(device_list[didx]);
+                }
+            }
+            else {
+                for (didx in device_list) {
+                    var nxtdev = device_list[didx];
+                    if (nxtdev.group == filter_group) {
+                        vdevices.push(nxtdev)
+                    }
+                }
+            }
+
+            return vdevices;
+        }
+    },
+    methods: {
+        onRowSelected(items) {
+            this.selected = items
+        },
+        selectAllRows() {
+            this.$refs.selectableTable.selectAllRows()
+        },
+        clearSelected() {
+            this.$refs.selectableTable.clearSelected()
+        }
+    },
     template: `
-        <b-list-group v-bind:id="list_identifier">
-            <device-card v-for="device in device_list" v-bind:device="device"
-                         v-bind:list_identifier="list_identifier"
-                         v-bind:detail_identifier="detail_identifier"
-                         v-bind:key="device.MACAddress" ></device-card>
-        </b-list-group>
+        <div style="display: flex; flex-direction: column; width: 100%">
+            <b-table ref="selectableTable" selectable select-mode="multi"
+                v-bind:id="list_identifier" v-bind:items="visibleDevices" v-bind:fields="fields" @row-selected="onRowSelected" >
+                <template v-slot:cell(cachedIcon)="data">
+                    <img :src="data.value"></img>
+                </template>
+            </b-table>
+            <div style="display: flex; flex-direction: row-reverse; width: 100%;">
+                <div style="width: 20px;"></div>
+                <b-button @click="clearSelected">Clear All</b-button>
+                <div style="width: 20px;"></div>
+                <b-button @click="selectAllRows">Select All</b-button>
+            </div>
+        </div>
         ` // End of Template
 });
 

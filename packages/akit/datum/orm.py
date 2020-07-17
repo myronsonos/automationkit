@@ -1,4 +1,7 @@
-from sqlalchemy import BigInteger, Column, DateTime, String, Text, VARCHAR, ForeignKey
+import json
+
+from sqlalchemy import BigInteger, Column, DateTime, Float, String, Text, VARCHAR, ForeignKey
+from sqlalchemy import inspect
 from sqlalchemy.types import JSON
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -6,8 +9,26 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils.types.uuid import UUIDType
 
 
-AutomationBase = declarative_base()
+class SerializableMode:
 
+    def to_dict(self, query_instance=None):
+        dval = {}
+
+        model = type(self)
+        mapper = inspect(model)
+        for col in mapper.attrs:
+            col_key = col.key
+            dval[col_key] = str(getattr(self, col_key))
+
+        return dval
+
+
+    def to_json(self, query_instance=None, indent=4):
+        model_dict = self.to_dict(query_instance=query_instance)
+        json_str = json.dumps(model_dict, indent=indent)
+        return json_str
+
+AutomationBase = declarative_base()
 
 class AutomationJob(AutomationBase):
     __tablename__ = 'automation_job'
@@ -73,10 +94,10 @@ class TaskContainer(AutomationBase):
 
 AutomationPod = declarative_base()
 
-class WorkQueue(AutomationPod):
+class WorkQueue(AutomationPod, SerializableMode):
     __tablename__ = 'work_queue'
 
-    id = Column('wkq_id', BigInteger, primary_key=True)
+    id = Column('wkq_id', BigInteger, primary_key=True, autoincrement=True)
 
     title =  Column('wkq_title', VARCHAR(1024), nullable=False)
     description = Column('wkq_description', Text, nullable=False)
@@ -84,8 +105,12 @@ class WorkQueue(AutomationPod):
     build =  Column('wkq_build', VARCHAR(1024), nullable=True)
     flavor =  Column('wkq_flavor', VARCHAR(1024), nullable=True)
     added = Column('wkq_added', DateTime, nullable=False)
-    started = Column('wkq_started', DateTime, nullable=True)
+    start = Column('wkq_start', DateTime, nullable=True)
+    stop = Column('wkq_stop', DateTime, nullable=True)
+    progress = Column('wkq_progress', Float, default=0.0)
     status = Column('wkq_status', String(50), nullable=False)
-    detail = Column('wkq_detail', JSON, nullable=True)
+    packet = Column('wkq_packet', JSON, nullable=True)
 
     user_id = Column('user_id', BigInteger, nullable=False)
+
+    

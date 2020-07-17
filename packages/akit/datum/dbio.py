@@ -37,5 +37,13 @@ def create_apod_postgresql_database(username, password):
 
     return
 
+def open_apod_postgresql_database(username, password):
+    
+    create_apod_postgresql_database(username, password)
+
+    engine = create_engine('postgresql://%s:%s@localhost:5432/apod' % (username, password), echo=True)
+
+    return engine
+
 if __name__ == "__main__":
     create_apod_postgresql_database("websvc", "Acess2Data!!")

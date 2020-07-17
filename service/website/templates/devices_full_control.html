@@ -140,7 +140,7 @@
                     <div class="nav navbar-nav" style="padding-top: 10px">
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/';"> Summary </button>
-                            <button type="button" class="btn btn-primary active"> Devices </button>
+                            <button type="button" class="btn btn-primary" onclick="window.location.href = '/devices'"> Devices </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/jobs';"> Job Queue </button>
                             <button type="button" class="btn btn-primary" onclick="window.location.href = '/results';"> Results </button>
                         </div>
@@ -153,10 +153,7 @@
         </section>
         <section id='section-body'>
             <div id='application'>
-                <device-viewer style="margin-top: 40px;" title="Devices"
-                    list_identifier="exp-dev-list"
-                    detail_identifier="dev-det-view"
-                    v-bind:device_list="devices" ></device-viewer>
+                
             </div>
             <!-- Load the Application-->
             <script>
@@ -165,19 +162,29 @@
                     data: function() {
                         var dobj = {
                             username: "{{ username }}",
-                            devices: null
+                            device_ids: "{{ devices_ids }}",
+                            devices: []
                         };
                         return dobj;
                     },
                     mounted () {
                         var that = this;
 
-                        var qurl = "/api/1/devices";
-                        axios.get(qurl).then(
-                            (response) => {
-                                that.devices = response.data.items;
-                            }
-                        );
+                        var qurl_base = "/api/1/device/";
+
+                        var device_id_list = that.device_ids.split(",");
+
+                        device_id_list.forEach(devid => function(devid) {
+
+                            var qurl = qurl_base + devid;
+                            axios.get(qurl).then(
+                                (response) => {
+                                    that.devices = response.data.items;
+                                }
+                            );
+
+                        });
+
                     }
                 });
             </script>

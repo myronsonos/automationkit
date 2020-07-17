@@ -4,6 +4,8 @@ import requests
 
 from flask_restplus import Namespace, Resource
 from flask_restplus.reqparse import RequestParser
+from flask_restplus import fields
+
 
 from akit.integration.landscaping import Landscape
 from akit.integration.agents.upnpagent import UpnpAgent
@@ -55,40 +57,60 @@ class AllDevicesCollection(Resource):
         """
         expected_upnp_devices = landscape.get_upnp_devices()
 
-        exp_device_table = {}
+        expected_devices_table = {}
+
         for exp_dev in expected_upnp_devices:
             exp_usn = exp_dev["USN"]
-            exp_device_table[exp_usn] = exp_dev
-            exp_dev["cachedIcon"] = "/static/images/unknowndevice.png"
+            expected_devices_table[exp_usn] = exp_dev
 
         other_devices = []
         for child in upnp_agent.children:
+
+            # Get a dictionary representation of the device
             cinfo = child.to_dict(brief=True)
 
+            # Get and cache the icon for the device, or assign the unknown device icon
+            firstIcon = cinfo.get("firstIcon", None)
+            if firstIcon is not None:
+                icon_url = firstIcon["url"]
+                replacement_url = "/static/images/cached/" + icon_url.lstrip("/")
+                cinfo["cachedIcon"] = replacement_url
+
+                cache_dir = os.path.join(DIR_STATIC, "images", "cached")
+                url_base = cinfo.get("URLBase", None)
+                try_download_icon_to_cache(cache_dir, icon_url, url_base=url_base)
+            else:
+                cinfo["cachedIcon"] = "/static/images/unknown.png"
+
+            # If this device has a USN, try to lookup the device in the
+            # expected device table, otherwise it is an unexpected device
             if "USN" in cinfo:
                 usn = cinfo["USN"]
-                if usn in exp_device_table:
-                    exp_device_table[usn] = cinfo
+                if usn in expected_devices_table:
+                    cinfo["group"] = "expected"
+                    expected_devices_table[usn] = cinfo
                 else:
+                    cinfo["group"] = "other"
                     other_devices.append(cinfo)
-
-                firstIcon = cinfo.get("firstIcon", None)
-                if firstIcon is not None:
-                    icon_url = firstIcon["url"]
-                    replacement_url = "/static/images/cached/" + icon_url.lstrip("/")
-                    cinfo["cachedIcon"] = replacement_url
-
-
-                    cache_dir = os.path.join(DIR_STATIC, "images", "cached")
-                    url_base = cinfo.get("URLBase", None)
-                    try_download_icon_to_cache(cache_dir, icon_url, url_base=url_base)
             else:
+                cinfo["group"] = "other"
                 other_devices.append(cinfo)
+
+        all_devices = []
+        all_devices.extend(expected_devices_table.values())
+        all_devices.extend(other_devices)
+
+        for dinfo in other_devices:
+            if "MACAddress" not in dinfo:
+                dinfo["MACAddress"] = "(unknown)"
+            if "softwareVersion" not in dinfo:
+                dinfo["softwareVersion"] = "(unknown)"
+            if "household" not in dinfo:
+                dinfo["household"] = "(unknown)"
 
         rtndata = {
             "status": "success",
-            "expected": [ v for v in exp_device_table.values() ],
-            "other": other_devices
+            "items": all_devices
         }
 
         return rtndata
@@ -134,6 +156,20 @@ class DeviceDetail(Resource):
             }
 
         return rtndata
+
+
+devices_multi_invoke_model = devices_ns.model("DevicesMultiInvokePacket", {
+        "packet": fields.Raw(required=True, description="The invoke packet to use on the devices.")
+    })
+
+@devices_ns.route("/multi-invoke")
+class DevicesMultiInvoke(Resource):
+
+    @devices_ns.expect(devices_multi_invoke_model)
+    def post(self):
+        return
+
+
 
 
 def publish_namespaces(version_prefix):

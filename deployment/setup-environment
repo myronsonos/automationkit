@@ -74,12 +74,12 @@ function ensure_system_dependencies () {
 
 # Run the dependency checks on the system
 echo "BASE DEPENDENCIES:"
-APT_BASE_DEPENDENCIES="build-essential python3 python3-dev python-setuptools python3-pip virtualenv"
+APT_BASE_DEPENDENCIES="build-essential python3.8 python3.8-dev python3-setuptools python3-pip virtualenv"
 ensure_system_dependencies "$APT_BASE_DEPENDENCIES"
 echo
 
 echo "POSTGRESQL DEPENDENCIES"
-POSTGRESQL_DEPENDENCIES="postgresql postgresql-contrib python-psycopg2 libpq-dev"
+POSTGRESQL_DEPENDENCIES="postgresql postgresql-contrib libpq-dev"
 ensure_system_dependencies "$POSTGRESQL_DEPENDENCIES"
 echo
 echo "---------------------------------------------------------------------------------------"
@@ -92,7 +92,7 @@ echo
 echo "---------------------------- VIRTUAL ENVIRONMENT CREATION -----------------------------"
 if [ ! -f $INITIALIZED_FILE ]; then
 
-    virtualenv -p python3 $VIRTUAL_ENV_DIR
+    virtualenv -p python3.8 $VIRTUAL_ENV_DIR
 
     source $VIRTUAL_ENV_DIR/bin/activate
 
