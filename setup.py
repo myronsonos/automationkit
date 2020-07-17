@@ -12,6 +12,6 @@ setup(name='akit',
       author='Myron Walker',
       author_email='myron.walker@automationmojo.com',
       url='https://automationmojo.com/products/akit',
-      packages=[DEPENDENCIES],
+      packages=DEPENDENCIES,
       dependency_links=DEPENDENCY_LINKS
      )
