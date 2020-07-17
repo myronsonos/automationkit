@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-from distutils.core import setup
+from setuptools import setup
 
-DEPENDENCIES = [ b"netifaces", b"paramiko", b"psycopg2", b"requests", b"sqlalchemy", b"sqlalchemy_utils", b"ssdp" ]
+DEPENDENCIES = [ "netifaces", "paramiko", "psycopg2", "requests", "sqlalchemy", "sqlalchemy_utils", "ssdp" ]
 
 DEPENDENCY_LINKS = []
 
