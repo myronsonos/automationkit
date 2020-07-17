@@ -1,4 +1,19 @@
+"""
+.. module:: akit.integration.mixins.automationpodmixin
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Contains a ClusterMixIn object to use for working with the nodes of a cluster
 
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+"""
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@gmail.com"
+__status__ = "Development" # Prototype, Development or Production
+__license__ = "MIT"
 
 from akit.integration.landscaping import Landscape
 from akit.integration.agents.upnpagent import UpnpAgent
@@ -8,7 +23,7 @@ from akit.mixins.integration import IntegrationMixIn
 
 class AutomationPodMixIn(IntegrationMixIn):
     """
-        This is a mock playback device.
+        This is a mock automation pod device.
     """
 
     pathbase = None

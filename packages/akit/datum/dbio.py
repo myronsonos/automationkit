@@ -1,3 +1,20 @@
+"""
+.. module:: akit.datum.dbio
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Contains helper functions for working with specific databases
+
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+"""
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@gmail.com"
+__status__ = "Development" # Prototype, Development or Production
+__license__ = "MIT"
+
 
 import traceback
 
@@ -44,6 +61,3 @@ def open_apod_postgresql_database(username, password):
     engine = create_engine('postgresql://%s:%s@localhost:5432/apod' % (username, password), echo=True)
 
     return engine
-
-if __name__ == "__main__":
-    create_apod_postgresql_database("websvc", "Acess2Data!!")
