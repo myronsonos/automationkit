@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from setuptools import setup
+from setuptools import setup, find_namespace_packages
 
 DEPENDENCIES = [ "netifaces", "paramiko", "psycopg2", "requests", "sqlalchemy", "sqlalchemy_utils", "ssdp" ]
 
@@ -12,7 +12,8 @@ setup(name='akit',
       author='Myron Walker',
       author_email='myron.walker@automationmojo.com',
       url='https://automationmojo.com/products/akit',
-      packages=['packages/akit'],
+      package_dir={'': 'packages'},
+      packages=find_namespace_packages(where='packages'),
       install_requires=DEPENDENCIES,
       dependency_links=DEPENDENCY_LINKS
      )
