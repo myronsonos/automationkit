@@ -76,7 +76,7 @@ app.register_blueprint(redirect_apidoc)
 def automation_pod_main():
 
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-    app.run(port=8888, debug=False)
+    app.run(host='0.0.0.0', port=8888, debug=False)
 
     return
 
