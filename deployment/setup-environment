@@ -96,8 +96,10 @@ if [ ! -f $INITIALIZED_FILE ]; then
 
     source $VIRTUAL_ENV_DIR/bin/activate
 
-    # Install pylint into the virtual environment
+    # MSCODE Environment Dependencies
     pip install pylint
+
+    # Install pylint into the virtual environment
     pip install coverage
     pip install netifaces
     pip install paramiko

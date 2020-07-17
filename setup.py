@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-DEPENDENCIES = [ "netifaces", "paramiko", "psycopg2", "requests", "sqlalchemy", "sqlalchemy_utils", "ssdp" ]
+DEPENDENCIES = [ b"netifaces", b"paramiko", b"psycopg2", b"requests", b"sqlalchemy", b"sqlalchemy_utils", b"ssdp" ]
 
 DEPENDENCY_LINKS = []
 
