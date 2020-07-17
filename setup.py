@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-DEPENDENCIES = [ paramiko, requests, sqlalchemy, sqlalchemy_utils, ssdp, werkzeug=="0.16.1", flask, flask-restplus ]
+DEPENDENCIES = [ "netifaces", "paramiko", "psycopg2", "requests", "sqlalchemy", "sqlalchemy_utils", "ssdp" ]
 
 DEPENDENCY_LINKS = []
 
