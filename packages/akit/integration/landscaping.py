@@ -99,7 +99,8 @@ class Landscape:
     def landscape_info(self):
         return self._landscape_info
 
-    def get_databases(self):
+    @property
+    def databases(self):
         """
             Returns the database configuration information from the landscape file.
         """
