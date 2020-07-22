@@ -74,7 +74,7 @@ function ensure_system_dependencies () {
 
 # Run the dependency checks on the system
 echo "BASE DEPENDENCIES:"
-APT_BASE_DEPENDENCIES="build-essential python3.8 python3.8-dev python3-setuptools python3-pip virtualenv"
+APT_BASE_DEPENDENCIES="build-essential python3.8 python3.8-dev python3.8-venv python3-setuptools python3-pip virtualenv"
 ensure_system_dependencies "$APT_BASE_DEPENDENCIES"
 echo
 
@@ -94,34 +94,38 @@ if [ ! -f $INITIALIZED_FILE ]; then
 
     virtualenv -p python3.8 $VIRTUAL_ENV_DIR
 
-    source $VIRTUAL_ENV_DIR/bin/activate
+    if [ -f $VIRTUAL_ENV_DIR/bin/activate ]; then
+        source $VIRTUAL_ENV_DIR/bin/activate
 
-    # MSCODE Environment Dependencies
-    pip install pylint
+        # MSCODE Environment Dependencies
+        pip install pylint
 
-    # Install pylint into the virtual environment
-    pip install coverage
-    pip install netifaces
-    pip install paramiko
-    pip install psycopg2
-    pip install requests
-    pip install sqlalchemy
-    pip install sqlalchemy_utils
-    pip install ssdp
+        # Install pylint into the virtual environment
+        pip install coverage
+        pip install netifaces
+        pip install paramiko
+        pip install psycopg2
+        pip install requests
+        pip install sqlalchemy
+        pip install sqlalchemy_utils
+        pip install ssdp
 
-    # Website and REST service dependencies
-    pip install gunicorn
-    pip install werkzeug==0.16.1
-    pip install flask
-    pip install flask-restplus
+        # Website and REST service dependencies
+        pip install gunicorn
+        pip install werkzeug==0.16.1
+        pip install flask
+        pip install flask-restplus
 
-    # Install dependencies into the virtual environment
-    pip install -r $REQUIREMENTS_FILE
+        # Install dependencies into the virtual environment
+        pip install -r $REQUIREMENTS_FILE
 
-    touch $INITIALIZED_FILE
+        touch $INITIALIZED_FILE
 
-    # Exit the virtual environment
-    deactivate
+        # Exit the virtual environment
+        deactivate
+    else
+        echo "ERROR: Unable to create or find the python virtual environment"
+    fi
 else
     echo "Virtual environment already intialized..."
 fi

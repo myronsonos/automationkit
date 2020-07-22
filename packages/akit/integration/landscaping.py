@@ -95,6 +95,13 @@ class Landscape:
     def landscape_info(self):
         return self._landscape_info
 
+    def get_databases(self):
+        """
+            Returns the database configuration information from the landscape file.
+        """
+        db_info = self.landscape_info["databases"]
+        return db_info
+
     def get_upnp_devices(self):
         """
             Returns a list of UPNP device information dictionaries.

@@ -59,18 +59,6 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": false
-        },
-        {
-            "name": "Service: Automation Pod",
-            "type": "python",
-            "request": "launch",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/packages:${workspaceFolder}/service"
-            },
-            "program": "${workspaceFolder}/service/app_automation_pod.py",
-            "args": [],
-            "console": "integratedTerminal",
-            "justMyCode": false
-        },
+        }
     ]
 }

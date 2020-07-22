@@ -83,13 +83,13 @@ class UpnpAgent:
             instance = cls._instance_table[instanceid]
         return instance
 
-    def __init__(self, instanceid="default", interfaces=None, msearch_interval=60):
+    def __init__(self, instanceid="default", interface=None, msearch_interval=60):
 
         this_type = type(self)
         if instanceid not in this_type._initialized_table:
                 this_type._initialized_table[instanceid] = True
                 self._instanceid = instanceid
-                self._interfaces = interfaces
+                self._interface = interface
                 self._factory = UpnpFactory()
                 self._children = {}
                 self._lock = threading.RLock()
@@ -261,25 +261,25 @@ class UpnpAgent:
             self._running = True
 
             sgate.clear()
-            self._notify_thread = threading.Thread(name="UpnpAgent(%s) Notify" % self._interfaces, target=self._thread_entry_notify, 
+            self._notify_thread = threading.Thread(name="UpnpAgent(%s) Notify" % self._interface, target=self._thread_entry_notify, 
                                                    daemon=True, args=(sgate,))
             self._notify_thread.start()
             sgate.wait()
 
             sgate.clear()
-            self._response_thread = threading.Thread(name="UpnpAgent(%s) Response" % self._interfaces, target=self._thread_entry_response,
+            self._response_thread = threading.Thread(name="UpnpAgent(%s) Response" % self._interface, target=self._thread_entry_response,
                                                     daemon=True, args=(sgate,))
             self._response_thread.start()
             sgate.wait()
 
             sgate.clear()
-            self._listen_thread = threading.Thread(name="UpnpAgent(%s) Listen" % self._interfaces, target=self._thread_entry_listen,
+            self._listen_thread = threading.Thread(name="UpnpAgent(%s) Listen" % self._interface, target=self._thread_entry_listen,
                                                    daemon=True, args=(sgate,))
             self._listen_thread.start()
             sgate.wait()
 
             sgate.clear()
-            self._tick_thread = threading.Thread(name="UpnpAgent(%s) Tick" % self._interfaces, target=self._thread_entry_tick,
+            self._tick_thread = threading.Thread(name="UpnpAgent(%s) Tick" % self._interface, target=self._thread_entry_tick,
                                                    daemon=True, args=(sgate,))
             self._tick_thread.start()
             sgate.wait()
@@ -374,9 +374,13 @@ class UpnpAgent:
 
                 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 
+                bind_ip = '0.0.0.0'
+                if self._interface is not None:
+                    bind_ip = get_ip_address(self._interface)
+
                 multicast_address = UpnpProtocol.MULTICAST_ADDRESS
                 multicast_port = UpnpProtocol.PORT
-                multicast_group = ('0.0.0.0', UpnpProtocol.PORT)
+                multicast_group = (bind_ip, UpnpProtocol.PORT)
 
                 # Set us up to be a member of the group, this allows us to receive all the packets
                 # that are sent to the group
