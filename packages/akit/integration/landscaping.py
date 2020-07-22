@@ -92,6 +92,10 @@ class Landscape:
         return
 
     @property
+    def name(self):
+        return self.landscape_info["name"]
+
+    @property
     def landscape_info(self):
         return self._landscape_info
 
