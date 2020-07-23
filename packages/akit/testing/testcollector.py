@@ -307,10 +307,10 @@ class TestCollector:
         if len(default_testpack_refs) > 0:
             DefaultTestPack.test_references = default_testpack_refs
 
-        self._test_packages = testpack_table.values()
+        self._test_packages = testpack_table
 
         # Sort the testpack table by weight
-        testpacks = self._test_packages.values()
+        testpacks = [ v for v in self._test_packages.values()]
         testpacks.sort(key=testpack_compare, reverse=True)
 
         return testpacks

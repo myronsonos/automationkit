@@ -111,7 +111,7 @@ class TestJob(ContextUser):
         """
         result_code = 0
 
-        with TestSequencer(self._testroot, includes=self.includes, excludes=self.excludes) as tseq:
+        with TestSequencer(self.name, self._testroot, includes=self.includes, excludes=self.excludes) as tseq:
 
             # Discover the Tests, Integrations and Scopes
             count = tseq.discover(test_module=self._test_module)
@@ -127,7 +127,7 @@ class TestJob(ContextUser):
                 # Intitiate Resource Aquisition
                 tseq.collect_resources()
 
-                title = "Automation Test Run"
+                title = self.name
                 runid = str(uuid.uuid4())
                 start = str(self._starttime)
 
