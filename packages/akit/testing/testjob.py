@@ -21,6 +21,7 @@ import uuid
 
 from akit.environment.context import ContextUser
 
+from akit.integration.landscaping import Landscape
 from akit.recorders import JsonResultRecorder
 from akit.results import ResultContainer, ResultType
 from akit.testing.testsequencer import TestSequencer
@@ -123,6 +124,11 @@ class TestJob(ContextUser):
                 if self._parser is not None:
                     # Parse any extended arguements now that we have discovered the integrations
                     tseq.parse_extended_args(self._parser)
+
+                # Initiate contact with the TestLandscape
+                landscape = Landscape()
+
+                landscape.first_contact()
 
                 # Intitiate Resource Aquisition
                 tseq.collect_resources()
