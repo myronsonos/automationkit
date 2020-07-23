@@ -28,6 +28,8 @@ from akit.compat import import_file
 from akit.mixins.integration import IntegrationMixIn, is_integration_mixin
 from akit.mixins.scope import ScopeMixIn, is_scope_mixin
 
+from akit.paths import collect_python_modules
+
 from akit.testing.testcontainer import TestContainer, inherits_from_testcontainer
 from akit.testing.testpack import TestPack, DefaultTestPack, is_testpack, testpack_compare
 from akit.testing.testref import TestRef
@@ -128,41 +130,37 @@ class TestCollector:
         if self._test_module is not None:
             test_module_basename, test_module_ext = os.path.splitext(self._test_module.__file__)
             included_files.append(test_module_basename + ".py")
-        else:
-            if expr_package is None:
+        elif expr_package is not None:
+            if expr_module is None:
+                # If expr_module is None, then we had a single item expression, this means
+                # we can look for a single file, or a directory with lots of files.
                 filenames = os.listdir(self._root)
                 for fname in filenames:
-                    ffull = os.path.join(self._root, fname)
-                    if os.path.isfile(ffull):
-                        if fnmatch.fnmatch(fname, expr_module):
-                            fbase, fext = os.splitext(fname)
+                    if fnmatch.fnmatch(fname, expr_module):
+                        ffull = os.path.join(self._root, fname)
+                        if os.path.isfile(ffull):
+                            fbase, fext = os.path.splitext(fname)
                             if fext == ".py" and fbase != "__init__":
                                 included_files.append(ffull)
+                        elif os.path.isdir(ffull):
+                            included_files.append(collect_python_modules(ffull))
             else:
+                pkgpathpfx = expr_package.replace(".", "/")
+                fullpathpfx = pkgpathpfx + "/" + expr_module
                 for dirpath, dirnames, filenames in os.walk(self._root):
                     dirleaf = dirpath[len(self._root):].lstrip(os.sep)
-                    if len(dirleaf) == 0 and expr_package.find(".") == -1:
-                        for fname in filenames:
-                            fbase, fext = os.path.splitext(fname)
-                            if fext == ".py" and fbase.startswith(expr_package):
-                                ffull = os.path.join(dirpath, fname)
-                                included_files.append(ffull)
-                    elif os.path.exists(os.path.join(dirpath, "__init__.py")):
-                        pkgname = dirleaf.replace("/", ".")
-                        if fnmatch.fnmatch(pkgname, expr_package):
-                            if expr_module is not None:
-                                for fname in filenames:
-                                    if fname.startswith(expr_module) or fnmatch.fnmatch(fname, expr_module):
-                                        fbase, fext = os.path.splitext(fname)
-                                        if fext == ".py" and fbase != "__init__":
-                                            ffull = os.path.join(dirpath, fname)
-                                            included_files.append(ffull)
-                            else:
-                                for fname in filenames:
-                                    fbase, fext = os.path.splitext(fname)
-                                    if fext == ".py" and fbase != "__init__":
-                                        ffull = os.path.join(dirpath, fname)
-                                        included_files.append(ffull)
+                    
+                    # If we are in the testroot, then dirleaf will be len 0
+                    if len(dirleaf) > 0:
+                        if dirleaf.startswith(fullpathpfx) or fnmatch.fnmatch(dirleaf, fullpathpfx):
+                            included_files.append(collect_python_modules(dirpath))
+                        elif dirleaf.startswith(pkgpathpfx) or fnmatch.fnmatch(dirleaf, pkgpathpfx):
+                            for fname in filenames:
+                                fbase, fext = os.path.splitext(fname)
+                                if fext == ".py" and fbase != "__init__" and \
+                                   fbase.startswith(expr_module) and fnmatch.fnmatch(fbase, expr_module):
+                                    ffull = os.path.join(dirpath, fname)
+                                    included_files.append(ffull)
 
         import_errors = []
 

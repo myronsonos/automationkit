@@ -93,7 +93,10 @@ class Landscape:
 
     @property
     def name(self):
-        return self.landscape_info["name"]
+        lname = None
+        if "name" in self.landscape_info:
+            lname = self.landscape_info["name"]
+        return lname
 
     @property
     def landscape_info(self):
