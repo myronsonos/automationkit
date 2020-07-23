@@ -88,6 +88,7 @@ class Landscape:
         if not this_cls._initialized:
             this_cls._initialized = True
             self._landscape_info = None
+            self._upnp_agent = None
             self.initialize()
         return
 
