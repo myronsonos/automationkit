@@ -202,7 +202,7 @@ class Landscape:
 
         return
 
-    def _validate_landscape(self, linfo):
+    def _validate_landscape(self):
         return
 
 def is_subclass_of_landscape(cand_type):
