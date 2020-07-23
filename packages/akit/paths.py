@@ -25,18 +25,18 @@ DIR_TESTRESULTS = None
 def collect_python_modules(searchdir: str) -> List[str]:
     """
         Walks a directory tree of python modules and collects the names
-        of all of the python module files or .py files.
+        of all of the python module files or .py files.  This method allows
+        for python namespaces by not forcing the root folder to contain a
+        __init__.py file.
     """
     pyfiles = []
 
-    pkgfile = os.path.join(searchdir, "__init__.py")
-    if os.path.exists(pkgfile):
-        for root, _, files in os.walk(searchdir, topdown=True):
-            for fname in files:
-                fbase, fext = os.path.splitext(fname)
-                if fext == '.py' and fbase != "__init__":
-                    ffull = os.path.join(root, fname)
-                    pyfiles.append(ffull)
+    for root, _, files in os.walk(searchdir, topdown=True):
+        for fname in files:
+            fbase, fext = os.path.splitext(fname)
+            if fext == '.py' and fbase != "__init__":
+                ffull = os.path.join(root, fname)
+                pyfiles.append(ffull)
 
     return pyfiles
 

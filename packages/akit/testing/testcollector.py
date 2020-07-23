@@ -50,7 +50,7 @@ class TestCollector:
         self._method_prefix = method_prefix
         self._test_module = test_module
         self._references = {}
-        self._testpacks = []
+        self._test_packages = {}
         self._import_errors = []
         return
 
@@ -143,7 +143,7 @@ class TestCollector:
                             if fext == ".py" and fbase != "__init__":
                                 included_files.append(ffull)
                         elif os.path.isdir(ffull):
-                            included_files.append(collect_python_modules(ffull))
+                            included_files.extend(collect_python_modules(ffull))
             else:
                 pkgpathpfx = expr_package.replace(".", "/")
                 fullpathpfx = pkgpathpfx + "/" + expr_module
@@ -153,7 +153,7 @@ class TestCollector:
                     # If we are in the testroot, then dirleaf will be len 0
                     if len(dirleaf) > 0:
                         if dirleaf.startswith(fullpathpfx) or fnmatch.fnmatch(dirleaf, fullpathpfx):
-                            included_files.append(collect_python_modules(dirpath))
+                            included_files.extend(collect_python_modules(dirpath))
                         elif dirleaf.startswith(pkgpathpfx) or fnmatch.fnmatch(dirleaf, pkgpathpfx):
                             for fname in filenames:
                                 fbase, fext = os.path.splitext(fname)
@@ -173,48 +173,42 @@ class TestCollector:
                 ifileleaf = ifilebase[rootlen:].strip("/")
                 modname = ifileleaf.replace("/", ".")
                 mod = import_file(modname, ifile)
-                test_class_coll = inspect.getmembers(mod, inherits_from_testcontainer)
+                test_class_coll = inspect.getmembers(mod, inspect.isclass)
                 for testclass_name, testclass_obj in test_class_coll:
                     tcobj_module_name = testclass_obj.__module__
                     # We only want to include the classes that are from the target module
-                    if tcobj_module_name == modname:
-                        test_class_name = testclass_obj.__module__ + "@" + testclass_obj.__name__
-                        if expr_testclass is not None:
-                            if fnmatch.fnmatch(testclass_name, expr_testclass):
-                                if issubclass(testclass_obj, TestContainer):
-                                    if expr_testname is not None:
-                                        # We have a testname expression so go through all the test methods and and check
-                                        # the test method names
-                                        test_method_coll = inspect.getmembers(testclass_obj, inspect.isfunction)
-                                        for method_name, method_obj in test_method_coll:
-                                            if method_name.startswith(self._method_prefix):
-                                                if fnmatch.fnmatch(method_name, expr_testname):
-                                                    tname = test_class_name + "#" + method_name
-                                                    tref = TestRef(testclass_obj, method_obj)
-                                                    self._references[tname] = tref
-                                    else:
-                                        # If we don't have a testname expression then add all the test test methods for the class
-                                        test_method_coll = inspect.getmembers(testclass_obj, inspect.isfunction)
-                                        for method_name, method_obj in test_method_coll:
-                                            if method_name.startswith(self._method_prefix):
-                                                tname = test_class_name + "#" + method_name
-                                                tref = TestRef(testclass_obj, method_obj)
-                                                self._references[tname] = tref
-                                elif issubclass(testclass_obj, TestPack):
-                                    # If we find a TestPack object that matches the criteria, look to see if the
-                                    # expression had a testname.  If it didn't we should save the TestPack reference
-                                    # in order to load the tests from the test pack.
-                                    if expr_testname is None:
-                                        self._testpacks[test_class_name] = testclass_obj
+                    if tcobj_module_name != modname:
+                        continue
 
+                    test_class_name = testclass_obj.__module__ + "@" + testclass_obj.__name__
+                    if expr_testclass is not None and not fnmatch.fnmatch(testclass_name, expr_testclass):
+                        continue
+
+                    if issubclass(testclass_obj, TestContainer):
+                        if expr_testname is not None:
+                            # We have a testname expression so go through all the test methods and and check
+                            # the test method names
+                            test_method_coll = inspect.getmembers(testclass_obj, inspect.isfunction)
+                            for method_name, method_obj in test_method_coll:
+                                if method_name.startswith(self._method_prefix):
+                                    if fnmatch.fnmatch(method_name, expr_testname):
+                                        tname = test_class_name + "#" + method_name
+                                        tref = TestRef(testclass_obj, method_obj)
+                                        self._references[tname] = tref
                         else:
-                            # If we don't have a testclass expression then add all the test classes and test methods
+                            # If we don't have a testname expression then add all the test test methods for the class
                             test_method_coll = inspect.getmembers(testclass_obj, inspect.isfunction)
                             for method_name, method_obj in test_method_coll:
                                 if method_name.startswith(self._method_prefix):
                                     tname = test_class_name + "#" + method_name
                                     tref = TestRef(testclass_obj, method_obj)
                                     self._references[tname] = tref
+                    elif issubclass(testclass_obj, TestPack):
+                        # If we find a TestPack object that matches the criteria, look to see if the
+                        # expression had a testname.  If it didn't we should save the TestPack reference
+                        # in order to load the tests from the test pack.
+                        if expr_testname is None:
+                            self._test_packages[test_class_name] = testclass_obj
 
             except Exception as xcpt:
                 errmsg = traceback.format_exc()
@@ -313,22 +307,25 @@ class TestCollector:
         if len(default_testpack_refs) > 0:
             DefaultTestPack.test_references = default_testpack_refs
 
-        self._testpacks = list(testpack_table.values())
+        self._test_packages = testpack_table.values()
 
         # Sort the testpack table by weight
-        self._testpacks.sort(key=testpack_compare, reverse=True)
+        testpacks = self._test_packages.values()
+        testpacks.sort(key=testpack_compare, reverse=True)
 
-        return self._testpacks
+        return testpacks
 
-    def expand_testpacks():
+    def expand_testpacks(self):
 
         excluded = []
-        # Go through all of the exclude expressions and utilize them to mark the TestPack objects that
-        # should be excluded from the test run
-        for ex_expr in self._excludes:
-            for tpack_name, tpack_obj in self._test_packages.items():
-                if tpack_name.startswith(ex_expr):
-                    excluded.append(tpack_name)
+
+        if self._excludes is not None:
+            # Go through all of the exclude expressions and utilize them to mark the TestPack objects that
+            # should be excluded from the test run
+            for ex_expr in self._excludes:
+                for tpack_name, tpack_obj in self._test_packages.items():
+                    if tpack_name.startswith(ex_expr):
+                        excluded.append(tpack_name)
 
         # Go through all the excluded test packs and then remove them from the test packs catalog
         # by name
@@ -337,40 +334,45 @@ class TestCollector:
 
         # Go through all of the test package references and load the tests that are associated with the
         # test package
+        import_errors = []
+
         for tpack_name, tpack_obj in self._test_packages.items():
             searchin = tpack_obj.searchin
             if searchin is None:
                 # If searchin was None, then we scan utilize the descendant directories of root
                 searchin = self._root_directories()
 
+            scanfiles = []
             for sdir in searchin:
-                scanfiles = [f for f in os.listdir(sdir) if os.path.isfile(f)]
-                for nxtfile in scanfiles:
-                    fbase, fext = os.path.splitext(nxtfile)
-                    if fext == ".py":
-                        nxtfile_full = os.path.join(sdir, nxtfile)
-                        try:
-                            ifilebase, ifileext = os.path.splitext(ifile)
-                            ifileleaf = ifilebase[rootlen:].strip("/")
-                            modname = ifileleaf.replace("/", ".")
-                            mod = import_file(modname, ifile)
+                scanfiles = collect_python_modules(sdir)
 
-                            test_class_coll = inspect.getmembers(mod, inherits_from_testcontainer)
-                            for testclass_name, testclass_obj in test_class_coll:
-                                test_class_name = testclass_obj.__module__ + "@" + testclass_obj.__name__
-                                if issubclass(testclass_obj, TestContainer) and issubclass(testclass_obj, tpack_obj):
-                                    # If we don't have a testname expression then add all the test test methods for the class
-                                    test_method_coll = inspect.getmembers(testclass_obj, inspect.isfunction)
-                                    for method_name, method_obj in test_method_coll:
-                                        if method_name.startswith(self._method_prefix):
-                                            tname = test_class_name + "#" + method_name
-                                            tref = TestRef(testclass_obj, method_obj)
-                                            self._references[tname] = tref
+            rootlen = len(self._root)
+            for ifile in scanfiles:
+                fbase, fext = os.path.splitext(ifile)
+                if fext == ".py":
+                    ifile_full = os.path.join(sdir, ifile)
+                    try:
+                        ifilebase, ifileext = os.path.splitext(ifile)
+                        ifileleaf = ifilebase[rootlen:].strip("/")
+                        modname = ifileleaf.replace("/", ".")
+                        mod = import_file(modname, ifile)
 
-                        except Exception as xcpt:
-                            errmsg = traceback.format_exc()
-                            print(errmsg)
-                            import_errors.append((modname, ifile, errmsg))
+                        test_class_coll = inspect.getmembers(mod, inherits_from_testcontainer)
+                        for testclass_name, testclass_obj in test_class_coll:
+                            test_class_name = testclass_obj.__module__ + "@" + testclass_obj.__name__
+                            if issubclass(testclass_obj, TestContainer) and issubclass(testclass_obj, tpack_obj):
+                                # If we don't have a testname expression then add all the test test methods for the class
+                                test_method_coll = inspect.getmembers(testclass_obj, inspect.isfunction)
+                                for method_name, method_obj in test_method_coll:
+                                    if method_name.startswith(self._method_prefix):
+                                        tname = test_class_name + "#" + method_name
+                                        tref = TestRef(testclass_obj, method_obj)
+                                        self._references[tname] = tref
+
+                    except Exception as xcpt:
+                        errmsg = traceback.format_exc()
+                        print(errmsg)
+                        import_errors.append((modname, ifile, errmsg))
         
         self._import_errors.extend(import_errors)
 
