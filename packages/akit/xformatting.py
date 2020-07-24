@@ -14,4 +14,4 @@ def indent_lines(msg, level, indent=4):
         indented.write(pfx)
         indented.write(nxtline)
     
-    return indented.value()
+    return indented.getvalue()
