@@ -243,3 +243,7 @@ class UpnpRootDevice(UpnpDevice):
         self._specVersion = UpnpDevice1SpecVersion(verNode, namespaces=namespaces)
         return
 
+    def __str__(self):
+        rtnstr = "%s: mac=%s ip=%s" % (self.MODEL_DESCRIPTION, self.MACAddress, self.IPAddress)
+        return
+

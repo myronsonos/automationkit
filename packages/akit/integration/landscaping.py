@@ -30,6 +30,8 @@ from akit.integration.clients.linuxclientmixin import LinuxClientMixIn
 from akit.integration.clients.windowsclientmixin import WindowsClientMixIn
 from akit.integration.cluster.clustermixin import ClusterMixIn
 
+from akit.xlogging import getAutomatonKitLogger
+
 class LandscapeDescription:
     """
         The base class for all derived :class:`LandscapeDescription` objects.  The
@@ -89,6 +91,7 @@ class Landscape:
             this_cls._initialized = True
             self._landscape_info = None
             self._upnp_agent = None
+            self._logger = getAutomatonKitLogger()
             self.initialize()
         return
 
