@@ -176,11 +176,20 @@ class TestJob(ContextUser):
                 runid = str(uuid.uuid4())
                 start = str(self._starttime)
 
+                # STEP 7: The startup phase is over, up to this point we have mostly been executing
+                # integration code and configuration analysis code that is embedded int mostly class level
+                # methods.
+                #
+                # Now we start going through all the test testpacks and tests and start instantiating
+                # test scopes and instances and start executing setup, teardown and test level code
                 with JsonResultRecorder(title, runid, start, self._summary_filename, self._result_filename) as recorder:
                     # Traverse the execution graph
                     self._testpacks = tseq.testpacks
                     result_code = tseq.execute_testpacks(runid, recorder, self.sequence)
 
+                # STEP 8: This is where we do any final processing and or publishing of results.
+                # We might also want to add automated bug filing here later.
+                
             else:
                 # We didn't find any tests so display a message, and set the return code to
                 # indicate an error condition
