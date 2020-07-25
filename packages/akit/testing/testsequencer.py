@@ -87,13 +87,44 @@ class TestSequencer(ContextUser):
         return self._testpacks
 
     def attach_to_environment(self):
+        """
+            Goes through all the integrations and provides them with an opportunity to
+            attach to the test environment.
+        """
+
+        for integ in self._integrations:
+            integ.attach_to_environment()
+
         return
 
     def collect_resources(self):
-        
+        """
+            Goes through all the integrations and provides them with an opportunity to
+            collect shared resources that are required for testing.
+        """
+
+        for integ in self._integrations:
+            integ.collect_resources()
+
+        return
+
+    def establish_integration_order(self):
+        """
+            Re-orders the integrations based on any declared precedences.
+        """
+
         return
 
     def establish_connectivity(self):
+        """
+            Goes through all the integrations and provides them with an opportunity to
+            establish connectivity with the test resource or resources they are integrating
+            into the automation run.
+        """
+
+        for integ in self._integrations:
+            integ.establish_connectivity()
+
         return
 
     def discover(self, test_module=None):

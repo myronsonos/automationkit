@@ -82,6 +82,22 @@ class IntegrationMixIn(ContextUser):
         return
 
     @classmethod
+    def declare_precedence(cls):
+        """
+            This API is called so that the IntegrationMixIn can declare an ordinal precedence that should be
+            utilized for bringing up its integration state.
+        """
+        return
+    
+    @classmethod
+    def declare_options(cls):
+        """
+            This API is called so that the IntegrationMixIn can declare any command line options that are required
+            for it to be able to function.
+        """
+        return
+
+    @classmethod
     def attach_to_environment(cls):
         """
             This API is called so that the IntegrationMixIn can process configuration information.  The :class:`IntegrationMixIn`
