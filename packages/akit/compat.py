@@ -41,7 +41,10 @@ def import_file(name, loc):
         returns: The loaded module.
     """
     mod = None
-    if name not in sys.modules:
+    if name in sys.modules:
+        mod = sys.modules[name]
+
+    if mod is None:
         if is_python_pre_3_5:
             import imp
 
@@ -49,11 +52,17 @@ def import_file(name, loc):
         else:
             import importlib.util
 
-            spec = importlib.util.spec_from_file_location(name, str(loc))
-            mod = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(mod)
-    else:
-        mod = sys.modules[name]
+            while True:
+                # First try to import the module by name only
+                try:
+                    mod = importlib.import_module(name)
+                    break
+                except Exception as xcpt:
+                    pass
+            
+                spec = importlib.util.spec_from_file_location(name, str(loc))
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
 
     return mod
 

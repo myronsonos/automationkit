@@ -30,6 +30,8 @@ from akit.integration.clients.linuxclientmixin import LinuxClientMixIn
 from akit.integration.clients.windowsclientmixin import WindowsClientMixIn
 from akit.integration.cluster.clustermixin import ClusterMixIn
 
+from akit.xlogging import getAutomatonKitLogger
+
 class LandscapeDescription:
     """
         The base class for all derived :class:`LandscapeDescription` objects.  The
@@ -88,14 +90,24 @@ class Landscape:
         if not this_cls._initialized:
             this_cls._initialized = True
             self._landscape_info = None
+            self._upnp_agent = None
+            self._logger = getAutomatonKitLogger()
             self.initialize()
         return
+
+    @property
+    def name(self):
+        lname = None
+        if "name" in self.landscape_info:
+            lname = self.landscape_info["name"]
+        return lname
 
     @property
     def landscape_info(self):
         return self._landscape_info
 
-    def get_databases(self):
+    @property
+    def databases(self):
         """
             Returns the database configuration information from the landscape file.
         """
@@ -193,7 +205,7 @@ class Landscape:
 
         return
 
-    def _validate_landscape(self, linfo):
+    def _validate_landscape(self):
         return
 
 def is_subclass_of_landscape(cand_type):

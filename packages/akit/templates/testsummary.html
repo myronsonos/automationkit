@@ -717,6 +717,9 @@
             }
 
             function refresh_summary() {
+                if (g_summary.hasOwnProperty("title") && g_summary.title != null) {
+                    document.getElementById("summary-title").innerHTML = g_summary.title
+                }
                 if (g_summary.hasOwnProperty("build") && g_summary.build != null) {
                     document.getElementById("summary-build").innerHTML = g_summary.build;
                 }

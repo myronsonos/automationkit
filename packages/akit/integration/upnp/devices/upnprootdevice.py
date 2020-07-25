@@ -108,6 +108,11 @@ class UpnpRootDevice(UpnpDevice):
     @property
     def mode(self):
         return self._mode
+    
+    @property
+    def modelName(self):
+        mname = self.description.modelName
+        return mname
 
     @property
     def server(self):
@@ -241,5 +246,9 @@ class UpnpRootDevice(UpnpDevice):
 
     def _process_version_node(self, verNode, namespaces=None):
         self._specVersion = UpnpDevice1SpecVersion(verNode, namespaces=namespaces)
+        return
+
+    def __str__(self):
+        rtnstr = "%s: mac=%s ip=%s" % (self.modelName, self.MACAddress, self.IPAddress)
         return
 

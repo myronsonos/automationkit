@@ -23,7 +23,10 @@ from akit.xlogging import LEVEL_NAMES
 ENVIRONMENT_OPTIONS = [
     (("-o", "--output"), { "dest":"output", "action":"store", "default":None, "help":"The output directory where results and artifacts are collected."}),
     (("--console-level",), { "dest":"consolelevel", "action":"store", "default":"INFO", "choices":LEVEL_NAMES, "help":"The logging level for console output."}),
-    (("--logfile-level",), { "dest":"logfilelevel", "action":"store", "default":"DEBUG", "choices":LEVEL_NAMES, "help":"The logging level for logfile output."})
+    (("--logfile-level",), { "dest":"logfilelevel", "action":"store", "default":"DEBUG", "choices":LEVEL_NAMES, "help":"The logging level for logfile output."}),
+    (("--branch",), { "dest": "branch", "action": "store", "default": None, "help": "The name of the branch to associate with the test run results."}),
+    (("--build",), { "dest": "build", "action": "store", "default": None, "help": "The name of the build to associate with the test run results."}),
+    (("--flavor",), { "dest": "flavor", "action": "store", "default": None, "help": "The name of the flavor to associate with the test run results."})
 ]
 
 def process_environment_options():
@@ -34,6 +37,9 @@ def process_environment_options():
         * output directory
         * console log level
         * logfile log level
+        * branch
+        * build
+        * flavor
     """
     env_parser = argparse.ArgumentParser()
     for opt_args, opt_kwargs in ENVIRONMENT_OPTIONS:
@@ -44,5 +50,8 @@ def process_environment_options():
     output_dir = args.output
     console_level = args.consolelevel
     logfile_level = args.logfilelevel
+    branch = args.branch
+    build = args.build
+    flavor = args.flavor
 
-    return output_dir, console_level, logfile_level
+    return output_dir, console_level, logfile_level, branch, build, flavor

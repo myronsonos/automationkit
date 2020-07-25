@@ -71,4 +71,11 @@ def open_apod_postgresql_database(host='localhost', port=5432, username=None, pa
 
     return engine
 
-open_apod_postgresql_database(username='auser', password='Acess2Data!!')
+if __name__ == "__main__":
+    from akit.integration.landscaping import Landscape
+    landscape = Landscape()
+
+    dbinfo = landscape.get_databases()
+
+    apoddb_info = dbinfo["apod"]
+    open_apod_postgresql_database(**apoddb_info)

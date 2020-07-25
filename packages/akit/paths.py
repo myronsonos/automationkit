@@ -16,10 +16,29 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import os
+from typing import List
 
 from akit.environment.context import Context
 
 DIR_TESTRESULTS = None
+
+def collect_python_modules(searchdir: str) -> List[str]:
+    """
+        Walks a directory tree of python modules and collects the names
+        of all of the python module files or .py files.  This method allows
+        for python namespaces by not forcing the root folder to contain a
+        __init__.py file.
+    """
+    pyfiles = []
+
+    for root, _, files in os.walk(searchdir, topdown=True):
+        for fname in files:
+            fbase, fext = os.path.splitext(fname)
+            if fext == '.py' and fbase != "__init__":
+                ffull = os.path.join(root, fname)
+                pyfiles.append(ffull)
+
+    return pyfiles
 
 def get_expand_path(path: str) -> str:
     """
