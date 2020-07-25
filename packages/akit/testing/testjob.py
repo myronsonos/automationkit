@@ -137,7 +137,7 @@ class TestJob(ContextUser):
                 # the mixins to register extended arguements, so now parse those arguements to ensure
                 # that any extended arguments that are needed by the included tests were actually
                 # provided.  This provides for a dynamic and rich arguement processing mechanism
-                # that is can vary based on the tests that were included in the run.
+                # that can vary based on the tests that were included in the run.
                 if self._parser is not None:
                     # Parse any extended arguements now that we have discovered the integrations
                     tseq.parse_extended_args(self._parser)
@@ -158,7 +158,7 @@ class TestJob(ContextUser):
 
                 # STEP 5: All the mixins have had a chance to analyze the configuration
                 # information and provide us with a clear indication if there are any configuration
-                # issues.  Now provide that mixins with the opportunity to reach out to the
+                # issues.  Now provide the mixins with the opportunity to reach out to the
                 # automation infrastructure and checkout or collect any global shared resources
                 # that might be required for this automation run.
                 tseq.collect_resources()
@@ -177,8 +177,8 @@ class TestJob(ContextUser):
                 start = str(self._starttime)
 
                 # STEP 7: The startup phase is over, up to this point we have mostly been executing
-                # integration code and configuration analysis code that is embedded int mostly class level
-                # methods.
+                # integration code and configuration analysis code that is embedded into mostly class
+                # level methods.
                 #
                 # Now we start going through all the test testpacks and tests and start instantiating
                 # test scopes and instances and start executing setup, teardown and test level code
@@ -189,7 +189,7 @@ class TestJob(ContextUser):
 
                 # STEP 8: This is where we do any final processing and or publishing of results.
                 # We might also want to add automated bug filing here later.
-                
+
             else:
                 # We didn't find any tests so display a message, and set the return code to
                 # indicate an error condition
