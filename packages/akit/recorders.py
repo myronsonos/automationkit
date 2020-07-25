@@ -60,6 +60,10 @@ class JsonResultRecorder:
         self._output_dir = os.path.dirname(summary_filename)
         self._summary_filename = summary_filename
         self._result_filename = result_filename
+        self._branch = branch
+        self._build = build
+        self._flavor = flavor
+
         self._rout = None
 
         self._error_count = 0

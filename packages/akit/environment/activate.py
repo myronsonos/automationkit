@@ -21,11 +21,11 @@ import akit.environment.configuration
 
 # Step 2 - Process the environment variables that are used to overwride the
 # default configuration
-import akit.environment.variables
+from akit.environment.variables import VARIABLES
 
 # Step 3 - Process environment options
 from akit.environment.options import process_environment_options
-output_dir, console_level, logfile_level = process_environment_options()
+output_dir, console_level, logfile_level, branch, build, flavor = process_environment_options()
 
 # Step 4 - Force the context to load with defaults if it is not already loaded
 # and setup the run type if not already set
@@ -37,14 +37,29 @@ ctx = Context()
 # startup process
 env = ctx.lookup("/environment")
 
+if branch is not None:
+    env["branch"] = branch
+else:
+    env["branch"] = VARIABLES.AKIT_BRANCH
+
+if build is not None:
+    env["build"] = build
+else:
+    env["build"] = VARIABLES.AKIT_BUILD
+
+if flavor is not None:
+    env["flavor"] = flavor
+else:
+    env["flavor"] = VARIABLES.AKIT_FLAVOR
+
+conf = ctx.lookup("/environment/configuration")
+
 if env["jobtype"] == "unkownjob":
     env["jobtype"] = "testrun"
     env["output_directory"] = conf.lookup("/paths/testresults")
 
 if output_dir is not None:
     env["output_directory"] = output_dir
-
-conf = ctx.lookup("/environment/configuration")
 
 loglevels = conf.lookup("/logging/levels")
 loglevels["console"] = console_level

@@ -58,7 +58,8 @@ class TestJob(ContextUser):
             cls._instance = super(TestJob, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, logger, testroot, includes=None, excludes=None, test_module=None, parser=None):
+    def __init__(self, logger, testroot, includes=None, excludes=None, test_module=None, parser=None,
+                 branch=None, build=None, flavor=None):
         """
             Constructor for a :class:`TestJob`.  It initializes the member variables based on the parameters passed
             from the entry point function and the class member data declared on :class:`TestJob` derived classes.
@@ -80,6 +81,9 @@ class TestJob(ContextUser):
         self._import_errors_filename = None
 
         self._testpacks = None
+        self._branch = branch
+        self._build = build
+        self._flavor = flavor
         return
 
     def __enter__(self):
@@ -175,6 +179,11 @@ class TestJob(ContextUser):
                 title = self.title
                 runid = str(uuid.uuid4())
                 start = str(self._starttime)
+                sum_file = self._summary_filename
+                res_file = self._result_filename
+                branch = self._branch
+                build = self._build
+                flavor = self._flavor
 
                 # STEP 7: The startup phase is over, up to this point we have mostly been executing
                 # integration code and configuration analysis code that is embedded into mostly class
@@ -182,7 +191,7 @@ class TestJob(ContextUser):
                 #
                 # Now we start going through all the test testpacks and tests and start instantiating
                 # test scopes and instances and start executing setup, teardown and test level code
-                with JsonResultRecorder(title, runid, start, self._summary_filename, self._result_filename) as recorder:
+                with JsonResultRecorder(title, runid, start, sum_file, res_file, branch=branch, build=build, flavor=flavor) as recorder:
                     # Traverse the execution graph
                     self._testpacks = tseq.testpacks
                     result_code = tseq.execute_testpacks(runid, recorder, self.sequence)

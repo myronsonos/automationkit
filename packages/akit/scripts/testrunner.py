@@ -44,6 +44,9 @@ def testrunner_main():
     parser.add_argument("-o", "--output", dest="output", action="store", default=None, help="The output directory where results and artifacts are collected.")
     parser.add_argument("--console-level", dest="consolelevel", action="store", default="INFO", choices=LEVEL_NAMES, help="The logging level for console output.")
     parser.add_argument("--logfile-level", dest="logfilelevel", action="store", default="DEBUG", choices=LEVEL_NAMES, help="The logging level for logfile output.")
+    parser.add_argument("--branch", dest="branch", action="store", default=None, help="The name of the branch to associate with the test run results.")
+    parser.add_argument("--build", dest="build", action="store", default=None, help="The build number to associate with the test run results.")
+    parser.add_argument("--flavor", dest="flavor", action="store", default=None, help="The build flavor to associate with the test run results.")
 
     args = parser.parse_args()
 
