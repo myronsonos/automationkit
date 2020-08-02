@@ -74,7 +74,9 @@ class TestCollector:
                     else:
                         integrations[mikey] = (bcls, [ref])
 
-        return integrations
+        integlist = [ i for i in integrations.items()]
+
+        return integlist
 
     def collect_references(self, expression):
         """

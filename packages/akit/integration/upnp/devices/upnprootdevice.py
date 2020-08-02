@@ -250,5 +250,5 @@ class UpnpRootDevice(UpnpDevice):
 
     def __str__(self):
         rtnstr = "%s: mac=%s ip=%s" % (self.modelName, self.MACAddress, self.IPAddress)
-        return
+        return rtnstr
 

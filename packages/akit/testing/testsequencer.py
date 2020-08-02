@@ -92,7 +92,7 @@ class TestSequencer(ContextUser):
             attach to the test environment.
         """
 
-        for integ in self._integrations:
+        for integ, _ in self._integrations:
             integ.attach_to_environment()
 
         return
@@ -103,7 +103,7 @@ class TestSequencer(ContextUser):
             collect shared resources that are required for testing.
         """
 
-        for integ in self._integrations:
+        for integ, _ in self._integrations:
             integ.collect_resources()
 
         return
@@ -112,6 +112,9 @@ class TestSequencer(ContextUser):
         """
             Re-orders the integrations based on any declared precedences.
         """
+
+        for integ, _ in self._integrations:
+            integ.establish_integration_order()
 
         return
 
@@ -122,7 +125,7 @@ class TestSequencer(ContextUser):
             into the automation run.
         """
 
-        for integ in self._integrations:
+        for integ, _ in self._integrations:
             integ.establish_connectivity()
 
         return
@@ -164,6 +167,9 @@ class TestSequencer(ContextUser):
 
     def parse_extended_args(self, base_parser):
         
+        return
+
+    def publish_integrations(self):
         return
 
     def record_import_errors(self, outputfilename: str):
