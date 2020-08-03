@@ -43,6 +43,7 @@ def format_log_section_header(title):
     marker_prefix = LOGGING_SECTION_MARKER * marker_half
     marker_suffix = LOGGING_SECTION_MARKER * (marker_count - marker_half)
     header = "%s%s%s" % (marker_prefix, title_upper, marker_suffix)
+    return header
 
 def getAutomatonKitLogger():
     logger = logging.getLogger(LOGGER_NAME)
