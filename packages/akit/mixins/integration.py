@@ -24,7 +24,6 @@ import inspect
 from akit.exceptions import AKitInvalidConfigError, AKitMissingConfigError, AKitResourceError, AKitInitialConnectivityError
 
 from akit.environment.context import ContextUser
-from akit.integration.landscaping import Landscape
 
 from akit.xlogging import getAutomatonKitLogger
 
@@ -105,6 +104,8 @@ class IntegrationMixIn(ContextUser):
 
             :raises :class:`akit.exceptions.AKitMissingConfigError`, :class:`akit.exceptions.AKitInvalidConfigError`:
         """
+        from akit.integration.landscaping import Landscape
+
         cls.logger = getAutomatonKitLogger()
         cls.landscape = Landscape()
         return

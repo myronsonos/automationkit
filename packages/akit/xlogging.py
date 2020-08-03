@@ -33,6 +33,17 @@ logging.basicConfig(level=logging.NOTSET)
 
 LOGGER_NAME = "AKIT"
 
+LOGGING_SECTION_MARKER = "="
+LOGGING_SECTION_MARKER_LENGTH = 80
+
+def format_log_section_header(title):
+    title_upper = " %s " % title.strip().upper()
+    marker_count = LOGGING_SECTION_MARKER_LENGTH - len(title_upper)
+    marker_half = marker_count >> 1
+    marker_prefix = LOGGING_SECTION_MARKER * marker_half
+    marker_suffix = LOGGING_SECTION_MARKER * (marker_count - marker_half)
+    header = "%s%s%s" % (marker_prefix, title_upper, marker_suffix)
+
 def getAutomatonKitLogger():
     logger = logging.getLogger(LOGGER_NAME)
     return logger
@@ -152,7 +163,7 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
     root_logger.addHandler(stdout_logger)
     root_logger.addHandler(stderr_logger)
 
-    root_logger.info("Logging Initiaized")
+    root_logger.info(format_log_section_header("Logging Initiaized"))
 
     return
 

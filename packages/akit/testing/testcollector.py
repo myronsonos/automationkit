@@ -74,7 +74,7 @@ class TestCollector:
                     else:
                         integrations[mikey] = (bcls, [ref])
 
-        integlist = [ i for i in integrations.items()]
+        integlist = [ i for i in integrations.values()]
 
         return integlist
 
