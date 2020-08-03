@@ -195,6 +195,7 @@ class TestJob(ContextUser):
                 build = self._build
                 flavor = self._flavor
 
+                self._logger.section("Running Tests")
                 # STEP 8: The startup phase is over, up to this point we have mostly been executing
                 # integration code and configuration analysis code that is embedded into mostly class
                 # level methods.
