@@ -80,7 +80,7 @@ class TestKitLoggerWrapper:
 
         logger.debug("Houston, we have a %s", "thorny problem", exc_info=1)
         """
-        self._logger.debug(msg, args, **kwargs)
+        self._logger.debug(msg, *args, **kwargs)
         return
 
     def info(self, msg, *args, **kwargs):
@@ -92,7 +92,7 @@ class TestKitLoggerWrapper:
 
         logger.info("Houston, we have a %s", "interesting problem", exc_info=1)
         """
-        self._logger.info(msg, args, **kwargs)
+        self._logger.info(msg, *args, **kwargs)
         return
 
 
@@ -105,7 +105,7 @@ class TestKitLoggerWrapper:
 
         logger.warning("Houston, we have a %s", "bit of a problem", exc_info=1)
         """
-        self._logger.warning(msg, args, **kwargs)
+        self._logger.warning(msg, *args, **kwargs)
         return
 
     def warn(self, msg, *args, **kwargs):
@@ -121,14 +121,14 @@ class TestKitLoggerWrapper:
 
         logger.error("Houston, we have a %s", "major problem", exc_info=1)
         """
-        self._logger.error(msg, args, **kwargs)
+        self._logger.error(msg, *args, **kwargs)
         return
 
     def exception(self, msg, *args, exc_info=True, **kwargs):
         """
         Convenience method for logging an ERROR with exception information.
         """
-        self._logger.exception(msg, args, exc_info=exc_info, **kwargs)
+        self._logger.exception(msg, *args, exc_info=exc_info, **kwargs)
         return
 
     def critical(self, msg, *args, **kwargs):
@@ -140,7 +140,7 @@ class TestKitLoggerWrapper:
 
         logger.critical("Houston, we have a %s", "major disaster", exc_info=1)
         """
-        self._logger.critical(msg, args, **kwargs)
+        self._logger.critical(msg, *args, **kwargs)
         return
 
     fatal = critical
