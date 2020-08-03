@@ -127,6 +127,7 @@ class TestJob(ContextUser):
             # or teardown code at this point.  We want to seperate out the integration
             # code from the test code and run the integration code first so we can discover
             # integration issues independant of the test code itself.
+            self._logger.section("Discovery")
             count = tseq.discover(test_module=self._test_module)
 
             # STEP 2: Tell the sequencer to record any import errors that happened during discovery
@@ -137,6 +138,7 @@ class TestJob(ContextUser):
 
             if count > 0:
 
+                self._logger.section("Integration Publishing")
                 # STEP 3: If there are tests that were discovered. Provide an opportunity for any Integration
                 # or Scope mixins associated with the descovered tests to publish the intergation points they
                 # use to engage with the framework and environment.
@@ -163,6 +165,7 @@ class TestJob(ContextUser):
                 # This is the final step of validating all the input information to the run and
                 # we are able to perform this step in the context of the integration code and 
                 # outside of the execution of any test code
+                self._logger.section("Attaching to Environment")
                 tseq.attach_to_environment() 
 
                 # STEP 6: All the mixins have had a chance to analyze the configuration
@@ -170,6 +173,7 @@ class TestJob(ContextUser):
                 # issues.  Now provide the mixins with the opportunity to reach out to the
                 # automation infrastructure and checkout or collect any global shared resources
                 # that might be required for this automation run.
+                self._logger.section("Collecting Resources")
                 tseq.collect_resources()
 
                 # STEP 7: Because the Automation Kit is a distrubuted automation test framework,
@@ -179,6 +183,7 @@ class TestJob(ContextUser):
                 #
                 # This helps to ensure the reduction of automation failure noise due to configuration
                 # or environmental issues
+                self._logger.section("Establishing Connectivity")
                 tseq.establish_connectivity()
 
                 title = self.title
