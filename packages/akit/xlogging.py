@@ -33,9 +33,26 @@ logging.basicConfig(level=logging.NOTSET)
 
 LOGGER_NAME = "AKIT"
 
+LOGGING_SECTION_MARKER = "="
+LOGGING_SECTION_MARKER_LENGTH = 80
+
+
+def format_log_section_header(title):
+    title_upper = " %s " % title.strip().upper()
+    marker_count = LOGGING_SECTION_MARKER_LENGTH - len(title_upper)
+    marker_half = marker_count >> 1
+    marker_prefix = LOGGING_SECTION_MARKER * marker_half
+    marker_suffix = LOGGING_SECTION_MARKER * (marker_count - marker_half)
+    header = "\n%s%s%s\n" % (marker_prefix, title_upper, marker_suffix)
+    return header
+
+akit_logger = None
+
 def getAutomatonKitLogger():
-    logger = logging.getLogger(LOGGER_NAME)
-    return logger
+    global akit_logger
+    if akit_logger is None:
+        akit_logger = TestKitLoggerWrapper(logging.getLogger(LOGGER_NAME))
+    return akit_logger
 
 OTHER_LOGGER_FILTERS = []
 
@@ -47,6 +64,93 @@ LEVEL_NAMES = [
     "ERROR",
     "CRITICAL"
 ]
+
+class TestKitLoggerWrapper:
+
+    def __init__(self, logger):
+        self._logger = logger
+        return
+
+    def debug(self, msg, *args, **kwargs):
+        """
+        Log 'msg % args' with severity 'DEBUG'.
+
+        To pass exception information, use the keyword argument exc_info with
+        a true value, e.g.
+
+        logger.debug("Houston, we have a %s", "thorny problem", exc_info=1)
+        """
+        self._logger.debug(msg, *args, **kwargs)
+        return
+
+    def info(self, msg, *args, **kwargs):
+        """
+        Log 'msg % args' with severity 'INFO'.
+
+        To pass exception information, use the keyword argument exc_info with
+        a true value, e.g.
+
+        logger.info("Houston, we have a %s", "interesting problem", exc_info=1)
+        """
+        self._logger.info(msg, *args, **kwargs)
+        return
+
+
+    def warning(self, msg, *args, **kwargs):
+        """
+        Log 'msg % args' with severity 'WARNING'.
+
+        To pass exception information, use the keyword argument exc_info with
+        a true value, e.g.
+
+        logger.warning("Houston, we have a %s", "bit of a problem", exc_info=1)
+        """
+        self._logger.warning(msg, *args, **kwargs)
+        return
+
+    def warn(self, msg, *args, **kwargs):
+        self._logger.warning(msg, *args, **kwargs)
+        return
+
+    def error(self, msg, *args, **kwargs):
+        """
+        Log 'msg % args' with severity 'ERROR'.
+
+        To pass exception information, use the keyword argument exc_info with
+        a true value, e.g.
+
+        logger.error("Houston, we have a %s", "major problem", exc_info=1)
+        """
+        self._logger.error(msg, *args, **kwargs)
+        return
+
+    def exception(self, msg, *args, exc_info=True, **kwargs):
+        """
+        Convenience method for logging an ERROR with exception information.
+        """
+        self._logger.exception(msg, *args, exc_info=exc_info, **kwargs)
+        return
+
+    def critical(self, msg, *args, **kwargs):
+        """
+        Log 'msg % args' with severity 'CRITICAL'.
+
+        To pass exception information, use the keyword argument exc_info with
+        a true value, e.g.
+
+        logger.critical("Houston, we have a %s", "major disaster", exc_info=1)
+        """
+        self._logger.critical(msg, *args, **kwargs)
+        return
+
+    fatal = critical
+
+    def section(self, title):
+        """
+            Logs a log section marker
+        """
+        self._logger.info(format_log_section_header(title))
+        return
 
 class WarningFilter(logging.Filter):
     def filter(self, rec):
@@ -152,7 +256,7 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
     root_logger.addHandler(stdout_logger)
     root_logger.addHandler(stderr_logger)
 
-    root_logger.info("Logging Initiaized")
+    root_logger.info(format_log_section_header("Logging Initiaized"))
 
     return
 

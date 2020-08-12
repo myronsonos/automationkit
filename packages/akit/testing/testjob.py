@@ -127,6 +127,7 @@ class TestJob(ContextUser):
             # or teardown code at this point.  We want to seperate out the integration
             # code from the test code and run the integration code first so we can discover
             # integration issues independant of the test code itself.
+            self._logger.section("Discovery")
             count = tseq.discover(test_module=self._test_module)
 
             # STEP 2: Tell the sequencer to record any import errors that happened during discovery
@@ -137,19 +138,25 @@ class TestJob(ContextUser):
 
             if count > 0:
 
-                # STEP 3: Parse the extended arguements, the discover phase would have allowed
-                # the mixins to register extended arguements, so now parse those arguements to ensure
+                self._logger.section("Integration Publishing")
+                # STEP 3: If there are tests that were discovered. Provide an opportunity for any Integration
+                # or Scope mixins associated with the descovered tests to publish the intergation points they
+                # use to engage with the framework and environment.
+                tseq.publish_integrations()
+
+                # STEP 4: Parse the extended arguments, the publish phase would have allowed
+                # the mixins to register extended arguments, so now parse those arguments to ensure
                 # that any extended arguments that are needed by the included tests were actually
                 # provided.  This provides for a dynamic and rich arguement processing mechanism
                 # that can vary based on the tests that were included in the run.
                 if self._parser is not None:
-                    # Parse any extended arguements now that we have discovered the integrations
+                    # Parse any extended arguments now that were published by the integrations
                     tseq.parse_extended_args(self._parser)
 
                 # Initiate contact with the TestLandscape
                 landscape = Landscape()
 
-                # STEP 4: Now that we have collected all the mixins and have a preview of
+                # STEP 5: Now that we have collected all the mixins and have a preview of
                 # the complexity of the automation run encoded into the mixin types collected.
                 # Allow the mixins to attach to the automation environment so they can get
                 # a preview of the parameters and configuration and provide us with an early
@@ -158,22 +165,25 @@ class TestJob(ContextUser):
                 # This is the final step of validating all the input information to the run and
                 # we are able to perform this step in the context of the integration code and 
                 # outside of the execution of any test code
+                self._logger.section("Attaching to Environment")
                 tseq.attach_to_environment() 
 
-                # STEP 5: All the mixins have had a chance to analyze the configuration
+                # STEP 6: All the mixins have had a chance to analyze the configuration
                 # information and provide us with a clear indication if there are any configuration
                 # issues.  Now provide the mixins with the opportunity to reach out to the
                 # automation infrastructure and checkout or collect any global shared resources
                 # that might be required for this automation run.
+                self._logger.section("Collecting Resources")
                 tseq.collect_resources()
 
-                # STEP 6: Because the Automation Kit is a distrubuted automation test framework,
+                # STEP 7: Because the Automation Kit is a distrubuted automation test framework,
                 # we want to provide an early opportunity for all the integration and scope mixins
                 # to establish initial connectivity or first contact with the resources or devices
                 # that are being integrated into the automation run.
                 #
                 # This helps to ensure the reduction of automation failure noise due to configuration
                 # or environmental issues
+                self._logger.section("Establishing Connectivity")
                 tseq.establish_connectivity()
 
                 title = self.title
@@ -185,7 +195,8 @@ class TestJob(ContextUser):
                 build = self._build
                 flavor = self._flavor
 
-                # STEP 7: The startup phase is over, up to this point we have mostly been executing
+                self._logger.section("Running Tests")
+                # STEP 8: The startup phase is over, up to this point we have mostly been executing
                 # integration code and configuration analysis code that is embedded into mostly class
                 # level methods.
                 #
@@ -196,7 +207,7 @@ class TestJob(ContextUser):
                     self._testpacks = tseq.testpacks
                     result_code = tseq.execute_testpacks(runid, recorder, self.sequence)
 
-                # STEP 8: This is where we do any final processing and or publishing of results.
+                # STEP 9: This is where we do any final processing and or publishing of results.
                 # We might also want to add automated bug filing here later.
 
             else:

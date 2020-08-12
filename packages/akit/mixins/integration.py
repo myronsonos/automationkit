@@ -24,7 +24,6 @@ import inspect
 from akit.exceptions import AKitInvalidConfigError, AKitMissingConfigError, AKitResourceError, AKitInitialConnectivityError
 
 from akit.environment.context import ContextUser
-from akit.integration.landscaping import Landscape
 
 from akit.xlogging import getAutomatonKitLogger
 
@@ -82,6 +81,22 @@ class IntegrationMixIn(ContextUser):
         return
 
     @classmethod
+    def declare_precedence(cls):
+        """
+            This API is called so that the IntegrationMixIn can declare an ordinal precedence that should be
+            utilized for bringing up its integration state.
+        """
+        return
+    
+    @classmethod
+    def declare_options(cls):
+        """
+            This API is called so that the IntegrationMixIn can declare any command line options that are required
+            for it to be able to function.
+        """
+        return
+
+    @classmethod
     def attach_to_environment(cls):
         """
             This API is called so that the IntegrationMixIn can process configuration information.  The :class:`IntegrationMixIn`
@@ -89,6 +104,8 @@ class IntegrationMixIn(ContextUser):
 
             :raises :class:`akit.exceptions.AKitMissingConfigError`, :class:`akit.exceptions.AKitInvalidConfigError`:
         """
+        from akit.integration.landscaping import Landscape
+
         cls.logger = getAutomatonKitLogger()
         cls.landscape = Landscape()
         return
