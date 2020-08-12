@@ -16,6 +16,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import fcntl
+import netifaces
 import socket
 import struct
 
@@ -24,18 +25,16 @@ import netifaces
 from akit.compat import bytes_cast
 
 
-def get_ip_address(ifname):
+def get_ipv4_address(ifname):
 
-    ifname = bytes_cast(ifname)
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sfd = s.fileno()
-    ifname_packed = struct.pack('256s', ifname[:15])
-    iface = socket.inet_ntoa(
-        fcntl.ioctl(sfd,
-        0x8915,  # SIOCGIFADDR
-        ifname_packed)[20:24])
+    addr = None
 
-    return iface
+    address_info = netifaces.ifaddresses(ifname)
+    if address_info is not None and netifaces.AF_INET in address_info:
+        addr_info = address_info[netifaces.AF_INET][0]
+        addr = addr_info["addr"]
+
+    return addr
 
 def get_correspondance_interface(ref_ip, ref_port, addr_family=socket.AF_INET):
     """

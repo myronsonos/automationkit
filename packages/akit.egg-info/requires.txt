@@ -1,0 +1,7 @@
+netifaces
+paramiko
+psycopg2
+requests
+sqlalchemy
+sqlalchemy_utils
+ssdp
