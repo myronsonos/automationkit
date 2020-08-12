@@ -8,7 +8,8 @@
         }
     ],
     "settings": {
-        "python.pythonPath": "/media/myron/SSD/source/sonos/automationkit/_local/venv/bin/python",
-        "python.envFile": "/home/myron/source/automationkit/_local/development.env"
+        "python.pythonPath": "./_local/venv/bin/python3.8",
+        "python.envFile": "./_local/development.env",
+        "python.venvPath": "./_local/venv"
     }
 }

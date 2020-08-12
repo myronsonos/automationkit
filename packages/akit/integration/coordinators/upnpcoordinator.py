@@ -180,7 +180,7 @@ class UpnpCoordinator:
 
         return
 
-    def _create_root_device(self, manufacturer: str, modelNumber: str, modelDescription: str):
+    def _create_root_device(self, manufacturer, modelNumber, modelDescription):
         dev = self._factory.create_root_device_instance(manufacturer, modelNumber, modelDescription)
         return dev
 
