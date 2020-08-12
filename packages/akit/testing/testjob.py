@@ -21,6 +21,7 @@ import uuid
 
 from akit.environment.context import ContextUser
 
+from akit.integration.landscaping import Landscape
 from akit.recorders import JsonResultRecorder
 from akit.results import ResultContainer, ResultType
 from akit.testing.testsequencer import TestSequencer
@@ -57,7 +58,8 @@ class TestJob(ContextUser):
             cls._instance = super(TestJob, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, logger, testroot, includes=None, excludes=None, test_module=None, parser=None):
+    def __init__(self, logger, testroot, includes=None, excludes=None, test_module=None, parser=None,
+                 branch=None, build=None, flavor=None):
         """
             Constructor for a :class:`TestJob`.  It initializes the member variables based on the parameters passed
             from the entry point function and the class member data declared on :class:`TestJob` derived classes.
@@ -79,6 +81,9 @@ class TestJob(ContextUser):
         self._import_errors_filename = None
 
         self._testpacks = None
+        self._branch = branch
+        self._build = build
+        self._flavor = flavor
         return
 
     def __enter__(self):
@@ -111,30 +116,88 @@ class TestJob(ContextUser):
         """
         result_code = 0
 
-        with TestSequencer(self._testroot, includes=self.includes, excludes=self.excludes) as tseq:
+        with TestSequencer(self.title, self._testroot, includes=self.includes, excludes=self.excludes) as tseq:
+            # IMPORTANT: The ordering of the automation sequence is extremely important.  Proper
+            # ordering of these steps ensures that the correct things are happening in the correct
+            # order in the automation code and that we provide the ability for configuration
+            # issues to be discovered as early as possible.
 
-            # Discover the Tests, Integrations and Scopes
+            # STEP 1: We discover the tests first so we can build a listing of the
+            # Integration and Scope mixins.  We don't want to execute any test code, setup,
+            # or teardown code at this point.  We want to seperate out the integration
+            # code from the test code and run the integration code first so we can discover
+            # integration issues independant of the test code itself.
             count = tseq.discover(test_module=self._test_module)
 
-            # Tell the sequencer to record any import errors that happened during discovery
+            # STEP 2: Tell the sequencer to record any import errors that happened during discovery
+            # of tests.  If a test file or dependent file failed to import then the test
+            # will just not be included in a run and this is a type of invisible error
+            # that we must plan for and highlight.
             tseq.record_import_errors(self._import_errors_filename)
 
             if count > 0:
+
+                # STEP 3: Parse the extended arguements, the discover phase would have allowed
+                # the mixins to register extended arguements, so now parse those arguements to ensure
+                # that any extended arguments that are needed by the included tests were actually
+                # provided.  This provides for a dynamic and rich arguement processing mechanism
+                # that can vary based on the tests that were included in the run.
                 if self._parser is not None:
                     # Parse any extended arguements now that we have discovered the integrations
                     tseq.parse_extended_args(self._parser)
 
-                # Intitiate Resource Aquisition
+                # Initiate contact with the TestLandscape
+                landscape = Landscape()
+
+                # STEP 4: Now that we have collected all the mixins and have a preview of
+                # the complexity of the automation run encoded into the mixin types collected.
+                # Allow the mixins to attach to the automation environment so they can get
+                # a preview of the parameters and configuration and provide us with an early
+                # indicator of any parameter or configuration issues.
+                #
+                # This is the final step of validating all the input information to the run and
+                # we are able to perform this step in the context of the integration code and 
+                # outside of the execution of any test code
+                tseq.attach_to_environment() 
+
+                # STEP 5: All the mixins have had a chance to analyze the configuration
+                # information and provide us with a clear indication if there are any configuration
+                # issues.  Now provide the mixins with the opportunity to reach out to the
+                # automation infrastructure and checkout or collect any global shared resources
+                # that might be required for this automation run.
                 tseq.collect_resources()
 
-                title = "Automation Test Run"
+                # STEP 6: Because the Automation Kit is a distrubuted automation test framework,
+                # we want to provide an early opportunity for all the integration and scope mixins
+                # to establish initial connectivity or first contact with the resources or devices
+                # that are being integrated into the automation run.
+                #
+                # This helps to ensure the reduction of automation failure noise due to configuration
+                # or environmental issues
+                tseq.establish_connectivity()
+
+                title = self.title
                 runid = str(uuid.uuid4())
                 start = str(self._starttime)
+                sum_file = self._summary_filename
+                res_file = self._result_filename
+                branch = self._branch
+                build = self._build
+                flavor = self._flavor
 
-                with JsonResultRecorder(title, runid, start, self._summary_filename, self._result_filename) as recorder:
+                # STEP 7: The startup phase is over, up to this point we have mostly been executing
+                # integration code and configuration analysis code that is embedded into mostly class
+                # level methods.
+                #
+                # Now we start going through all the test testpacks and tests and start instantiating
+                # test scopes and instances and start executing setup, teardown and test level code
+                with JsonResultRecorder(title, runid, start, sum_file, res_file, branch=branch, build=build, flavor=flavor) as recorder:
                     # Traverse the execution graph
                     self._testpacks = tseq.testpacks
                     result_code = tseq.execute_testpacks(runid, recorder, self.sequence)
+
+                # STEP 8: This is where we do any final processing and or publishing of results.
+                # We might also want to add automated bug filing here later.
 
             else:
                 # We didn't find any tests so display a message, and set the return code to

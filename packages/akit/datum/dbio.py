@@ -43,7 +43,7 @@ def database_create(username, password, dbname):
 
     return
 
-def create_apod_postgresql_database(username, password):
+def create_apod_postgresql_database(host='localhost', port=5432, username=None, password=None):
 
     if not database_exists(username, password, "apod"):
         database_create(username, password, "apod")
@@ -54,10 +54,28 @@ def create_apod_postgresql_database(username, password):
 
     return
 
-def open_apod_postgresql_database(username, password):
+def open_apod_postgresql_database(host='localhost', port=5432, username=None, password=None):
     
-    create_apod_postgresql_database(username, password)
+    create_apod_postgresql_database(host=host, port=port, username=username, password=password)
 
-    engine = create_engine('postgresql://%s:%s@localhost:5432/apod' % (username, password), echo=True)
+    connstr = 'postgresql://'
+    if username is not None:
+        connstr += username
+
+    if password is not None:
+        connstr += ":%s" % password
+    
+    connstr += "%s@:%d/apod" % (host, port)
+
+    engine = create_engine(connstr, echo=True)
 
     return engine
+
+if __name__ == "__main__":
+    from akit.integration.landscaping import Landscape
+    landscape = Landscape()
+
+    dbinfo = landscape.get_databases()
+
+    apoddb_info = dbinfo["apod"]
+    open_apod_postgresql_database(**apoddb_info)

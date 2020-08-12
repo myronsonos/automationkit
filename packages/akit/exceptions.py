@@ -73,6 +73,12 @@ class AKitInitialConnectivityError(AKitLandscapeError):
         connectivity with a connected resource.
     """
 
+class AKitMissingResourceError(AKitLandscapeError):
+    """
+        This error is raised when an device or resources was declared in the landscape.json file
+        but was not able to be found during device or resource discovery.
+    """
+
 class AKitResourceError(AKitLandscapeError):
     """
         This error is raised when an IntegrationMixIn object was unable to obtain a required resource.

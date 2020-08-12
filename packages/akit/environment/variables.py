@@ -28,6 +28,10 @@ class VARIABLES:
     AKIT_BUILD = "unknown"
     if "AKIT_BUILD" in environ:
         AKIT_BUILD = environ["AKIT_BUILD"]
+    
+    AKIT_FLAVOR = "unknown"
+    if "AKIT_FLAVOR" in environ:
+        AKIT_FLAVOR = environ["AKIT_FLAVOR"]
 
     AKIT_JOBTYPE = "unknown"
     if "AKIT_JOBTYPE" in environ:

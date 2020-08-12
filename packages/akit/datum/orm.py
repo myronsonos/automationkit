@@ -15,10 +15,10 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-
+import enum
 import json
 
-from sqlalchemy import BigInteger, Column, DateTime, Float, String, Text, VARCHAR, ForeignKey
+from sqlalchemy import BigInteger, Column, DateTime, Enum, Float, Integer, String, Text, VARCHAR, ForeignKey
 from sqlalchemy import inspect
 from sqlalchemy.types import JSON
 
@@ -112,16 +112,22 @@ class TaskContainer(AutomationBase):
 
 AutomationPod = declarative_base()
 
+import enum
+class WorkQueueJobType(enum.Enum):
+    Local = 1
+    Global = 2
+
 class WorkQueue(AutomationPod, SerializableMode):
     __tablename__ = 'work_queue'
 
     id = Column('wkq_id', BigInteger, primary_key=True, autoincrement=True)
 
-    title =  Column('wkq_title', VARCHAR(1024), nullable=False)
+    jtype = Column('wkq_jtype', Enum(WorkQueueJobType), nullable=False)
+    title =  Column('wkq_title', String(1024), nullable=False)
     description = Column('wkq_description', Text, nullable=False)
-    branch =  Column('wkq_branch', VARCHAR(1024), nullable=True)
-    build =  Column('wkq_build', VARCHAR(1024), nullable=True)
-    flavor =  Column('wkq_flavor', VARCHAR(1024), nullable=True)
+    branch =  Column('wkq_branch', String(1024), nullable=True)
+    build =  Column('wkq_build', String(1024), nullable=True)
+    flavor =  Column('wkq_flavor', String(1024), nullable=True)
     added = Column('wkq_added', DateTime, nullable=False)
     start = Column('wkq_start', DateTime, nullable=True)
     stop = Column('wkq_stop', DateTime, nullable=True)
@@ -129,6 +135,6 @@ class WorkQueue(AutomationPod, SerializableMode):
     status = Column('wkq_status', String(50), nullable=False)
     packet = Column('wkq_packet', JSON, nullable=True)
 
+    result_id = Column('result_id', String(64), nullable=False)
     user_id = Column('user_id', BigInteger, nullable=False)
-
     

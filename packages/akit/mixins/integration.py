@@ -21,8 +21,12 @@ __license__ = "MIT"
 
 import inspect
 
-from akit.environment.context import ContextUser
 from akit.exceptions import AKitInvalidConfigError, AKitMissingConfigError, AKitResourceError, AKitInitialConnectivityError
+
+from akit.environment.context import ContextUser
+from akit.integration.landscaping import Landscape
+
+from akit.xlogging import getAutomatonKitLogger
 
 class IntegrationMixIn(ContextUser):
     """
@@ -31,6 +35,8 @@ class IntegrationMixIn(ContextUser):
         are included in an automation run.
     """
 
+    logger = None
+    landscape = None
     pathname = None
 
     def __init__(self, *args, role=None, **kwargs):
@@ -83,7 +89,8 @@ class IntegrationMixIn(ContextUser):
 
             :raises :class:`akit.exceptions.AKitMissingConfigError`, :class:`akit.exceptions.AKitInvalidConfigError`:
         """
-        
+        cls.logger = getAutomatonKitLogger()
+        cls.landscape = Landscape()
         return
 
     @classmethod

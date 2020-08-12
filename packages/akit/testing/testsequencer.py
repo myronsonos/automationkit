@@ -45,12 +45,12 @@ class TEST_SEQUENCER_PHASES:
 
 class TestSequencer(ContextUser):
 
-    def __init__(self, root, job=None, includes=[], excludes=[]):
+    def __init__(self, jobtitle, root, includes=[], excludes=[]):
         """
             Creates a 'TestSequencer' object which is used to discover the tests and control the flow of a test run.
 
-            :param context: A reference to the global contenxt.
-            :type context: akit.context.Context
+            :param jobtitle: The name of the test job.
+            :type jobtitle: str
             :param root: The path to the root folder that is the base of the tests.
             :type root: str
             :param includes: List of expressions used to determine which tests to include. 
@@ -60,8 +60,8 @@ class TestSequencer(ContextUser):
             :type excludes: list. 
 
         """
+        self._jobtitle = jobtitle
         self._root = root
-        self._job = job
         self._includes = includes
         self._excludes = excludes
         self._integrations = []
@@ -86,8 +86,14 @@ class TestSequencer(ContextUser):
     def testpacks(self):
         return self._testpacks
 
+    def attach_to_environment(self):
+        return
+
     def collect_resources(self):
         
+        return
+
+    def establish_connectivity(self):
         return
 
     def discover(self, test_module=None):
@@ -98,6 +104,8 @@ class TestSequencer(ContextUser):
         # we are running tests from an individual module and we can limit discovery to the test module
         for inc_item in self._includes:
             collector.collect_references(inc_item)
+
+        collector.expand_testpacks()
 
         self._references = collector.references
 

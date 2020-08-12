@@ -1,5 +1,5 @@
 
-from testing.testjob import TestJob
+from akit.testing.testjob import TestJob
 
 class ExampleJob(TestJob):
 
