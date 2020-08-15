@@ -16,16 +16,17 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+import socket
 import time
 
 from akit.aspects import RunPattern, DEFAULT_ASPECTS
 
-from paramiko import SSHClient
+import paramiko
 
 DEFAULT_SSH_TIMEOUT = 300
-DEFAULT_RETRY_INTERVAL = 1
+DEFAULT_SSH_RETRY_INTERVAL = 1
 
-def execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIMEOUT, inactivity_interval=DEFAULT_RETRY_INTERVAL, chunk_size=1024):
+def execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIMEOUT, inactivity_interval=DEFAULT_SSH_RETRY_INTERVAL, chunk_size=1024):
     """
 
     """
@@ -37,7 +38,7 @@ def execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIMEOUT,
     end_time = start_time + inactivity_timeout
 
     channel = ssh_client.get_transport().open_session(timeout=inactivity_timeout)
-    channel.exec_command(cmd)
+    channel.exec_command(command)
 
     while True:
         # Grab exit status ready before checking to see if stdout_ready or stderr_ready are True
@@ -49,10 +50,10 @@ def execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIMEOUT,
         if stdout_ready or stderr_ready:
             if stdout_ready:
                 rcv_data = channel.recv(chunk_size)
-                stdout_buffer.append(rcv_data)
+                stdout_buffer.extend(rcv_data)
             if stderr_ready:
                 rcv_data = bychannel.recv_stderr(chunk_size)
-                stderr_buffer.append(rcv_data)
+                stderr_buffer.extend(rcv_data)
 
             # We only want to timeout if there is inactivity
             start_time = time.time()
@@ -82,7 +83,10 @@ def execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIMEOUT,
 
 
 class SshSession:
-    def __init__(self, username, password, aspects=None):
+    def __init__(self, host, username, password, port=22,aspects=DEFAULT_ASPECTS):
+        self._host = host
+        self._ipaddr = socket.gethostbyname(host)
+        self._port = port
         self._username = username
         self._password = password
         self._aspects = aspects
@@ -90,9 +94,9 @@ class SshSession:
         return
 
     def __enter__(self):
-        self._ssh_client = SSHClient()
+        self._ssh_client = paramiko.SSHClient()
         self._ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self._ssh_client.connect(self._host, self._port, username, None, key)
+        self._ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password)
         return
 
     def __exit__(self, ex_val, ex_type, ex_tb):
@@ -105,19 +109,19 @@ class SshSession:
         if aspects is None:
             aspects = self._aspects
 
-        timeout=aspects.timeout
-        interval=aspects.interval
+        timeout=aspects.inactivity_timeout
+        interval=aspects.inactivity_interval
 
         status = None
         stdout = None
         stderr = None
 
         if aspects.run_pattern == RunPattern.SINGLE_RUN:
-            status, stdout, stderr = execute_command(self._ssh_client, command, timeout=timeout, interval=interval)
+            status, stdout, stderr = execute_command(self._ssh_client, command, inactivity_timeout=timeout, inactivity_interval=interval)
 
         elif aspects.run_pattern == RunPattern.RUN_UNTIL_SUCCESS:
             while True:
-                status, stdout, stderr = execute_command(self._ssh_client, command, timeout=timeout, interval=interval)
+                status, stdout, stderr = execute_command(self._ssh_client, command, inactivity_timeout=timeout, inactivity_interval=interval)
                 if status == 0:
                     break
                 else:
@@ -125,7 +129,7 @@ class SshSession:
 
         elif aspects.run_pattern == RunPattern.RUN_WHILE_SUCCESS:
             while True:
-                status, stdout, stderr = execute_command(self._ssh_client, command, timeout=timeout, interval=interval)
+                status, stdout, stderr = execute_command(self._ssh_client, command, inactivity_timeout=timeout, inactivity_interval=interval)
                 if status != 0:
                     break
                 else:
@@ -136,21 +140,46 @@ class SshSession:
 
 class SshAgent:
 
-    def __init__(self, host, username, password, port=22, aspects=DEFAULT_RETRY_INTERVAL):
+    def __init__(self, host, username, password, port=22, aspects=DEFAULT_ASPECTS):
         self._host = host
+        self._ipaddr = socket.gethostbyname(self._host)
         self._port = port
         self._username = username
         self._password = password
         self._aspects = aspects
         return
 
+    @property
+    def aspects(self):
+        return self._aspects
+
+    @property
+    def host(self):
+        return self._host
+
+    @property
+    def ipaddr(self):
+        return self._ipaddr
+
+    @property
+    def password(self):
+        return self._password
+
+    @property
+    def port(self):
+        return self._port
+
+    @property
+    def username(self):
+        return self._username
+
     def run_cmd(self, command, aspects=None, ssh_client=None):
 
         if aspects is None:
             aspects = self._aspects
 
-        timeout=aspects.timeout
-        interval=aspects.interval
+        inactivity_timeout=aspects.inactivity_timeout
+        inactivity_interval=aspects.inactivity_interval
 
         cleanup_client = False
         status = None
@@ -158,17 +187,17 @@ class SshAgent:
         stderr = None
         try:
             if ssh_client is None:
-                ssh_client = SSHClient()
+                ssh_client = paramiko.SSHClient()
                 ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh_client.connect(self._host, self._port, username, None, key)
+                ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password)
                 cleanup_client = True
 
             if aspects.run_pattern == RunPattern.SINGLE_RUN:
-                status, stdout, stderr = execute_command(ssh_client, command, timeout=timeout, interval=interval)
+                status, stdout, stderr = execute_command(ssh_client, command, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
 
             elif aspects.run_pattern == RunPattern.RUN_UNTIL_SUCCESS:
                 while True:
-                    status, stdout, stderr = execute_command(ssh_client, command, timeout=timeout, interval=interval)
+                    status, stdout, stderr = execute_command(ssh_client, command, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
                     if status == 0:
                         break
                     else:
@@ -176,7 +205,7 @@ class SshAgent:
 
             elif aspects.run_pattern == RunPattern.RUN_WHILE_SUCCESS:
                 while True:
-                    status, stdout, stderr = execute_command(ssh_client, command, timeout=timeout, interval=interval)
+                    status, stdout, stderr = execute_command(ssh_client, command, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
                     if status != 0:
                         break
                     else:

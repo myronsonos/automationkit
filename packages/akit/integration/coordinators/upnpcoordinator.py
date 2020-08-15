@@ -119,10 +119,26 @@ class UpnpCoordinator:
         return chlist
 
     def lookup_device_by_mac(self, mac):
+        """
+            Lookup a UPNP device by its MAC address.
+        """
 
         found = None
         for nxtdev in self.children:
             if mac == nxtdev.MACAddress:
+                found = nxtdev
+                break
+
+        return found
+
+    def lookup_device_by_usn(self, usn):
+        """
+            Lookup a UPNP device by its USN id.
+        """
+
+        found = None
+        for nxtdev in self.children:
+            if usn == nxtdev.USN:
                 found = nxtdev
                 break
 

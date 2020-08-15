@@ -114,6 +114,19 @@ class Landscape:
         db_info = self.landscape_info["databases"]
         return db_info
 
+    def get_ssh_devices(self):
+        """
+            Returns a list of devices that support ssh.
+        """
+        ssh_device_list = []
+
+        pod_info = self.landscape_info["pod"]
+        for devinfo in pod_info["devices"]:
+            if "ssh" in devinfo:
+                ssh_device_list.append(devinfo)
+
+        return ssh_device_list
+
     def get_upnp_devices(self):
         """
             Returns a list of UPNP device information dictionaries.
