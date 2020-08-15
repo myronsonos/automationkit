@@ -52,7 +52,7 @@ def execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIMEOUT,
                 rcv_data = channel.recv(chunk_size)
                 stdout_buffer.extend(rcv_data)
             if stderr_ready:
-                rcv_data = bychannel.recv_stderr(chunk_size)
+                rcv_data = channel.recv_stderr(chunk_size)
                 stderr_buffer.extend(rcv_data)
 
             # We only want to timeout if there is inactivity
