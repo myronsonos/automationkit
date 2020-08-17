@@ -131,4 +131,7 @@ if __name__ == "__main__":
         print ("STDERR:\n%s" % stderr)
         print ()
 
+    agent = sshpool.lookup_agent_by_usn("uuid:RINCON_7828CAF55FF001400::upnp:rootdevice")
+    agent.directory_tree("/")
+
     time.sleep(600)

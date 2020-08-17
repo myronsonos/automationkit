@@ -16,6 +16,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+import re
 import socket
 import time
 
@@ -81,6 +82,143 @@ def execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIMEOUT,
 
     return status, stdout, stderr
 
+def list_directory(ssh_client, directory):
+    return
+
+def list_tree(ssh_client, treeroot, max_depth=1):
+    return
+
+def list_tree_recurse(ssh_client, rootdir, remaining):
+    return
+
+#                    PERMS          LINKS   OWNER       GROUPS    SIZE   MONTH  DAY  TIME    NAME
+#                  rwxrwxrwx         24      myron      myron     4096   Jul    4   00:37  PCBs
+REGEX_DIRECTORY_ENTRY = re.compile(r"([\S]+)[\s]+([0-9]+)[\s]+([\S]+)[\s]+([\S]+)[\s]+([0-9]+)[\s]+([A-za-z]+[\s]+[0-9]+[\s]+[0-9:]+)[\s]+([\S\s]+)")
+
+def primitive_list_directory(ssh_client, directory):
+    """
+        Uses a primitive method to create a list of the files and folders in a directory
+        by running the 'ls -al' commands on the directory.  This is required if the SSH
+        server does not support sftp.
+    """
+    entries = None
+
+    ls_cmd = "ls -al %s" % directory
+
+    status, stdout, stderr = execute_command(ssh_client, ls_cmd)
+
+    if status == 0:
+        entries = primitive_parse_directory_listing(directory, stdout)
+    else:
+        if stderr.find("Permission denied") < 0:
+            errmsg = "Error attempting to get a primitive directory listing.\n    CMD=%s\n    STDERR:\n%s" % (ls_cmd, stderr)
+            raise Exception(errmsg)
+
+    return entries
+
+def primitive_list_tree(ssh_client, treeroot, max_depth=1):
+    """
+        Uses a primitive method to create an information tree about the files and folders
+        in a directory tree by running 'ls -al' commands on the directory tree.  This is
+        required if the SSH server does not support sftp.
+    """
+    
+    level_items = primitive_list_directory(ssh_client, treeroot)
+
+    if max_depth > 1:
+        if not treeroot.endswith("/"):
+            treeroot = treeroot + "/"
+
+        for nxtitem in level_items.values():
+            nxtname = nxtitem["name"]
+            nxtroot = treeroot + nxtname
+            nxtchildren = primitive_list_tree_recurse(ssh_client, nxtroot, max_depth - 1)
+            nxtitem.update(nxtchildren)
+
+    tree_info = {
+        "name": treeroot,
+        "items": level_items
+    }
+
+    return tree_info
+
+def primitive_list_tree_recurse(ssh_client, rootdir, remaining):
+
+    level_items = primitive_list_directory(ssh_client, rootdir)
+
+    if remaining > 1:
+        if not rootdir.endswith("/"):
+            rootdir = rootdir + "/"
+
+        for nxtitem in level_items.values():
+            nxtname = nxtitem["name"]
+            nxtroot = rootdir + nxtname
+            nxtchildren = primitive_list_tree_recurse(ssh_client, nxtroot, remaining - 1)
+            nxtitem.update(nxtchildren)
+
+    children_info = {
+        "items": level_items
+    }
+
+    return children_info
+
+def primitive_parse_directory_listing(dir, content):
+    """
+        {
+            "name": "blah",
+            "type": "dir", # dir, file, link
+            "owner": "root",
+            "group": "root",
+            "modified": "Jul  4 00:37"
+            "size": 1234
+        }
+    """
+    entries = {}
+
+    listing_lines = content.splitlines(False)
+    for nxtline in listing_lines:
+        nxtline = nxtline.strip()
+
+        mobj = REGEX_DIRECTORY_ENTRY.match(nxtline)
+        if mobj is not None:
+            mgroups = mobj.groups()
+
+            name = mgroups[6]
+            if name == "." or name == "..":
+                continue
+
+            perms = mgroups[0]
+
+            perms_tc = perms[0]
+            etype = None
+            if perms_tc == '-':
+                etype = "file"
+            elif perms_tc == 'd':
+                etype = "dir"
+            elif perms_tc == 'l':
+                etype = "link"
+                name, _ = name.split(" -> ")
+            elif perms_tc == 'c':
+                etype = "char"
+            elif perms_tc == 'b':
+                etype = "block"
+            else:
+                raise Exception("Unknown directory listing entry type. dir=%s tc=%s" % (dir, perms_tc))
+
+            dentry = {
+                "name": name,
+                "perms": perms,
+                "type": etype,
+                "owner": mgroups[2],
+                "group": mgroups[3],
+                "size": mgroups[4],
+                "modified": mgroups[5]
+            }
+
+            entries[name] = dentry
+
+    return entries
+
 
 class SshSession:
     def __init__(self, host, username, password, port=22,aspects=DEFAULT_ASPECTS):
@@ -91,6 +229,7 @@ class SshSession:
         self._password = password
         self._aspects = aspects
         self._ssh_client = None
+        self._primitive_mode = False
         return
 
     def __enter__(self):
@@ -140,13 +279,16 @@ class SshSession:
 
 class SshAgent:
 
-    def __init__(self, host, username, password, port=22, aspects=DEFAULT_ASPECTS):
+    def __init__(self, host, username, password, port=22, primitive=None, aspects=DEFAULT_ASPECTS):
         self._host = host
         self._ipaddr = socket.gethostbyname(self._host)
         self._port = port
         self._username = username
         self._password = password
         self._aspects = aspects
+        if primitive is None:
+            self._primitive = True
+        self._primitive = primitive
         return
 
     @property
@@ -218,3 +360,49 @@ class SshAgent:
 
         return status, stdout, stderr
 
+    def directory_tree(self, root_dir, depth=1, ssh_client=None):
+
+        dir_info = {}
+
+        cleanup_client = False
+        try:
+            if ssh_client is None:
+                ssh_client = paramiko.SSHClient()
+                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password)
+                cleanup_client = True
+
+            if not self._primitive:
+                transport = ssh_client.get_transport()
+                try:
+
+                    ftp = paramiko.SFTPClient.from_transport(transport)
+                    try:
+                        ftp.chdir(root_dir)
+                        dir_entries = ftp.listdir()
+
+                        for nitem in dir_entries:
+                            print(nitem)
+                    finally:
+                        ftp.close()
+                finally:
+                    transport.close()
+            else:
+                dir_info = primitive_list_tree(ssh_client, root_dir, max_depth=depth)
+
+        except Exception as xcpt:
+            raise
+        finally:
+            if cleanup_client:
+                ssh_client.close()
+                del ssh_client
+
+        return dir_info
+
+if __name__ == "__main__":
+    from pprint import pprint
+    agent = SshAgent("192.168.1.40", username="myron", password="Skate4Fun##", primitive=True)
+
+    dir_info = agent.directory_tree("/home", depth=3)
+
+    pprint(dir_info, indent=4)
