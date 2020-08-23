@@ -18,6 +18,7 @@ __license__ = "MIT"
 
 import re
 import socket
+import stat
 import time
 
 from akit.aspects import RunPattern, DEFAULT_ASPECTS
@@ -25,75 +26,27 @@ from akit.aspects import RunPattern, DEFAULT_ASPECTS
 import paramiko
 
 DEFAULT_SSH_TIMEOUT = 300
-DEFAULT_SSH_RETRY_INTERVAL = 1
-
-def execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIMEOUT, inactivity_interval=DEFAULT_SSH_RETRY_INTERVAL, chunk_size=1024):
-    """
-
-    """
-    status = None
-    stdout_buffer = bytearray()
-    stderr_buffer = bytearray()
-
-    start_time = time.time()
-    end_time = start_time + inactivity_timeout
-
-    channel = ssh_client.get_transport().open_session(timeout=inactivity_timeout)
-    channel.exec_command(command)
-
-    while True:
-        # Grab exit status ready before checking to see if stdout_ready or stderr_ready are True
-        exit_status_ready = channel.exit_status_ready()
-        stdout_ready = channel.recv_ready()
-        stderr_ready = channel.recv_stderr_ready()
-
-        # If stdout_ready or stderr_ready are true, we read this round
-        if stdout_ready or stderr_ready:
-            if stdout_ready:
-                rcv_data = channel.recv(chunk_size)
-                stdout_buffer.extend(rcv_data)
-            if stderr_ready:
-                rcv_data = channel.recv_stderr(chunk_size)
-                stderr_buffer.extend(rcv_data)
-
-            # We only want to timeout if there is inactivity
-            start_time = time.time()
-            end_time = start_time + inactivity_timeout
-        # If we did not ready any data this round and our exit status was ready, its time to exit
-        elif exit_status_ready:
-            status = channel.recv_exit_status()
-            break
-        # We didn't have any data to read and our exit status was not ready, go to sleep for interval
-        else:
-            time.sleep(inactivity_interval)
-
-        now_time = time.time()
-        if now_time > end_time:
-            diff_time = now_time - start_time
-            err_msg = "Timeout while executing SSH command.\n    command=%s\n    start=%r end=%r now=%r diff=%r" % (
-                command, start_time, end_time, now_time, diff_time)
-            raise TimeoutError(err_msg)
-
-    stdout = stdout_buffer.decode()
-    del stdout_buffer
-
-    stderr = stderr_buffer.decode()
-    del stderr_buffer
-
-    return status, stdout, stderr
-
-def list_directory(ssh_client, directory):
-    return
-
-def list_tree(ssh_client, treeroot, max_depth=1):
-    return
-
-def list_tree_recurse(ssh_client, rootdir, remaining):
-    return
+DEFAULT_SSH_RETRY_INTERVAL = .5
 
 #                    PERMS          LINKS   OWNER       GROUPS    SIZE   MONTH  DAY  TIME    NAME
 #                  rwxrwxrwx         24      myron      myron     4096   Jul    4   00:37  PCBs
 REGEX_DIRECTORY_ENTRY = re.compile(r"([\S]+)[\s]+([0-9]+)[\s]+([\S]+)[\s]+([\S]+)[\s]+([0-9]+)[\s]+([A-za-z]+[\s]+[0-9]+[\s]+[0-9:]+)[\s]+([\S\s]+)")
+def lookup_entry_type(pdir, ename, finfo):
+    etype = None
+    if stat.S_ISREG(finfo.st_mode):
+        etype = "file"
+    elif stat.S_ISDIR(finfo.st_mode):
+        etype = "dir"
+    elif stat.S_ISLNK(finfo.st_mode):
+        etype = "link"
+    elif stat.S_ISCHR(finfo.st_mode):
+        etype = "char"
+    elif stat.S_ISBLK(finfo.st_mode):
+        etype = "block"
+    else:
+        print ("ERROR: Unknown entry type. pdir=%s, ename=%s" % (pdir, ename))
+
+    return etype
 
 def primitive_list_directory(ssh_client, directory):
     """
@@ -105,11 +58,12 @@ def primitive_list_directory(ssh_client, directory):
 
     ls_cmd = "ls -al %s" % directory
 
-    status, stdout, stderr = execute_command(ssh_client, ls_cmd)
+    status, stdout, stderr = ssh_execute_command(ssh_client, ls_cmd)
 
     if status == 0:
         entries = primitive_parse_directory_listing(directory, stdout)
     else:
+        # Allow permission denied errors
         if stderr.find("Permission denied") < 0:
             errmsg = "Error attempting to get a primitive directory listing.\n    CMD=%s\n    STDERR:\n%s" % (ls_cmd, stderr)
             raise Exception(errmsg)
@@ -131,9 +85,10 @@ def primitive_list_tree(ssh_client, treeroot, max_depth=1):
 
         for nxtitem in level_items.values():
             nxtname = nxtitem["name"]
-            nxtroot = treeroot + nxtname
-            nxtchildren = primitive_list_tree_recurse(ssh_client, nxtroot, max_depth - 1)
-            nxtitem.update(nxtchildren)
+            if nxtitem["type"] == "dir":
+                nxtroot = treeroot + nxtname
+                nxtchildren = primitive_list_tree_recurse(ssh_client, nxtroot, max_depth - 1)
+                nxtitem.update(nxtchildren)
 
     tree_info = {
         "name": treeroot,
@@ -152,9 +107,10 @@ def primitive_list_tree_recurse(ssh_client, rootdir, remaining):
 
         for nxtitem in level_items.values():
             nxtname = nxtitem["name"]
-            nxtroot = rootdir + nxtname
-            nxtchildren = primitive_list_tree_recurse(ssh_client, nxtroot, remaining - 1)
-            nxtitem.update(nxtchildren)
+            if nxtitem["type"] == "dir":
+                nxtroot = rootdir + nxtname
+                nxtchildren = primitive_list_tree_recurse(ssh_client, nxtroot, remaining - 1)
+                nxtitem.update(nxtchildren)
 
     children_info = {
         "items": level_items
@@ -219,6 +175,165 @@ def primitive_parse_directory_listing(dir, content):
 
     return entries
 
+def primitive_pull_file(ssh_client, remotepath, localpath):
+
+    copycmd = "cat %s" % remotepath
+
+    status, stdout, stderr = ssh_execute_command(ssh_client, copycmd)
+
+    if status != 0:
+        raise Exception("Error pulling file using command. cmd=%s" % copycmd)
+
+    with open(localpath, 'w') as lfile:
+        lfile.write(stdout)
+
+    return
+
+def primitive_push_file(ssh_client, localpath, remotepath):
+    raise Exception("primitive_push_file: not implemented")
+    return
+
+def sftp_list_directory(sftp, directory, userlookup, grouplookup):
+
+    entries = {}
+
+    try:
+        sftp.chdir(directory)
+        directory_items = sftp.listdir()
+
+        for nname in directory_items:
+            ninfo = sftp.lstat(nname)
+            perms = ""
+            dentry = {
+                "name": nname,
+                "perms": perms,
+                "type": lookup_entry_type(directory, nname, ninfo),
+                "owner": userlookup(ninfo.st_uid),
+                "group": grouplookup(ninfo.st_gid),
+                "size": ninfo.st_size,
+                "accessed": ninfo.st_atime,
+                "modified": ninfo.st_mtime
+            }
+
+            entries[nname] = dentry
+    except PermissionError:
+        pass
+
+    return entries
+
+def sftp_list_tree(sftp, treeroot, userlookup, grouplookup, max_depth=1):
+
+    level_items = sftp_list_directory(sftp, treeroot, userlookup, grouplookup)
+
+    if max_depth > 1:
+        if not treeroot.endswith("/"):
+            treeroot = treeroot + "/"
+
+        for nxtitem in level_items.values():
+            nxtname = nxtitem["name"]
+            if nxtitem["type"] == "dir":
+                nxtroot = treeroot + nxtname
+                nxtchildren = sftp_list_tree_recurse(sftp, nxtroot, userlookup, grouplookup, max_depth - 1)
+                nxtitem.update(nxtchildren)
+
+    tree_info = {
+        "name": treeroot,
+        "items": level_items
+    }
+
+    return tree_info
+
+def sftp_list_tree_recurse(sftp, rootdir, userlookup, grouplookup, remaining):
+
+    level_items = sftp_list_directory(sftp, rootdir, userlookup, grouplookup)
+
+    if remaining > 1:
+        if not rootdir.endswith("/"):
+            rootdir = rootdir + "/"
+
+        for nxtitem in level_items.values():
+            nxtname = nxtitem["name"]
+            if nxtitem["type"] == "dir":
+                nxtroot = rootdir + nxtname
+                nxtchildren = sftp_list_tree_recurse(sftp, nxtroot, userlookup, grouplookup, remaining - 1)
+                nxtitem.update(nxtchildren)
+
+    children_info = {
+        "items": level_items
+    }
+
+    return children_info
+
+def ssh_execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIMEOUT, inactivity_interval=DEFAULT_SSH_RETRY_INTERVAL, chunk_size=1024):
+    """
+        Runs a command on a remote server using the specified ssh_client.  We implement our own version of ssh_execute_command
+        in order to have better control over the timeouts and to make sure all the checks are sequenced properly in order
+        to prevent SSH lockups.
+
+        :param ssh_client: The :class:`paramiko.SSHClient` object to utilize when running the command.
+        :type ssh_client: :class:`paramiko.SSHClient`
+        :param command: The commandline to run.
+        :type command: str
+        :param inactivity_timeout: The timeout for the channel for the ssh transaction.
+        :type inactivity_timeout: float
+        :param inactivity_interval: The retry interval to wait for the channel to have data ready.
+        :type inactivity_interval: float
+        :param chunk_size: The size of the chunks that are read during receive operations
+        :type chunk_size: int
+
+        :returns: A tuple with the command result code, the standard output and the standard error output.
+        :rtype: (int, str, str)
+    """
+    status = None
+    stdout_buffer = bytearray()
+    stderr_buffer = bytearray()
+
+    start_time = time.time()
+    end_time = start_time + inactivity_timeout
+
+    channel = ssh_client.get_transport().open_session(timeout=inactivity_timeout)
+    channel.exec_command(command)
+
+    while True:
+        # Grab exit status ready before checking to see if stdout_ready or stderr_ready are True
+        exit_status_ready = channel.exit_status_ready()
+        stdout_ready = channel.recv_ready()
+        stderr_ready = channel.recv_stderr_ready()
+
+        # If stdout_ready or stderr_ready are true, we read this round
+        if stdout_ready or stderr_ready:
+            if stdout_ready:
+                rcv_data = channel.recv(chunk_size)
+                stdout_buffer.extend(rcv_data)
+            if stderr_ready:
+                rcv_data = channel.recv_stderr(chunk_size)
+                stderr_buffer.extend(rcv_data)
+
+            # We only want to timeout if there is inactivity
+            start_time = time.time()
+            end_time = start_time + inactivity_timeout
+        # If we did not ready any data this round and our exit status was ready, its time to exit
+        elif exit_status_ready:
+            status = channel.recv_exit_status()
+            break
+        # We didn't have any data to read and our exit status was not ready, go to sleep for interval
+        else:
+            time.sleep(inactivity_interval)
+
+        now_time = time.time()
+        if now_time > end_time:
+            diff_time = now_time - start_time
+            err_msg = "Timeout while executing SSH command.\n    command=%s\n    start=%r end=%r now=%r diff=%r" % (
+                command, start_time, end_time, now_time, diff_time)
+            raise TimeoutError(err_msg)
+
+    stdout = stdout_buffer.decode()
+    del stdout_buffer
+
+    stderr = stderr_buffer.decode()
+    del stderr_buffer
+
+    return status, stdout, stderr
 
 class SshSession:
     def __init__(self, host, username, password, port=22,aspects=DEFAULT_ASPECTS):
@@ -256,11 +371,11 @@ class SshSession:
         stderr = None
 
         if aspects.run_pattern == RunPattern.SINGLE_RUN:
-            status, stdout, stderr = execute_command(self._ssh_client, command, inactivity_timeout=timeout, inactivity_interval=interval)
+            status, stdout, stderr = ssh_execute_command(self._ssh_client, command, inactivity_timeout=timeout, inactivity_interval=interval)
 
         elif aspects.run_pattern == RunPattern.RUN_UNTIL_SUCCESS:
             while True:
-                status, stdout, stderr = execute_command(self._ssh_client, command, inactivity_timeout=timeout, inactivity_interval=interval)
+                status, stdout, stderr = ssh_execute_command(self._ssh_client, command, inactivity_timeout=timeout, inactivity_interval=interval)
                 if status == 0:
                     break
                 else:
@@ -268,7 +383,7 @@ class SshSession:
 
         elif aspects.run_pattern == RunPattern.RUN_WHILE_SUCCESS:
             while True:
-                status, stdout, stderr = execute_command(self._ssh_client, command, inactivity_timeout=timeout, inactivity_interval=interval)
+                status, stdout, stderr = ssh_execute_command(self._ssh_client, command, inactivity_timeout=timeout, inactivity_interval=interval)
                 if status != 0:
                     break
                 else:
@@ -289,6 +404,9 @@ class SshAgent:
         if primitive is None:
             self._primitive = True
         self._primitive = primitive
+
+        self._user_lookup_table = {}
+        self._group_lookup_table = {}
         return
 
     @property
@@ -335,11 +453,11 @@ class SshAgent:
                 cleanup_client = True
 
             if aspects.run_pattern == RunPattern.SINGLE_RUN:
-                status, stdout, stderr = execute_command(ssh_client, command, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
+                status, stdout, stderr = ssh_execute_command(ssh_client, command, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
 
             elif aspects.run_pattern == RunPattern.RUN_UNTIL_SUCCESS:
                 while True:
-                    status, stdout, stderr = execute_command(ssh_client, command, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
+                    status, stdout, stderr = ssh_execute_command(ssh_client, command, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
                     if status == 0:
                         break
                     else:
@@ -347,7 +465,7 @@ class SshAgent:
 
             elif aspects.run_pattern == RunPattern.RUN_WHILE_SUCCESS:
                 while True:
-                    status, stdout, stderr = execute_command(ssh_client, command, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
+                    status, stdout, stderr = ssh_execute_command(ssh_client, command, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
                     if status != 0:
                         break
                     else:
@@ -376,15 +494,11 @@ class SshAgent:
                 transport = ssh_client.get_transport()
                 try:
 
-                    ftp = paramiko.SFTPClient.from_transport(transport)
+                    sftp = paramiko.SFTPClient.from_transport(transport)
                     try:
-                        ftp.chdir(root_dir)
-                        dir_entries = ftp.listdir()
-
-                        for nitem in dir_entries:
-                            print(nitem)
+                        dir_info = sftp_list_tree(sftp, root_dir, self.lookup_user_by_uid, self.lookup_group_by_uid, max_depth=depth)
                     finally:
-                        ftp.close()
+                        sftp.close()
                 finally:
                     transport.close()
             else:
@@ -398,11 +512,128 @@ class SshAgent:
                 del ssh_client
 
         return dir_info
+    
+    def directory(self, root_dir, ssh_client=None):
 
-if __name__ == "__main__":
-    from pprint import pprint
-    agent = SshAgent("192.168.1.40", username="myron", password="Skate4Fun##", primitive=True)
+        dir_info = {}
 
-    dir_info = agent.directory_tree("/home", depth=3)
+        cleanup_client = False
+        try:
+            if ssh_client is None:
+                ssh_client = paramiko.SSHClient()
+                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password)
+                cleanup_client = True
 
-    pprint(dir_info, indent=4)
+            if not self._primitive:
+                transport = ssh_client.get_transport()
+                try:
+
+                    sftp = paramiko.SFTPClient.from_transport(transport)
+                    try:
+                        dir_info = sftp_list_directory(sftp, root_dir, self.lookup_user_by_uid, self.lookup_group_by_uid)
+                    finally:
+                        sftp.close()
+                finally:
+                    transport.close()
+            else:
+                dir_info = primitive_list_directory(ssh_client, root_dir)
+
+        except Exception as xcpt:
+            raise
+        finally:
+            if cleanup_client:
+                ssh_client.close()
+                del ssh_client
+
+        return dir_info
+
+    def pull_file(self, remotepath, localpath, ssh_client=None):
+
+        cleanup_client = False
+        try:
+            if ssh_client is None:
+                ssh_client = paramiko.SSHClient()
+                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password)
+                cleanup_client = True
+            
+            if not self._primitive:
+                transport = ssh_client.get_transport()
+                try:
+                    sftp = paramiko.SFTPClient.from_transport(transport)
+                    try:
+                        sftp.get(remotepath, localpath)
+                    finally:
+                        sftp.close()
+                finally:
+                    transport.close()
+            else:
+                primitive_pull_file(ssh_client, remotepath, localpath)
+
+        except Exception as xcpt:
+            raise
+        finally:
+            if cleanup_client:
+                ssh_client.close()
+                del ssh_client
+    
+        return
+
+    def push_file(self, localpath, remotepath, ssh_client=None):
+
+        cleanup_client = False
+        try:
+            if ssh_client is None:
+                ssh_client = paramiko.SSHClient()
+                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password)
+                cleanup_client = True
+            
+            if not self._primitive:
+                transport = ssh_client.get_transport()
+                try:
+                    sftp = paramiko.SFTPClient.from_transport(transport)
+                    try:
+                        sftp.put(localpath, remotepath)
+                    finally:
+                        sftp.close()
+                finally:
+                    transport.close()
+            else:
+                primitive_push_file(ssh_client, localpath, remotepath)
+
+        except Exception as xcpt:
+            raise
+        finally:
+            if cleanup_client:
+                ssh_client.close()
+                del ssh_client
+
+        return
+
+    def lookup_user_by_uid(self, uid, update=False):
+        username = None
+
+        if uid in self._user_lookup_table:
+            username = self._user_lookup_table[uid]
+        else:
+            status, stdout, _ = self.run_cmd("id -n -u %d" % uid)
+            if status == 0:
+                username = stdout.strip()
+                self._user_lookup_table[uid] = username
+
+        return username
+
+    def lookup_group_by_uid(self, gid, update=False):
+        grpname = None
+
+        if gid in self._group_lookup_table:
+            grpname = self._group_lookup_table[gid]
+        else:
+            status, stdout, _ = self.run_cmd("id -n -g %d" % gid)
+            if status == 0:
+                grpname = stdout.strip()
+                self._group_lookup_table[gid] = grpname
+
+        return grpname
