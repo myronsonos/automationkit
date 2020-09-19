@@ -1,9 +1,9 @@
 
+import socket
 import time
 
 from akit.xlogging import getAutomatonKitLogger
 
-from akit.integration.landscaping import Landscape
 from akit.integration.agents.sshagent import SshAgent
 
 class SshPoolCoordinator:
@@ -17,55 +17,85 @@ class SshPoolCoordinator:
         self._logger = getAutomatonKitLogger()
         self._agent_table = {}
         self._usn_to_ip_lookup = {}
+        self._ip_to_host_lookup = {}
         return
 
-    def load_from_config(self, upnp_coord=None):
-        """
-            Loads the :class:`SshPoolCoordinator` connection info from the config file.  The
-            optional upnp_coord parameter is provided when the config file contains UPNP devices
-            that support SSH.  The :class:`UpnpCoordinator` passed as the upnp_coord must be started
-            up so it will have the opportunity to resolve the IP address of the upnp devices.
-        """
-        lscape = Landscape()
+    @property
+    def device_agents(self):
+        dalist = [a for a in self._agent_table.values()]
+        return dalist
 
-        sshdevices = lscape.get_ssh_devices()
+    def attach_to_devices(self, sshdevices, upnp_coord=None):
 
         ssh_config_errors = []
 
         for sshdev in sshdevices:
             devtype = sshdev["deviceType"]
             sshinfo = sshdev["ssh"]
-            ipaddr = None
-            if "IP" in sshinfo:
-                ipaddr = sshinfo["IP"]
+            host = None
+
+            if "host" in sshinfo:
+                host = sshinfo["host"]
             elif devtype == "network/upnp":
                 usn = sshdev["USN"]
                 if upnp_coord is not None:
                     dev = upnp_coord.lookup_device_by_usn(usn)
                     ipaddr = dev.IPAddress
+                    host = ipaddr
                     self._usn_to_ip_lookup[usn] = ipaddr
                 else:
                     ssh_config_errors.append(sshinfo)
 
-            if ipaddr is not None:
+            if host is not None:
                 username = sshinfo["username"]
                 password = sshinfo["password"]
-                agent = SshAgent(ipaddr, username, password)
-                self._agent_table[ipaddr] = agent
+
+                ip = socket.gethostbyname(host)
+                self._ip_to_host_lookup[ip] = host
+
+                agent = SshAgent(host, username, password)
+                self._agent_table[host] = agent
             else:
                 ssh_config_errors.append(sshinfo)
 
+        return ssh_config_errors
+
+    def load_from_config(self, lscape, upnp_coord=None):
+        """
+            Loads the :class:`SshPoolCoordinator` connection info from the config file.  The
+            optional upnp_coord parameter is provided when the config file contains UPNP devices
+            that support SSH.  The :class:`UpnpCoordinator` passed as the upnp_coord must be started
+            up so it will have the opportunity to resolve the IP address of the upnp devices.
+        """
+
+        sshdevices = lscape.get_ssh_devices()
+
+        self.attach_to_devices(sshdevices, upnp_coord=upnp_coord)
+
         return
 
-    def lookup_agent_by_ip(self, ip):
+    def lookup_agent_by_host(self, host):
         """
-            Looks up the agent for a device by its IP address.  If the
+            Looks up the agent for a device by its hostname.  If the
             agent is not found then the API returns None.
         """
         agent = None
 
-        if ip in self._agent_table:
-            agent = self._agent_table[ip]
+        if host in self._agent_table:
+            agent = self._agent_table[host]
+
+        return agent
+
+    def lookup_agent_by_ip(self, ip):
+        """
+            Looks up the agent for a device by its ip address.  If the
+            agent is not found then the API returns None.
+        """
+        agent = None
+
+        if ip in self._ip_to_host_lookup:
+            host = self._ip_to_host_lookup[ip]
+            agent = self.lookup_agent_by_host(host)
 
         return agent
 
@@ -111,27 +141,3 @@ class SshPoolCoordinator:
 
         return results
 
-
-if __name__ == "__main__":
-    from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
-
-    lscape = Landscape()
-    upnp_hint_list = lscape.get_upnp_device_lookup_table()
-    
-    upnp_coord = UpnpCoordinator()
-    upnp_coord.startup_scan(upnp_hint_list, exclude_interfaces=['lo'])
-
-    sshpool = SshPoolCoordinator()
-    sshpool.load_from_config(upnp_coord=upnp_coord)
-    results = sshpool.verify_connectivity()
-
-    for host, ip, status, stdout, stderr, xcpt in results:
-        print ("Host: %s IP: %s" % (host, ip))
-        print ("STDOUT:\n%s" % stdout)
-        print ("STDERR:\n%s" % stderr)
-        print ()
-
-    agent = sshpool.lookup_agent_by_usn("uuid:RINCON_7828CAF55FF001400::upnp:rootdevice")
-    agent.directory_tree("/")
-
-    time.sleep(600)

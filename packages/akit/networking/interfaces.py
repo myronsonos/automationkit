@@ -121,3 +121,16 @@ def get_correspondance_ip_address(ref_ip, ref_port, addr_family=socket.AF_INET):
         sock.close()
 
     return corr_ip
+
+def is_ipv6_address(self, candidate: str):
+    """
+        Checks to see if 'candidate' is an ipv6 address.
+
+        :param candidate: A string that is to be checked to see if it is a valid IPv6 address.
+        :type candidate: str
+    """
+    is_ipv6 = False
+    if len(candidate) == 16:
+        is_ipv6 = True
+
+    return is_ipv6

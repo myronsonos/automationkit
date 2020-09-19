@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:pnpx="http://schemas.microsoft.com/windows/pnpx/2005/11" xmlns:df="http://schemas.microsoft.com/windows/2008/09/devicefoundation" >
+<specVersion>
+<major>1</major>
+<minor>0</minor>
+</specVersion>
+<URLBase>http://192.168.1.21</URLBase>
+<device>
+<pnpx:X_hardwareId>VEN_04e8&amp;DEV_3328</pnpx:X_hardwareId>
+<pnpx:X_compatibleId>http://schemas.microsoft.com/windows/2006/08/wdp/print/PrinterServiceType</pnpx:X_compatibleId>
+<pnpx:X_deviceCategory>Printers</pnpx:X_deviceCategory>
+<df:X_deviceCategory>PrintFax.Printer.Laser</df:X_deviceCategory>
+<df:X_containerId>{f4288040-571c-11df-a364-30cda7a78b32}</df:X_containerId>
+<deviceType>urn:schemas-upnp-org:device:Printer:1</deviceType>
+<friendlyName>Samsung M283x Series (192.168.1.21)</friendlyName>
+<manufacturer>Samsung Electronics</manufacturer>
+<manufacturerURL>http://www.samsungprinter.com</manufacturerURL>
+<modelDescription>Garage</modelDescription>
+<modelName>SEC30CDA7A78B32</modelName>
+<modelNumber>1.0</modelNumber>
+<modelURL>http://www.samsungprinter.com</modelURL>
+<serialNumber>075WB8GG6F075PL</serialNumber>
+<UDN>uuid:16a65700-007c-1000-bb49-30cda7a78b32</UDN>
+<serviceList><service><serviceType>urn:schemas-upnp-org:service:PrintBasic:1</serviceType>
+<serviceId>urn:upnp-org:serviceId:1</serviceId>
+<SCPDURL>/PrintBasic.xml</SCPDURL>
+<controlURL>/upnp/control/printercontrol</controlURL>
+<eventSubURL>/printercontrol</eventSubURL>
+</service></serviceList><presentationURL>http://192.168.1.21/</presentationURL>
+</device>
+</root>

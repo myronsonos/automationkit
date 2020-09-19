@@ -133,15 +133,15 @@ class UpnpDevice:
             serviceId = serviceInfo.serviceId
             serviceType = serviceInfo.serviceType
 
-            if serviceId not in self._services_descriptions:
-                svc_inst = factory.create_service_instance(serviceId)
-                if svc_inst is not None:
-                    self._services_descriptions[serviceId] = svc_inst
-            else:
-                svc_inst = self._services_descriptions[serviceId]
+            if serviceType not in self._services_descriptions:
+                self._services_descriptions[serviceType] = serviceInfo
 
-            if svc_inst is not None:
-                svc_inst.update_description(self._host, self._urlBase, serviceInfo)
+                svc_inst = factory.create_service_instance(serviceId, serviceType)
+                if svc_inst is not None:
+                    self._services[serviceType] = svc_inst
+            else:
+                svc_inst = self._services[serviceType]
+
         return
 
     def _process_full_service_description(self, sdurl):

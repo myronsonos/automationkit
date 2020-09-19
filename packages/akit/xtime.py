@@ -24,6 +24,12 @@ import time
 
 FORMAT_DATETIME = "%Y-%m-%dT%H:%M:%S"
 
+def current_time_millis() -> float:
+    """
+        Current system time in milliseconds
+    """
+    return time.time() * 1000
+
 def format_time_with_fractional(tsecs) -> str:
     sec_comp = int(tsecs)
     frac_comp = (tsecs - sec_comp) * 1000

@@ -111,7 +111,11 @@ class MSearchScanContent:
     def __init__(self, upnp_device_hints):
         self.upnp_device_hints = upnp_device_hints
         self.remaining_device_hints = [dh for dh in upnp_device_hints]
-        
+
+        self.have_hints = False
+        if len(self.remaining_device_hints) > 0:
+            self.have_hints = True
+
         self.continue_scan = True
 
         self.found_devices = {}
@@ -134,8 +138,8 @@ class MSearchScanContent:
                     self.remaining_device_hints.remove(usn)
 
                     self.matching_devices[usn] = device_info
-                
-                if len(self.remaining_device_hints) == 0:
+
+                if self.have_hints and len(self.remaining_device_hints) == 0:
                     self.continue_scan = False
             else:
                 existing_info = self.found_devices[usn]
@@ -206,7 +210,7 @@ def msearch_parse_response(content: bytes):
 
 
 
-def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTargets.ROOTDEVICE, response_timeout=30, interval=2):
+def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTargets.ROOTDEVICE, response_timeout=45, interval=2):
     """
         The inline msearch function provides a mechanism to do a synchronous msearch
         in order to determine if a set of available devices are available and to
@@ -222,9 +226,6 @@ def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTarget
         :returns:  dict -- A dictionary of the devices that were found.
         :raises: TimeoutError, KeyboardInterrupt
     """
-
-    found_devices = {}
-    matching_devices = {}
 
     route_info = {
         MSearchRouteKeys.IFNAME: ifname,
@@ -288,10 +289,10 @@ def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTarget
     finally:
         sock.close()
 
-    return found_devices, matching_devices
+    return
 
 
-def msearch_scan(expected_devices, interface_list=None, response_timeout=30, interval=2):
+def msearch_scan(expected_devices, interface_list=None, response_timeout=45, interval=2):
 
     if interface_list is None:
         interface_list = netifaces.interfaces()
@@ -383,7 +384,7 @@ if __name__ == "__main__":
     from akit.integration.landscaping import Landscape
 
     landscape = Landscape()
-    expected_upnp_devices = landscape.get_upnp_device_lookup_table()
+    expected_upnp_devices = [usn for usn in landscape.get_upnp_device_lookup_table().keys()]
 
     found_devices, matching_devices = msearch_scan(expected_upnp_devices)
 

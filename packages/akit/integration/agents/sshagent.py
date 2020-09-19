@@ -512,7 +512,7 @@ class SshAgent:
                 del ssh_client
 
         return dir_info
-    
+
     def directory(self, root_dir, ssh_client=None):
 
         dir_info = {}
@@ -637,3 +637,16 @@ class SshAgent:
                 self._group_lookup_table[gid] = grpname
 
         return grpname
+    
+    def verify_connectivity(self):
+        """
+            Method that can be used to verify connectivity to the target computer.
+        """
+        vok = False
+
+        hello_cmd = "echo Hello"
+        status, stdout, stderr = self.run_cmd(hello_cmd)
+        if status == 0 and stdout.strip() == "Hello":
+            vok = True
+
+        return vok

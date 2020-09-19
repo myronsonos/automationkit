@@ -1,17 +1,25 @@
 
+import netifaces
 import os
 import sys
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentError
 
 from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import fromstring as xml_fromstring
 
+from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 from akit.integration.upnp.extensions import services as services_extensions
 
+
 DIR_UPNP_GENERATOR = os.path.dirname(__file__)
+
+DIR_UPNP_GENERATOR_DYNAMIC = os.path.join(DIR_UPNP_GENERATOR, "dynamic")
+DIR_UPNP_GENERATOR_STANDARD = os.path.join(DIR_UPNP_GENERATOR, "standard")
+
 DIR_UPNP_EXTENSIONS = os.path.dirname(services_extensions.__file__)
 
+DIR_UPNP_EXTENSIONS_DYNAMIC = os.path.join(DIR_UPNP_EXTENSIONS, "dynamic")
 DIR_UPNP_EXTENSIONS_STANDARD = os.path.join(DIR_UPNP_EXTENSIONS, "standard")
 
 DIR_UPNP_GENERATOR_DYNAMIC_SERVICES = os.path.join(DIR_UPNP_GENERATOR, "dynamic", "services")
@@ -325,16 +333,38 @@ def generate_service_proxies(svc_desc_directory, proxy_dest_directory):
 
     return
 
-def soapgenerator_main():
-    parse = ArgumentParser()
+def upnpgenerator_main():
+    aparser = ArgumentParser()
+    aparser.add_argument("--action", dest="action", action="store", choices=["scan", "generate"], default="scan",
+                         help="The action to perform.")
+    aparser.add_argument("--exclude-iface", dest="interfaces_excluded", action="append", default=["lo"],
+                         help="The interfaces to exclude in the scan.")
+    aparser.add_argument("--include-iface", dest="interfaces_included", action="append",
+                         help="The interfaces to include in the scan.")
 
-    #if os.path.exists(DIR_UPNP_GENERATOR_DYNAMIC_SERVICES):
-    #    generate_service_proxies(DIR_UPNP_GENERATOR_DYNAMIC_SERVICES)
+    args = aparser.parse_args()
 
-    if os.path.exists(DIR_UPNP_GENERATOR_STANDARD_SERVICES):
-        generate_service_proxies(DIR_UPNP_GENERATOR_STANDARD_SERVICES, DIR_UPNP_EXTENSIONS_STANDARD)
+    action = args.action
+    excluded_interfaces = [iface for iface in args.interfaces_excluded]
+
+    if action == "scan":
+        ucoord = UpnpCoordinator()
+        ucoord.startup_scan(None, exclude_interfaces=excluded_interfaces, response_timeout=60)
+
+        for cdev in ucoord.children:
+            cdev.record_description(DIR_UPNP_GENERATOR_DYNAMIC)
+
+    elif action == "generate":
+        if os.path.exists(DIR_UPNP_GENERATOR_DYNAMIC_SERVICES):
+            generate_service_proxies(DIR_UPNP_GENERATOR_DYNAMIC_SERVICES, DIR_UPNP_EXTENSIONS_DYNAMIC)
+
+        if os.path.exists(DIR_UPNP_GENERATOR_STANDARD_SERVICES):
+            generate_service_proxies(DIR_UPNP_GENERATOR_STANDARD_SERVICES, DIR_UPNP_EXTENSIONS_STANDARD)
+    else:
+        raise ArgumentError("action", "The 'action' argument specified (%s) is not valid." % action)
+
 
     return
 
 if __name__ == "__main__":
-    soapgenerator_main()
+    upnpgenerator_main()

@@ -20,16 +20,22 @@ import inspect
 import json
 import traceback
 
+import pprint
+
 from akit.compat import import_by_name
 from akit.environment.variables import VARIABLES
 from akit.environment.context import Context
 from akit.exceptions import AKitConfigurationError, AKitSemanticError
 from akit.paths import get_expand_path
 
+from akit.integration.coordinators.sshpoolcoordinator import SshPoolCoordinator
+from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
+
 from akit.integration.clients.linuxclientmixin import LinuxClientMixIn
 from akit.integration.clients.windowsclientmixin import WindowsClientMixIn
 from akit.integration.cluster.clustermixin import ClusterMixIn
 
+from akit.xformatting import indent_lines
 from akit.xlogging import getAutomatonKitLogger
 
 class LandscapeDescription:
@@ -90,8 +96,11 @@ class Landscape:
         if not this_cls._initialized:
             this_cls._initialized = True
             self._landscape_info = None
-            self._upnp_agent = None
             self._logger = getAutomatonKitLogger()
+            self._has_upnp_devices = False
+            self._has_ssh_devices = False
+            self._upnp_coord = None
+            self._ssh_coord = None
             self.initialize()
         return
 
@@ -101,6 +110,14 @@ class Landscape:
         if "name" in self.landscape_info:
             lname = self.landscape_info["name"]
         return lname
+
+    @property
+    def has_ssh_devices(self):
+        return self._has_ssh_devices
+
+    @property
+    def has_upnp_devices(self):
+        return self._has_upnp_devices
 
     @property
     def landscape_info(self):
@@ -196,8 +213,36 @@ class Landscape:
 
             :returns list: list of failing entities
         """
-        return
-    
+
+        error_lists = []
+
+        self._initialize_device_coordinators()
+
+        if self._has_upnp_devices and self._upnp_coord is None:
+            raise AKitConfigurationError("UpnpCoordinator initialization failure.")
+
+        if self._has_ssh_devices and self._ssh_coord is None:
+            raise AKitConfigurationError("SshPoolCoordinator initialization failure.")
+
+        pod_info = self.landscape_info["pod"]
+        for devinfo in pod_info["devices"]:
+            dev_type = devinfo["deviceType"]
+            if dev_type == "network/upnp":
+                usn = devinfo["USN"]
+                if "ssh" in devinfo:
+                    agent = self._ssh_coord.lookup_agent_by_usn(usn)
+                    if not agent.verify_connectivity():
+                        error_lists.append(devinfo)
+            elif dev_type == "network/ssh":
+                host = devinfo["host"]
+                agent = self._ssh_coord.lookup_agent_by_host(host)
+                if not agent.verify_connectivity():
+                    error_lists.append(devinfo)
+            else:
+                error_lists.append(devinfo)
+
+        return error_lists
+
     def register_integration_point(self, role, mixin):
         """
             This method should be called from the attach_to_environment methods from individual mixins
@@ -215,6 +260,43 @@ class Landscape:
             self._integrations[role] = mixin
         else:
             raise AKitSemanticError("A mixin with the role %r was already registered." % role)
+
+        return
+
+    def _initialize_device_coordinators(self):
+        """
+            Initializes the device coordinators according the the information specified in the
+            'devices' portion of the configuration file.
+        """
+
+        upnp_device_list = []
+        ssh_device_list = []
+
+        pod_info = self.landscape_info["pod"]
+        for devinfo in pod_info["devices"]:
+            dev_type = devinfo["deviceType"]
+            if dev_type == "network/upnp":
+                upnp_device_list.append(devinfo)
+                if "ssh" in devinfo:
+                    ssh_device_list.append(devinfo)
+            elif dev_type == "network/ssh":
+                ssh_device_list.append(devinfo)
+            else:
+                errmsg = "Unknown device type %r in configuraiton file.\n" % dev_type
+                errmsg += "DEVICE INFO:\n"
+                errmsg += indent_lines(pprint.pformat(devinfo, indent=4), level=1)
+                self._logger.error(errmsg)
+
+        if len(upnp_device_list) > 0:
+            self._has_upnp_devices = True
+            upnp_hint_list = [devinfo["USN"] for devinfo in upnp_device_list]
+            self._upnp_coord = UpnpCoordinator()
+            self._upnp_coord.startup_scan(upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=["lo"])
+
+        if len(ssh_device_list) > 0:
+            self._has_ssh_devices = True
+            self._ssh_coord = SshPoolCoordinator()
+            self._ssh_coord.attach_to_devices(ssh_device_list)
 
         return
 
@@ -249,3 +331,7 @@ if VARIABLES.AKIT_LANDSCAPE_MODULE is not None:
     load_and_set_landscape_type(lscape_module)
     check_landscape = Landscape()
     pass
+
+if __name__ == "__main__":
+    lscape = Landscape()
+    lscape.first_contact()

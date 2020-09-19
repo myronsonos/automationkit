@@ -20,8 +20,6 @@ from akit.integration import upnp as upnp_module
 
 from akit.exceptions import AKitSemanticError, AKitTimeoutError
 
-#from akit.integration.agents.upnpagent import UpnpAgent
-from akit.integration.landscaping import Landscape
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 from akit.integration.upnp.upnpfactory import UpnpFactory
 from akit.integration.upnp.upnpprotocol import MSearchKeys, UpnpProtocol
@@ -118,6 +116,18 @@ class UpnpCoordinator:
 
         return chlist
 
+    @property
+    def watch_devices(self):
+        wlist = []
+
+        self._lock.acquire()
+        try:
+            wlist = [wd for wd in self._watched_devices.values()]
+        finally:
+            self._lock.release()
+
+        return wlist
+
     def lookup_device_by_mac(self, mac):
         """
             Lookup a UPNP device by its MAC address.
@@ -144,11 +154,26 @@ class UpnpCoordinator:
 
         return found
 
-    def startup_scan(self, upnp_hint_list, exclude_interfaces=[], retry=2):
+    def lookup_device_list_by_usn(self, usnlist):
+        """
+        """
+        found = []
+
+        for usn in usnlist:
+            for nxtdev in self.children:
+                if usn == nxtdev.USN:
+                    found.append(nxtdev)
+
+        return found
+
+    def startup_scan(self, upnp_hint_list, watchlist=None, exclude_interfaces=[], response_timeout=45, retry=2):
         """
             Starts up and initilizes the UPNP coordinator by utilizing a hint list to determine
             what network interfaces to setup UPNP monitoring on.
         """
+        if upnp_hint_list is None:
+            upnp_hint_list = []
+
         hint_count = len(upnp_hint_list)
 
         interface_list = [ifname for ifname in netifaces.interfaces()]
@@ -161,7 +186,8 @@ class UpnpCoordinator:
         for ridx in range(0, retry):
             if ridx > 0:
                 self._logger.info("MSEARCH: Not all devices found, retrying (count=%d)..." % ridx)
-            iter_found_devices, iter_matching_devices = msearch_scan(upnp_hint_list)
+            iter_found_devices, iter_matching_devices = msearch_scan(upnp_hint_list, 
+                interface_list=interface_list, response_timeout=response_timeout)
             found_devices.update(iter_found_devices)
             matching_devices.update(iter_matching_devices)
             if len(matching_devices) >= hint_count:
@@ -191,6 +217,12 @@ class UpnpCoordinator:
             ifname = dev[MSearchKeys.ROUTES][0][MSearchRouteKeys.IFNAME]
             if ifname not in ifacelist:
                 ifacelist.append(ifname)
+
+        if watchlist is not None and len(watchlist) > 0:
+            for dev in self.children:
+                devusn = dev.USN
+                if devusn in watchlist:
+                    self._watched_devices[devusn] = dev
 
         self._start_monitor_and_worker_threads()
 
@@ -534,10 +566,18 @@ class UpnpCoordinator:
 
 
 if __name__ == "__main__":
+    from akit.integration.landscaping import Landscape
+
+
     lscape = Landscape()
     upnp_hint_list = lscape.get_upnp_device_lookup_table()
     
     upnpcoord = UpnpCoordinator()
-    upnpcoord.startup_scan(upnp_hint_list, exclude_interfaces=['lo'])
+    upnpcoord.startup_scan(upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=['lo'])
+
+    firstdev = upnpcoord.watch_devices[0]
+    print(type(firstdev))
+
+    aclock = firstdev.serviceAlarmClock()
 
     time.sleep(600)

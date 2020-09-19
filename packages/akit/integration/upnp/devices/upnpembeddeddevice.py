@@ -37,14 +37,12 @@ class UpnpEmbeddedDevice(UpnpDevice):
             Creates a root device object.
         """
         super(UpnpEmbeddedDevice, self).__init__()
-
-        self._decription = None
         return
 
     def update_description(self, host, baseUrl, description):
         self._host = host
         self._urlBase = baseUrl
-        self._decription = description
+        self._description = description
         return
 
     def _populate_embedded_devices(self, factory, description):

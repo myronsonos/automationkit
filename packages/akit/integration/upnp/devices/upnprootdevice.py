@@ -16,6 +16,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+import os
 import requests
 import threading
 import traceback
@@ -152,6 +153,37 @@ class UpnpRootDevice(UpnpDevice):
         device = self._devices[device_type]
         return device
 
+    def record_description(self, root_dir):
+
+        if not os.path.exists(root_dir):
+            os.makedirs(root_dir)
+
+        mfg_folder = self.description.manufacturer.replace(" ", "")
+        modelName = self.description.modelName
+
+        resp = requests.get(self._location)
+        if resp.status_code == 200:
+            root_dev_desc_folder = os.path.join(root_dir, 'rootdevices', mfg_folder)
+            if not os.path.exists(root_dev_desc_folder):
+                os.makedirs(root_dev_desc_folder)
+
+            destDescFile = os.path.join(root_dev_desc_folder, modelName + ".xml")
+            with open(destDescFile, 'wb') as rdf:
+                rdf.write(resp.content)
+
+            emb_dev_desc_folder = os.path.join(root_dir, 'embeddeddevices')
+            if not os.path.exists(emb_dev_desc_folder):
+                os.makedirs(emb_dev_desc_folder)
+
+            for ddesc in self.device_descriptions:
+                for sdesc in ddesc.services_descriptions:
+                    pass
+
+            for sdesc in self.services_descriptions:
+                pass
+
+        return
+
     def refresh_description(self, ipaddr, factory, docNode, namespaces=None):
         """
         """
@@ -176,6 +208,7 @@ class UpnpRootDevice(UpnpDevice):
             devNode = docNode.find("device", namespaces=namespaces)
             if devNode is not None:
                 self._process_device_node(factory, devNode, namespaces=namespaces)
+
         except Exception as xcpt:
             err_msg = traceback.format_exc()
             print(err_msg)
@@ -208,9 +241,9 @@ class UpnpRootDevice(UpnpDevice):
     def _populate_embedded_device_descriptions(self, factory, description):
 
         for deviceInfo in description.deviceList:
-            manufacturer = deviceInfo.manufacturer
-            modelNumber = deviceInfo.modelNumber
-            modelDescription = deviceInfo.modelDescription
+            manufacturer = deviceInfo.manufacturer.strip()
+            modelNumber = deviceInfo.modelNumber.strip()
+            modelDescription = deviceInfo.modelDescription.strip()
 
             devkey = ":".join([manufacturer, modelNumber, modelDescription])
 
