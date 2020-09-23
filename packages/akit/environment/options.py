@@ -45,7 +45,7 @@ def process_environment_options():
     for opt_args, opt_kwargs in ENVIRONMENT_OPTIONS:
         env_parser.add_argument(*opt_args, **opt_kwargs)
 
-    args, unknown = env_parser.parse_known_args()
+    args, _ = env_parser.parse_known_args()
 
     output_dir = args.output
     console_level = args.consolelevel

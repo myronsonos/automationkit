@@ -22,6 +22,7 @@ import stat
 import time
 
 from akit.aspects import RunPattern, DEFAULT_ASPECTS
+from akit.exceptions import AKitInvalidConfigError
 
 import paramiko
 
@@ -336,26 +337,29 @@ def ssh_execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIME
     return status, stdout, stderr
 
 class SshSession:
-    def __init__(self, host, username, password, port=22,aspects=DEFAULT_ASPECTS):
+    def __init__(self, host, username, password=None, keyfile=None, keypasswd=None, port=22, aspects=DEFAULT_ASPECTS):
         self._host = host
         self._ipaddr = socket.gethostbyname(host)
         self._port = port
         self._username = username
         self._password = password
+        self._keyfile = keyfile
+        self._keypasswd = keypasswd
         self._aspects = aspects
         self._ssh_client = None
         self._primitive_mode = False
+
+        if self._password is None and self._keyfile is None:
+            raise AKitInvalidConfigError("SshAgent requires either a 'password' or identity 'keyfile' be specified.")
         return
 
     def __enter__(self):
-        self._ssh_client = paramiko.SSHClient()
-        self._ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self._ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password)
+        self._ssh_client = self._create_client()
         return
 
     def __exit__(self, ex_val, ex_type, ex_tb):
         self._ssh_client.close()
-        handled = True
+        handled = False
         return handled
 
     def run_cmd(self, command, aspects=None):
@@ -391,15 +395,26 @@ class SshSession:
 
         return status, stdout, stderr
 
+    def _create_client(self):
+        pkey = None
+        if self._keyfile is not None:
+            pkey = paramiko.pkey.PKey.from_private_key_file(self._keyfile, password=self._keypasswd)
+        ssh_client = paramiko.SSHClient()
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password, pkey=pkey)
+        return ssh_client
+
 
 class SshAgent:
 
-    def __init__(self, host, username, password, port=22, primitive=None, aspects=DEFAULT_ASPECTS):
+    def __init__(self, host, username, password=None, keyfile=None, keypasswd=None, port=22, primitive=None, aspects=DEFAULT_ASPECTS):
         self._host = host
         self._ipaddr = socket.gethostbyname(self._host)
         self._port = port
         self._username = username
         self._password = password
+        self._keyfile = keyfile
+        self._keypasswd = keypasswd
         self._aspects = aspects
         if primitive is None:
             self._primitive = True
@@ -407,6 +422,9 @@ class SshAgent:
 
         self._user_lookup_table = {}
         self._group_lookup_table = {}
+
+        if self._password is None and self._keyfile is None:
+            raise AKitInvalidConfigError("SshAgent requires either a 'password' or identity 'keyfile' be specified.")
         return
 
     @property
@@ -416,6 +434,14 @@ class SshAgent:
     @property
     def host(self):
         return self._host
+
+    @property
+    def keyfile(self):
+        return self._keyfile
+
+    @property
+    def keypasswd(self):
+        return self._keypasswd
 
     @property
     def ipaddr(self):
@@ -447,9 +473,7 @@ class SshAgent:
         stderr = None
         try:
             if ssh_client is None:
-                ssh_client = paramiko.SSHClient()
-                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password)
+                ssh_client = self._create_client()
                 cleanup_client = True
 
             if aspects.run_pattern == RunPattern.SINGLE_RUN:
@@ -485,9 +509,7 @@ class SshAgent:
         cleanup_client = False
         try:
             if ssh_client is None:
-                ssh_client = paramiko.SSHClient()
-                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password)
+                ssh_client = self._create_client()
                 cleanup_client = True
 
             if not self._primitive:
@@ -520,9 +542,7 @@ class SshAgent:
         cleanup_client = False
         try:
             if ssh_client is None:
-                ssh_client = paramiko.SSHClient()
-                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password)
+                ssh_client = self._create_client()
                 cleanup_client = True
 
             if not self._primitive:
@@ -553,9 +573,7 @@ class SshAgent:
         cleanup_client = False
         try:
             if ssh_client is None:
-                ssh_client = paramiko.SSHClient()
-                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password)
+                ssh_client = self._create_client()
                 cleanup_client = True
             
             if not self._primitive:
@@ -585,9 +603,7 @@ class SshAgent:
         cleanup_client = False
         try:
             if ssh_client is None:
-                ssh_client = paramiko.SSHClient()
-                ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password)
+                ssh_client = self._create_client()
                 cleanup_client = True
             
             if not self._primitive:
@@ -650,3 +666,12 @@ class SshAgent:
             vok = True
 
         return vok
+
+    def _create_client(self):
+        pkey = None
+        if self._keyfile is not None:
+            pkey = paramiko.pkey.PKey.from_private_key_file(self._keyfile, password=self._keypasswd)
+        ssh_client = paramiko.SSHClient()
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password, pkey=pkey)
+        return ssh_client

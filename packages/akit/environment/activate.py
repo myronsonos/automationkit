@@ -17,17 +17,23 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 # Step 1 - Force the default configuration to load if it is not already loaded
-import akit.environment.configuration
+from akit.environment.configuration import RUNTIME_CONFIGURATION
 
 # Step 2 - Process the environment variables that are used to overwride the
 # default configuration
 from akit.environment.variables import VARIABLES
 
-# Step 3 - Process environment options
+# Step 3 - Load the user configuration and add it to the RUNTIME_CONFIGURATION 'ChainMap' so
+# the user settings take precedence over the runtime default settings.
+from akit.environment.userconfig import load_user_configuration
+user_config = load_user_configuration()
+RUNTIME_CONFIGURATION.maps.insert(0, user_config)
+
+# Step 4 - Process environment options
 from akit.environment.options import process_environment_options
 output_dir, console_level, logfile_level, branch, build, flavor = process_environment_options()
 
-# Step 4 - Force the context to load with defaults if it is not already loaded
+# Step 5 - Force the context to load with defaults if it is not already loaded
 # and setup the run type if not already set
 from akit.environment.context import Context
 

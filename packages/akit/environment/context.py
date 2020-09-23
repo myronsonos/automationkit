@@ -175,7 +175,7 @@ class ContextCursor:
                         LookupError("Context remove failure for path=%s" % path)
                 else:
                     found_node = found_node
-                    del drev[leaf_name]
+                    del dref[leaf_name]
             else:
                 raise LookupError("Context remove failure for path=%s" % path)
         else:
@@ -280,7 +280,7 @@ class Context:
         else:
             path_parts = validate_path_name(path.rstrip("/"))
 
-        found_node = self._remove(self._storeref, path, path_parts)
+        found_node = self._remove(self._store, path, path_parts)
 
         return found_node
 
@@ -338,7 +338,7 @@ class Context:
                         LookupError("Context remove failure for path=%s" % path)
                 else:
                     found_node = found_node
-                    del drev[leaf_name]
+                    del dref[leaf_name]
             else:
                 raise LookupError("Context remove failure for path=%s" % path)
         else:
@@ -347,15 +347,15 @@ class Context:
         return found_node
 
     def __contains__(self, key: str) -> bool:
-        found = key in self._storeref
+        found = key in self._store
         return found
 
     def __getitem__(self, key: str) -> typing.Any:
-        found_node = self._lookup(self._store, [key])
+        found_node = self.lookup(self._store, [key])
         return found_node
 
     def __setitem__(self, key: str, val: typing.Any):
-        self._insert(self._storeref, key, [key], val)
+        self._insert(self._store, key, [key], val)
         return
 
 default_environment = {

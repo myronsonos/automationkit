@@ -163,7 +163,7 @@ class OtherFilter:
         return
 
     def filter(self, rec):
-        rec.is_other = fnmatch.fnmatch(rec.name, prefix)
+        rec.is_other = fnmatch.fnmatch(rec.name, self.prefix)
         return rec.is_other
 
 class RelevantFilter:
@@ -178,6 +178,10 @@ class RelevantFilter:
 logging_initialized = False
 
 def logging_initialize():
+    """
+        Method used to configure the automation kit logging based on the environmental parameters
+        specified and then reinitialize the logging.
+    """
     global logging_initialized
 
     if not logging_initialized:
@@ -204,6 +208,26 @@ def logging_initialize():
 
     return
 
+def logging_create_branch_logger(logger_name, logfilename, log_level):
+    """
+        Method that allows for the creation of a separate logfile for specific loggers in order
+        to reduce the noise in the main logfile.  A common use for this would be to redirect
+        logging from specific modules such as 'paramiko' and 'httplib' to thier own log files.
+
+        :param logger_name: The name of the logger to create a branch log for.
+    """
+    target_logger = logging.getLogger(logger_name)
+
+    # Setup the relevant log file which will get all the
+    # log entries from loggers that satisified a relevant
+    # logger name prefix match
+    handler = logging.FileHandler(logfilename)
+    handler.setLevel(log_level)
+    for handler in target_logger.handlers:
+        target_logger.removeHandler(handler)
+    target_logger.addHandler(handler)
+    return
+
 def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basename):
     
     basecomp, extcomp = os.path.splitext(logfile_basename)
@@ -226,14 +250,6 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
     base_handler.setLevel(logging.NOTSET)
     root_logger.addHandler(base_handler)
 
-    # Setup the relevant log file which will get all the
-    # log entries from loggers that satisified a relevant
-    # logger name prefix match
-    rel_hanlder = logging.FileHandler(rel_logfilename)
-    rel_hanlder.setLevel(logging.NOTSET)
-    rel_hanlder.addFilter(RelevantFilter())
-    root_logger.addHandler(rel_hanlder)
-
     # Setup the other log handler and other filter, we
     # need to add the other log handler before adding
     # the relevant log handler
@@ -242,6 +258,14 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
     for other_expr in OTHER_LOGGER_FILTERS:
         other_handler.addFilter(OtherFilter(other_expr))
     root_logger.addHandler(other_handler)
+
+    # Setup the relevant log file which will get all the
+    # log entries from loggers that satisified a relevant
+    # logger name prefix match
+    rel_handler = logging.FileHandler(rel_logfilename)
+    rel_handler.setLevel(logging.NOTSET)
+    rel_handler.addFilter(RelevantFilter())
+    root_logger.addHandler(rel_handler)
 
     # Setup the stdout logger with the correct console level and
     # filter the log entries from the stdout handler that are

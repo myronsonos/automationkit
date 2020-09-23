@@ -2,6 +2,7 @@
 import socket
 import time
 
+from akit.paths import get_expanded_path
 from akit.xlogging import getAutomatonKitLogger
 
 from akit.integration.agents.sshagent import SshAgent
@@ -50,10 +51,18 @@ class SshPoolCoordinator:
                 username = sshinfo["username"]
                 password = sshinfo["password"]
 
+                keyfile = None
+                if "keyfile" in sshinfo:
+                    keyfile = get_expanded_path(sshinfo["keyfile"])
+
+                keypasswd = None
+                if "keypasswd" in sshinfo:
+                    keypasswd = sshinfo["keypasswd"]
+
                 ip = socket.gethostbyname(host)
                 self._ip_to_host_lookup[ip] = host
 
-                agent = SshAgent(host, username, password)
+                agent = SshAgent(host, username, password=password, keyfile=keyfile, keypasswd=keypasswd)
                 self._agent_table[host] = agent
             else:
                 ssh_config_errors.append(sshinfo)

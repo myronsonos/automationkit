@@ -17,9 +17,10 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+import collections
 import os
 
-RUNTIME_CONFIGURATION = {
+RUNTIME_DEFAULTS = {
     "version": "1.0.0",
     "logging": {
         "levels": {
@@ -36,4 +37,4 @@ RUNTIME_CONFIGURATION = {
     }
 }
 
-
+RUNTIME_CONFIGURATION = collections.ChainMap(RUNTIME_DEFAULTS)

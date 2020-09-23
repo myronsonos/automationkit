@@ -28,7 +28,7 @@ class VARIABLES:
     AKIT_BUILD = "unknown"
     if "AKIT_BUILD" in environ:
         AKIT_BUILD = environ["AKIT_BUILD"]
-    
+
     AKIT_FLAVOR = "unknown"
     if "AKIT_FLAVOR" in environ:
         AKIT_FLAVOR = environ["AKIT_FLAVOR"]
@@ -40,6 +40,10 @@ class VARIABLES:
     AKIT_LANDSCAPE_MODULE = None
     if "AKIT_LANDSCAPE_MODULE" in environ:
         AKIT_LANDSCAPE_MODULE = environ["AKIT_LANDSCAPE_MODULE"]
+
+    AKIT_USER_CONFIGURATION = "~/akit/config/userconfig.json"
+    if "AKIT_USER_CONFIGURATION" in environ:
+        AKIT_USER_CONFIGURATION = environ["AKIT_USER_CONFIGURATION"]
 
 def extend_path(dir_to_add):
     """

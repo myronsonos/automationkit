@@ -40,7 +40,7 @@ def collect_python_modules(searchdir: str) -> List[str]:
 
     return pyfiles
 
-def get_expand_path(path: str) -> str:
+def get_expanded_path(path: str) -> str:
     """
         Returns a path expanded using expanduser, expandvars and abspath for
         the provided path.
@@ -73,7 +73,7 @@ def get_path_for_testresults() -> str:
         }
         testresult_path = testresult_path % fill_dict
 
-        DIR_TESTRESULTS = get_expand_path(testresult_path)
+        DIR_TESTRESULTS = get_expanded_path(testresult_path)
 
     return DIR_TESTRESULTS
 

@@ -26,7 +26,7 @@ from akit.compat import import_by_name
 from akit.environment.variables import VARIABLES
 from akit.environment.context import Context
 from akit.exceptions import AKitConfigurationError, AKitSemanticError
-from akit.paths import get_expand_path
+from akit.paths import get_expanded_path
 
 from akit.integration.coordinators.sshpoolcoordinator import SshPoolCoordinator
 from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
@@ -131,14 +131,28 @@ class Landscape:
         db_info = self.landscape_info["databases"]
         return db_info
 
+    def get_devices(self):
+        """
+            Returns the list of devices from the landscape.  This will
+            skip any device that has a "skip": true member.
+        """
+        device_list = []
+
+        pod_info = self.landscape_info["pod"]
+        for devinfo in pod_info["devices"]:
+            if "skip" in devinfo and devinfo["skip"]:
+                continue
+            device_list.append(devinfo)
+
+        return device_list
+
     def get_ssh_devices(self):
         """
             Returns a list of devices that support ssh.
         """
         ssh_device_list = []
 
-        pod_info = self.landscape_info["pod"]
-        for devinfo in pod_info["devices"]:
+        for devinfo in self.get_devices():
             if "ssh" in devinfo:
                 ssh_device_list.append(devinfo)
 
@@ -150,8 +164,7 @@ class Landscape:
         """
         upnp_device_list = []
 
-        pod_info = self.landscape_info["pod"]
-        for devinfo in pod_info["devices"]:
+        for devinfo in self.get_devices():
             dev_type = devinfo["deviceType"]
             if dev_type == "network/upnp":
                 upnp_device_list.append(devinfo)
@@ -184,7 +197,7 @@ class Landscape:
 
         context = Context()
         try:
-            landscape_file = get_expand_path(context.lookup("/environment/configuration/paths/landscape"))
+            landscape_file = get_expanded_path(context.lookup("/environment/configuration/paths/landscape"))
             with open(landscape_file, 'r') as lf:
                 lfcontent = lf.read()
                 self._landscape_info = json.loads(lfcontent)
@@ -224,8 +237,7 @@ class Landscape:
         if self._has_ssh_devices and self._ssh_coord is None:
             raise AKitConfigurationError("SshPoolCoordinator initialization failure.")
 
-        pod_info = self.landscape_info["pod"]
-        for devinfo in pod_info["devices"]:
+        for devinfo in self.get_devices():
             dev_type = devinfo["deviceType"]
             if dev_type == "network/upnp":
                 usn = devinfo["USN"]
@@ -234,7 +246,8 @@ class Landscape:
                     if not agent.verify_connectivity():
                         error_lists.append(devinfo)
             elif dev_type == "network/ssh":
-                host = devinfo["host"]
+                sshinfo = devinfo["ssh"]
+                host = sshinfo["host"]
                 agent = self._ssh_coord.lookup_agent_by_host(host)
                 if not agent.verify_connectivity():
                     error_lists.append(devinfo)
@@ -272,8 +285,7 @@ class Landscape:
         upnp_device_list = []
         ssh_device_list = []
 
-        pod_info = self.landscape_info["pod"]
-        for devinfo in pod_info["devices"]:
+        for devinfo in self.get_devices():
             dev_type = devinfo["deviceType"]
             if dev_type == "network/upnp":
                 upnp_device_list.append(devinfo)
@@ -282,7 +294,7 @@ class Landscape:
             elif dev_type == "network/ssh":
                 ssh_device_list.append(devinfo)
             else:
-                errmsg = "Unknown device type %r in configuraiton file.\n" % dev_type
+                errmsg = "Unknown device type %r in configuration file.\n" % dev_type
                 errmsg += "DEVICE INFO:\n"
                 errmsg += indent_lines(pprint.pformat(devinfo, indent=4), level=1)
                 self._logger.error(errmsg)
@@ -319,7 +331,7 @@ def load_and_set_landscape_type(lscape_module):
         take the first one and assign it as the current runtime landscape type.
     """
     class_items = inspect.getmembers(lscape_module, is_subclass_of_landscape)
-    for cls_name, cls_type in class_items:
+    for _, cls_type in class_items:
         type_module_name = cls_type.__module__
         if type_module_name == lscape_module.__name__:
             Landscape._landscape_type = cls_type
