@@ -33,7 +33,7 @@ RUNTIME_CONFIGURATION.maps.insert(0, user_config)
 from akit.environment.options import process_environment_options
 output_dir, console_level, logfile_level, branch, build, flavor = process_environment_options()
 
-# Step 5 - Force the context to load with defaults if it is not already loaded
+# Step 5 - Force the context to load with defaults ifz it is not already loaded
 # and setup the run type if not already set
 from akit.environment.context import Context
 
