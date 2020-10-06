@@ -248,7 +248,7 @@ class TestJob(ContextUser):
         """
             Overridden by derived TestJob classes in order to return a configuration user interface
             description that provides information about a vue javascript component that meets the
-            interface requirements and will allow a user to input job configuration information that
+            interface requirements and will allow a user to display job configuration information that
             can be packaged stored in a data store as a json object and later passed to a job in order
             to configure the job.
         """
@@ -265,10 +265,11 @@ class TestJob(ContextUser):
         """
         return
 
+
 class DefaultTestJob(TestJob):
     name = "Test Job"
     description = "Unspecified test job."
 
-    def __init__(self, context, logger, testroot, includes=None, excludes=None, test_module=None):
-        super(DefaultTestJob, self).__init__(context, logger, testroot, includes=includes, excludes=excludes, test_module=test_module)
+    def __init__(self, logger, testroot, includes=None, excludes=None, test_module=None):
+        super().__init__(logger, testroot, includes=includes, excludes=excludes, test_module=test_module)
         return

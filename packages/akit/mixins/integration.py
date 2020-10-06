@@ -151,7 +151,6 @@ class IntegrationMixIn(ContextUser):
         """
         return
 
-
 def is_integration_mixin(cls):
     is_integmi = False
     if inspect.isclass(cls) and cls is not IntegrationMixIn and issubclass(cls, IntegrationMixIn):

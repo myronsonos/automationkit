@@ -670,7 +670,8 @@ class SshAgent:
     def _create_client(self):
         pkey = None
         if self._keyfile is not None:
-            pkey = paramiko.pkey.PKey.from_private_key_file(self._keyfile, password=self._keypasswd)
+            with open(self._keyfile) as kf:
+                pkey = paramiko.rsakey.RSAKey.from_private_key(kf, password=self._keypasswd)
         ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password, pkey=pkey)
