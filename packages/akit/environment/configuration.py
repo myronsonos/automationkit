@@ -32,6 +32,7 @@ RUNTIME_DEFAULTS = {
     "paths": {
         "landscape": os.sep.join(("~", "akit", "config", "landscape.json")),
         "results": os.sep.join(("~", "akit", "results")),
+        "consoleresults": os.sep.join(("~", "akit", "console", "%(starttime)s")),
         "runresults": os.sep.join(("~", "akit", "results", "runresults", "%(starttime)s")),
         "testresults": os.sep.join(("~", "akit", "results", "testresults", "%(starttime)s"))
     }

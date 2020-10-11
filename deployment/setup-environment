@@ -102,6 +102,7 @@ if [ ! -f $INITIALIZED_FILE ]; then
 
         # Install pylint into the virtual environment
         pip install coverage
+        pip install ipython
         pip install netifaces
         pip install paramiko
         pip install psycopg2

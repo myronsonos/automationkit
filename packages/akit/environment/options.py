@@ -18,12 +18,12 @@ __license__ = "MIT"
 
 import argparse
 
-from akit.xlogging import LEVEL_NAMES
+from akit.environment.variables import LOG_LEVEL_NAMES
 
 ENVIRONMENT_OPTIONS = [
     (("-o", "--output"), { "dest":"output", "action":"store", "default":None, "help":"The output directory where results and artifacts are collected."}),
-    (("--console-level",), { "dest":"consolelevel", "action":"store", "default":"INFO", "choices":LEVEL_NAMES, "help":"The logging level for console output."}),
-    (("--logfile-level",), { "dest":"logfilelevel", "action":"store", "default":"DEBUG", "choices":LEVEL_NAMES, "help":"The logging level for logfile output."}),
+    (("--console-level",), { "dest":"consolelevel", "action":"store", "default":None, "choices":LOG_LEVEL_NAMES, "help":"The logging level for console output."}),
+    (("--logfile-level",), { "dest":"logfilelevel", "action":"store", "default":None, "choices":LOG_LEVEL_NAMES, "help":"The logging level for logfile output."}),
     (("--branch",), { "dest": "branch", "action": "store", "default": None, "help": "The name of the branch to associate with the test run results."}),
     (("--build",), { "dest": "build", "action": "store", "default": None, "help": "The name of the build to associate with the test run results."}),
     (("--flavor",), { "dest": "flavor", "action": "store", "default": None, "help": "The name of the flavor to associate with the test run results."})

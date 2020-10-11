@@ -38,6 +38,7 @@ from akit.integration.cluster.clustermixin import ClusterMixIn
 from akit.xformatting import indent_lines
 from akit.xlogging import getAutomatonKitLogger
 
+
 class LandscapeDescription:
     """
         The base class for all derived :class:`LandscapeDescription` objects.  The
@@ -57,8 +58,123 @@ class LandscapeDescription:
         landscape.register_integration_point("secondary-cluster", ClusterMixIn)
         return
 
-    def load(self, landscapefile):
-        return
+    def load(self, landscape_file):
+        landscape_info = None
+
+        with open(landscape_file, 'r') as lf:
+            lfcontent = lf.read()
+            landscape_info = json.loads(lfcontent)
+
+        errors = self.validate_landscape(landscape_info)
+
+        if len(errors) > 0:
+            errmsg = "ERROR Landscape validation failures:\n"
+            for err in errors:
+                errmsg += "    %s\n" % err
+            raise AKitConfigurationError(errmsg)
+
+        return landscape_info
+
+    def validate_landscape(self, landscape_info):
+        errors = []
+
+        if "pod" in landscape_info:
+            podinfo = landscape_info["pod"]
+            if "devices" in podinfo:
+                devices_list = podinfo["devices"]
+                child_errors = self.validate_devices_list(devices_list, prefix="")
+                errors.extend(child_errors)
+            else:
+                errors.append(["/pod/devices", "A pod description requires a 'devices' list data member."])
+        else:
+            errors.append(["/pod", "A landscape description requires a 'pod' data member."])
+
+        return errors
+
+    def validate_devices_list(self, devlist, prefix=""):
+        """
+            Verifies that all the devices in a device list are valid and returns a list of errors found.
+        """
+        errors = []
+
+        for devidx, devinfo in enumerate(devlist):
+            item_prefix = "/devices[%d]" % devidx
+            child_errors = self.validate_device_info(devinfo, prefix=item_prefix)
+            errors.extend(child_errors)
+
+        return errors
+
+    def validate_device_info(self, devinfo, prefix=""):
+        """
+            Verifies that a device info dictionary has the required common fields and also has valid
+            information for the declared device type.  Returns a list of errors found.
+
+            Required Common Fields:
+                deviceType
+
+            Valid Device Types:
+                network/ssh
+                network/upnp
+        """
+        errors = []
+
+        if "deviceType" in devinfo:
+            deviceType = devinfo["deviceType"]
+            if deviceType == "network/upnp":
+                if "upnp" in devinfo:
+                    upnpinfo = devinfo["upnp"]
+                    child_errors = self.validate_upnp_info(upnpinfo, prefix=prefix + "/upnp")
+                    errors.extend(child_errors)
+                    if "ssh" in devinfo:
+                        sshinfo = devinfo["ssh"]
+                        child_errors = self.validate_ssh_info(sshinfo, require_host=False, prefix=prefix + "/ssh")
+                        errors.extend(child_errors)
+                else:
+                    errors.append([prefix + "upnp", "Device type 'network/upnp' must have a 'upnp' data member."])
+            if deviceType == "network/ssh":
+                if "ssh" in devinfo:
+                    sshinfo = devinfo["ssh"]
+                    child_errors = self.validate_ssh_info(sshinfo, prefix=prefix + "/ssh")
+                    errors.extend(child_errors)
+                else:
+                    errors.append([prefix + "ssh", "Device type 'network/ssh' must have a 'ssh' data member."])
+        else:
+            errors.append([prefix + "deviceType", "Device information is missing the required 'deviceType' data member."])
+
+        return errors
+
+    def validate_ssh_info(self, sshinfo, require_host=True, prefix=""):
+        """
+            Verifies that a ssh info dictionary has valid data member combinations and can be used. Returns a
+            list of errors found.
+        """
+        errors = []
+
+        if require_host and "host" not in sshinfo:
+            errors.append([prefix + "host", "SSH information is missing a 'host' data member."])
+        if "username" not in sshinfo:
+            errors.append([prefix + "username", "SSH information is missing a 'username' data member."])
+
+        if not ("password" in sshinfo or "keyfile" in sshinfo):
+            errors.append([prefix + "password", "SSH information is missing a 'password' or 'keyfile' data member."])
+
+        return errors
+
+    def validate_upnp_info(self, upnpinfo, prefix=""):
+        """
+            Verifies that a upnp info dictionary has valid data member combinations and can be used. Returns a
+            list of errors found.
+        """
+        errors = []
+
+        if "USN" not in upnpinfo:
+            errors.append([prefix + "USN", "UPnP information is missing a 'USN' data member."])
+        if "modelNumber" not in upnpinfo:
+            errors.append([prefix + "modelNumber", "UPnP information is missing a 'modelNumber' data member."])
+        if "modelName" not in upnpinfo:
+            errors.append([prefix + "modelName", "UPnP information is missing a 'modelName' data member."])
+
+        return errors
     
 
 class Landscape:
@@ -198,9 +314,8 @@ class Landscape:
         context = Context()
         try:
             landscape_file = get_expanded_path(context.lookup("/environment/configuration/paths/landscape"))
-            with open(landscape_file, 'r') as lf:
-                lfcontent = lf.read()
-                self._landscape_info = json.loads(lfcontent)
+            lscape_desc = self.landscape_description()
+            self._landscape_info = lscape_desc.load(landscape_file)
         except Exception as xcpt:
             err_msg = "Error loading the landscape file from (%s)" % landscape_file
             raise AKitConfigurationError(err_msg) from xcpt
@@ -240,7 +355,7 @@ class Landscape:
         for devinfo in self.get_devices():
             dev_type = devinfo["deviceType"]
             if dev_type == "network/upnp":
-                usn = devinfo["USN"]
+                usn = devinfo["upnp"]["USN"]
                 if "ssh" in devinfo:
                     agent = self._ssh_coord.lookup_agent_by_usn(usn)
                     if not agent.verify_connectivity():
@@ -301,19 +416,17 @@ class Landscape:
 
         if len(upnp_device_list) > 0:
             self._has_upnp_devices = True
-            upnp_hint_list = [devinfo["USN"] for devinfo in upnp_device_list]
+            upnp_hint_list = [devinfo["upnp"]["USN"] for devinfo in upnp_device_list]
             self._upnp_coord = UpnpCoordinator()
             self._upnp_coord.startup_scan(upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=["lo"])
 
         if len(ssh_device_list) > 0:
             self._has_ssh_devices = True
             self._ssh_coord = SshPoolCoordinator()
-            self._ssh_coord.attach_to_devices(ssh_device_list)
+            self._ssh_coord.attach_to_devices(ssh_device_list, upnp_coord=self._upnp_coord)
 
         return
 
-    def _validate_landscape(self):
-        return
 
 def is_subclass_of_landscape(cand_type):
     """

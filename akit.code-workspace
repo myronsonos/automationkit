@@ -10,6 +10,9 @@
     "settings": {
         "python.pythonPath": "./_local/venv/bin/python3.8",
         "python.envFile": "./_local/development.env",
-        "python.venvPath": "./_local/venv"
+        "python.venvPath": "./_local/venv",
+        "terminal.integrated.env.linux": {
+            "PYTHONPATH": "$PYTHONPATH:${workspaceFolder}/packages"
+        }
     }
 }

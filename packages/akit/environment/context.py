@@ -27,7 +27,7 @@ from akit.environment.variables import VARIABLES
 from akit.environment.configuration import RUNTIME_CONFIGURATION
 
 
-REGEX_PATH_VALIDATOR = re.compile("/{1}([a-zA-Z0-9]+)")
+REGEX_PATH_VALIDATOR = re.compile("/{1}([a-zA-Z0-9_]+)")
 
 def validate_path_name(path: str) -> [str]:
     parts = None
@@ -352,7 +352,7 @@ class Context:
         return found
 
     def __getitem__(self, key: str) -> typing.Any:
-        found_node = self.lookup(self._store, [key])
+        found_node = self._lookup(self._store, key, [key])
         return found_node
 
     def __setitem__(self, key: str, val: typing.Any):

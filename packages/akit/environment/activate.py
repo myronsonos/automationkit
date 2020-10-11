@@ -16,12 +16,14 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+import os
+
 # Step 1 - Force the default configuration to load if it is not already loaded
 from akit.environment.configuration import RUNTIME_CONFIGURATION
 
 # Step 2 - Process the environment variables that are used to overwride the
 # default configuration
-from akit.environment.variables import VARIABLES
+from akit.environment.variables import VARIABLES, LOG_LEVEL_NAMES
 
 # Step 3 - Load the user configuration and add it to the RUNTIME_CONFIGURATION 'ChainMap' so
 # the user settings take precedence over the runtime default settings.
@@ -32,6 +34,18 @@ RUNTIME_CONFIGURATION.maps.insert(0, user_config)
 # Step 4 - Process environment options
 from akit.environment.options import process_environment_options
 output_dir, console_level, logfile_level, branch, build, flavor = process_environment_options()
+
+if console_level is None:
+    if VARIABLES.AKIT_CONSOLE_LOG_LEVEL is not None and VARIABLES.AKIT_CONSOLE_LOG_LEVEL in LOG_LEVEL_NAMES:
+        console_level = VARIABLES.AKIT_CONSOLE_LOG_LEVEL
+    else:
+        console_level = "INFO"
+
+if logfile_level is None:
+    if VARIABLES.AKIT_FILE_LOG_LEVEL is not None and VARIABLES.AKIT_FILE_LOG_LEVEL in LOG_LEVEL_NAMES:
+        logfile_level = VARIABLES.AKIT_FILE_LOG_LEVEL
+    else:
+        logfile_level = "DEBUG"
 
 # Step 5 - Force the context to load with defaults ifz it is not already loaded
 # and setup the run type if not already set
@@ -60,9 +74,19 @@ else:
 
 conf = ctx.lookup("/environment/configuration")
 
+fill_dict = {
+    "starttime": str(env["starttime"]).replace(" ", "T")
+}
+
 if env["jobtype"] == "unkownjob":
     env["jobtype"] = "testrun"
-    env["output_directory"] = conf.lookup("/paths/testresults")
+    outdir_template = conf.lookup("/paths/testresults")
+    outdir_full = os.path.abspath(os.path.expandvars(os.path.expanduser(outdir_template % fill_dict)))
+    env["output_directory"] = outdir_full
+elif env["jobtype"] == "console":
+    outdir_template = conf.lookup("/paths/consoleresults")
+    outdir_full = os.path.abspath(os.path.expandvars(os.path.expanduser(outdir_template % fill_dict)))
+    env["output_directory"] = outdir_full
 
 if output_dir is not None:
     env["output_directory"] = output_dir

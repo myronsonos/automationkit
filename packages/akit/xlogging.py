@@ -26,6 +26,9 @@ import os
 import sys
 
 from akit.environment.context import Context
+from akit.environment.variables import LOG_LEVEL_NAMES
+
+logging.addLevelName(100, "QUIET")
 
 # Start Logging to Standard Out.  We need to make sure it is initialized to something as early as possible,
 # but we may not have a file to write to yet until logging_initialize is called by a proper entry point 
@@ -56,14 +59,9 @@ def getAutomatonKitLogger():
 
 OTHER_LOGGER_FILTERS = []
 
-LEVEL_NAMES = [
-    "NOTSET",
-    "DEBUG",
-    "INFO",
-    "WARNING",
-    "ERROR",
-    "CRITICAL"
-]
+class LoggingDefaults:
+
+    DefaultFileLoggingHandler = logging.FileHandler
 
 class TestKitLoggerWrapper:
 
@@ -229,11 +227,23 @@ def logging_create_branch_logger(logger_name, logfilename, log_level):
     return
 
 def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basename):
-    
+
+    print("")
+    print("NOTE: Console logging set to %r" % consolelevel)
+    print("NOTE: outputdir=%s" % output_dir)
+    print("")
+
     basecomp, extcomp = os.path.splitext(logfile_basename)
+
+    ctx = Context()
+    env = ctx.lookup("/environment")
 
     debug_logfilename = os.path.join(output_dir, basecomp + ".DEBUG" + extcomp)
     other_logfilename = os.path.join(output_dir, basecomp + ".OTHER" + extcomp)
+
+    env["logfile_debug"] = debug_logfilename
+    env["logfile_other"] = other_logfilename
+
     rel_logfilename = os.path.join(output_dir, basecomp + extcomp)
 
     # Remove all the log handlers from the root logger
@@ -246,14 +256,14 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
     root_logger.setLevel(logging.NOTSET)
 
     # Setup the debug logfile
-    base_handler = logging.FileHandler(debug_logfilename)
+    base_handler = LoggingDefaults.DefaultFileLoggingHandler(debug_logfilename)
     base_handler.setLevel(logging.NOTSET)
     root_logger.addHandler(base_handler)
 
     # Setup the other log handler and other filter, we
     # need to add the other log handler before adding
     # the relevant log handler
-    other_handler = logging.FileHandler(other_logfilename)
+    other_handler = LoggingDefaults.DefaultFileLoggingHandler(other_logfilename)
     other_handler.setLevel(logfilelevel)
     for other_expr in OTHER_LOGGER_FILTERS:
         other_handler.addFilter(OtherFilter(other_expr))
@@ -262,7 +272,7 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
     # Setup the relevant log file which will get all the
     # log entries from loggers that satisified a relevant
     # logger name prefix match
-    rel_handler = logging.FileHandler(rel_logfilename)
+    rel_handler = LoggingDefaults.DefaultFileLoggingHandler(rel_logfilename)
     rel_handler.setLevel(logging.NOTSET)
     rel_handler.addFilter(RelevantFilter())
     root_logger.addHandler(rel_handler)

@@ -38,7 +38,7 @@ class SshPoolCoordinator:
             if "host" in sshinfo:
                 host = sshinfo["host"]
             elif devtype == "network/upnp":
-                usn = sshdev["USN"]
+                usn = sshdev["upnp"]["USN"]
                 if upnp_coord is not None:
                     dev = upnp_coord.lookup_device_by_usn(usn)
                     ipaddr = dev.IPAddress

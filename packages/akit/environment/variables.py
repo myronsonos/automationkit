@@ -20,6 +20,16 @@ import sys
 
 environ = os.environ
 
+LOG_LEVEL_NAMES = [
+    "NOTSET",
+    "DEBUG",
+    "INFO",
+    "WARNING",
+    "ERROR",
+    "CRITICAL",
+    "QUIET"
+]
+
 class VARIABLES:
     AKIT_BRANCH = "unknown"
     if "AKIT_BRANCH" in environ:
@@ -28,6 +38,14 @@ class VARIABLES:
     AKIT_BUILD = "unknown"
     if "AKIT_BUILD" in environ:
         AKIT_BUILD = environ["AKIT_BUILD"]
+
+    AKIT_CONSOLE_LOG_LEVEL = None
+    if "AKIT_CONSOLE_LOG_LEVEL" in environ:
+        AKIT_CONSOLE_LOG_LEVEL = environ["AKIT_CONSOLE_LOG_LEVEL"].upper()
+
+    AKIT_FILE_LOG_LEVEL = None
+    if "AKIT_FILE_LOG_LEVEL" in environ:
+        AKIT_FILE_LOG_LEVEL = environ["AKIT_FILE_LOG_LEVEL"].upper()
 
     AKIT_FLAVOR = "unknown"
     if "AKIT_FLAVOR" in environ:

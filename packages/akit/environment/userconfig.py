@@ -17,6 +17,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import json
+import os
 
 from akit.environment.variables import VARIABLES
 from akit.paths import get_expanded_path
@@ -33,7 +34,10 @@ def load_user_configuration():
     global USER_CONFIGURATION
 
     if USER_CONFIGURATION is None:
-        with open(FILE_USER_CONFIGURATION, 'r') as cf:
-            USER_CONFIGURATION = json.load(cf)
+        if os.path.exists(FILE_USER_CONFIGURATION):
+            with open(FILE_USER_CONFIGURATION, 'r') as cf:
+                USER_CONFIGURATION = json.load(cf)
+        else:
+            USER_CONFIGURATION = {}
 
     return USER_CONFIGURATION
