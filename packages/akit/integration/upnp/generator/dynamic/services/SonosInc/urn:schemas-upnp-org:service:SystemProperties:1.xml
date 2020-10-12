@@ -97,7 +97,7 @@
       <name>ThirdPartyHash</name>
       <dataType>string</dataType>
     </stateVariable>
-</serviceStateTable>
+  </serviceStateTable>
   <actionList>
     <action>
       <name>SetString</name>

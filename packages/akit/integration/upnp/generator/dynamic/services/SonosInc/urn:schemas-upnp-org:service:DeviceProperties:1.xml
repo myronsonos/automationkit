@@ -29,7 +29,7 @@
       <name>TargetRoomName</name>
       <dataType>string</dataType>
     </stateVariable>
-     <stateVariable sendEvents="yes">
+    <stateVariable sendEvents="yes">
       <name>Invisible</name>
       <dataType>boolean</dataType>
     </stateVariable>
@@ -294,8 +294,8 @@
           <name>ChannelMapSet</name>
           <direction>in</direction>
           <relatedStateVariable>ChannelMapSet</relatedStateVariable>
-           </argument>
-           <argument>
+        </argument>
+        <argument>
           <name>KeepGrouped</name>
           <direction>in</direction>
           <relatedStateVariable>KeepGrouped</relatedStateVariable>
