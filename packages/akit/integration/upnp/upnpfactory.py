@@ -79,7 +79,9 @@ class UpnpFactory:
     def create_service_instance(self, serviceId, serviceType):
         serviceInst = None
         if serviceType is not None:
-            extkey = UpnpFactory.generate_extension_key(serviceId, serviceType)
+            if serviceType == "urn:schemas-upnp-org:service:AlarmClock:1":
+                print("blah")
+            extkey = UpnpFactory.generate_extension_key(serviceType, serviceId)
             if extkey in self._service_registry:
                 serviceClass = self._service_registry[extkey]
                 serviceInst = serviceClass()
@@ -87,7 +89,7 @@ class UpnpFactory:
 
     @staticmethod
     def generate_extension_key(*parts):
-        extkey = ":".join(parts)
+        extkey = "/".join(parts)
         return extkey
 
     def _register_root_device(self, extkey, extcls):
@@ -118,5 +120,5 @@ class UpnpFactory:
         for extname, extcls in extcoll:
             if (hasattr(extcls, "SERVICE_ID") and hasattr(extcls, "SERVICE_TYPE")):
                 extkey = UpnpFactory.generate_extension_key(getattr(extcls, "SERVICE_ID"), getattr(extcls, "SERVICE_TYPE"))
-                self._register_service(extkey, extcls)
+                self._register_service(extcls, extkey)
         return

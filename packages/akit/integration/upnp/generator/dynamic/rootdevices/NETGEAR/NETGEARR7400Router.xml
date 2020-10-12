@@ -1,16 +1,13 @@
-<?xml version="1.0"?>
-<root xmlns="urn:schemas-upnp-org:device-1-0"
-xmlns:pnpx="http://schemas.microsoft.com/windows/pnpx/2005/11"
-xmlns:df="http://schemas.microsoft.com/windows/2008/09/devicefoundation">
+<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:ns1="http://schemas.microsoft.com/windows/pnpx/2005/11" xmlns:ns2="http://schemas.microsoft.com/windows/2008/09/devicefoundation">
 <specVersion>
 <major>1</major>
 <minor>0</minor>
 </specVersion>
 <device>
-<pnpx:X_hardwareId>VEN_01f2&amp;DEV_0042&amp;REV_01 VEN_01f2&amp;DEV_8000&amp;SUBSYS_01&amp;REV_01 VEN_01f2&amp;DEV_8000&amp;REV_01</pnpx:X_hardwareId>
-<pnpx:X_deviceCategory>NetworkInfrastructure.Router</pnpx:X_deviceCategory>
-<df:X_deviceCategory>Network.Router.Wireless</df:X_deviceCategory>
-<df:X_modelId>undefined</df:X_modelId>
+<ns1:X_hardwareId>VEN_01f2&amp;DEV_0042&amp;REV_01 VEN_01f2&amp;DEV_8000&amp;SUBSYS_01&amp;REV_01 VEN_01f2&amp;DEV_8000&amp;REV_01</ns1:X_hardwareId>
+<ns1:X_deviceCategory>NetworkInfrastructure.Router</ns1:X_deviceCategory>
+<ns2:X_deviceCategory>Network.Router.Wireless</ns2:X_deviceCategory>
+<ns2:X_modelId>undefined</ns2:X_modelId>
 <deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:1</deviceType>
 <friendlyName>R7400 (Gateway)</friendlyName>
 <manufacturer>NETGEAR </manufacturer>

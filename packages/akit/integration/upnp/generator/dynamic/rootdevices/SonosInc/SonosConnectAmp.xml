@@ -1,24 +1,23 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<root xmlns="urn:schemas-upnp-org:device-1-0">
+<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:ns1="http://www.real.com/rhapsody/xmlns/upnp-1-0" xmlns:ns2="http://www.tencent.com">
   <specVersion>
     <major>1</major>
     <minor>0</minor>
   </specVersion>
   <device>
     <deviceType>urn:schemas-upnp-org:device:ZonePlayer:1</deviceType>
-    <friendlyName>192.168.1.60 - Sonos ZP80</friendlyName>
+    <friendlyName>192.168.1.51 - Sonos Connect:Amp</friendlyName>
     <manufacturer>Sonos, Inc.</manufacturer>
     <manufacturerURL>http://www.sonos.com</manufacturerURL>
-    <modelNumber>ZP80</modelNumber>
-    <modelDescription>Sonos ZP80</modelDescription>
-    <modelName>Sonos ZP80</modelName>
-    <modelURL>http://www.sonos.com/products/zoneplayers/ZP80</modelURL>
-    <softwareVersion>57.1-73160-dev-myron-20200127-mainline_integ</softwareVersion>
-    <swGen>1</swGen>
-    <hardwareVersion>1.1.16.3-1</hardwareVersion>
-    <serialNum>00-0E-58-20-43-00:0</serialNum>
-    <MACAddress>00:0E:58:20:43:00</MACAddress>
-    <UDN>uuid:RINCON_000E5820430001400</UDN>
+    <modelNumber>ZP120</modelNumber>
+    <modelDescription>Sonos Connect:Amp</modelDescription>
+    <modelName>Sonos Connect:Amp</modelName>
+    <modelURL>http://www.sonos.com/products/zoneplayers/ZP120</modelURL>
+    <softwareVersion>63.0-82080-dev-myron-20201008-player_dev_integ</softwareVersion>
+    <swGen>2</swGen>
+    <hardwareVersion>1.17.3.1-1.1</hardwareVersion>
+    <serialNum>34-7E-5C-22-AA-C8:3</serialNum>
+    <MACAddress>34:7E:5C:22:AA:C8</MACAddress>
+    <UDN>uuid:RINCON_347E5C22AAC801400</UDN>
     <iconList>
       <icon>
         <id>0</id>
@@ -26,34 +25,34 @@
         <width>48</width>
         <height>48</height>
         <depth>24</depth>
-        <url>/img/icon-ZP80.png</url>
+        <url>/img/icon-ZP120.png</url>
       </icon>
     </iconList>
-    <minCompatibleVersion>56.0-00000</minCompatibleVersion>
-    <legacyCompatibleVersion>36.0-00000</legacyCompatibleVersion>
-    <apiVersion>1.19.0-alpha.4+mainline_integ.alpha.57.1-73160</apiVersion>
+    <minCompatibleVersion>62.0-00000</minCompatibleVersion>
+    <legacyCompatibleVersion>58.0-00000</legacyCompatibleVersion>
+    <apiVersion>1.23.0-alpha.1+player_dev_integ.alpha.63.0-82080</apiVersion>
     <minApiVersion>1.1.0</minApiVersion>
-    <displayVersion>11.2</displayVersion>
-    <extraVersion>r8: 16.0-7</extraVersion>
+    <displayVersion>13.1</displayVersion>
+    <extraVersion>OTP: 1.1.1(1-17-3-2.1)</extraVersion>
+    <nsVersion>22</nsVersion>
     <roomName>Den</roomName>
-    <displayName>ZP80</displayName>
-    <zoneType>1</zoneType>
-    <feature1>0x00310001</feature1>
+    <displayName>Connect:Amp</displayName>
+    <zoneType>3</zoneType>
+    <feature1>0x05000001</feature1>
     <feature2>0x00006172</feature2>
-    <feature3>0x00031021</feature3>
-    <seriesid>S100</seriesid>
-    <variant>0</variant>
+    <feature3>0x00033071</feature3>
+    <seriesid>C100</seriesid>
+    <variant>1</variant>
     <internalSpeakerSize>-1</internalSpeakerSize>
-    <bassExtension>0.000</bassExtension>
-    <satGainOffset>0.000</satGainOffset>
-    <memory>32</memory>
-    <flash>32</flash>
-    
-    
-    
-    <flashRepartitioned>1</flashRepartitioned>
+    <bassExtension>60.000</bassExtension>
+    <satGainOffset>1.000</satGainOffset>
+    <memory>64</memory>
+    <flash>64</flash>
+    <flashRepartitioned>0</flashRepartitioned>
     <ampOnTime>425</ampOnTime>
     <retailMode>0</retailMode>
+    <SSLPort>1443</SSLPort>
+    <securehhSSLPort>1843</securehhSSLPort>
     <serviceList>
       <service>
         <serviceType>urn:schemas-upnp-org:service:AlarmClock:1</serviceType>
@@ -115,14 +114,14 @@
     <deviceList>
       <device>
   <deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
-  <friendlyName>192.168.1.60 - Sonos ZP80 Media Server</friendlyName>
+  <friendlyName>192.168.1.51 - Sonos Connect:Amp Media Server</friendlyName>
   <manufacturer>Sonos, Inc.</manufacturer>
   <manufacturerURL>http://www.sonos.com</manufacturerURL>
-  <modelNumber>ZP80</modelNumber>
-  <modelDescription>Sonos ZP80 Media Server</modelDescription>
-  <modelName>Sonos ZP80</modelName>
-  <modelURL>http://www.sonos.com/products/zoneplayers/ZP80</modelURL>
-  <UDN>uuid:RINCON_000E5820430001400_MS</UDN>
+  <modelNumber>ZP120</modelNumber>
+  <modelDescription>Sonos Connect:Amp Media Server</modelDescription>
+  <modelName>Sonos Connect:Amp</modelName>
+  <modelURL>http://www.sonos.com/products/zoneplayers/ZP120</modelURL>
+  <UDN>uuid:RINCON_347E5C22AAC801400_MS</UDN>
   <serviceList>
     <service>
       <serviceType>urn:schemas-upnp-org:service:ContentDirectory:1</serviceType>
@@ -142,14 +141,14 @@
       </device>
       <device>
 	<deviceType>urn:schemas-upnp-org:device:MediaRenderer:1</deviceType>
-  <friendlyName>Den - Sonos ZP80 Media Renderer</friendlyName>
+  <friendlyName>Den - Sonos Connect:Amp Media Renderer</friendlyName>
   <manufacturer>Sonos, Inc.</manufacturer>
   <manufacturerURL>http://www.sonos.com</manufacturerURL>
-  <modelNumber>ZP80</modelNumber>
-  <modelDescription>Sonos ZP80 Media Renderer</modelDescription>
-  <modelName>Sonos ZP80</modelName>
-  <modelURL>http://www.sonos.com/products/zoneplayers/ZP80</modelURL>
-	<UDN>uuid:RINCON_000E5820430001400_MR</UDN>
+  <modelNumber>ZP120</modelNumber>
+  <modelDescription>Sonos Connect:Amp Media Renderer</modelDescription>
+  <modelName>Sonos Connect:Amp</modelName>
+  <modelURL>http://www.sonos.com/products/zoneplayers/ZP120</modelURL>
+	<UDN>uuid:RINCON_347E5C22AAC801400_MR</UDN>
 	<serviceList>
 	  <service>
 	    <serviceType>urn:schemas-upnp-org:service:RenderingControl:1</serviceType>
@@ -194,20 +193,20 @@
         <SCPDURL>/xml/VirtualLineIn1.xml</SCPDURL>
     </service>
 	</serviceList>
-        <X_Rhapsody-Extension xmlns="http://www.real.com/rhapsody/xmlns/upnp-1-0">
-          <deviceID>urn:rhapsody-real-com:device-id-1-0:sonos_1:RINCON_000E5820430001400</deviceID>
-            <deviceCapabilities>
-              <interactionPattern type="real-rhapsody-upnp-1-0"/>
-            </deviceCapabilities>
-        </X_Rhapsody-Extension>
-        <qq:X_QPlay_SoftwareCapability xmlns:qq="http://www.tencent.com">QPlay:2</qq:X_QPlay_SoftwareCapability>
+        <ns1:X_Rhapsody-Extension>
+          <ns1:deviceID>urn:rhapsody-real-com:device-id-1-0:sonos_1:RINCON_347E5C22AAC801400</ns1:deviceID>
+            <ns1:deviceCapabilities>
+              <ns1:interactionPattern type="real-rhapsody-upnp-1-0"></ns1:interactionPattern>
+            </ns1:deviceCapabilities>
+        </ns1:X_Rhapsody-Extension>
+        <ns2:X_QPlay_SoftwareCapability>QPlay:2</ns2:X_QPlay_SoftwareCapability>
         <iconList>
           <icon>
             <mimetype>image/png</mimetype>
             <width>48</width>
             <height>48</height>
             <depth>24</depth>
-            <url>/img/icon-ZP80.png</url>
+            <url>/img/icon-ZP120.png</url>
           </icon>
         </iconList>
       </device>

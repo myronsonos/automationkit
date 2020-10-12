@@ -240,6 +240,14 @@ class Landscape:
         return self._landscape_info
 
     @property
+    def ssh_coord(self):
+        return self._ssh_coord
+
+    @property
+    def upnp_coord(self):
+        return self._upnp_coord
+
+    @property
     def databases(self):
         """
             Returns the database configuration information from the landscape file.
@@ -295,7 +303,7 @@ class Landscape:
 
         upnp_device_table = {}
         for device in upnp_device_list:
-            usn = device["USN"]
+            usn = device["upnp"]["USN"]
             upnp_device_table[usn] = device
 
         return upnp_device_table

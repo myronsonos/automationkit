@@ -12,18 +12,21 @@ from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 from akit.integration.upnp.extensions import services as services_extensions
 
 
-DIR_UPNP_GENERATOR = os.path.dirname(__file__)
+from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS
+from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS_DYNAMIC
+from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS_STANDARD
 
-DIR_UPNP_GENERATOR_DYNAMIC = os.path.join(DIR_UPNP_GENERATOR, "dynamic")
-DIR_UPNP_GENERATOR_STANDARD = os.path.join(DIR_UPNP_GENERATOR, "standard")
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR
 
-DIR_UPNP_EXTENSIONS = os.path.dirname(services_extensions.__file__)
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_EMBEDDEDDEVICES
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_ROOTDEVICES
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_SERVICES
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_EMBEDDEDDEVICES
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_ROOTDEVICES
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_SERVICES
 
-DIR_UPNP_EXTENSIONS_DYNAMIC = os.path.join(DIR_UPNP_EXTENSIONS, "dynamic")
-DIR_UPNP_EXTENSIONS_STANDARD = os.path.join(DIR_UPNP_EXTENSIONS, "standard")
-
-DIR_UPNP_GENERATOR_DYNAMIC_SERVICES = os.path.join(DIR_UPNP_GENERATOR, "dynamic", "services")
-DIR_UPNP_GENERATOR_STANDARD_SERVICES = os.path.join(DIR_UPNP_GENERATOR, "standard", "services")
 
 UPNP_SERVICE_NAMESPACE = "urn:schemas-upnp-org:service-1-0"
 
@@ -348,11 +351,9 @@ def upnpgenerator_main():
     excluded_interfaces = [iface for iface in args.interfaces_excluded]
 
     if action == "scan":
+        # The UpnpCoordinator scan will download and update device descriptions for us
         ucoord = UpnpCoordinator()
-        ucoord.startup_scan(None, exclude_interfaces=excluded_interfaces, response_timeout=60)
-
-        for cdev in ucoord.children:
-            cdev.record_description(DIR_UPNP_GENERATOR_DYNAMIC)
+        ucoord.startup_scan(None, exclude_interfaces=excluded_interfaces, response_timeout=60, force_recording=True)
 
     elif action == "generate":
         if os.path.exists(DIR_UPNP_GENERATOR_DYNAMIC_SERVICES):

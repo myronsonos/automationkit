@@ -6,4 +6,4 @@ export PYTHONPATH="$PYTHONPATH:$THIS_DIR/packages"
 
 source $THIS_DIR/_local/venv/bin/activate
 
-ipython
+ipython -i $THIS_DIR/console/startup.py

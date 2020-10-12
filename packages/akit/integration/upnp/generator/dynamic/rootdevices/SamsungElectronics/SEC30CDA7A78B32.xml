@@ -1,16 +1,15 @@
-<?xml version="1.0"?>
-<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:pnpx="http://schemas.microsoft.com/windows/pnpx/2005/11" xmlns:df="http://schemas.microsoft.com/windows/2008/09/devicefoundation" >
+<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:ns1="http://schemas.microsoft.com/windows/pnpx/2005/11" xmlns:ns2="http://schemas.microsoft.com/windows/2008/09/devicefoundation">
 <specVersion>
 <major>1</major>
 <minor>0</minor>
 </specVersion>
 <URLBase>http://192.168.1.21</URLBase>
 <device>
-<pnpx:X_hardwareId>VEN_04e8&amp;DEV_3328</pnpx:X_hardwareId>
-<pnpx:X_compatibleId>http://schemas.microsoft.com/windows/2006/08/wdp/print/PrinterServiceType</pnpx:X_compatibleId>
-<pnpx:X_deviceCategory>Printers</pnpx:X_deviceCategory>
-<df:X_deviceCategory>PrintFax.Printer.Laser</df:X_deviceCategory>
-<df:X_containerId>{f4288040-571c-11df-a364-30cda7a78b32}</df:X_containerId>
+<ns1:X_hardwareId>VEN_04e8&amp;DEV_3328</ns1:X_hardwareId>
+<ns1:X_compatibleId>http://schemas.microsoft.com/windows/2006/08/wdp/print/PrinterServiceType</ns1:X_compatibleId>
+<ns1:X_deviceCategory>Printers</ns1:X_deviceCategory>
+<ns2:X_deviceCategory>PrintFax.Printer.Laser</ns2:X_deviceCategory>
+<ns2:X_containerId>{f4288040-571c-11df-a364-30cda7a78b32}</ns2:X_containerId>
 <deviceType>urn:schemas-upnp-org:device:Printer:1</deviceType>
 <friendlyName>Samsung M283x Series (192.168.1.21)</friendlyName>
 <manufacturer>Samsung Electronics</manufacturer>

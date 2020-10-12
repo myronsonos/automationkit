@@ -5,7 +5,7 @@
   </specVersion>
   <device>
     <deviceType>urn:schemas-upnp-org:device:ZonePlayer:1</deviceType>
-    <friendlyName>192.168.1.38 - Sonos ZP80</friendlyName>
+    <friendlyName>192.168.1.60 - Sonos ZP80</friendlyName>
     <manufacturer>Sonos, Inc.</manufacturer>
     <manufacturerURL>http://www.sonos.com</manufacturerURL>
     <modelNumber>ZP80</modelNumber>
@@ -114,7 +114,7 @@
     <deviceList>
       <device>
   <deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
-  <friendlyName>192.168.1.38 - Sonos ZP80 Media Server</friendlyName>
+  <friendlyName>192.168.1.60 - Sonos ZP80 Media Server</friendlyName>
   <manufacturer>Sonos, Inc.</manufacturer>
   <manufacturerURL>http://www.sonos.com</manufacturerURL>
   <modelNumber>ZP80</modelNumber>

@@ -1,24 +1,23 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<root xmlns="urn:schemas-upnp-org:device-1-0">
+<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:ns1="http://www.real.com/rhapsody/xmlns/upnp-1-0" xmlns:ns2="http://www.tencent.com">
   <specVersion>
     <major>1</major>
     <minor>0</minor>
   </specVersion>
   <device>
     <deviceType>urn:schemas-upnp-org:device:ZonePlayer:1</deviceType>
-    <friendlyName>192.168.1.44 - Sonos Beam</friendlyName>
+    <friendlyName>192.168.1.50 - Sonos Arc</friendlyName>
     <manufacturer>Sonos, Inc.</manufacturer>
     <manufacturerURL>http://www.sonos.com</manufacturerURL>
-    <modelNumber>S14</modelNumber>
-    <modelDescription>Sonos Beam</modelDescription>
-    <modelName>Sonos Beam</modelName>
-    <modelURL>http://www.sonos.com/products/zoneplayers/S14</modelURL>
-    <softwareVersion>62.0-80270-dev-myron-20200828-player_dev_integ</softwareVersion>
+    <modelNumber>S19</modelNumber>
+    <modelDescription>Sonos Arc</modelDescription>
+    <modelName>Sonos Arc</modelName>
+    <modelURL>http://www.sonos.com/products/zoneplayers/S19</modelURL>
+    <softwareVersion>63.0-82080-dev-myron-20201008-player_dev_integ</softwareVersion>
     <swGen>2</swGen>
-    <hardwareVersion>1.23.1.10-1.1</hardwareVersion>
-    <serialNum>94-9F-3E-C5-FF-88:4</serialNum>
-    <MACAddress>94:9F:3E:C5:FF:88</MACAddress>
-    <UDN>uuid:RINCON_949F3EC5FF8801400</UDN>
+    <hardwareVersion>1.27.1.5-1.2</hardwareVersion>
+    <serialNum>48-A6-B8-B0-06-24:B</serialNum>
+    <MACAddress>48:A6:B8:B0:06:24</MACAddress>
+    <UDN>uuid:RINCON_48A6B8B0062401400</UDN>
     <iconList>
       <icon>
         <id>0</id>
@@ -26,25 +25,25 @@
         <width>48</width>
         <height>48</height>
         <depth>24</depth>
-        <url>/img/icon-S14.png</url>
+        <url>/img/icon-S19.png</url>
       </icon>
     </iconList>
-    <minCompatibleVersion>61.0-00000</minCompatibleVersion>
+    <minCompatibleVersion>62.0-00000</minCompatibleVersion>
     <legacyCompatibleVersion>58.0-00000</legacyCompatibleVersion>
-    <apiVersion>1.22.0-beta.1-b7c825ae051bbacb55b3dfbc42b717c18dce2e1f+player_dev_integ.alpha.62.0-80270</apiVersion>
+    <apiVersion>1.23.0-alpha.1+player_dev_integ.alpha.63.0-82080</apiVersion>
     <minApiVersion>1.1.0</minApiVersion>
-    <displayVersion>12.3</displayVersion>
+    <displayVersion>13.1</displayVersion>
     <extraVersion></extraVersion>
-    <nsVersion>21</nsVersion>
-    <roomName>Bedroom</roomName>
-    <displayName>Beam</displayName>
-    <zoneType>16</zoneType>
-    <feature1>0x00004000</feature1>
-    <feature2>0x15a18732</feature2>
-    <feature3>0x00015008</feature3>
-    <seriesid>A100</seriesid>
-    <variant>1</variant>
-    <internalSpeakerSize>9</internalSpeakerSize>
+    <nsVersion>22</nsVersion>
+    <roomName>Living Room</roomName>
+    <displayName>Arc</displayName>
+    <zoneType>21</zoneType>
+    <feature1>0x00006000</feature1>
+    <feature2>0x75a18732</feature2>
+    <feature3>0x00115008</feature3>
+    <seriesid>X999</seriesid>
+    <variant>2</variant>
+    <internalSpeakerSize>10</internalSpeakerSize>
     <bassExtension>50.000</bassExtension>
     <satGainOffset>0.000</satGainOffset>
     <memory>1024</memory>
@@ -114,14 +113,14 @@
     <deviceList>
       <device>
   <deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
-  <friendlyName>192.168.1.44 - Sonos Beam Media Server</friendlyName>
+  <friendlyName>192.168.1.50 - Sonos Arc Media Server</friendlyName>
   <manufacturer>Sonos, Inc.</manufacturer>
   <manufacturerURL>http://www.sonos.com</manufacturerURL>
-  <modelNumber>S14</modelNumber>
-  <modelDescription>Sonos Beam Media Server</modelDescription>
-  <modelName>Sonos Beam</modelName>
-  <modelURL>http://www.sonos.com/products/zoneplayers/S14</modelURL>
-  <UDN>uuid:RINCON_949F3EC5FF8801400_MS</UDN>
+  <modelNumber>S19</modelNumber>
+  <modelDescription>Sonos Arc Media Server</modelDescription>
+  <modelName>Sonos Arc</modelName>
+  <modelURL>http://www.sonos.com/products/zoneplayers/S19</modelURL>
+  <UDN>uuid:RINCON_48A6B8B0062401400_MS</UDN>
   <serviceList>
     <service>
       <serviceType>urn:schemas-upnp-org:service:ContentDirectory:1</serviceType>
@@ -141,14 +140,14 @@
       </device>
       <device>
 	<deviceType>urn:schemas-upnp-org:device:MediaRenderer:1</deviceType>
-  <friendlyName>Bedroom - Sonos Beam Media Renderer</friendlyName>
+  <friendlyName>Living Room - Sonos Arc Media Renderer</friendlyName>
   <manufacturer>Sonos, Inc.</manufacturer>
   <manufacturerURL>http://www.sonos.com</manufacturerURL>
-  <modelNumber>S14</modelNumber>
-  <modelDescription>Sonos Beam Media Renderer</modelDescription>
-  <modelName>Sonos Beam</modelName>
-  <modelURL>http://www.sonos.com/products/zoneplayers/S14</modelURL>
-	<UDN>uuid:RINCON_949F3EC5FF8801400_MR</UDN>
+  <modelNumber>S19</modelNumber>
+  <modelDescription>Sonos Arc Media Renderer</modelDescription>
+  <modelName>Sonos Arc</modelName>
+  <modelURL>http://www.sonos.com/products/zoneplayers/S19</modelURL>
+	<UDN>uuid:RINCON_48A6B8B0062401400_MR</UDN>
 	<serviceList>
 	  <service>
 	    <serviceType>urn:schemas-upnp-org:service:RenderingControl:1</serviceType>
@@ -193,24 +192,23 @@
         <SCPDURL>/xml/VirtualLineIn1.xml</SCPDURL>
     </service>
 	</serviceList>
-        <X_Rhapsody-Extension xmlns="http://www.real.com/rhapsody/xmlns/upnp-1-0">
-          <deviceID>urn:rhapsody-real-com:device-id-1-0:sonos_1:RINCON_949F3EC5FF8801400</deviceID>
-            <deviceCapabilities>
-              <interactionPattern type="real-rhapsody-upnp-1-0"/>
-            </deviceCapabilities>
-        </X_Rhapsody-Extension>
-        <qq:X_QPlay_SoftwareCapability xmlns:qq="http://www.tencent.com">QPlay:2</qq:X_QPlay_SoftwareCapability>
+        <ns1:X_Rhapsody-Extension>
+          <ns1:deviceID>urn:rhapsody-real-com:device-id-1-0:sonos_1:RINCON_48A6B8B0062401400</ns1:deviceID>
+            <ns1:deviceCapabilities>
+              <ns1:interactionPattern type="real-rhapsody-upnp-1-0"></ns1:interactionPattern>
+            </ns1:deviceCapabilities>
+        </ns1:X_Rhapsody-Extension>
+        <ns2:X_QPlay_SoftwareCapability>QPlay:2</ns2:X_QPlay_SoftwareCapability>
         <iconList>
           <icon>
             <mimetype>image/png</mimetype>
             <width>48</width>
             <height>48</height>
             <depth>24</depth>
-            <url>/img/icon-S14.png</url>
+            <url>/img/icon-S19.png</url>
           </icon>
         </iconList>
       </device>
     </deviceList>
   </device>
 </root>
-

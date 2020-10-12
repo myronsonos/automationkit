@@ -59,6 +59,34 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "UPnP Generator - Generate",
+            "type": "python",
+            "request": "launch",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/packages"
+            },
+            "program": "${workspaceFolder}/packages/akit/integration/upnp/generator/upnpgenerator.py",
+            "args": [
+                "--action=generate",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "UPnP Generator - Scan",
+            "type": "python",
+            "request": "launch",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/packages"
+            },
+            "program": "${workspaceFolder}/packages/akit/integration/upnp/generator/upnpgenerator.py",
+            "args": [
+                "--action=scan",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
         }
     ]
 }

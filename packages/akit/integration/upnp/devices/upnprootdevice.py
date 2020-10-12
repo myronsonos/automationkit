@@ -20,12 +20,82 @@ import os
 import requests
 import threading
 import traceback
+import typing
 
 from urllib.parse import urlparse
 
+from xml.etree.ElementTree import tostring as xml_tostring
+from xml.etree.ElementTree import fromstring as xml_fromstring
+from xml.etree.ElementTree import ElementTree, Element, SubElement
+from xml.etree.ElementTree import register_namespace
+
 from akit.integration.upnp.upnpprotocol import MSearchKeys
-from akit.integration.upnp.devices.upnpdevice import UpnpDevice
-from akit.integration.upnp.xml.upnpdevice1 import UpnpDevice1Device, UpnpDevice1SpecVersion
+from akit.integration.upnp.devices.upnpdevice import UpnpDevice, normalize_name_for_path
+from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE, UpnpDevice1Device, UpnpDevice1SpecVersion
+
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_EMBEDDEDDEVICES
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_ROOTDEVICES
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_SERVICES
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_EMBEDDEDDEVICES
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_ROOTDEVICES
+from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_SERVICES
+
+from akit.integration import upnp as upnp_module
+
+from akit.xlogging import getAutomatonKitLogger
+
+UPNP_DIR = os.path.dirname(upnp_module.__file__)
+
+def device_description_load(location):
+    docTree = None
+
+    resp = requests.get(location)
+    if resp.status_code == 200:
+        xmlcontent = resp.content
+
+        docTree = ElementTree(xml_fromstring(xmlcontent))
+
+    return  docTree
+
+
+def device_description_find_components(location, docTree, namespaces={"": UPNP_DEVICE1_NAMESPACE}):
+
+    devNode = docTree.find("device", namespaces=namespaces)
+
+    urlBase = None
+    baseURLNode = devNode.find("URLBase", namespaces=namespaces)
+    if baseURLNode is not None:
+        urlBase = baseURLNode.text
+
+    url_parts = urlparse(location)
+    host = url_parts.netloc
+
+    # If urlBase was not set we need to try to use the schema and host as the urlBase
+    if urlBase is None:
+        urlBase = "%s://%s" % (url_parts.scheme, host)
+
+    manufacturer = None
+    modelName = None
+    modelNumber = None
+    modelDescription = None
+
+    manufacturerNode = devNode.find("manufacturer", namespaces=namespaces)
+    if manufacturerNode is not None:
+        manufacturer = manufacturerNode.text
+
+    modelNameNode = devNode.find("modelName", namespaces=namespaces)
+    if modelNameNode is not None:
+        modelName = modelNameNode.text
+
+    modelNumberNode = devNode.find("modelNumber", namespaces=namespaces)
+    if modelNumberNode is not None:
+        modelNumber = modelNumberNode.text
+
+    modelDescNode = devNode.find("modelDescription", namespaces=namespaces)
+    if modelDescNode is not None:
+        modelDescription = modelDescNode.text
+
+    return devNode, urlBase, manufacturer, modelName, modelNumber, modelDescription
 
 class UpnpRootDevice(UpnpDevice):
     """
@@ -59,6 +129,8 @@ class UpnpRootDevice(UpnpDevice):
         self._device_descriptions = {}
 
         self._mode = None
+
+        self._logger = getAutomatonKitLogger()
 
         self._lock = threading.RLock()
         return
@@ -153,34 +225,88 @@ class UpnpRootDevice(UpnpDevice):
         device = self._devices[device_type]
         return device
 
-    def record_description(self, root_dir):
+    def record_description(self, urlBase: str, manufacturer: str, modelName: str, docTree: typing.Any, devNode: typing.Any, namespaces: str, force_recording: bool = False):
 
-        if not os.path.exists(root_dir):
-            os.makedirs(root_dir)
+        manufacturerNormalized = normalize_name_for_path(manufacturer)
+        modelName = normalize_name_for_path(modelName)
 
-        mfg_folder = self.description.manufacturer.replace(" ", "")
-        modelName = self.description.modelName
+        root_dev_dir = os.path.join(DIR_UPNP_GENERATOR_DYNAMIC_ROOTDEVICES, manufacturerNormalized)
+        if not os.path.exists(root_dev_dir):
+            os.makedirs(root_dev_dir)
+        
+        root_dev_def_file = os.path.join(root_dev_dir, modelName + ".xml")
+        if force_recording or not os.path.exists(root_dev_def_file):
+            docNode = docTree.getroot()
+            register_namespace('', namespaces[''])
+            pretty_dev_content = xml_tostring(docNode, short_empty_elements=False)
+            with open(root_dev_def_file, 'wb') as rddf:
+                rddf.write(pretty_dev_content)
 
-        resp = requests.get(self._location)
-        if resp.status_code == 200:
-            root_dev_desc_folder = os.path.join(root_dir, 'rootdevices', mfg_folder)
-            if not os.path.exists(root_dev_desc_folder):
-                os.makedirs(root_dev_desc_folder)
+        embDevList = devNode.find("deviceList", namespaces=namespaces)
+        if embDevList is not None:
+            for embDevNode in embDevList:
+                self._record_embedded_device( manufacturerNormalized, embDevNode, namespaces)
 
-            destDescFile = os.path.join(root_dev_desc_folder, modelName + ".xml")
-            with open(destDescFile, 'wb') as rdf:
-                rdf.write(resp.content)
+        svcList = devNode.find("serviceList", namespaces=namespaces)
+        if svcList is not None:
+            for svcNode in svcList:
+                self._record_service( urlBase, manufacturerNormalized, svcNode, namespaces)
 
-            emb_dev_desc_folder = os.path.join(root_dir, 'embeddeddevices')
-            if not os.path.exists(emb_dev_desc_folder):
-                os.makedirs(emb_dev_desc_folder)
+        return
+    
+    def _record_embedded_device(self, manufacturer: str, embDevNode: typing.Any, namespaces: str, force_recording: bool = False):
 
-            for ddesc in self.device_descriptions:
-                for sdesc in ddesc.services_descriptions:
-                    pass
+        deviceTypeNode = embDevNode.find("deviceType", namespaces=namespaces)
+        if deviceTypeNode is not None:
+            deviceType = deviceTypeNode.text
 
-            for sdesc in self.services_descriptions:
-                pass
+            dyn_dev_dir = os.path.join(DIR_UPNP_GENERATOR_DYNAMIC_EMBEDDEDDEVICES, manufacturer)
+            if not os.path.exists(dyn_dev_dir):
+                os.makedirs(dyn_dev_dir)
+
+            dyn_dev_filename = os.path.join(dyn_dev_dir, deviceType + ".xml")
+            if force_recording or not os.path.exists(dyn_dev_filename):
+                pretty_sl_content = ""
+
+                srcSvcListNode = embDevNode.find("serviceList", namespaces=namespaces)
+                if srcSvcListNode is not None:
+                    register_namespace('', namespaces[''])
+                    pretty_sl_content = xml_tostring(srcSvcListNode)
+
+                with open(dyn_dev_filename, 'wb') as edf:
+                    edf.write(b"<device>\n")
+                    edf.write(pretty_sl_content)
+                    edf.write(b"</device\n")
+
+        return
+
+    def _record_service(self, urlBase: str, manufacturer: str, svcNode: typing.Any, namespaces: str, force_recording: bool = False):
+
+        serviceTypeNode = svcNode.find("serviceType", namespaces=namespaces)
+        scpdUrlNode = svcNode.find("SCPDURL", namespaces=namespaces)
+        if serviceTypeNode is not None and scpdUrlNode is not None:
+            serviceType = serviceTypeNode.text
+
+            scpdUrl = scpdUrlNode.text
+            if urlBase is not None:
+                scpdUrl = urlBase.rstrip("/") + "/" + scpdUrl.lstrip("/")
+
+            dyn_service_dir = os.path.join(DIR_UPNP_GENERATOR_DYNAMIC_SERVICES, manufacturer)
+            if not os.path.exists(dyn_service_dir):
+                os.makedirs(dyn_service_dir)
+
+            dyn_svc_filename = os.path.join(dyn_service_dir, serviceType + ".xml")
+            if force_recording or not os.path.exists(dyn_svc_filename):
+                try:
+                    resp = requests.get(scpdUrl)
+                    if resp.status_code == 200:
+                        svc_content = resp.content
+                        with open(dyn_svc_filename, 'wb') as sdf:
+                            sdf.write(svc_content)
+                    else:
+                        self._logger.warn("Unable to retrieve service description for manf=%s st=%s url=%s" % (manufacturer, serviceType, scpdUrl))
+                except Exception:
+                    self._logger.exception("Exception while retreiving service description.")
 
         return
 

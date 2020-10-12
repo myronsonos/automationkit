@@ -30,6 +30,12 @@ import requests
 
 UPNP_SERVICE1_NAMESPACE = "urn:schemas-upnp-org:service-1-0"
 
+TRANSLATE_TABLE_NORMALIZE_FOR_PATH = str.maketrans(",.:;", "    ")
+
+def normalize_name_for_path(name):
+    norm_name = name.translate(TRANSLATE_TABLE_NORMALIZE_FOR_PATH).replace(" ", "")
+    return norm_name
+
 class UpnpDevice:
     """
         The UPNP Root device is the base device for the hierarchy that is

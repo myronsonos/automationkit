@@ -21,6 +21,9 @@ from akit.integration import upnp as upnp_module
 from akit.exceptions import AKitSemanticError, AKitTimeoutError
 
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
+from akit.integration.upnp.devices.upnprootdevice import device_description_load
+from akit.integration.upnp.devices.upnprootdevice import device_description_find_components
+
 from akit.integration.upnp.upnpfactory import UpnpFactory
 from akit.integration.upnp.upnpprotocol import MSearchKeys, UpnpProtocol
 from akit.integration.upnp.upnpprotocol import msearch_parse_request, notify_parse_request
@@ -34,14 +37,6 @@ from akit.xlogging import getAutomatonKitLogger
 EMPTY_LIST = []
 
 UPNP_DIR = os.path.dirname(upnp_module.__file__)
-
-GENERATOR_DYNAMIC_ROOTDEVICES_DIR = os.path.join(UPNP_DIR, "generator", "dynamic", "rootdevices")
-GENERATOR_DYNAMIC_EMBEDDEDDEVICES_DIR = os.path.join(UPNP_DIR, "generator", "dynamic", "embeddeddevices")
-GENERATOR_DYNAMIC_SERVICES_DIR = os.path.join(UPNP_DIR, "generator", "dynamic", "services")
-
-GENERATOR_STANDARD_ROOTDEVICES_DIR = os.path.join(UPNP_DIR, "generator", "standard", "rootdevices")
-GENERATOR_STANDARD_EMBEDDEDDEVICES_DIR = os.path.join(UPNP_DIR, "generator", "standard", "embeddeddevices")
-GENERATOR_STANDARD_SERVICES_DIR = os.path.join(UPNP_DIR, "generator", "standard", "services")
 
 class UpnpCoordinator:
 
@@ -166,7 +161,7 @@ class UpnpCoordinator:
 
         return found
 
-    def startup_scan(self, upnp_hint_list, watchlist=None, exclude_interfaces=[], response_timeout=45, retry=2):
+    def startup_scan(self, upnp_hint_list, watchlist=None, exclude_interfaces=[], response_timeout=45, retry=2, force_recording=False):
         """
             Starts up and initilizes the UPNP coordinator by utilizing a hint list to determine
             what network interfaces to setup UPNP monitoring on.
@@ -198,7 +193,7 @@ class UpnpCoordinator:
             devmsg += "    %s\n" % dkey
             addr = dval[MSearchKeys.IP]
             location = dval[MSearchKeys.LOCATION]
-            self._update_root_device(addr, location, dval)
+            self._update_root_device(addr, location, dval, force_recording=force_recording)
         devmsg += "\n"
 
         devmsg += "MATCHING DEVICES:\n"
@@ -210,7 +205,7 @@ class UpnpCoordinator:
         for dkey, dval in found_devices.items():
             addr = dval[MSearchKeys.IP]
             location = dval[MSearchKeys.LOCATION]
-            self._update_root_device(addr, location, dval)
+            self._update_root_device(addr, location, dval, force_recording=force_recording)
         
         ifacelist = []
         for dev in matching_devices.values():
@@ -260,97 +255,6 @@ class UpnpCoordinator:
         
         if usn in self._watched_devices:
             self._process_device_notification(usn, target, subtype)
-
-        return
-
-    def _record_embedded_device(self, manufacturer: str, embDevNode: typing.Any, namespaces: str):
-
-        deviceTypeNode = embDevNode.find("deviceType", namespaces=namespaces)
-        if deviceTypeNode is not None:
-            deviceType = deviceTypeNode.text
-
-            std_dev_filename = os.path.join(GENERATOR_STANDARD_EMBEDDEDDEVICES_DIR, deviceType + ".xml")
-            if not os.path.exists(std_dev_filename):
-
-                dyn_dev_dir = os.path.join(GENERATOR_DYNAMIC_EMBEDDEDDEVICES_DIR, manufacturer)
-                if not os.path.exists(dyn_dev_dir):
-                    os.makedirs(dyn_dev_dir)
-
-                dyn_dev_filename = os.path.join(dyn_dev_dir, deviceType + ".xml")
-                if not os.path.exists(dyn_dev_filename):
-                    pretty_sl_content = ""
-
-                    srcSvcListNode = embDevNode.find("serviceList", namespaces=namespaces)
-                    if srcSvcListNode is not None:
-                        register_namespace('', namespaces[''])
-                        pretty_sl_content = xml_tostring(srcSvcListNode)
-
-                    with open(dyn_dev_filename, 'wb') as edf:
-                        edf.write(b"<device>\n")
-                        edf.write(pretty_sl_content)
-                        edf.write(b"</device\n")
-
-        return
-
-    def _record_root_device(self, urlBase: str, manufacturer: str, modelNumber: str, docTree: typing.Any, devNode: typing.Any, namespaces: str):
-
-        manufacturerNormalized = self._normalize_name(manufacturer)
-        modelNumberNormalized = self._normalize_name(modelNumber)
-
-        root_dev_dir = os.path.join(GENERATOR_DYNAMIC_ROOTDEVICES_DIR, manufacturerNormalized)
-        if not os.path.exists(root_dev_dir):
-            os.makedirs(root_dev_dir)
-        
-        root_dev_def_file = os.path.join(root_dev_dir, modelNumberNormalized + ".xml")
-        if not os.path.exists(root_dev_def_file):
-            docNode = docTree.getroot()
-            register_namespace('', namespaces[''])
-            pretty_dev_content = xml_tostring(docNode, short_empty_elements=False)
-            with open(root_dev_def_file, 'wb') as rddf:
-                rddf.write(pretty_dev_content)
-
-            embDevList = devNode.find("deviceList", namespaces=namespaces)
-            if embDevList is not None:
-                for embDevNode in embDevList:
-                    self._record_embedded_device( manufacturerNormalized, embDevNode, namespaces)
-
-            svcList = devNode.find("serviceList", namespaces=namespaces)
-            if svcList is not None:
-                for svcNode in svcList:
-                    self._record_service( urlBase, manufacturerNormalized, svcNode, namespaces)
-
-        return
-
-    def _record_service(self, urlBase: str, manufacturer: str, svcNode: typing.Any, namespaces: str):
-
-        serviceTypeNode = svcNode.find("serviceType", namespaces=namespaces)
-        scpdUrlNode = svcNode.find("SCPDURL", namespaces=namespaces)
-        if serviceTypeNode is not None and scpdUrlNode is not None:
-            serviceType = serviceTypeNode.text
-
-            scpdUrl = scpdUrlNode.text
-            if urlBase is not None:
-                scpdUrl = urlBase.rstrip("/") + "/" + scpdUrl.lstrip("/")
-
-            std_svc_filename = os.path.join(GENERATOR_STANDARD_SERVICES_DIR, serviceType + ".xml")
-            if not os.path.exists(std_svc_filename):
-
-                dyn_service_dir = os.path.join(GENERATOR_DYNAMIC_SERVICES_DIR, manufacturer)
-                if not os.path.exists(dyn_service_dir):
-                    os.makedirs(dyn_service_dir)
-
-                dyn_svc_filename = os.path.join(dyn_service_dir, serviceType + ".xml")
-                if not os.path.exists(dyn_svc_filename):
-                    try:
-                        resp = requests.get(scpdUrl)
-                        if resp.status_code == 200:
-                            svc_content = resp.content
-                            with open(dyn_svc_filename, 'wb') as sdf:
-                                sdf.write(svc_content)
-                        else:
-                            self._logger.warn("Unable to retrieve service description for manf=%s st=%s url=%s" % (manufacturer, serviceType, scpdUrl))
-                    except Exception:
-                        self._logger.exception("Exception while retreiving service description.")
 
         return
 
@@ -469,7 +373,7 @@ class UpnpCoordinator:
         
         return
 
-    def _update_root_device(self, ip_addr: str, location: str, deviceinfo: dict):
+    def _update_root_device(self, ip_addr: str, location: str, deviceinfo: dict, force_recording: bool = False):
         """
         """
         
@@ -480,81 +384,50 @@ class UpnpCoordinator:
                 usn = deviceinfo[MSearchKeys.USN]
                 devuuid = usn.split("::")[0]
 
-                resp = requests.get(location)
-                if resp.status_code == 200:
-                    xmlcontent = resp.content
+                docTree = device_description_load(location)
+    
+                try:
+                    # {urn:schemas-upnp-org:device-1-0}root
+                    namespaces = {"": UPNP_DEVICE1_NAMESPACE}
+
+                    deviceDescParts = device_description_find_components(location, docTree, namespaces=namespaces)
+                    devNode, urlBase, manufacturer, modelName, modelNumber, modelDescription = deviceDescParts
 
                     try:
-                        docTree = ElementTree(xml_fromstring(xmlcontent))
+                        # Acquire the lock before we decide if the location exists in the children table
+                        self._lock.acquire()
+                        if location not in self._children:
+                            try:
+                                # Unlock while we do some expensive stuff, we have already decided to
+                                # create the device
+                                self._lock.release()
 
-                        # {urn:schemas-upnp-org:device-1-0}root
-                        namespaces = {"": UPNP_DEVICE1_NAMESPACE}
+                                # We create the device
+                                rootdev = self._create_root_device(manufacturer, modelNumber, modelDescription)
+                                if type(rootdev) == UpnpRootDevice:
+                                    rootdev.record_description(urlBase, manufacturer, modelName, docTree, devNode, namespaces=namespaces, force_recording=force_recording)
 
-                        devNode = docTree.find("device", namespaces=namespaces)
+                                rootdev.initialize(location, deviceinfo)
 
-                        urlBase = None
-                        baseURLNode = devNode.find("URLBase", namespaces=namespaces)
-                        if baseURLNode is not None:
-                            urlBase = baseURLNode.text
-
-                        url_parts = urlparse(location)
-                        host = url_parts.netloc
-
-                        # If urlBase was not set we need to try to use the schema and host as the urlBase
-                        if urlBase is None:
-                            urlBase = "%s://%s" % (url_parts.scheme, host)
-
-                        manufacturer = None
-                        modelNumber = None
-                        modelDescription = None
-
-                        manufacturerNode = devNode.find("manufacturer", namespaces=namespaces)
-                        if manufacturerNode is not None:
-                            manufacturer = manufacturerNode.text
-
-                        modelNumberNode = devNode.find("modelNumber", namespaces=namespaces)
-                        if modelNumberNode is not None:
-                            modelNumber = modelNumberNode.text
-
-                        modelDescNode = devNode.find("modelDescription", namespaces=namespaces)
-                        if modelDescNode is not None:
-                            modelDescription = modelDescNode.text
-
-                        try:
-                            # Acquire the lock before we decide if the location exists in the children table
-                            self._lock.acquire()
-                            if location not in self._children:
-                                try:
-                                    # Unlock while we do some expensive stuff, we have already decided to
-                                    # create the device
-                                    self._lock.release()
-
-                                    # We create the device
-                                    rootdev = self._create_root_device(manufacturer, modelNumber, modelDescription)
-                                    if type(rootdev) == UpnpRootDevice:
-                                        self._record_root_device(urlBase, manufacturer, modelNumber, docTree, devNode, namespaces)
-
-                                    rootdev.initialize(location, deviceinfo)
-
-                                    # Refresh the description
-                                    rootdev.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
-                                finally:
-                                    self._lock.acquire()
-
-                                # If the device is still not in the table, add it
-                                if location not in self._children:
-                                    self._children[location] = rootdev
-                            else:
-                                rootdev = self._children[location]
                                 # Refresh the description
                                 rootdev.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
-                        finally:
-                            self._lock.release()
-                    except:
-                        errmsg = "ERROR: Unable to parse description for. IP: %s LOCATION: %s\n" % (ip_addr, location)
-                        for k, v in deviceinfo.items():
-                            errmsg += "    %s: %s\n" % (k, v)
-                        self._logger.debug(errmsg)
+                            finally:
+                                self._lock.acquire()
+
+                            # If the device is still not in the table, add it
+                            if location not in self._children:
+                                self._children[location] = rootdev
+                        else:
+                            rootdev = self._children[location]
+                            # Refresh the description
+                            rootdev.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
+                    finally:
+                        self._lock.release()
+                except:
+                    errmsg = "ERROR: Unable to parse description for. IP: %s LOCATION: %s\n" % (ip_addr, location)
+                    for k, v in deviceinfo.items():
+                        errmsg += "    %s: %s\n" % (k, v)
+                    self._logger.debug(errmsg)
             except:
                 errmsg = "ERROR: Unable to parse description for. IP: %s LOCATION: %s\n" % (ip_addr, location)
                 for k, v in deviceinfo.items():
