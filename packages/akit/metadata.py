@@ -15,6 +15,7 @@ __maintainer__ = "Myron Walker"
 __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
+
 class Category:
     """
         The 'Category' decorator allows test engineers to associate categories with individual test
