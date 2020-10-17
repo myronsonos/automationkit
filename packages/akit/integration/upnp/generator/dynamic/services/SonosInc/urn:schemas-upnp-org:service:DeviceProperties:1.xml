@@ -29,7 +29,7 @@
       <name>TargetRoomName</name>
       <dataType>string</dataType>
     </stateVariable>
-    <stateVariable sendEvents="yes">
+     <stateVariable sendEvents="yes">
       <name>Invisible</name>
       <dataType>boolean</dataType>
     </stateVariable>
@@ -238,23 +238,6 @@
       <name>KeepGrouped</name>
       <dataType>boolean</dataType>
     </stateVariable>
-    <stateVariable sendEvents="no">
-      <name>A_ARG_TYPE_RoomDetectionChirpChannel</name>
-      <dataType>ui2</dataType>
-      <allowedValueRange>
-        <minimum>0</minimum>
-        <maximum>7</maximum>
-        <step>1</step>
-      </allowedValueRange>
-    </stateVariable>
-    <stateVariable sendEvents="no">
-      <name>A_ARG_TYPE_RoomDetectionDurationMilliseconds</name>
-      <dataType>ui4</dataType>
-    </stateVariable>
-    <stateVariable sendEvents="no">
-      <name>A_ARG_TYPE_RoomDetectionPlayId</name>
-      <dataType>ui4</dataType>
-    </stateVariable>
   </serviceStateTable>
   <actionList>
     <action>
@@ -294,8 +277,8 @@
           <name>ChannelMapSet</name>
           <direction>in</direction>
           <relatedStateVariable>ChannelMapSet</relatedStateVariable>
-        </argument>
-        <argument>
+           </argument>
+           <argument>
           <name>KeepGrouped</name>
           <direction>in</direction>
           <relatedStateVariable>KeepGrouped</relatedStateVariable>
@@ -634,36 +617,6 @@
           <name>CurrentButtonLockState</name>
           <direction>out</direction>
           <relatedStateVariable>ButtonLockState</relatedStateVariable>
-        </argument>
-      </argumentList>
-    </action>
-    <action>
-      <name>RoomDetectionStartChirping</name>
-      <argumentList>
-        <argument>
-          <name>Channel</name>
-          <direction>in</direction>
-          <relatedStateVariable>A_ARG_TYPE_RoomDetectionChirpChannel</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>DurationMilliseconds</name>
-          <direction>in</direction>
-          <relatedStateVariable>A_ARG_TYPE_RoomDetectionDurationMilliseconds</relatedStateVariable>
-        </argument>
-        <argument>
-          <name>PlayId</name>
-          <direction>out</direction>
-          <relatedStateVariable>A_ARG_TYPE_RoomDetectionPlayId</relatedStateVariable>
-        </argument>
-      </argumentList>
-    </action>
-    <action>
-      <name>RoomDetectionStopChirping</name>
-      <argumentList>
-        <argument>
-          <name>PlayId</name>
-          <direction>in</direction>
-          <relatedStateVariable>A_ARG_TYPE_RoomDetectionPlayId</relatedStateVariable>
         </argument>
       </argumentList>
     </action>

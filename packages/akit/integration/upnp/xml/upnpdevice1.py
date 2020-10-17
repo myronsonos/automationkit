@@ -135,7 +135,8 @@ class UpnpDevice1Service:
             <SCPDURL>/xml/AlarmClock1.xml</SCPDURL>
         </service>
     """
-    def __init__(self, svcNode, namespaces=None):
+    def __init__(self, svcManufacturer, svcNode, namespaces=None):
+        self._svcManufacturer = svcManufacturer
         self._svcNode = svcNode
         self._namespaces = namespaces
         return
@@ -159,6 +160,10 @@ class UpnpDevice1Service:
     def serviceId(self):
         rtnval = self._find_value("serviceId", namespaces=self._namespaces)
         return rtnval
+
+    @property
+    def serviceManufacturer(self):
+        return self._svcManufacturer
 
     @property
     def serviceType(self):
@@ -327,9 +332,10 @@ class UpnpDevice1Device:
 
     @property
     def serviceList(self):
+        manufacturer = self.manufacturer
         listNode = self._devNode.find("serviceList", namespaces=self._namespaces)
         if listNode is not None:
-            resultList = [ UpnpDevice1Service(child, namespaces=self._namespaces) for child in listNode ]
+            resultList = [ UpnpDevice1Service(manufacturer, child, namespaces=self._namespaces) for child in listNode ]
         return resultList
 
     @property

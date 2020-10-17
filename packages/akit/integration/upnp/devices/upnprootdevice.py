@@ -285,6 +285,7 @@ class UpnpRootDevice(UpnpDevice):
         serviceTypeNode = svcNode.find("serviceType", namespaces=namespaces)
         scpdUrlNode = svcNode.find("SCPDURL", namespaces=namespaces)
         if serviceTypeNode is not None and scpdUrlNode is not None:
+
             serviceType = serviceTypeNode.text
 
             scpdUrl = scpdUrlNode.text
@@ -295,7 +296,7 @@ class UpnpRootDevice(UpnpDevice):
             if not os.path.exists(dyn_service_dir):
                 os.makedirs(dyn_service_dir)
 
-            dyn_svc_filename = os.path.join(dyn_service_dir, serviceType + ".xml")
+            dyn_svc_filename = os.path.join(dyn_service_dir, "%s.xml" % (serviceType,))
             if force_recording or not os.path.exists(dyn_svc_filename):
                 try:
                     resp = requests.get(scpdUrl)
@@ -304,7 +305,7 @@ class UpnpRootDevice(UpnpDevice):
                         with open(dyn_svc_filename, 'wb') as sdf:
                             sdf.write(svc_content)
                     else:
-                        self._logger.warn("Unable to retrieve service description for manf=%s st=%s url=%s" % (manufacturer, serviceType, scpdUrl))
+                        self._logger.warn("Unable to retrieve service description for manf=%s st=%s sid=%s url=%s" % (manufacturer, serviceType, scpdUrl))
                 except Exception:
                     self._logger.exception("Exception while retreiving service description.")
 

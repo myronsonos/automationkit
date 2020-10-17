@@ -19,14 +19,15 @@ __license__ = "MIT"
 import os
 
 from akit.exceptions import AKitSemanticError
+from akit.extensible import generate_extension_key
 
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.devices.upnpembeddeddevice import UpnpEmbeddedDevice
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 from akit.integration.upnp.services.upnpserviceproxy import UpnpServiceProxy
 
-from akit.integration.upnp.extensions import devices as device_extensions
-from akit.integration.upnp.extensions import services as service_extensions
+from akit.integration.upnp.extensions import dynamic as dynamic_extensions
+from akit.integration.upnp.extensions import standard as standard_extensions
 
 from akit.extensible import collect_extensions_under_module
 
@@ -57,13 +58,15 @@ class UpnpFactory:
             self._embedded_device_registry = {}
             self._root_device_registry = {}
             self._service_registry = {}
-            self._scan_for_device_extensions_under_module(device_extensions)
-            self._scan_for_service_extensions_under_module(service_extensions)
+            self._scan_for_device_extensions_under_module(dynamic_extensions)
+            self._scan_for_device_extensions_under_module(standard_extensions)
+            self._scan_for_service_extensions_under_module(dynamic_extensions)
+            self._scan_for_service_extensions_under_module(standard_extensions)
         return
 
     def create_embedded_device_instance(self, manufacturer:str, modelNumber: str, modelDescription: str):
         deviceClass = UpnpEmbeddedDevice
-        extkey = UpnpFactory.generate_extension_key(manufacturer, modelNumber, modelDescription)
+        extkey = generate_extension_key(manufacturer, modelNumber, modelDescription)
         if extkey in self._embedded_device_registry:
             deviceClass = self._embedded_device_registry[extkey]
         return deviceClass()
@@ -71,26 +74,19 @@ class UpnpFactory:
     def create_root_device_instance(self, manufacturer:str, modelNumber: str, modelDescription: str):
         deviceClass = UpnpRootDevice
         if manufacturer is not None and modelNumber is not None and modelDescription is not None:
-            extkey = UpnpFactory.generate_extension_key(manufacturer, modelNumber, modelDescription)
+            extkey = generate_extension_key(manufacturer, modelNumber, modelDescription)
             if extkey in self._root_device_registry:
                 deviceClass = self._root_device_registry[extkey]
         return deviceClass()
 
-    def create_service_instance(self, serviceId, serviceType):
+    def create_service_instance(self, serviceManufacturer, serviceType):
         serviceInst = None
         if serviceType is not None:
-            if serviceType == "urn:schemas-upnp-org:service:AlarmClock:1":
-                print("blah")
-            extkey = UpnpFactory.generate_extension_key(serviceType, serviceId)
+            extkey = generate_extension_key(serviceManufacturer, serviceType)
             if extkey in self._service_registry:
                 serviceClass = self._service_registry[extkey]
                 serviceInst = serviceClass()
         return serviceInst
-
-    @staticmethod
-    def generate_extension_key(*parts):
-        extkey = "/".join(parts)
-        return extkey
 
     def _register_root_device(self, extkey, extcls):
         if extkey not in self._root_device_registry:
@@ -103,14 +99,14 @@ class UpnpFactory:
         if extkey not in self._service_registry:
             self._service_registry[extkey] = extcls
         else:
-            raise AKitSemanticError("A service extension with the key=%r was already registered. (%s)" % (extkey, extcls))
+            self._service_registry[extkey] = extcls
         return
 
     def _scan_for_device_extensions_under_module(self, module):
         extcoll = collect_extensions_under_module(module, UpnpRootDevice)
         for extname, extcls in extcoll:
             if hasattr(extcls, "MANUFACTURER") and hasattr(extcls, "MODEL_NUMBER") and hasattr(extcls, "MODEL_DESCRIPTION"):
-                extkey = UpnpFactory.generate_extension_key(getattr(extcls, "MANUFACTURER"),
+                extkey = generate_extension_key(getattr(extcls, "MANUFACTURER"),
                     getattr(extcls, "MODEL_NUMBER"), getattr(extcls, "MODEL_DESCRIPTION"))
                 self._register_root_device(extkey, extcls)
         return
@@ -118,7 +114,9 @@ class UpnpFactory:
     def _scan_for_service_extensions_under_module(self, module):
         extcoll = collect_extensions_under_module(module, UpnpServiceProxy)
         for extname, extcls in extcoll:
-            if (hasattr(extcls, "SERVICE_ID") and hasattr(extcls, "SERVICE_TYPE")):
-                extkey = UpnpFactory.generate_extension_key(getattr(extcls, "SERVICE_ID"), getattr(extcls, "SERVICE_TYPE"))
-                self._register_service(extcls, extkey)
+            if (hasattr(extcls, "SERVICE_MANUFACTURER") and hasattr(extcls, "SERVICE_TYPE")):
+                svc_manufacturer = getattr(extcls, "SERVICE_MANUFACTURER")
+                svc_type = getattr(extcls, "SERVICE_TYPE")
+                extkey = generate_extension_key(svc_manufacturer, svc_type)
+                self._register_service(extkey, extcls)
         return

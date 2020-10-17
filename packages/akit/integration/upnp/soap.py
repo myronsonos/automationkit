@@ -1,17 +1,21 @@
 
 
-from xml.etree.ElementTree import Element, SubElement, QName
+from xml.etree.ElementTree import Element, SubElement, QName, ParseError
 from xml.etree.ElementTree import tostring as xml_tostring
 from xml.etree.ElementTree import fromstring as xml_fromstring
 from xml.etree.ElementTree import register_namespace
 
 from akit.compat import bytes_cast, str_cast
+
 from akit.exceptions import AKitCommunicationsProtocolError
+from akit.integration.upnp.upnperrors import UPNP_ERROR_TEST_LOOKUP
 
 NS_SOAP_ENV = "http://schemas.xmlsoap.org/soap/envelope/"
 NS_SOAP_ENC = "http://schemas.xmlsoap.org/soap/encoding/"
 NS_XSI = "http://www.w3.org/1999/XMLSchema-instance"
 NS_XSD = "http://www.w3.org/1999/XMLSchema"
+
+NS_UPNP_CONTROL = "urn:schemas-upnp-org:control-1-0"
 
 URI_SOAP_ENCODING = "http://schemas.xmlsoap.org/soap/encoding/"
 
@@ -77,17 +81,17 @@ class SoapProcessor:
                 soap_type = PYTHON_TO_SOAP_TYPE_MAP[py_type]
 
                 if soap_type == 'xsd:string':
-                    arg_val = bytes_cast(arg_val)
+                    arg_val = arg_val
                 elif soap_type == 'xsd:int' or soap_type == 'xsd:float':
-                    arg_val = str(argval)
+                    arg_val = str(arg_val)
                 elif soap_type == 'xsd:boolean':
                     arg_val = "1" if arg_val else "0"
 
                 argElement = SubElement(methElement, arg_name)
-                if typed and arg_type:
+                if typed and soap_type:
                     if not isinstance(type, QName):
-                        arg_type = QName(NS_XSD, arg_type)
-                    argElement.set(NS_XSI + "type", arg_type)
+                        soap_type = QName(NS_XSD, soap_type)
+                    argElement.set(NS_XSI + "type", soap_type)
 
                 argElement.text = arg_val
         else:
@@ -130,9 +134,9 @@ class SoapProcessor:
                 soap_type = PYTHON_TO_SOAP_TYPE_MAP[py_type]
 
                 if soap_type == 'xsd:string':
-                    arg_val = bytes_cast(arg_val)
+                    arg_val = arg_val
                 elif soap_type == 'xsd:int' or soap_type == 'xsd:float':
-                    arg_val = str(argval)
+                    arg_val = str(arg_val)
                 elif soap_type == 'xsd:boolean':
                     arg_val = "1" if arg_val else "0"
 
@@ -173,6 +177,7 @@ class SoapProcessor:
             # declaration, which lxml doesn't like.
             docNode = xml_fromstring(content.encode('utf8'))
 
+        resp_body = None
         if typed:
             resp_body = docNode.find(".//{%s}%sResponse" % (typed, action_name))
         else:
@@ -181,7 +186,7 @@ class SoapProcessor:
         if resp_body is None:
             msg = ('Returned XML did not include an element which matches namespace %r and tag name'
                    ' \'%sResponse\'.' % (typed, action_name))
-            print(msg + '\n' + xml_tostring(xml, short_empty_elements=False).decode('utf8'))
+            print(msg + '\n' + xml_tostring(docNode, short_empty_elements=False).decode('utf8'))
             raise SOAPProtocolError(msg)
 
         # Sometimes devices return XML strings as their argument values without escaping them with
@@ -190,9 +195,61 @@ class SoapProcessor:
         for arg in resp_body.getchildren():
             children = arg.getchildren()
             if children:
-                resp_dict[arg.tag] = b"\n".join(xml_tostring(x) for x in children)
+                resp_dict[arg.tag] = "\n".join(xml_tostring(x) for x in children)
             else:
                 resp_dict[arg.tag] = arg.text
 
         return resp_dict
+    
+    def parse_response_error_for_upnp(self, action_name, content, status_code, extra=None, encoding=None, envelope_attrib=None, typed=None):
+
+        register_namespace('', None)
+
+        if encoding is None:
+            encoding = self._encoding
+        if envelope_attrib is None:
+            envelope_attrib = self._envelope_attrib
+        if typed is None:
+            typed = self._typed
+
+        try:
+            docNode = xml_fromstring(content)
+        except ParseError as perr:
+            # Try removing any extra XML declarations in case there are more than one.
+            # This sometimes happens when a device sends its own XML config files.
+            docNode = xml_fromstring(self._remove_extraneous_xml_declarations(content))
+        except ValueError as verr:
+            # This can occur when requests returns a `str` (unicode) but there's also an XML
+            # declaration, which lxml doesn't like.
+            docNode = xml_fromstring(content.encode('utf8'))
+
+        resp_body = None
+        if typed:
+            resp_body = docNode.find(".//{%s}Fault" % (NS_SOAP_ENV,))
+        else:
+            resp_body = docNode.find(".//Fault")
+
+        if resp_body is None:
+            msg = ('Returned XML did not include an element which matches namespace %r and tag name'
+                   ' \'%sFault\'.' % (typed, action_name))
+            print(msg + '\n' + xml_tostring(docNode, short_empty_elements=False).decode('utf8'))
+            raise SOAPProtocolError(msg)
+
+        # Lets try to extract the XML response error information
+        try:
+            faultCode = resp_body.find(".//faultcode").text
+            faultString = resp_body.find(".//faultstring").text
+            detail = resp_body.find(".//detail")
+            upnpErrorNode = detail.find(".//{%s}UPnPError" % NS_UPNP_CONTROL)
+            errorCode = int(upnpErrorNode.find(".//{%s}errorCode" % NS_UPNP_CONTROL).text)
+            errorDescription = upnpErrorNode.find(".//{%s}errorDescription" % NS_UPNP_CONTROL)
+            if errorDescription is None:
+                if errorCode in UPNP_ERROR_TEST_LOOKUP:
+                    errorDescription = UPNP_ERROR_TEST_LOOKUP[errorCode]
+                else:
+                    errorDescription = "Unknown error."
+        except:
+            raise SOAPProtocolError("Unable to process xml response:\n%s" % content)
+
+        return errorCode, errorDescription
 

@@ -23,6 +23,8 @@ from xml.etree.ElementTree import dump as dump_node
 from xml.etree.ElementTree import ElementTree
 
 from akit.exceptions import AKitNotOverloadedError
+from akit.extensible import generate_extension_key
+from akit.paths import normalize_name_for_path
 
 from akit.integration.upnp.upnpprotocol import MSearchKeys
 
@@ -30,11 +32,7 @@ import requests
 
 UPNP_SERVICE1_NAMESPACE = "urn:schemas-upnp-org:service-1-0"
 
-TRANSLATE_TABLE_NORMALIZE_FOR_PATH = str.maketrans(",.:;", "    ")
-
-def normalize_name_for_path(name):
-    norm_name = name.translate(TRANSLATE_TABLE_NORMALIZE_FOR_PATH).replace(" ", "")
-    return norm_name
+from akit.paths import normalize_name_for_path
 
 class UpnpDevice:
     """
@@ -97,8 +95,10 @@ class UpnpDevice:
 
         return svc_content
 
-    def lookup_service(self, service_type):
-        svc = self._services[service_type]
+    def lookup_service(self, serviceManufacturer, serviceType):
+        serviceManufacturer = normalize_name_for_path(serviceManufacturer)
+        svckey = generate_extension_key(serviceManufacturer, serviceType)
+        svc = self._services[svckey]
         return svc
 
     def to_dict(self, brief=False):
@@ -136,17 +136,19 @@ class UpnpDevice:
     def _populate_services_descriptions(self, factory, description):
 
         for serviceInfo in description.serviceList:
-            serviceId = serviceInfo.serviceId
+            serviceManufacturer = normalize_name_for_path(serviceInfo.serviceManufacturer)
             serviceType = serviceInfo.serviceType
 
+            svckey = generate_extension_key(serviceManufacturer, serviceType)
             if serviceType not in self._services_descriptions:
-                self._services_descriptions[serviceType] = serviceInfo
+                self._services_descriptions[svckey] = serviceInfo
 
-                svc_inst = factory.create_service_instance(serviceId, serviceType)
+                svc_inst = factory.create_service_instance(serviceManufacturer, serviceType)
                 if svc_inst is not None:
-                    self._services[serviceType] = svc_inst
+                    svc_inst.proxy_link_service_to_device(self, serviceInfo)
+                    self._services[svckey] = svc_inst
             else:
-                svc_inst = self._services[serviceType]
+                svc_inst = self._services[svckey]
 
         return
 

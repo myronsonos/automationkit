@@ -19,8 +19,11 @@ import os
 from typing import List
 
 from akit.environment.context import Context
+from akit.exceptions import AKitRuntimeError
 
 DIR_TESTRESULTS = None
+
+TRANSLATE_TABLE_NORMALIZE_FOR_PATH = str.maketrans(",.:;", "    ")
 
 def collect_python_modules(searchdir: str) -> List[str]:
     """
@@ -39,6 +42,33 @@ def collect_python_modules(searchdir: str) -> List[str]:
                 pyfiles.append(ffull)
 
     return pyfiles
+
+def ensure_directory_is_module(moduleDir, moduleTitle=None):
+    """
+        Ensures that a directory is represented to python as a module by checking to see if the
+        directory has an __init__.py file and if not it adds one.
+    """
+    serviceDirInit = os.path.join(moduleDir, "__init__.py")
+    if not os.path.exists(serviceDirInit):
+        with open(serviceDirInit, 'w') as initf:
+            initf.write('"""\n')
+            if moduleTitle is not None:
+                initf.write('   %s\n' % moduleTitle)
+            initf.write('"""\n')
+    return
+
+def get_directory_for_module(module):
+    """
+        Returns the directory for a module
+    """
+    if hasattr(module, '__path__'):
+        module_dir = str(module.__path__._path[0]).rstrip(os.sep)
+    elif hasattr(module, '__file__'):
+        module_dir = os.path.dirname(module.__file__).rstrip(os.sep)
+    else:
+        raise AKitRuntimeError("Unable to get parent dir for module")
+
+    return module_dir
 
 def get_expanded_path(path: str) -> str:
     """
@@ -77,3 +107,6 @@ def get_path_for_testresults() -> str:
 
     return DIR_TESTRESULTS
 
+def normalize_name_for_path(name):
+    norm_name = name.translate(TRANSLATE_TABLE_NORMALIZE_FOR_PATH).replace(" ", "")
+    return norm_name

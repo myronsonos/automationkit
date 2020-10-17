@@ -24,6 +24,7 @@ from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 from akit.integration.upnp.devices.upnprootdevice import device_description_load
 from akit.integration.upnp.devices.upnprootdevice import device_description_find_components
 
+from akit.integration.upnp.upnperrors import UpnpError
 from akit.integration.upnp.upnpfactory import UpnpFactory
 from akit.integration.upnp.upnpprotocol import MSearchKeys, UpnpProtocol
 from akit.integration.upnp.upnpprotocol import msearch_parse_request, notify_parse_request
@@ -439,18 +440,37 @@ class UpnpCoordinator:
 
 
 if __name__ == "__main__":
+
     from akit.integration.landscaping import Landscape
 
 
     lscape = Landscape()
     upnp_hint_list = lscape.get_upnp_device_lookup_table()
-    
+
     upnpcoord = UpnpCoordinator()
     upnpcoord.startup_scan(upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=['lo'])
 
     firstdev = upnpcoord.watch_devices[0]
     print(type(firstdev))
+    print(firstdev)
 
-    aclock = firstdev.serviceAlarmClock()
+    devProps = firstdev.serviceDeviceProperties()
+
+    value = devProps.action_GetLEDState()
+
+    LEDSTATES = ["Off", "On"]
+
+    nxt_state_index = 0
+    while True:
+        nxt_state = LEDSTATES[nxt_state_index]
+        try:
+            devProps.action_SetLEDState(nxt_state)
+        except UpnpError as upnperr:
+            print(upnperr)
+        except Exception as xcpt:
+            errmsg = traceback.format_exc()
+            print(errmsg)
+        time.sleep(2)
+        nxt_state_index = (nxt_state_index + 1) % 2
 
     time.sleep(600)

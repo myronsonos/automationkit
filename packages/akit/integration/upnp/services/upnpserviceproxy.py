@@ -2,9 +2,10 @@
 import requests
 import traceback
 
-
+from xml.etree.ElementTree import fromstring as xml_fromstring
 
 from akit.integration.upnp.soap import SoapProcessor, SOAPError, SOAPProtocolError, SOAP_TIMEOUT
+from akit.integration.upnp.upnperrors import UpnpError
 
 class UpnpServiceProxy:
     """
@@ -14,16 +15,18 @@ class UpnpServiceProxy:
     SERVICE_TYPE = None
 
     def __init__(self):
+        self._device = None
+        self._soap_processor = SoapProcessor()
+
         self._host = None
         self._baseURL = None
-        self._description = None
-        self._soap_processor = SoapProcessor()
 
         self._controlURL = None
         self._eventSubURL = None
         self._SCPDURL = None
-        self._serviceId = None
         self._serviceType = None
+
+        self._serviceId = None
 
         self._validate_parameter_values = True
         return
@@ -56,16 +59,18 @@ class UpnpServiceProxy:
     def serviceType(self):
         return self._serviceType
 
-    def proxy_update_description(self, host, baseURL, description):
-        self._host = host
-        self._baseURL = baseURL
-        self._description = description
+    def proxy_link_service_to_device(self, device, service_description):
 
-        self._controlURL = self._description.controlURL
-        self._eventSubURL = self._description.eventSubURL
-        self._SCPDURL = self._description.SCPDURL
-        self._serviceId = self._description.serviceId
-        self._serviceType = self._description.serviceType
+        self._device = device
+
+        self._host = device.host
+        self._baseURL = device.URLBase
+
+        self._controlURL = service_description.controlURL
+        self._eventSubURL = service_description.eventSubURL
+        self._SCPDURL = service_description.SCPDURL
+        self._serviceId = service_description.serviceId
+        self._serviceType = service_description.serviceType
 
         return
 
@@ -103,6 +108,7 @@ class UpnpServiceProxy:
         }
         call_headers.update(headers)
 
+        resp = None
         try:
             resp = requests.post(
                 call_url,
@@ -113,23 +119,42 @@ class UpnpServiceProxy:
             )
             resp.raise_for_status()
         except requests.exceptions.HTTPError as exc:
-            # If the body of the error response contains XML then it should be a UPnP error,
-            # otherwise reraise the HTTPError.
+            if resp is not None:
+                # If the body of the error response contains XML then it should be a UPnP error,
+                # extract the UPnP error information and raise a UpnpError
+                content_type = resp.headers["CONTENT-TYPE"]
+                if content_type.find('text/xml') == -1:
+                    raise
+        except:
             errmsg = traceback.format_exc()
             print(errmsg)
             raise
 
         resp_content = resp.content.strip()
 
-        resp_dict = self._soap_processor.parse_response(action_name, resp_content, typed=self.serviceType)
+        resp_dict = None
+        status_code = resp.status_code
+        if status_code >= 200 and status_code < 300:
+            resp_dict = self._soap_processor.parse_response(action_name, resp_content, typed=self.serviceType)
+        else:
+            errorCode, errorDescription = self._soap_processor.parse_response_error_for_upnp(action_name, resp_content, status_code, typed=self.serviceType)
+            raise UpnpError(errorCode, errorDescription, "host=%s action=%s args=%s" % (self._host, action_name, repr(arguments)))
 
         return resp_dict
 
     def proxy_get_variable_value(self, var_name):
         var_value = None
 
+        action_name = "Get" + var_name
+
+        resp_dict = self.proxy_call_action(action_name)
+
         return var_value
 
     def proxy_set_variable_value(self, var_name, var_value):
+
+        action_name = "Set" + var_name
+
+        resp_dict = self.proxy_call_action(action_name)
 
         return

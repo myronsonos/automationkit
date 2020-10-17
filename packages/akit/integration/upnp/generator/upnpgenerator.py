@@ -8,13 +8,22 @@ from argparse import ArgumentParser, ArgumentError
 from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import fromstring as xml_fromstring
 
-from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
-from akit.integration.upnp.extensions import services as services_extensions
+from akit.paths import ensure_directory_is_module
 
+from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 
 from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS
+
 from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS_DYNAMIC
+from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS_DYNAMIC_EMBEDDEDDEVICES
+from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS_DYNAMIC_ROOTDEVICES
+from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS_DYNAMIC_SERVICES
+
 from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS_STANDARD
+from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS_STANDARD_EMBEDDEDDEVICES
+from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS_STANDARD_ROOTDEVICES
+from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS_STANDARD_SERVICES
+
 
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR
 
@@ -48,8 +57,8 @@ class %(class_name)s(UpnpServiceProxy, LoadableExtension):
         This is a code generated proxy class to the '%(class_name_base)s' service.
     \"""
 
+    SERVICE_MANUFACTURER = '%(service_manufacturer)s'
     SERVICE_TYPE = '%(service_type)s'
-    SERVICE_ID = '%(service_id)s'
 
 """
 
@@ -74,16 +83,22 @@ TEMPLATE_SETTER = """
 """
 
 TEMPLATE_ACTION = """
-    def action_%(action_name)s(self%(in_params_comma)s%(in_params_list)s):
+    def action_%(action_name)s(self%(in_params_comma)s%(in_params_list)s, extract_returns=True):
         \"""
             Calls the %(action_name)s action.
+
+            :returns: %(out_params_list)s
         \"""
         arguments = %(args_dict)s
         out_params = self.proxy_call_action("%(action_name)s", arguments=arguments)
 
-        (%(out_params_list)s,) = out_params
+        rtn_args = out_params
+        if extract_returns:
+            rtn_args = [out_params[k] for k in (%(out_params_list)s,)]
+            if len(rtn_args) == 1:
+                rtn_args = rtn_args[0]
 
-        return %(out_params_list)s
+        return rtn_args
 
 """
 
@@ -97,13 +112,14 @@ def node_strip_text(txt):
         txt = txt.strip()
     return txt
 
-def generate_upnp_service_proxy(destinationDir, serviceType, variablesTable, typesTable, eventsTable, actionsTable):
+def generate_upnp_service_proxy(servicesDir, serviceManufacturer, serviceType, variablesTable, typesTable, eventsTable, actionsTable):
 
-    if not os.path.exists(destinationDir):
-        os.makedirs(destinationDir)
+    if not os.path.exists(servicesDir):
+        os.makedirs(servicesDir)
+
+    ensure_directory_is_module(servicesDir, moduleTitle="Services directory module")
 
     service_type_parts = serviceType.split(":")
-    service_id = ":".join(service_type_parts[:-1])
 
     class_name_base = service_type_parts[3] + service_type_parts[-1]
     class_name = class_name_base + "ServiceProxy"
@@ -112,11 +128,16 @@ def generate_upnp_service_proxy(destinationDir, serviceType, variablesTable, typ
     class_fill_dict = {
         "class_name": class_name,
         "class_name_base": class_name_base,
-        "service_type": serviceType,
-        "service_id": service_id
+        "service_manufacturer": serviceManufacturer,
+        "service_type": serviceType
     }
 
-    dest_file_full = os.path.join(destinationDir, file_base)
+    manufacturerDir = os.path.join(servicesDir, serviceManufacturer)
+    if not os.path.exists(manufacturerDir):
+        os.makedirs(manufacturerDir)
+
+    dest_file_full = os.path.join(manufacturerDir, file_base)
+
     with open(dest_file_full, 'w') as spf:
         spf.write('"""\n')
         spf.write(CONTENT_PROXY_FILE_HEADER)
@@ -148,10 +169,10 @@ def generate_upnp_service_proxy(destinationDir, serviceType, variablesTable, typ
             }
 
             # Generate the getter
-            spf.write(TEMPLATE_GETTER % var_fill_dict)
+            # spf.write(TEMPLATE_GETTER % var_fill_dict)
 
             # Generate the setter
-            spf.write(TEMPLATE_SETTER % var_fill_dict)
+            # spf.write(TEMPLATE_SETTER % var_fill_dict)
 
         action_names_sorted = [ k for k in actionsTable.keys() ]
         action_names_sorted.sort()
@@ -161,7 +182,7 @@ def generate_upnp_service_proxy(destinationDir, serviceType, variablesTable, typ
             action_info = actionsTable[action_name]
 
             in_params_list = ""
-            out_params_list = "result"
+            out_params_list = '"result"'
 
             args_dict = "{ }\n"
             args_in_table = action_info["args_in"]
@@ -178,7 +199,7 @@ def generate_upnp_service_proxy(destinationDir, serviceType, variablesTable, typ
                 in_params_comma = ", "
 
             args_out_table = action_info["args_out"]
-            args_out_keys = action_info["args_out_keys"]
+            args_out_keys = [ '"%s"' % ok for ok in action_info["args_out_keys"] ]
             if len(args_out_keys) > 0:
                 out_params_list = ", ".join(args_out_keys)
 
@@ -207,7 +228,7 @@ def process_action_list(svcActionListNode, namespaces=None):
 
         argumentListNode = actionNode.find("argumentList", namespaces=namespaces)
         if argumentListNode is not None:
-            argumentNodeList = argumentListNode.findall("argument")
+            argumentNodeList = argumentListNode.findall("argument", namespaces=namespaces)
             for argumentNode in argumentNodeList:
                 arg_info = {}
                 arg_name = node_strip_text(argumentNode.find("name", namespaces=namespaces).text)
@@ -231,13 +252,13 @@ def process_action_list(svcActionListNode, namespaces=None):
                 else:
                     raise ValueError("Invalid argument direction %s" % arg_direction)
 
-                action_info = { 
-                    "name": action_name, 
-                    "args_in": args_in_table,
-                    "args_in_keys": args_in_keys,
-                    "args_out": args_out_table,
-                    "args_out_keys": args_out_keys
-                }
+        action_info = { 
+            "name": action_name, 
+            "args_in": args_in_table,
+            "args_in_keys": args_in_keys,
+            "args_out": args_out_table,
+            "args_out_keys": args_out_keys
+        }
 
         actionsTable[action_name] = action_info
 
@@ -295,11 +316,14 @@ def process_service_state_table(svcStateTableNode, namespaces=None):
     return variablesTable, typesTable, eventsTable
 
 
-def generate_service_proxies(svc_desc_directory, proxy_dest_directory):
+def generate_service_proxies(svc_desc_directory, svc_proxy_directory):
 
     for dirpath, dirnames, filenames in os.walk(svc_desc_directory, topdown=True):
         for nxtfile in filenames:
+
             serviceType, nxtfile_ext = os.path.splitext(nxtfile)
+
+            serviceManufacturer = os.path.basename(dirpath)
 
             svc_content = None
 
@@ -313,7 +337,7 @@ def generate_service_proxies(svc_desc_directory, proxy_dest_directory):
                 namespaces = None
                 doc_node_tag = docNode.tag
                 if doc_node_tag.find("}") > 0:
-                    default_ns = doc_node_tag[doc_node_tag.find("{"):doc_node_tag.find("}")]
+                    default_ns = doc_node_tag[doc_node_tag.find("{") + 1:doc_node_tag.find("}")]
                     namespaces = {"": default_ns}
 
                 variablesTable = {}
@@ -324,12 +348,15 @@ def generate_service_proxies(svc_desc_directory, proxy_dest_directory):
                 if svcStateTableNode is not None:
                     variablesTable, typesTable, eventsTable = process_service_state_table(svcStateTableNode, namespaces=namespaces)
 
+                if serviceType.find("DeviceProperties") > 0:
+                    print("found")
+
                 actionsTable = {}
                 actionListNode = docNode.find("actionList", namespaces=namespaces)
                 if actionListNode is not None:
                     actionsTable = process_action_list(actionListNode, namespaces=namespaces)
 
-                generate_upnp_service_proxy(proxy_dest_directory, serviceType, variablesTable, typesTable, eventsTable, actionsTable)
+                generate_upnp_service_proxy(svc_proxy_directory, serviceManufacturer, serviceType, variablesTable, typesTable, eventsTable, actionsTable)
             else:
                 errmsg = "WARNING: No serice node found in file:\n    %s\n" % fullpath
                 print(errmsg, file=sys.stderr)
@@ -357,10 +384,10 @@ def upnpgenerator_main():
 
     elif action == "generate":
         if os.path.exists(DIR_UPNP_GENERATOR_DYNAMIC_SERVICES):
-            generate_service_proxies(DIR_UPNP_GENERATOR_DYNAMIC_SERVICES, DIR_UPNP_EXTENSIONS_DYNAMIC)
+            generate_service_proxies(DIR_UPNP_GENERATOR_DYNAMIC_SERVICES, DIR_UPNP_EXTENSIONS_DYNAMIC_SERVICES)
 
         if os.path.exists(DIR_UPNP_GENERATOR_STANDARD_SERVICES):
-            generate_service_proxies(DIR_UPNP_GENERATOR_STANDARD_SERVICES, DIR_UPNP_EXTENSIONS_STANDARD)
+            generate_service_proxies(DIR_UPNP_GENERATOR_STANDARD_SERVICES, DIR_UPNP_EXTENSIONS_STANDARD_SERVICES)
     else:
         raise ArgumentError("action", "The 'action' argument specified (%s) is not valid." % action)
 

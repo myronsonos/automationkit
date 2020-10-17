@@ -19,6 +19,7 @@ import inspect
 import os
 
 from akit.compat import import_by_name
+from akit.paths import get_directory_for_module
 
 class LoadableExtension:
     """
@@ -44,7 +45,7 @@ def collect_extensions_under_module(module, ext_base_type):
         return result
 
     module_name = module.__name__
-    module_dir = os.path.dirname(module.__file__).rstrip(os.sep)
+    module_dir = get_directory_for_module(module)
     module_parts = module_name.split(".")
     module_root = os.sep.join(module_dir.split(os.sep)[:-len(module_parts)])
     rootlen = len(module_root)
@@ -65,3 +66,7 @@ def collect_extensions_under_module(module, ext_base_type):
             ext_collection.extend(inspect.getmembers(nxtmod, predicate=is_extension_class))
 
     return ext_collection
+
+def generate_extension_key(*parts):
+    extkey = "/".join(parts)
+    return extkey
