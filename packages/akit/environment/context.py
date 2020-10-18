@@ -363,7 +363,6 @@ default_environment = {
     "branch": VARIABLES.AKIT_BRANCH,
     "build": VARIABLES.AKIT_BUILD,
     "jobtype": VARIABLES.AKIT_JOBTYPE,
-    "starttime": datetime.now(),
     "configuration": RUNTIME_CONFIGURATION,
     "output_directory": os.path.expanduser("~/aresults")
 }

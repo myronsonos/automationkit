@@ -18,6 +18,10 @@ __license__ = "MIT"
 
 import os
 
+from datetime import datetime
+
+from akit.xtime import parse_datetime
+
 # Step 1 - Force the default configuration to load if it is not already loaded
 from akit.environment.configuration import RUNTIME_CONFIGURATION
 
@@ -33,7 +37,7 @@ RUNTIME_CONFIGURATION.maps.insert(0, user_config)
 
 # Step 4 - Process environment options
 from akit.environment.options import process_environment_options
-output_dir, console_level, logfile_level, branch, build, flavor = process_environment_options()
+output_dir, console_level, logfile_level, branch, build, flavor, start_time = process_environment_options()
 
 if console_level is None:
     if VARIABLES.AKIT_CONSOLE_LOG_LEVEL is not None and VARIABLES.AKIT_CONSOLE_LOG_LEVEL in LOG_LEVEL_NAMES:
@@ -72,18 +76,28 @@ if flavor is not None:
 else:
     env["flavor"] = VARIABLES.AKIT_FLAVOR
 
+if start_time is not None:
+    starttime = parse_datetime(start_time)
+    env["starttime"] = starttime
+elif VARIABLES.AKIT_STARTTIME is not None:
+    starttime = parse_datetime(start_time)
+    env["starttime"] = starttime
+else:
+    env["starttime"] = datetime.now()
+
 conf = ctx.lookup("/environment/configuration")
 
 fill_dict = {
     "starttime": str(env["starttime"]).replace(" ", "T")
 }
 
-if env["jobtype"] == "unkownjob":
+jobtype = env["jobtype"]
+if jobtype == "unkownjob" or jobtype == "testrun":
     env["jobtype"] = "testrun"
     outdir_template = conf.lookup("/paths/testresults")
     outdir_full = os.path.abspath(os.path.expandvars(os.path.expanduser(outdir_template % fill_dict)))
     env["output_directory"] = outdir_full
-elif env["jobtype"] == "console":
+elif jobtype == "console":
     outdir_template = conf.lookup("/paths/consoleresults")
     outdir_full = os.path.abspath(os.path.expandvars(os.path.expanduser(outdir_template % fill_dict)))
     env["output_directory"] = outdir_full

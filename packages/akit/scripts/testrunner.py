@@ -24,29 +24,21 @@ import uuid
 # We need to load the context first because it will load configuration
 from akit.compat import import_by_name
 from akit.environment.context import Context
-from akit.environment.variables import extend_path
-from akit.paths import get_path_for_testresults
-from akit.xlogging import LEVEL_NAMES, logging_initialize, getAutomatonKitLogger
+from akit.environment.variables import LOG_LEVEL_NAMES, extend_path
+from akit.environment.options import ENVIRONMENT_OPTIONS
 
 import akit.integration.landscaping
 
-from akit.testing.testjob import DefaultTestJob
-from akit.testing.testsequencer import TestSequencer
-from akit.recorders import JsonResultRecorder
-
 def testrunner_main():
     parser = argparse.ArgumentParser()
+
+    for opt_args, opt_kwargs in ENVIRONMENT_OPTIONS:
+        parser.add_argument(*opt_args, **opt_kwargs)
 
     parser.add_argument("-r", "--root", dest="root", action="store", default=".", help="The root directory to scan for tests.")
     parser.add_argument("-j", "--job", dest="job", action="store", default=None, help="The identifier of the job to run.")
     parser.add_argument("-i", "--include", dest="includes", action="append", default=[], help="Add an include search statement.")
     parser.add_argument("-x", "--exclude", dest="excludes", action="append", default=[], help="Add an exclude filter statement.")
-    parser.add_argument("-o", "--output", dest="output", action="store", default=None, help="The output directory where results and artifacts are collected.")
-    parser.add_argument("--console-level", dest="consolelevel", action="store", default="INFO", choices=LEVEL_NAMES, help="The logging level for console output.")
-    parser.add_argument("--logfile-level", dest="logfilelevel", action="store", default="DEBUG", choices=LEVEL_NAMES, help="The logging level for logfile output.")
-    parser.add_argument("--branch", dest="branch", action="store", default=None, help="The name of the branch to associate with the test run results.")
-    parser.add_argument("--build", dest="build", action="store", default=None, help="The build number to associate with the test run results.")
-    parser.add_argument("--flavor", dest="flavor", action="store", default=None, help="The build flavor to associate with the test run results.")
 
     args = parser.parse_args()
 
@@ -68,22 +60,10 @@ def testrunner_main():
         # Make sure we extend PATH to include the test root
         extend_path(test_root)
 
-        # Setup the output directory
-        output_path = args.output
-        if output_path is not None:
-            conf["paths"]["testresults"] = output_path
-
-        test_results_dir = get_path_for_testresults()
-        if not os.path.exists(test_results_dir):
-            os.makedirs(test_results_dir)
-        env["output_directory"] = test_results_dir
-
-        # Setup the logging levels
-        log_levels = {
-            "console": args.consolelevel,
-            "logfile": args.logfilelevel 
-        }
-        conf["logging"]["levels"] = log_levels
+        # We perform activation a little later in the testrunner.py file so we can
+        # handle exceptions in the context of testrunner_main function
+        import akit.environment.activate
+        from akit.xlogging import logging_initialize, getAutomatonKitLogger
 
         # Initialize logging
         logging_initialize()
@@ -100,6 +80,12 @@ def testrunner_main():
         if job is not None and (len(includes) > 0 or len(excludes) > 0):
             errmsg = "The --job arguement cannot be used with the --includes or --excludes flags."
             raise argparse.ArgumentError("--job", errmsg)
+
+        from akit.paths import get_path_for_testresults
+        
+        from akit.testing.testjob import DefaultTestJob
+        from akit.testing.testsequencer import TestSequencer
+        from akit.recorders import JsonResultRecorder
 
         # At this point in the code, we either lookup an existing test job or we create a test job
         # from the includes, excludes or test_module

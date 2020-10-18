@@ -40,7 +40,8 @@
             "program": "${workspaceFolder}/packages/akit/scripts/testrunner.py",
             "args": [
                 "--root=${workspaceFolder}/testroots/internal",
-                "--job=jobs.jobexample@ExampleJob"
+                "--job=jobs.jobexample@ExampleJob",
+                "--start=2020-10-17T15:30:11.989120"
             ],
             "console": "integratedTerminal",
             "justMyCode": false

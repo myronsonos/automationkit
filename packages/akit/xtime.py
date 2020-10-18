@@ -22,6 +22,8 @@ __license__ = "MIT"
 
 import time
 
+from datetime import datetime
+
 FORMAT_DATETIME = "%Y-%m-%dT%H:%M:%S"
 
 def current_time_millis() -> float:
@@ -35,3 +37,11 @@ def format_time_with_fractional(tsecs) -> str:
     frac_comp = (tsecs - sec_comp) * 1000
     dtstr = "%s.%03d" % (time.strftime(FORMAT_DATETIME, time.gmtime(sec_comp)), frac_comp)
     return dtstr
+
+def parse_datetime(dtstr, format=FORMAT_DATETIME):
+    microsecs = 0
+    if dtstr.find(".") > 0:
+        dtstr, msecstr = dtstr.split(".")
+        microsecs = int(msecstr)
+    dtobj = datetime(*time.strptime(dtstr, format)[:6], microsecs)
+    return dtobj

@@ -59,6 +59,10 @@ class VARIABLES:
     if "AKIT_LANDSCAPE_MODULE" in environ:
         AKIT_LANDSCAPE_MODULE = environ["AKIT_LANDSCAPE_MODULE"]
 
+    AKIT_STARTTIME = None
+    if "AKIT_STARTTIME" in environ:
+        AKIT_STARTTIME = environ["AKIT_STARTTIME"]
+
     AKIT_USER_CONFIGURATION = "~/akit/config/userconfig.json"
     if "AKIT_USER_CONFIGURATION" in environ:
         AKIT_USER_CONFIGURATION = environ["AKIT_USER_CONFIGURATION"]

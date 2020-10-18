@@ -26,7 +26,8 @@ ENVIRONMENT_OPTIONS = [
     (("--logfile-level",), { "dest":"logfilelevel", "action":"store", "default":None, "choices":LOG_LEVEL_NAMES, "help":"The logging level for logfile output."}),
     (("--branch",), { "dest": "branch", "action": "store", "default": None, "help": "The name of the branch to associate with the test run results."}),
     (("--build",), { "dest": "build", "action": "store", "default": None, "help": "The name of the build to associate with the test run results."}),
-    (("--flavor",), { "dest": "flavor", "action": "store", "default": None, "help": "The name of the flavor to associate with the test run results."})
+    (("--flavor",), { "dest": "flavor", "action": "store", "default": None, "help": "The name of the flavor to associate with the test run results."}),
+    (("--start",), { "dest": "start", "action": "store", "default": None, "help": r"A time stamp to associate with the start of the run. Example: 2020-10-17T15:30:11.989120  Bash: date +%Y-%m-%dT%H:%M:%S.%N"})
 ]
 
 def process_environment_options():
@@ -53,5 +54,6 @@ def process_environment_options():
     branch = args.branch
     build = args.build
     flavor = args.flavor
+    start_time = args.start
 
-    return output_dir, console_level, logfile_level, branch, build, flavor
+    return output_dir, console_level, logfile_level, branch, build, flavor, start_time
