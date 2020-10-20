@@ -424,7 +424,7 @@ class Landscape:
 
         if len(upnp_device_list) > 0:
             self._has_upnp_devices = True
-            upnp_hint_list = [devinfo["upnp"]["USN"] for devinfo in upnp_device_list]
+            upnp_hint_list = self.get_upnp_device_lookup_table()
             self._upnp_coord = UpnpCoordinator()
             self._upnp_coord.startup_scan(upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=["lo"])
 

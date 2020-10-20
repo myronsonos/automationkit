@@ -445,11 +445,9 @@ if __name__ == "__main__":
 
 
     lscape = Landscape()
-    upnp_hint_list = lscape.get_upnp_device_lookup_table()
+    lscape.first_contact()
 
-    upnpcoord = UpnpCoordinator()
-    upnpcoord.startup_scan(upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=['lo'])
-
+    upnpcoord = lscape.upnp_coord
     firstdev = upnpcoord.watch_devices[0]
     print(type(firstdev))
     print(firstdev)
