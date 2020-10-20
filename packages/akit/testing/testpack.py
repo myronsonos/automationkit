@@ -18,7 +18,11 @@ __license__ = "MIT"
 
 import inspect
 
-from akit.mixins.scope import ScopeMixIn
+from akit.mixins.scope import ScopeMixIn, is_scope_mixin
+
+from akit.xlogging import getAutomatonKitLogger
+
+logger = getAutomatonKitLogger()
 
 class TestPack(ScopeMixIn):
     """
@@ -71,73 +75,6 @@ class TestPack(ScopeMixIn):
 
             (torun, skipped)
         """
-        return
-
-    def run(self, presult):
-        """
-            Runs the tests associated with this :class:`TestPack` as a child result container of the parent
-            result container that was passed to this method.
-
-            :param presult: The parent result container to append test runs results to as child results.
-            :type presult: :class:`akit.results.ResultContainer`
-
-        """
-
-        setup_success = False
-        try:
-            setup_success = self.enter_scopes()
-        except:
-            pass
-
-        if setup_success:
-            pass
-        else:
-            # Mark all the tests as error
-            pass
-
-        try:
-            self.exit_scopes()
-        except:
-            pass
-
-        return
-
-    def traverse_package(self, recorder, parent_inst=None):
-
-        pack_key = self.__module__ + "." + self.__name__
-        logger.info("TESTPACK ENTER: %s" % pack_key)
-
-        try:
-            res_inst = str(uuid.uuid4())
-
-            result_container = ResultContainer(res_inst, pack_key, ResultType.PACKAGE, parent_inst=parent_inst)
-            recorder.record(result_container)
-
-            self.scopes_enter(scope)
-
-            if scope_key in ScopeMixIn.test_references:
-                test_references = ScopeMixIn.test_references[scope_key]
-                for tref in test_references:
-
-                    try:
-                        # Create an instance of the test case using the test reference
-                        testinst = tref.create_instance(leaf_scope, recorder)
-
-                        # Run the test, it shouldn't raise any exceptions unless a stop
-                        # is raised or a framework exception occurs
-                        testinst.run(result_container.result_inst)
-                    except Exception as xcpt:
-                        pass
-
-        finally:
-            try:
-                self.scopes_exit(scope)
-            except Exception as xcpt:
-                #TODO: Handing exception logging here
-                pass
-
-            logger.info("SCOPE EXIT: %s" % scope_key)
-
         return
 
     def scopes_enter(self):

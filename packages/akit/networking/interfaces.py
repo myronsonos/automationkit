@@ -25,7 +25,12 @@ import netifaces
 from akit.compat import bytes_cast
 
 
-def get_ipv4_address(ifname):
+def encode_address(address: str) -> bytes:
+    is_ipv6 = ':' in address
+    address_family = socket.AF_INET6 if is_ipv6 else socket.AF_INET
+    return socket.inet_pton(address_family, address)
+
+def get_ipv4_address(ifname: str) -> str:
 
     addr = None
 
@@ -36,7 +41,7 @@ def get_ipv4_address(ifname):
 
     return addr
 
-def get_correspondance_interface(ref_ip, ref_port, addr_family=socket.AF_INET):
+def get_correspondance_interface(ref_ip: str, ref_port: int, addr_family=socket.AF_INET) -> str:
     """
         Utilizes the TCP stack to make a connection to a remote computer and utilizes
         gets the network interface that was used to connect to the remote computer.
@@ -82,7 +87,7 @@ def get_correspondance_interface(ref_ip, ref_port, addr_family=socket.AF_INET):
 
     return corr_iface, corr_ip
 
-def get_correspondance_ip_address(ref_ip, ref_port, addr_family=socket.AF_INET):
+def get_correspondance_ip_address(ref_ip: str, ref_port: int, addr_family=socket.AF_INET) -> str:
     """
         Utilizes the TCP stack to make a connection to a remote computer and utilizes
         gets the socket address of the socket that connected to the remote computer.
@@ -122,7 +127,7 @@ def get_correspondance_ip_address(ref_ip, ref_port, addr_family=socket.AF_INET):
 
     return corr_ip
 
-def is_ipv6_address(self, candidate: str):
+def is_ipv6_address(self, candidate: str) -> str:
     """
         Checks to see if 'candidate' is an ipv6 address.
 

@@ -1,5 +1,6 @@
 
 import enum
+import re
 
 class DnsLiftimePercent(enum.IntEnum):
     Expired = 100
@@ -54,3 +55,11 @@ class DnsResponseFlags(enum.IntEnum):
     FLAGS_QR_QUERY = 0x0000  # query
     FLAGS_QR_RESPONSE = 0x8000  # response
 
+EXPIRE_FULL_TIME_PERCENT = 100
+EXPIRE_STALE_TIME_PERCENT = 50
+EXPIRE_REFRESH_TIME_PERCENT = 75
+
+HAS_A_TO_Z = re.compile(r'[A-Za-z]')
+HAS_ONLY_A_TO_Z_NUM_HYPHEN = re.compile(r'^[A-Za-z0-9\-]+$')
+HAS_ONLY_A_TO_Z_NUM_HYPHEN_UNDERSCORE = re.compile(r'^[A-Za-z0-9\-\_]+$')
+HAS_ASCII_CONTROL_CHARS = re.compile(r'[\x00-\x1f\x7f]')

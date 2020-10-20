@@ -39,6 +39,91 @@ from akit.xlogging import getAutomatonKitLogger
 
 logger = getAutomatonKitLogger()
 
+def find_included_tests(root, package, module, testclass, testname):
+
+    included_files = []
+
+    if module is None:
+        # If expr_module is None, then we had a single item expression, this means
+        # we can look for a single file, or a directory with lots of files.
+        filenames = os.listdir(root)
+        for fname in filenames:
+            if fnmatch.fnmatch(fname, module):
+                ffull = os.path.join(root, fname)
+                if os.path.isfile(ffull):
+                    fbase, fext = os.path.splitext(fname)
+                    if fext == ".py" and fbase != "__init__":
+                        included_files.append(ffull)
+                elif os.path.isdir(ffull):
+                    included_files.extend(collect_python_modules(ffull))
+    else:
+        pkgpathpfx = package.replace(".", "/")
+        fullpathpfx = pkgpathpfx + "/" + module
+        for dirpath, dirnames, filenames in os.walk(root):
+            dirleaf = dirpath[len(root):].lstrip(os.sep)
+            
+            # If we are in the testroot, then dirleaf will be len 0
+            if len(dirleaf) > 0:
+                if dirleaf.startswith(fullpathpfx) or fnmatch.fnmatch(dirleaf, fullpathpfx):
+                    included_files.extend(collect_python_modules(dirpath))
+                elif dirleaf.startswith(pkgpathpfx) or fnmatch.fnmatch(dirleaf, pkgpathpfx):
+                    for fname in filenames:
+                        fbase, fext = os.path.splitext(fname)
+                        if fext == ".py" and fbase != "__init__" and \
+                            fbase.startswith(module) and fnmatch.fnmatch(fbase, module):
+                            ffull = os.path.join(dirpath, fname)
+                            included_files.append(ffull)
+
+    return included_files
+
+def parse_expression(expression, testmodule=None, method_prefix="test"):
+
+    expr_package = None
+    expr_module = None
+    expr_testclass = None
+    expr_testname = None
+
+    # If self._test_module was set then we are running a test module as a script or debugging a test module
+    # so we handle the special case where we only collect the test references from the test module that
+    # was set.
+    if testmodule is not None:
+        if expression.find(".") > -1 or expression.find("@") > -1 or expression.find(":") > -1:
+            raise ValueError("parse_expression: The include expression for test module runs should only have a " \
+                             "test class and test method.")
+
+        expr_package = "*"
+        expr_module = "*"
+
+        if expression.find("#") > -1:
+            expression, expr_testname = expression.split("#")
+            if not expr_testname.startswith(method_prefix):
+                raise ValueError("parse_expression: The testname component of the expression must start with the " \
+                                "method_prefix=%r. expression%r" % (method_prefix, expression))
+
+        expr_testclass = expression
+
+    # If self._test_module was not set then we are performing a commmandline run where a test job or includes, excludes
+    # collection was passed we need to use one of those to determine what to run.
+    else:
+        if expression.find("#") > -1:
+            expression, expr_testname = expression.split("#")
+            if not expr_testname.startswith(method_prefix):
+                raise ValueError("TestCollector:collect_references: The testname component of the expression must " \
+                                "start with the method_prefix=%r. expression%r" % (method_prefix, expression))
+
+        if expression.find("@") > -1:
+            expression, expr_testclass = expression.split("@")
+
+        comb_expr_comp = expression.split(".")
+        if len(comb_expr_comp) > 1:
+            expr_package = ".".join(comb_expr_comp[:-1])
+            expr_module = comb_expr_comp[-1]
+        else:
+            expr_package = expression
+            expr_module = None
+
+    return expr_package, expr_module, expr_testclass, expr_testname
+
 class TestCollector:
     """
     """
@@ -63,6 +148,10 @@ class TestCollector:
         return self._references
 
     def collect_integrations(self):
+        """
+            Iterates through all of the test references and and collects the IntegrationMixins that
+            are found.
+        """
 
         integrations = {}
         for _, ref in self._references.items():
@@ -80,51 +169,11 @@ class TestCollector:
 
     def collect_references(self, expression):
         """
-            Collects and appends the test references based on the expression provided and the excludes for this class.
+            Collects and appends the test references based on the expression provided and the excludes
+            for this class.
         """
-        expr_package = None
-        expr_module = None
-        expr_testclass = None
-        expr_testname = None
 
-        # If self._test_module was set then we are running a test module as a script or debugging a test module
-        # so we handle the special case where we only collect the test references from the test module that
-        # was set.
-        if self._test_module is not None:
-            if expression.find(".") > -1 or expression.find("@") > -1 or expression.find(":") > -1:
-                raise ValueError("TestCollector:collect_reference: The include expression for test module runs should " \
-                                 "only have a test class and test method.")
-
-            expr_package = "*"
-            expr_module = "*"
-
-            if expression.find("#") > -1:
-                expression, expr_testname = expression.split("#")
-                if not expr_testname.startswith(self._method_prefix):
-                    raise ValueError("TestCollector:collect_references: The testname component of the expression must " \
-                                    "start with the method_prefix=%r. expression%r" % (self._method_prefix, expression))
-
-            expr_testclass = expression
-
-        # If self._test_module was not set then we are performing a commmandline run where a test job or includes, excludes
-        # collection was passed we need to use one of those to determine what to run.
-        else:
-            if expression.find("#") > -1:
-                expression, expr_testname = expression.split("#")
-                if not expr_testname.startswith(self._method_prefix):
-                    raise ValueError("TestCollector:collect_references: The testname component of the expression must " \
-                                    "start with the method_prefix=%r. expression%r" % (self._method_prefix, expression))
-
-            if expression.find("@") > -1:
-                expression, expr_testclass = expression.split("@")
-
-            comb_expr_comp = expression.split(".")
-            if len(comb_expr_comp) > 1:
-                expr_package = ".".join(comb_expr_comp[:-1])
-                expr_module = comb_expr_comp[-1]
-            else:
-                expr_package = expression
-                expr_module = None
+        expr_package, expr_module, expr_testclass, expr_testname = parse_expression(expression, self._test_module, self._method_prefix)
 
         # Find all the files that are included based on the expression
         included_files = []
@@ -133,36 +182,7 @@ class TestCollector:
             test_module_basename, test_module_ext = os.path.splitext(self._test_module.__file__)
             included_files.append(test_module_basename + ".py")
         elif expr_package is not None:
-            if expr_module is None:
-                # If expr_module is None, then we had a single item expression, this means
-                # we can look for a single file, or a directory with lots of files.
-                filenames = os.listdir(self._root)
-                for fname in filenames:
-                    if fnmatch.fnmatch(fname, expr_module):
-                        ffull = os.path.join(self._root, fname)
-                        if os.path.isfile(ffull):
-                            fbase, fext = os.path.splitext(fname)
-                            if fext == ".py" and fbase != "__init__":
-                                included_files.append(ffull)
-                        elif os.path.isdir(ffull):
-                            included_files.extend(collect_python_modules(ffull))
-            else:
-                pkgpathpfx = expr_package.replace(".", "/")
-                fullpathpfx = pkgpathpfx + "/" + expr_module
-                for dirpath, dirnames, filenames in os.walk(self._root):
-                    dirleaf = dirpath[len(self._root):].lstrip(os.sep)
-                    
-                    # If we are in the testroot, then dirleaf will be len 0
-                    if len(dirleaf) > 0:
-                        if dirleaf.startswith(fullpathpfx) or fnmatch.fnmatch(dirleaf, fullpathpfx):
-                            included_files.extend(collect_python_modules(dirpath))
-                        elif dirleaf.startswith(pkgpathpfx) or fnmatch.fnmatch(dirleaf, pkgpathpfx):
-                            for fname in filenames:
-                                fbase, fext = os.path.splitext(fname)
-                                if fext == ".py" and fbase != "__init__" and \
-                                   fbase.startswith(expr_module) and fnmatch.fnmatch(fbase, expr_module):
-                                    ffull = os.path.join(dirpath, fname)
-                                    included_files.append(ffull)
+            included_files = find_included_tests(self._root, expr_package, expr_module, expr_testclass, expr_testname)
 
         import_errors = []
 
