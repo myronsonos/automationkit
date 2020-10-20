@@ -319,14 +319,17 @@ def ssh_execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIME
             break
         # We didn't have any data to read and our exit status was not ready, go to sleep for interval
         else:
+            now_time = time.time()
+            if now_time > end_time:
+                diff_time = now_time - start_time
+                err_msg = "Timeout while executing SSH command.\n    command=%s\n    start=%r end=%r now=%r diff=%r" % (
+                    command, start_time, end_time, now_time, diff_time)
+                raise TimeoutError(err_msg)
+
+            # If we did not timeout, go to sleep for the interval before we make another attempt to read
             time.sleep(inactivity_interval)
 
-        now_time = time.time()
-        if now_time > end_time:
-            diff_time = now_time - start_time
-            err_msg = "Timeout while executing SSH command.\n    command=%s\n    start=%r end=%r now=%r diff=%r" % (
-                command, start_time, end_time, now_time, diff_time)
-            raise TimeoutError(err_msg)
+        # End while True
 
     stdout = stdout_buffer.decode()
     del stdout_buffer

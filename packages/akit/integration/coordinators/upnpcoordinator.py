@@ -460,17 +460,4 @@ if __name__ == "__main__":
 
     LEDSTATES = ["Off", "On"]
 
-    nxt_state_index = 0
-    while True:
-        nxt_state = LEDSTATES[nxt_state_index]
-        try:
-            devProps.action_SetLEDState(nxt_state)
-        except UpnpError as upnperr:
-            print(upnperr)
-        except Exception as xcpt:
-            errmsg = traceback.format_exc()
-            print(errmsg)
-        time.sleep(2)
-        nxt_state_index = (nxt_state_index + 1) % 2
-
     time.sleep(600)

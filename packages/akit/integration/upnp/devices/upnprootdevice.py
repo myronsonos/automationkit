@@ -305,7 +305,7 @@ class UpnpRootDevice(UpnpDevice):
                         with open(dyn_svc_filename, 'wb') as sdf:
                             sdf.write(svc_content)
                     else:
-                        self._logger.warn("Unable to retrieve service description for manf=%s st=%s sid=%s url=%s" % (manufacturer, serviceType, scpdUrl))
+                        self._logger.warn("Unable to retrieve service description for manf=%s st=%s url=%s" % (manufacturer, serviceType, scpdUrl))
                 except Exception:
                     self._logger.exception("Exception while retreiving service description.")
 
@@ -336,6 +336,8 @@ class UpnpRootDevice(UpnpDevice):
             if devNode is not None:
                 self._process_device_node(factory, devNode, namespaces=namespaces)
 
+            self._enhance_device_detail()
+
         except Exception as xcpt:
             err_msg = traceback.format_exc()
             print(err_msg)
@@ -364,6 +366,9 @@ class UpnpRootDevice(UpnpDevice):
     def _create_device_description_node(self, devNode, namespaces=None):
         dev_desc_node = UpnpDevice1Device(devNode, namespaces=namespaces)
         return dev_desc_node
+
+    def _enhance_device_detail(self):
+        return
 
     def _populate_embedded_device_descriptions(self, factory, description):
 
@@ -401,7 +406,7 @@ class UpnpRootDevice(UpnpDevice):
         return
 
     def _process_urlbase_node(self, urlBaseNode, namespaces=None):
-        self._urlBase = urlBaseNode.text
+        self._urlBase = urlBaseNode.text.rstrip("/")
         return
 
     def _process_version_node(self, verNode, namespaces=None):

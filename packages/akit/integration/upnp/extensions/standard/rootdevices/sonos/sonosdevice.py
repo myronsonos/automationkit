@@ -16,6 +16,11 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+import requests
+
+from xml.etree.ElementTree import fromstring as xml_fromstring
+from xml.etree.ElementTree import ElementTree
+
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 
@@ -258,7 +263,7 @@ class SonosDevice(UpnpRootDevice):
         return
 
     def _process_servicelist_node(self, listNode, namespaces=None):
-        self._process_servicelist_node(self, listNode, namespaces=namespaces)
+        super(SonosDevice, self)._process_servicelist_node(listNode, namespaces=namespaces)
         return
 
     def to_dict(self, brief=False):
