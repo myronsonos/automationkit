@@ -157,8 +157,8 @@ class SonosDevice(UpnpRootDevice):
 
     MANUFACTURER = "SonosInc"
 
-    def __init__(self):
-        super(SonosDevice, self).__init__()
+    def __init__(self, manufacturer: str, modelNumber: str, modelDescription: str):
+        super(SonosDevice, self).__init__(manufacturer, modelNumber, modelDescription)
 
         self._bood_id = None
         self._boot_seq = None

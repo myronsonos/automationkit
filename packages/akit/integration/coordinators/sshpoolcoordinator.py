@@ -41,6 +41,8 @@ class SshPoolCoordinator:
                 usn = sshdev["upnp"]["USN"]
                 if upnp_coord is not None:
                     dev = upnp_coord.lookup_device_by_usn(usn)
+                    if dev is None:
+                        dev = upnp_coord.lookup_device_by_usn(usn)
                     ipaddr = dev.IPAddress
                     host = ipaddr
                     self._usn_to_ip_lookup[usn] = ipaddr

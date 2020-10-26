@@ -77,7 +77,7 @@ class UpnpFactory:
             extkey = generate_extension_key(manufacturer, modelNumber, modelDescription)
             if extkey in self._root_device_registry:
                 deviceClass = self._root_device_registry[extkey]
-        return deviceClass()
+        return deviceClass(manufacturer, modelNumber, modelDescription)
 
     def create_service_instance(self, serviceManufacturer, serviceType):
         serviceInst = None

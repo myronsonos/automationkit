@@ -106,11 +106,22 @@ class UpnpRootDevice(UpnpDevice):
         http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf
     """
 
-    def __init__(self):
+    MANUFACTURER = "unknown"
+    MODEL_NUMBER = "unknown"
+    MODEL_DESCRIPTION = "unknown"
+
+    def __init__(self, manufacturer: str, modelNumber: str, modelDescription):
         """
             Creates a root device object.
         """
         super(UpnpRootDevice, self).__init__()
+
+        if self.MANUFACTURER != manufacturer:
+            self.MANUFACTURER = manufacturer
+        if self.MODEL_NUMBER != modelNumber:
+            self.MODEL_NUMBER = modelNumber
+        if self.MODEL_DESCRIPTION != modelDescription:
+            self.MODEL_DESCRIPTION = modelDescription
 
         self._extra = {}
         self._cachecontrol = None
@@ -124,6 +135,7 @@ class UpnpRootDevice(UpnpDevice):
 
         self._host = None
         self._ip_address = None
+        self._routes = None
 
         self._devices = {}
         self._device_descriptions = {}
@@ -212,11 +224,13 @@ class UpnpRootDevice(UpnpDevice):
         """
         """
         self._location = location
+
         self._cachecontrol = devinfo.pop(MSearchKeys.CACHE_CONTROL)
         self._ext = devinfo.pop(MSearchKeys.EXT)
         self._server = devinfo.pop(MSearchKeys.SERVER)
         self._st = devinfo.pop(MSearchKeys.ST)
         self._usn = devinfo.pop(MSearchKeys.USN)
+        self._routes = devinfo.pop(MSearchKeys.ROUTES)
 
         self._consume_upnp_extra(devinfo)
         return

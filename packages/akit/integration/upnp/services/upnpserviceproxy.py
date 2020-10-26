@@ -15,7 +15,7 @@ class UpnpServiceProxy:
     SERVICE_TYPE = None
 
     def __init__(self):
-        self._device = None
+        self._device_ref = None
         self._soap_processor = SoapProcessor()
 
         self._host = None
@@ -40,6 +40,10 @@ class UpnpServiceProxy:
         return self._controlURL
 
     @property
+    def device(self):
+        return self._device_ref()
+
+    @property
     def eventSubURL(self):
         return self._eventSubURL
 
@@ -59,9 +63,11 @@ class UpnpServiceProxy:
     def serviceType(self):
         return self._serviceType
 
-    def proxy_link_service_to_device(self, device, service_description):
+    def proxy_link_service_to_device(self, device_ref, service_description):
 
-        self._device = device
+        device = device_ref()
+
+        self._device_ref = device_ref
 
         self._host = device.host
         self._baseURL = device.URLBase
@@ -158,3 +164,13 @@ class UpnpServiceProxy:
         resp_dict = self.proxy_call_action(action_name)
 
         return
+
+    def proxy_subscribe_to_event(self, event_name, timeout=None):
+        """
+            Creates a subscription to the event name specified and returns a
+            UpnpEventVar object that can be used to read the current value for
+            the given event.
+        """
+        device = self._device_ref()
+        rtnval = device.subscribe_to_event(self.SERVICE_TYPE, event_name, timeout=timeout)
+        return rtnval

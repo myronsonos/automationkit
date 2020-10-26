@@ -9,6 +9,8 @@ import time
 import traceback
 import typing
 
+from io import BytesIO
+
 from urllib.parse import urlparse
 
 from xml.etree.ElementTree import tostring as xml_tostring
@@ -61,7 +63,10 @@ class UpnpCoordinator:
 
             self._control_point = control_point
             self._worker_count = workers
+            self._worker_threads = []
             self._watch_all = watch_all
+
+            self._callback_threads = []
 
             self._logger = getAutomatonKitLogger()
 
@@ -84,6 +89,8 @@ class UpnpCoordinator:
             self._running = False
 
             self._watched_devices = {}
+
+            self._iface_callback_addr_lookup = None
         return
 
     @property
@@ -178,7 +185,8 @@ class UpnpCoordinator:
 
         found_devices = {}
         matching_devices = {}
-        
+        missing_devices = []
+
         for ridx in range(0, retry):
             if ridx > 0:
                 self._logger.info("MSEARCH: Not all devices found, retrying (count=%d)..." % ridx)
@@ -188,6 +196,10 @@ class UpnpCoordinator:
             matching_devices.update(iter_matching_devices)
             if len(matching_devices) >= hint_count:
                 break
+
+        for expusn in upnp_hint_list:
+            if expusn not in matching_devices:
+                missing_devices.append(expusn)
 
         devmsg = "FOUND DEVICES:\n"
         for dkey, dval in found_devices.items():
@@ -201,18 +213,13 @@ class UpnpCoordinator:
         for dkey, dval in matching_devices.items():
             devmsg += "    %s\n" % dkey
         devmsg += "\n"
-        self._logger.info(devmsg)
 
-        for dkey, dval in found_devices.items():
-            addr = dval[MSearchKeys.IP]
-            location = dval[MSearchKeys.LOCATION]
-            self._update_root_device(addr, location, dval, force_recording=force_recording)
-        
-        ifacelist = []
-        for dev in matching_devices.values():
-            ifname = dev[MSearchKeys.ROUTES][0][MSearchRouteKeys.IFNAME]
-            if ifname not in ifacelist:
-                ifacelist.append(ifname)
+        devmsg += "MISSING DEVICES:\n"
+        for dkey in missing_devices:
+            devmsg += "    %s\n" % dkey
+        devmsg += "\n"
+
+        self._logger.info(devmsg)
 
         if watchlist is not None and len(watchlist) > 0:
             for dev in self.children:
@@ -220,7 +227,7 @@ class UpnpCoordinator:
                 if devusn in watchlist:
                     self._watched_devices[devusn] = dev
 
-        self._start_monitor_and_worker_threads()
+        self._start_all_threads()
 
         return
 
@@ -235,8 +242,26 @@ class UpnpCoordinator:
 
         return normal_name
 
-    def _process_device_notification(self, usn, target, subtype):
-        self._logger.debug("PROCESSING NOTIFY - USN: %s TARGET: %s SUBTYPE: %s", usn, target, subtype)
+    def _process_device_notification(self, usn, request_info):
+
+        host = request_info["HOST"]
+        target = request_info["NT"]
+        subtype = request_info["NTS"]
+
+        if subtype == "ssdp:alive":
+            self._logger.debug("PROCESSING NOTIFY - USN: %s HOST: %s SUBTYPE: %s", usn, host, subtype)
+        elif subtype == "ssdp:byebye":
+            self._logger.debug("PROCESSING NOTIFY - USN: %s HOST: %s SUBTYPE: %s", usn, host, subtype)
+        else:
+            self._logger.debug("PROCESSING NOTIFY - USN: %s HOST: %s SUBTYPE: %s", usn, host, subtype)
+
+        return
+
+    def _process_callback(self, ifname, claddr, request):
+        
+        reqinfo = msearch_parse_request(request)
+        self._logger.debug("RESPONDING TO MSEARCH")
+
         return
 
     def _process_request_for_msearch(self, addr, request):
@@ -248,20 +273,26 @@ class UpnpCoordinator:
 
     def _process_request_for_notify(self, addr, request):
 
-        reqinfo = notify_parse_request(request)
+        request_info = notify_parse_request(request)
 
-        usn = reqinfo["USN"]
-        target = reqinfo["NT"]
-        subtype = reqinfo["NTS"]
-        
+        usn = request_info["USN"]
+
         if usn in self._watched_devices:
-            self._process_device_notification(usn, target, subtype)
+            self._process_device_notification(usn, request_info)
 
         return
 
-    def _start_monitor_and_worker_threads(self):
+    def _start_all_threads(self):
         """
         """
+
+        ifacelist = []
+        for dev in self.watch_devices.values():
+            primary_route = dev[MSearchKeys.ROUTES][0]
+            ifname = [MSearchRouteKeys.IFNAME]
+            if ifname not in ifacelist:
+                ifacelist.append(ifname)
+        ifacecount = len(ifacelist)
 
         self._shutdown_gate = threading.Semaphore(1)
 
@@ -270,28 +301,101 @@ class UpnpCoordinator:
 
             self._running = True
 
-            self._shutdown_gate = threading.Semaphore(self._worker_count + 1)
+            self._shutdown_gate = threading.Semaphore(self._worker_count + ifacecount + 1)
 
+            # Spin-up the worker thread first so they will be ready to handle work
+            for wkrid in range(0, self._worker_count):
+                sgate.clear()
+                wthread = threading.Thread(name="UpnpCoordinator - Worker(%d)" % wkrid, target=self._thread_entry_worker, 
+                                                   daemon=True, args=(sgate,))
+                self._worker_threads.append(wthread)
+                wthread.start()
+                sgate.wait()
+
+            # Spin-up the Monitor thread so it can monitor notification traffic
             sgate.clear()
             self._monitor_thread = threading.Thread(name="UpnpCoordinator - Monitor", target=self._thread_entry_monitor, 
                                                    daemon=True, args=(sgate,))
             self._monitor_thread.start()
             sgate.wait()
 
-            for wkrid in range(0, self._worker_count):
+            # Spin-up a Callback thread for each interface
+            self._iface_callback_addr_lookup = {}
+
+            for ifaceidx in range(0, ifacecount):
+                ifname = ifacelist[ifaceidx]
                 sgate.clear()
-                wthread = threading.Thread(name="UpnpCoordinator - Worker(%d)" % wkrid, target=self._thread_entry_worker, 
-                                                   daemon=True, args=(sgate,))
-                wthread.start()
+                cbthread = threading.Thread(name="UpnpCoordinator - Callback(%s)" % ifname, target=self._thread_entry_callback, 
+                                                    daemon=True, args=(sgate, ifname))
+                self._callback_threads.append(cbthread)
+                cbthread.start()
                 sgate.wait()
 
         except:
             self._running = False
 
-            for i in range(0, self._worker_count + 1):
+            for i in range(0, self._worker_count + ifacecount + 1):
                 self._shutdown_gate.release()
 
             raise
+
+        return
+
+    def _thread_entry_callback(self, sgate, ifname):
+
+        self._shutdown_gate.acquire()
+
+        try:
+            service_addr = ""
+
+            sock = socket.socket(socket.AF_INET, socket.AF_INET, socket.IPPROTO_UDP)
+
+            # Bind to port zero so we can get an ephimeral port address
+            sock.bind((service_addr, 0))
+
+            host, port = sock.getsockname()
+
+            iface_callback_addr = "%s:%s" % (host, port)
+
+            self._iface_callback_addr_lookup[ifname] = iface_callback_addr
+
+            # Set the start gate to allow the thread spinning us up to continue
+            sgate.set()
+
+            sock.listen(1)
+
+            cbbuffer = BytesIO()
+
+            while self._running:
+                asock, claddr = sock.accept()
+
+                self._logger.info("CBTHREAD(%s): Processing callback from %r" % (ifname, claddr))
+                try:
+                    while self._running:
+                        # Process the requests
+                        nxtbuff = asock.recv(1024)
+                        if nxtbuff == 0:
+                            break
+                        cbbuffer.write(nxtbuff)
+                finally:
+                    asock.close()
+
+                request = cbbuffer.getvalue()
+
+                cbbuffer.truncate(0)
+                cbbuffer.seek(0)
+
+                # Queue the callback workpacket for dispatching by a worker thread
+                wkpacket = (self._process_callback, (ifname, claddr, request))
+                self._queue_lock.acquire()
+                try:
+                    self._queue_work.append(wkpacket)
+                    self._queue_available.release()
+                finally:
+                    self._queue_lock.release()
+
+        finally:
+            self._shutdown_gate.release()
 
         return
 
@@ -303,6 +407,7 @@ class UpnpCoordinator:
         multicast_port = UpnpProtocol.PORT
 
         try:
+            # Set the start gate to allow the thread spinning us up to continue
             sgate.set()
 
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -355,6 +460,7 @@ class UpnpCoordinator:
     def _thread_entry_worker(self, sgate):
 
         try:
+            # Set the start gate to allow the thread spinning us up to continue
             sgate.set()
 
             while self._running:
@@ -403,8 +509,15 @@ class UpnpCoordinator:
                                 # create the device
                                 self._lock.release()
 
-                                # We create the device
-                                rootdev = self._create_root_device(manufacturer, modelNumber, modelDescription)
+                                try:
+                                    # We create the device
+                                    rootdev = self._create_root_device(manufacturer, modelNumber, modelDescription)
+                                except:
+                                    errmsg = "ERROR: Unable to create device mfg=%s model=%s desc=%s\nTRACEBACK:\n" % (manufacturer, modelNumber, modelDescription)
+                                    errmsg += traceback.format_exc()
+                                    self._logger.error(errmsg)
+                                    raise
+
                                 if type(rootdev) == UpnpRootDevice:
                                     rootdev.record_description(urlBase, manufacturer, modelName, docTree, devNode, namespaces=namespaces, force_recording=force_recording)
 
@@ -456,6 +569,15 @@ if __name__ == "__main__":
 
     value = devProps.action_GetLEDState()
 
+    devProps.proxy_subscribe_to_event("MicEnabled")
+
     LEDSTATES = ["Off", "On"]
 
-    time.sleep(600)
+    index = 0
+    while True:
+        time.sleep(2)
+        if index == 0:
+            print("tick")
+        else:
+            print("tock")
+        index = (index + 1) % 2
