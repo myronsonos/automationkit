@@ -18,6 +18,7 @@ __license__ = "MIT"
 
 import inspect
 import json
+import os
 import traceback
 
 import pprint
@@ -72,7 +73,7 @@ class LandscapeDescription:
                 "ERROR Landscape validation failures:"
             ]
             for err in errors:
-                errmsg_lines.append( += )"    %s" % err)
+                errmsg_lines.append("    %s" % err)
 
             errmsg = os.linesep.join(errmsg_lines)
             raise AKitConfigurationError(errmsg)

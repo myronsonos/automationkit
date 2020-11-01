@@ -203,7 +203,7 @@ class UpnpCoordinator:
 
         devmsg_lines = ["FOUND DEVICES:"]
         for dkey, dval in found_devices.items():
-            devmsg.append("    %s" % dkey)
+            devmsg_lines.append("    %s" % dkey)
             addr = dval[MSearchKeys.IP]
             location = dval[MSearchKeys.LOCATION]
             self._update_root_device(addr, location, dval, force_recording=force_recording)
@@ -214,10 +214,11 @@ class UpnpCoordinator:
             devmsg_lines.append("    %s" % dkey)
         devmsg_lines.append("")
 
-        devmsg_lines.append("MISSING DEVICES:")
-        for dkey in missing_devices:
-            evmsg_lines.append("    %s" % dkey)
-        devmsg_lines.append("")
+        if len(missing_devices) > 0:
+            devmsg_lines.append("MISSING DEVICES:")
+            for dkey in missing_devices:
+                devmsg_lines.append("    %s" % dkey)
+            devmsg_lines.append("")
 
         devmsg = os.linesep.join(devmsg_lines)
         self._logger.info(devmsg)
@@ -288,9 +289,9 @@ class UpnpCoordinator:
         """
 
         ifacelist = []
-        for dev in self.watch_devices.values():
-            primary_route = dev[MSearchKeys.ROUTES][0]
-            ifname = [MSearchRouteKeys.IFNAME]
+        for dev in self.watch_devices:
+            primary_route = dev.routes[0]
+            ifname = primary_route[MSearchRouteKeys.IFNAME]
             if ifname not in ifacelist:
                 ifacelist.append(ifname)
         ifacecount = len(ifacelist)
@@ -349,7 +350,7 @@ class UpnpCoordinator:
         try:
             service_addr = ""
 
-            sock = socket.socket(socket.AF_INET, socket.AF_INET, socket.IPPROTO_UDP)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             # Bind to port zero so we can get an ephimeral port address
             sock.bind((service_addr, 0))

@@ -18,7 +18,7 @@ __license__ = "MIT"
 
 from akit.extensible import LoadableExtension
 
-from akit.integration.upnp.extensions.standard.rootdevices.sonos.sonosdevice import SonosPlayer
+from akit.integration.upnp.extensions.standard.rootdevices.sonos.sonosplayer import SonosPlayer
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 
 class SonosDeviceZpS15(SonosPlayer, LoadableExtension):

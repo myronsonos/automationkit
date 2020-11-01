@@ -200,6 +200,10 @@ class UpnpRootDevice(UpnpDevice):
         return mname
 
     @property
+    def routes(self):
+        return self._routes
+
+    @property
     def server(self):
         return self._server
 

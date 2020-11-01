@@ -333,6 +333,10 @@ def msearch_scan(expected_devices, interface_list=None, response_timeout=45, int
     if len(scan_context.matching_devices) != len(expected_devices):
         err_msg = "Failed to find expected UPNP devices after a timeout of %s seconds.\n" % response_timeout
 
+        missing = [dkey for dkey in expected_devices]
+        for dkey in scan_context.found_devices:
+            missing.remove(dkey)
+
         err_msg_lines = []
         err_msg_lines.append("EXPECTED: (%s)" % len(expected_devices))
         for dkey in expected_devices:
@@ -346,6 +350,11 @@ def msearch_scan(expected_devices, interface_list=None, response_timeout=45, int
 
         err_msg_lines.append("FOUND: (%s)" % len(scan_context.found_devices))
         for dkey in scan_context.found_devices:
+            err_msg_lines.append("    %r:" % dkey)
+        err_msg_lines.append("")
+
+        err_msg_lines.append("MISSING: (%s)" % len(missing))
+        for dkey in missing:
             err_msg_lines.append("    %r:" % dkey)
         err_msg_lines.append("")
 
