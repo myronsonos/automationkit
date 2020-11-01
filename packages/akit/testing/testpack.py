@@ -20,7 +20,7 @@ import inspect
 
 from akit.mixins.scope import ScopeMixIn, is_scope_mixin
 
-from akit.xlogging import getAutomatonKitLogger
+from akit.xlogging.foundations import getAutomatonKitLogger
 
 logger = getAutomatonKitLogger()
 

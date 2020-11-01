@@ -35,7 +35,7 @@ from akit.integration.upnp.upnpprotocol import msearch_scan, MSearchKeys, MSearc
 
 from akit.networking.interfaces import get_ipv4_address
 
-from akit.xlogging import getAutomatonKitLogger
+from akit.xlogging.foundations import getAutomatonKitLogger
 
 EMPTY_LIST = []
 
@@ -201,24 +201,25 @@ class UpnpCoordinator:
             if expusn not in matching_devices:
                 missing_devices.append(expusn)
 
-        devmsg = "FOUND DEVICES:\n"
+        devmsg_lines = ["FOUND DEVICES:"]
         for dkey, dval in found_devices.items():
-            devmsg += "    %s\n" % dkey
+            devmsg.append("    %s" % dkey)
             addr = dval[MSearchKeys.IP]
             location = dval[MSearchKeys.LOCATION]
             self._update_root_device(addr, location, dval, force_recording=force_recording)
-        devmsg += "\n"
+        devmsg_lines.append("")
 
-        devmsg += "MATCHING DEVICES:\n"
+        devmsg_lines.append("MATCHING DEVICES:")
         for dkey, dval in matching_devices.items():
-            devmsg += "    %s\n" % dkey
-        devmsg += "\n"
+            devmsg_lines.append("    %s" % dkey)
+        devmsg_lines.append("")
 
-        devmsg += "MISSING DEVICES:\n"
+        devmsg_lines.append("MISSING DEVICES:")
         for dkey in missing_devices:
-            devmsg += "    %s\n" % dkey
-        devmsg += "\n"
+            evmsg_lines.append("    %s" % dkey)
+        devmsg_lines.append("")
 
+        devmsg = os.linesep.join(devmsg_lines)
         self._logger.info(devmsg)
 
         if watchlist is not None and len(watchlist) > 0:
@@ -538,14 +539,22 @@ class UpnpCoordinator:
                     finally:
                         self._lock.release()
                 except:
-                    errmsg = "ERROR: Unable to parse description for. IP: %s LOCATION: %s\n" % (ip_addr, location)
+                    errmsg_lines = [
+                        "ERROR: Unable to parse description for. IP: %s LOCATION: %s" % (ip_addr, location)
+                    ]
                     for k, v in deviceinfo.items():
-                        errmsg += "    %s: %s\n" % (k, v)
+                        errmsg_lines.append("    %s: %s" % (k, v))
+
+                    errmsg = os.linesep.join(errmsg_lines)
                     self._logger.debug(errmsg)
             except:
-                errmsg = "ERROR: Unable to parse description for. IP: %s LOCATION: %s\n" % (ip_addr, location)
+                errmsg_lines = [
+                    "ERROR: Unable to parse description for. IP: %s LOCATION: %s" % (ip_addr, location)
+                ]
                 for k, v in deviceinfo.items():
-                    errmsg += "    %s: %s\n" % (k, v)
+                    errmsg_lines.append("    %s: %s" % (k, v))
+
+                errmsg = os.linesep.join(errmsg_lines)
                 self._logger.debug(errmsg)
 
         return

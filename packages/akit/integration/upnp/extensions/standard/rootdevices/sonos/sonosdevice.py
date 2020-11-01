@@ -16,12 +16,6 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-import requests
-
-from xml.etree.ElementTree import fromstring as xml_fromstring
-from xml.etree.ElementTree import ElementTree
-
-from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 
 from akit.integration.upnp.xml.upnpdevice1 import UpnpDevice1Device
@@ -159,121 +153,6 @@ class SonosDevice(UpnpRootDevice):
 
     def __init__(self, manufacturer: str, modelNumber: str, modelDescription: str):
         super(SonosDevice, self).__init__(manufacturer, modelNumber, modelDescription)
-
-        self._bood_id = None
-        self._boot_seq = None
-        self._household = None
-        self._smart_speaker = None
-        self._variant = None
-        self._wifimode = None
         return
 
-    @property
-    def bootId(self):
-        return self._bood_id
 
-    @property
-    def bootSeq(self):
-        return self._boot_seq
-
-    @property
-    def household(self):
-        return self._household
-
-    @property
-    def smartSpeaker(self):
-        return self._smart_speaker
-
-    @property
-    def variant(self):
-        return self._variant
-
-    @property
-    def wifiMode(self):
-        return self._wifimode
-
-    def deviceMediaRenderer(self):
-        return
-
-    def deviceMediaServer(self):
-        return
-
-    def serviceAlarmClock(self):
-        svctype = 'urn:schemas-upnp-org:service:AlarmClock:1'
-        svc = self.lookup_service(self.MANUFACTURER, svctype)
-        return svc
-    
-    def serviceDeviceProperties(self):
-        svctype = 'urn:schemas-upnp-org:service:DeviceProperties:1'
-        svc = self.lookup_service(self.MANUFACTURER, svctype)
-        return svc
-
-    def serviceGroupManagement(self):
-        svctype = 'urn:schemas-upnp-org:service:GroupManagement:1'
-        svc = self.lookup_service(self.MANUFACTURER, svctype)
-        return svc
-
-    def serviceMusicService(self):
-        svctype = 'urn:schemas-upnp-org:service:MusicService:1'
-        svc = self.lookup_service(self.MANUFACTURER, svctype)
-        return svc
-
-    def serviceSystemProperties(self):
-        svctype = 'urn:schemas-upnp-org:service:SystemProperties:1'
-        svc = self.lookup_service(self.MANUFACTURER, svctype)
-        return svc
-
-    def serviceQPlay(self):
-        svctype = 'urn:schemas-upnp-org:service:QPlay:1'
-        svc = self.lookup_service(self.MANUFACTURER, svctype)
-        return svc
-
-    def serviceZoneTopologyGroup(self):
-        svctype = 'urn:schemas-upnp-org:service:ZoneTopologyGroup:1'
-        svc = self.lookup_service(self.MANUFACTURER, svctype)
-        return svc
-
-    def _consume_upnp_extra(self, extrainfo):
-
-        if "BOOTID.UPNP.ORG" in extrainfo:
-            self._bood_id = extrainfo.pop("BOOTID.UPNP.ORG")
-        if "X-RINCON-BOOTSEQ" in extrainfo:
-            self._boot_seq = extrainfo.pop("X-RINCON-BOOTSEQ")
-        if "X-RINCON-HOUSEHOLD" in extrainfo:
-            self._household = extrainfo.pop("X-RINCON-HOUSEHOLD")
-        if "HOUSEHOLD.SMARTSPEAKER.AUDIO" in extrainfo:
-            self._smart_speaker = extrainfo.pop("HOUSEHOLD.SMARTSPEAKER.AUDIO")
-        if "X-RINCON-VARIANT" in extrainfo:
-            self._variant = extrainfo.pop("X-RINCON-VARIANT")
-        if "X-RINCON-WIFIMODE" in extrainfo:
-            self._wifimode = extrainfo.pop("X-RINCON-WIFIMODE")
-
-        self._extra = extrainfo
-        return
-
-    def _create_device_description_node(self, devNode, namespaces=None):
-        dev_desc_node = SonosUpnpDevice1Device(devNode, namespaces=namespaces)
-        return dev_desc_node
-
-    def _process_embedded_device_node(self, devNode, namespaces=None):
-        dev = UpnpDevice1Device(devNode, namespaces=namespaces)
-        return dev
-
-    def _process_other_node(self, otherNode, namespaces=None):
-        return
-
-    def _process_servicelist_node(self, listNode, namespaces=None):
-        super(SonosDevice, self)._process_servicelist_node(listNode, namespaces=namespaces)
-        return
-
-    def to_dict(self, brief=False):
-        dval = super(SonosDevice, self).to_dict(brief=brief)
-
-        dval["bootId"] = self.bootId
-        dval["bootSeq"] = self.bootSeq
-        dval["household"] = self.household
-        dval["smartSpeaker"] = self.smartSpeaker
-        dval["variant"] = self.variant
-        dval["wifiMode"] = self.wifiMode
-
-        return dval

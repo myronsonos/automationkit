@@ -16,7 +16,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import os
-from typing import List
+from typing import List, Optional
 
 from akit.environment.context import Context
 from akit.exceptions import AKitRuntimeError
@@ -43,7 +43,7 @@ def collect_python_modules(searchdir: str) -> List[str]:
 
     return pyfiles
 
-def ensure_directory_is_module(moduleDir, moduleTitle=None):
+def ensure_directory_is_module(moduleDir, moduleTitle: Optional[str] = None):
     """
         Ensures that a directory is represented to python as a module by checking to see if the
         directory has an __init__.py file and if not it adds one.

@@ -35,8 +35,8 @@ from akit.integration.clients.linuxclientmixin import LinuxClientMixIn
 from akit.integration.clients.windowsclientmixin import WindowsClientMixIn
 from akit.integration.cluster.clustermixin import ClusterMixIn
 
-from akit.xformatting import indent_lines
-from akit.xlogging import getAutomatonKitLogger
+from akit.xformatting import split_and_indent_lines
+from akit.xlogging.foundations import getAutomatonKitLogger
 
 
 class LandscapeDescription:
@@ -68,9 +68,13 @@ class LandscapeDescription:
         errors = self.validate_landscape(landscape_info)
 
         if len(errors) > 0:
-            errmsg = "ERROR Landscape validation failures:\n"
+            errmsg_lines = [
+                "ERROR Landscape validation failures:"
+            ]
             for err in errors:
-                errmsg += "    %s\n" % err
+                errmsg_lines.append( += )"    %s" % err)
+
+            errmsg = os.linesep.join(errmsg_lines)
             raise AKitConfigurationError(errmsg)
 
         return landscape_info
@@ -417,9 +421,13 @@ class Landscape:
             elif dev_type == "network/ssh":
                 ssh_device_list.append(devinfo)
             else:
-                errmsg = "Unknown device type %r in configuration file.\n" % dev_type
-                errmsg += "DEVICE INFO:\n"
-                errmsg += indent_lines(pprint.pformat(devinfo, indent=4), level=1)
+                errmsg_lines = [
+                    "Unknown device type %r in configuration file." % dev_type,
+                    "DEVICE INFO:"
+                ]
+                errmsg_lines.extend(split_and_indent_lines(pprint.pformat(devinfo, indent=4), 1))
+                
+                errmsg = os.linesep.join(errmsg_lines)
                 self._logger.error(errmsg)
 
         if len(upnp_device_list) > 0:

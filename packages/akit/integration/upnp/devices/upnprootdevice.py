@@ -42,7 +42,7 @@ from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_SERVICES
 
 from akit.integration import upnp as upnp_module
 
-from akit.xlogging import getAutomatonKitLogger
+from akit.xlogging.foundations import getAutomatonKitLogger
 
 UPNP_DIR = os.path.dirname(upnp_module.__file__)
 

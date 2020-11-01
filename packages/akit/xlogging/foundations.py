@@ -1,5 +1,5 @@
 """
-.. module:: akit.xlogging
+.. module:: akit.xlogging.foundations
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module which contains framework logging functions which extend the functionality to
                the python :module:`logging` module.

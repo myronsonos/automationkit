@@ -63,7 +63,7 @@ def testrunner_main():
         # We perform activation a little later in the testrunner.py file so we can
         # handle exceptions in the context of testrunner_main function
         import akit.environment.activate
-        from akit.xlogging import logging_initialize, getAutomatonKitLogger
+        from akit.xlogging.foundations import logging_initialize, getAutomatonKitLogger
 
         # Initialize logging
         logging_initialize()

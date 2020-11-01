@@ -27,7 +27,7 @@ os.environ["AKIT_JOBTYPE"] = "console"
 
 import akit.environment.activate
 
-from akit.xlogging import logging_initialize, LoggingDefaults
+from akit.xlogging.foundations import logging_initialize, LoggingDefaults
 
 LoggingDefaults.DefaultFileLoggingHandler = RotatingFileHandler
 logging_initialize()

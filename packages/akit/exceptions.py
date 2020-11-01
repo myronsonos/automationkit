@@ -118,6 +118,19 @@ class AKitSkipError(AKitRuntimeError):
         This error is raised when a test indicates it wants to be skipped while being run
     """
 
+class AKitLooperError(AKitRuntimeError):
+    """
+        This error is raised when an error occurs with the use of the :class:`LooperPool` or
+        :class:`Looper` objects.
+    """
+
+class AKitLooperQueueShutdownError(AKitRuntimeError):
+    """
+        This error is raised when work is being queued on a :class:`LooperQueue` thaat has
+        been shutdown and when a worker thread is attempting to wait for work on an empty
+        queue.
+    """
+
 class AKitTimeoutError(AKitRuntimeError):
     """
         This error is raised when a timeout occurs

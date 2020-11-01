@@ -3,7 +3,7 @@ import socket
 import time
 
 from akit.paths import get_expanded_path
-from akit.xlogging import getAutomatonKitLogger
+from akit.xlogging.foundations import getAutomatonKitLogger
 
 from akit.integration.agents.sshagent import SshAgent
 

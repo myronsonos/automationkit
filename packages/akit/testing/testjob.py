@@ -213,16 +213,29 @@ class TestJob(ContextUser):
             else:
                 # We didn't find any tests so display a message, and set the return code to
                 # indicate an error condition
-                err_msg = "The include and exclude parameters specified resulted in an empty test set."
+                err_msg_lines = [
+                    "The include and exclude parameters specified resulted in an empty test set."
+                ]
+
                 if self.includes is not None:
-                    err_msg += "INCLUDES:\n    %s\n" % "    \n".join(self.includes)
+                    err_msg_lines.append("INCLUDES:")
+                    for nxtitem in self.includes:
+                        err_msg_lines.append("    %s" % nxtitem)
+                    err_msg_lines.append("")
                 else:
-                    err_msg += "INCLUDES: None\n"
+                    err_msg_lines.append("INCLUDES: None")
+
                 if self.excludes is not None:
-                    err_msg += "EXCLUDES:\n    %s\n" % "    \n".join(self.excludes)
+                    err_msg_lines.append("EXCLUDES:")
+                    for nxtitem in self.excludes:
+                        err_msg_lines.append("    %s" % nxtitem)
+                    err_msg_lines.append("")
                 else:
-                    err_msg += "EXCLUDES: None\n"
+                    err_msg_lines.append("EXCLUDES: None")
+
+                err_msg = os.linesep.join(err_msg_lines)
                 self._logger.error(err_msg)
+
                 result_code = -1
 
         return result_code

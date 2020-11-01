@@ -34,3 +34,14 @@ def indent_lines(msg, level, indent=4):
         indented.write(nxtline)
     
     return indented.getvalue()
+
+def split_and_indent_lines(msg, level, indent=4):
+
+    # Split msg into lines keeping the line endings
+    msglines = msg.splitlines(False)
+
+    pfx = " " * (level * indent)
+
+    indented = [pfx + nxtline for nxtline in msglines]
+
+    return indented

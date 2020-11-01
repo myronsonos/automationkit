@@ -19,6 +19,7 @@ __license__ = "MIT"
 
 import asyncio
 import netifaces
+import os
 import selectors
 import socket
 import threading
@@ -332,21 +333,23 @@ def msearch_scan(expected_devices, interface_list=None, response_timeout=45, int
     if len(scan_context.matching_devices) != len(expected_devices):
         err_msg = "Failed to find expected UPNP devices after a timeout of %s seconds.\n" % response_timeout
 
-        err_msg += "EXPECTED: (%s)\n" % len(expected_devices)
+        err_msg_lines = []
+        err_msg_lines.append("EXPECTED: (%s)" % len(expected_devices))
         for dkey in expected_devices:
-            err_msg += "    %r:\n" % dkey
-        err_msg += "\n\n"
+            err_msg_lines.append("    %r:" % dkey)
+        err_msg_lines.append("")
 
-        err_msg += "MATCHING: (%s)\n" % len(scan_context.matching_devices)
-        for dkey, dval in scan_context.matching_devices.items():
-            err_msg += "    %r:\n" % dkey
-        err_msg += "\n\n"
+        err_msg_lines.append("MATCHING: (%s)" % len(scan_context.matching_devices))
+        for dkey in scan_context.matching_devices:
+            err_msg_lines.append("    %r:" % dkey)
+        err_msg_lines.append("")
 
-        err_msg += "FOUND: (%s)\n" % len(scan_context.found_devices)
-        for dkey, dval in scan_context.found_devices.items():
-            err_msg += "    %r:\n" % dkey
-        err_msg += "\n"
+        err_msg_lines.append("FOUND: (%s)" % len(scan_context.found_devices))
+        for dkey in scan_context.found_devices:
+            err_msg_lines.append("    %r:" % dkey)
+        err_msg_lines.append("")
 
+        err_msg = os.linesep.join(err_msg_lines)
         raise AKitTimeoutError(err_msg)
 
     return scan_context.found_devices, scan_context.matching_devices

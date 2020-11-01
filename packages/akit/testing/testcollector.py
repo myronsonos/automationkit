@@ -35,7 +35,7 @@ from akit.testing.testpack import TestPack, DefaultTestPack, is_testpack, testpa
 from akit.testing.testref import TestRef
 from akit.testing.utilities import find_testmodule_root, find_testmodule_fullname
 
-from akit.xlogging import getAutomatonKitLogger
+from akit.xlogging.foundations import getAutomatonKitLogger
 
 logger = getAutomatonKitLogger()
 

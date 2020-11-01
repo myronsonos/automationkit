@@ -1,7 +1,7 @@
 """
-.. module:: akit.integration.upnp.extensions.sonos.zps13
+.. module:: akit.integration.upnp.extensions.sonos.zps38
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the a Upnp device for a Sonos Zps13.
+    :synopsis: Module containing the a Upnp device for a Sonos Zps38.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
@@ -21,12 +21,11 @@ from akit.extensible import LoadableExtension
 from akit.integration.upnp.extensions.standard.rootdevices.sonos.sonosdevice import SonosPlayer
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 
-class SonosDeviceZpS13(SonosPlayer, LoadableExtension):
+class SonosDeviceZpS38(SonosPlayer, LoadableExtension):
     """
     """
 
     MANUFACTURER = "Sonos, Inc."
-    MODEL_NUMBER = "S13"
-    MODEL_DESCRIPTION = "Sonos One"
+    MODEL_NUMBER = "S38"
+    MODEL_DESCRIPTION = "Sonos One SL"
 
-    

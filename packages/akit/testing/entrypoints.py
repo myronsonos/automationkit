@@ -35,7 +35,7 @@ from akit.recorders import JsonResultRecorder
 from akit.testing.utilities import find_testmodule_root, find_testmodule_fullname
 from akit.testing.testjob import DefaultTestJob
 from akit.testing.testsequencer import TestSequencer
-from akit.xlogging import LEVEL_NAMES, logging_initialize, getAutomatonKitLogger
+from akit.xlogging.foundations import LEVEL_NAMES, logging_initialize, getAutomatonKitLogger
 
 logger = getAutomatonKitLogger()
 

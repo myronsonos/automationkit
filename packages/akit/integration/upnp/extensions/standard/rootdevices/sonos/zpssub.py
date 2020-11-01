@@ -1,7 +1,7 @@
 """
-.. module:: akit.integration.upnp.extensions.sonos.zps18
+.. module:: akit.integration.upnp.extensions.sonos.zpssub
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the a Upnp device for a Sonos Zps18.
+    :synopsis: Module containing the a Upnp device for a Sonos ZpsSub.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 
@@ -18,10 +18,10 @@ __license__ = "MIT"
 
 from akit.extensible import LoadableExtension
 
-from akit.integration.upnp.extensions.standard.rootdevices.sonos.sonosdevice import SonosDevice
+from akit.integration.upnp.extensions.standard.rootdevices.sonos.sonosdevice import SonosPlayer
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 
-class SonosDeviceZpSub(SonosDevice, LoadableExtension):
+class SonosDeviceZpSub(SonosPlayer, LoadableExtension):
     """
     """
 

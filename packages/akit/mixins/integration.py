@@ -25,7 +25,7 @@ from akit.exceptions import AKitInvalidConfigError, AKitMissingConfigError, AKit
 
 from akit.environment.context import ContextUser
 
-from akit.xlogging import getAutomatonKitLogger
+from akit.xlogging.foundations import getAutomatonKitLogger
 
 class IntegrationMixIn(ContextUser):
     """
