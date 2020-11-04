@@ -269,6 +269,20 @@ class UpnpRootDevice(UpnpDevice):
         device = self._devices[device_type]
         return device
 
+    def lookup_event_variable(self, service_type, event_name):
+        event_var = None
+
+        subscription_key = "{}/{}".format(service_type, event_name)
+
+        self._subscription_lock.acquire()
+        try:
+            if subscription_key in self._subscriptions:
+                event_var = self._subscriptions[subscription_key]
+        finally:
+            self._subscription_lock.release()
+
+        return event_var
+
     def process_subscription_callback(self, sid, headers, body):
 
         eventvar = None

@@ -63,6 +63,14 @@ class UpnpServiceProxy:
     def serviceType(self):
         return self._serviceType
 
+    def lookup_event_variable(self, eventname):
+        """
+            Creates a subscription to the service events for this service.
+        """
+        device = self._device_ref()
+        event_var = device.lookup_event_variable(self.SERVICE_TYPE, eventname)
+        return event_var
+
     def proxy_link_service_to_device(self, device_ref, service_description):
 
         device = device_ref()

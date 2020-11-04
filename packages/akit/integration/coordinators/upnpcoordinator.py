@@ -670,6 +670,8 @@ if __name__ == "__main__":
     var_zonename = devProps.subscribe_to_event("ZoneName")
     znval = var_zonename.wait_for_value()
 
+    isbval = devProps.lookup_event_variable("IsZoneBridge")
+
     LEDSTATES = ["Off", "On"]
 
     index = 0
