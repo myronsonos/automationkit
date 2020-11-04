@@ -275,19 +275,24 @@ class Landscape:
 
         return device_list
 
-    def get_ssh_devices(self):
+    def get_ssh_devices(self, exclude_upnp=False):
         """
             Returns a list of devices that support ssh.
         """
         ssh_device_list = []
 
         for devinfo in self.get_devices():
+            dev_type = devinfo["deviceType"]
+
+            if exclude_upnp and dev_type == "network/upnp":
+                continue
+
             if "ssh" in devinfo:
                 ssh_device_list.append(devinfo)
 
         return ssh_device_list
 
-    def get_upnp_devices(self):
+    def get_upnp_devices(self, ssh_only=False):
         """
             Returns a list of UPNP device information dictionaries.
         """
@@ -295,7 +300,13 @@ class Landscape:
 
         for devinfo in self.get_devices():
             dev_type = devinfo["deviceType"]
-            if dev_type == "network/upnp":
+
+            if dev_type != "network/upnp":
+                continue
+
+            if ssh_only and "ssh" in devinfo:
+                upnp_device_list.append(devinfo)
+            else:
                 upnp_device_list.append(devinfo)
 
         return upnp_device_list
@@ -365,22 +376,36 @@ class Landscape:
         if self._has_ssh_devices and self._ssh_coord is None:
             raise AKitConfigurationError("SshPoolCoordinator initialization failure.")
 
-        for devinfo in self.get_devices():
-            dev_type = devinfo["deviceType"]
-            if dev_type == "network/upnp":
+        available_upnp_devices = self.get_upnp_devices(ssh_only=True)
+        available_ssh_devices = self.get_ssh_devices(exclude_upnp=True)
+
+        self._logger.info("===================== Initiating SSH First Contact with Landscape Devices =====================")
+        self._logger.info("")
+
+
+        if len(available_upnp_devices) == 0 and len(available_ssh_devices) == 0:
+            self._logger.info("No SSH Devices Found...")
+
+        if len(available_upnp_devices) > 0:
+            self._logger.info("UPNP DEVICES:")
+            for devinfo in available_upnp_devices:
                 usn = devinfo["upnp"]["USN"]
-                if "ssh" in devinfo:
-                    agent = self._ssh_coord.lookup_agent_by_usn(usn)
-                    if not agent.verify_connectivity():
-                        error_lists.append(devinfo)
-            elif dev_type == "network/ssh":
+                agent = self._ssh_coord.lookup_agent_by_usn(usn)
+                self._logger.info("    Verifying USN={} HOST={} IP={}".format(usn, agent.host, agent.ipaddr))
+                if not agent.verify_connectivity():
+                    error_lists.append(devinfo)
+            self._logger.info("")
+
+        if len(available_ssh_devices) > 0:
+            self._logger.info("SSH DEVICES:")
+            for devinfo in available_ssh_devices:
                 sshinfo = devinfo["ssh"]
                 host = sshinfo["host"]
                 agent = self._ssh_coord.lookup_agent_by_host(host)
+                self._logger.info("    Verifying HOST={} IP={}".format(agent.host, agent.ipaddr))
                 if not agent.verify_connectivity():
                     error_lists.append(devinfo)
-            else:
-                error_lists.append(devinfo)
+            self._logger.info("")
 
         return error_lists
 

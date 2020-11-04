@@ -1,4 +1,6 @@
 
+import time
+
 from enum import IntEnum
 from datetime import datetime
 
@@ -26,14 +28,20 @@ class UpnpEventVar:
         API is provided to ensure this synchronization.
     """
 
-    def __init__(self, key, name, subscription_lock, value=None, timestamp=None):
+    def __init__(self, key, name, subscription_lock, sid=None, timeout=None, value=None, timestamp=None):
         self._key = key
         self._name = name
         self._value = value
         self._last_update = timestamp
         self._sid = None
+        self._timeout = None
         self._subscription_lock = subscription_lock
         return
+
+    @property
+    def expired(self):
+        #TODO: Implement expired
+        return True
 
     @property
     def key(self):
@@ -76,10 +84,25 @@ class UpnpEventVar:
         self._last_update = None
         return
 
+    def update_subscription_details(self, sid, timeout):
+        """
+            Called to update the subscription information for this event variable.
+        """
+
+        self._subscription_lock.acquire()
+        try:
+            self._sid = sid
+            self._timeout = timeout
+        finally:
+            self._subscription_lock.release()
+
+        return
+
     def sync_read(self):
+
         value, last_update, state = None, None, UpnpEventVarState.UnInitialized
 
-        self._subscription_lock.aquire()
+        self._subscription_lock.acquire()
         try:
             last_update = self._last_update
 
@@ -96,7 +119,7 @@ class UpnpEventVar:
 
     def sync_update(self, value, timestamp, sid=None):
 
-        self._subscription_lock.aquire()
+        self._subscription_lock.acquire()
         try:
             if sid != None:
                 self._sid = sid
@@ -105,3 +128,19 @@ class UpnpEventVar:
             self._subscription_lock.release()
 
         return
+
+    def wait_for_value(self, timeout=60, interval=2):
+
+        now_time = time.time()
+        start_time = now_time
+        end_time = start_time + timeout
+        while True:
+            if now_time > end_time:
+                raise TimeoutError("Timeout waiting for event variable to update.")
+
+            if self._value is not None:
+                break
+            time.sleep(interval)
+            now_time = time.time()
+
+        return self._value

@@ -17,21 +17,32 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import os
+import re
 import requests
 import threading
 import traceback
 import typing
+import weakref
+
+from datetime import datetime
 
 from urllib.parse import urlparse
+
+from requests.compat import urljoin
 
 from xml.etree.ElementTree import tostring as xml_tostring
 from xml.etree.ElementTree import fromstring as xml_fromstring
 from xml.etree.ElementTree import ElementTree, Element, SubElement
 from xml.etree.ElementTree import register_namespace
 
-from akit.integration.upnp.upnpprotocol import MSearchKeys
+from akit.exceptions import AKitCommunicationsProtocolError
+from akit.extensible import generate_extension_key
+from akit.paths import normalize_name_for_path
+
+from akit.integration.upnp.upnpprotocol import MSearchKeys, MSearchRouteKeys
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice, normalize_name_for_path
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE, UpnpDevice1Device, UpnpDevice1SpecVersion
+from akit.integration.upnp.soap import NS_UPNP_EVENT
 
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_EMBEDDEDDEVICES
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_ROOTDEVICES
@@ -40,11 +51,17 @@ from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_EMBEDDEDDEVI
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_ROOTDEVICES
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_SERVICES
 
+from akit.integration.upnp.services.upnpeventvar import UpnpEventVar
+
 from akit.integration import upnp as upnp_module
+
+from akit.networking.constants import USER_AGENT
 
 from akit.xlogging.foundations import getAutomatonKitLogger
 
 UPNP_DIR = os.path.dirname(upnp_module.__file__)
+
+REGEX_SUBSCRIPTION_TIMEOUT = re.compile("^seconds-([0-9]+|infinite)", flags=re.IGNORECASE)
 
 def device_description_load(location):
     docTree = None
@@ -136,6 +153,7 @@ class UpnpRootDevice(UpnpDevice):
         self._host = None
         self._ip_address = None
         self._routes = None
+        self._primary_route = None
 
         self._devices = {}
         self._device_descriptions = {}
@@ -145,6 +163,12 @@ class UpnpRootDevice(UpnpDevice):
         self._logger = getAutomatonKitLogger()
 
         self._lock = threading.RLock()
+
+        self._coord_ref = None
+
+        self._subscription_lock = threading.RLock()
+        self._subscriptions = {}
+        self._sid_to_subscription_key_lookup = {}
         return
 
     @property
@@ -224,9 +248,10 @@ class UpnpRootDevice(UpnpDevice):
     def USN(self):
         return self._usn
 
-    def initialize(self, location: str, devinfo: dict):
+    def initialize(self, coord_ref: weakref.ReferenceType, location: str, devinfo: dict):
         """
         """
+        self._coord_ref = coord_ref
         self._location = location
 
         self._cachecontrol = devinfo.pop(MSearchKeys.CACHE_CONTROL)
@@ -235,6 +260,7 @@ class UpnpRootDevice(UpnpDevice):
         self._st = devinfo.pop(MSearchKeys.ST)
         self._usn = devinfo.pop(MSearchKeys.USN)
         self._routes = devinfo.pop(MSearchKeys.ROUTES)
+        self._primary_route = self._routes[0]
 
         self._consume_upnp_extra(devinfo)
         return
@@ -242,6 +268,62 @@ class UpnpRootDevice(UpnpDevice):
     def lookup_device(self, device_type):
         device = self._devices[device_type]
         return device
+
+    def process_subscription_callback(self, sid, headers, body):
+
+        eventvar = None
+        subscription_key = None
+
+        self._subscription_lock.acquire()
+        try:
+            subscription_key = self._sid_to_subscription_key_lookup[sid]
+            eventvar = self._subscriptions[subscription_key]
+        finally:
+            self._subscription_lock.release()
+
+        if eventvar is not None:
+            service_type, _ = subscription_key.split("/") 
+
+            docTree = ElementTree(xml_fromstring(body))
+
+            psetNode = docTree.getroot()
+
+            if psetNode is not None and psetNode.tag == "{%s}propertyset" % NS_UPNP_EVENT:
+                propertyNodeList = psetNode.findall("{%s}property" % NS_UPNP_EVENT)
+                for propNodeOuter in propertyNodeList:
+                    # Get the first node of the outer property node
+                    propNode = propNodeOuter.getchildren()[0]
+
+                    event_name = propNode.tag
+                    event_value = propNode.text
+
+                    if event_name == eventvar.name:
+                        timestamp = datetime.now()
+                        eventvar.sync_update(event_value, timestamp)
+                    else:
+                        otherkey = "{}/{}".format(service_type, event_name)
+                        othervar = None
+
+                        self._subscription_lock.acquire()
+                        try:
+                            if otherkey in self._subscriptions:
+                                othervar = self._subscriptions[subscription_key]
+                        finally:
+                            self._subscription_lock.release()
+                        
+                        if othervar is not None:
+                            timestamp = datetime.now()
+                            othervar.sync_update(event_value, timestamp)
+                        else:
+                            # If we get here, we have a value for a variable that we are not subscribed
+                            # create a none subscribed entry for the variable and its value
+                            self._subscription_lock.acquire()
+                            try:
+                                event_var = UpnpEventVar(subscription_key, event_name, self._subscription_lock, value=event_value)
+                                self._subscriptions[subscription_key] = event_var
+                            finally:
+                                self._subscription_lock.release()
+        return
 
     def record_description(self, urlBase: str, manufacturer: str, modelName: str, docTree: typing.Any, devNode: typing.Any, namespaces: str, force_recording: bool = False):
 
@@ -271,7 +353,115 @@ class UpnpRootDevice(UpnpDevice):
                 self._record_service( urlBase, manufacturerNormalized, svcNode, namespaces)
 
         return
-    
+
+    def subscribe_to_event(self, service_type: str, event_name: str, timeout: typing.Optional[float]):
+
+        """
+            Creates a subscription to the event name specified and returns a
+            UpnpEventVar object that can be used to read the current value for
+            the given event.
+        """
+        event_var = None
+
+        subscription_key = "{}/{}".format(service_type, event_name)
+
+        new_subscription = False
+        self._subscription_lock.acquire()
+        try:
+            if not subscription_key in self._subscriptions:
+                new_subscription = True
+                # Create the subscription event variable. It is created with an invalid
+                # value and marked as uninitialized because we need to get an update
+                # response in order to set its values.  We can handle the update response
+                # in a Notify thread.
+                event_var = UpnpEventVar(subscription_key, event_name, self._subscription_lock)
+
+                self._subscriptions[subscription_key] = event_var
+            else:
+                # We could have an entry for this variable due to a first notify property broadcast,
+                # so look to to see if we have a variable and see if it is missing an SID or if its
+                # subscription has expired.  If either of these are true we should create a subscription 
+                event_var = self._subscriptions[subscription_key]
+                if event_var.sid is None:
+                    new_subscription = True
+                elif event_var.expired:
+                    new_subscription = True
+        finally:
+            self._subscription_lock.release()
+
+        if new_subscription:
+            # If we created an uninitialized variable and added it to the subsciptions table
+            # we need to statup the subsciption here.  If the startup process fails, we can
+            # later remove the subscription from the subscription table.
+
+            serviceManufacturer = normalize_name_for_path(self.MANUFACTURER)
+            svckey = generate_extension_key(serviceManufacturer, service_type)
+            service = self._services[svckey]
+
+            subscribe_url = urljoin(self.URLBase, service.eventSubURL)
+            subscribe_auth = ""
+
+            coord = self._coord_ref()
+
+            ifname = self._primary_route[MSearchRouteKeys.IFNAME]
+            callback_url = "<http://%s>" % coord.lookup_callback_url_for_interface(ifname)
+
+            headers = { "HOST": self._host, "User-Agent": USER_AGENT, "CALLBACK": callback_url, "NT": "upnp:event"}
+            if timeout is not None:
+                headers["TIMEOUT"] = "Seconds-%s" % timeout
+            resp = requests.request(
+                "SUBSCRIBE", subscribe_url, headers=headers, auth=subscribe_auth
+            )
+            if resp.status_code == 200:
+                #============================== Expected Response Headers ==============================
+                # SID: uuid:RINCON_7828CA09247C01400_sub0000000207
+                # TIMEOUT: Second-86400
+                # Server: Linux UPnP/1.0 Sonos/62.1-82260-monaco_dev (ZPS13)
+                # Connection: close
+                sub_sid = None
+                sub_timeout = None
+
+                resp_headers = {k.upper(): v for k, v in resp.headers.items()}
+
+                nxtheader = None
+                try:
+                    nxtheader = "SID"
+                    sub_sid = resp_headers[nxtheader]
+
+                    nxtheader = "TIMEOUT"
+                    sub_timeout_str = resp_headers[nxtheader]
+                except KeyError:
+                    errmsg = "Event subscription response was missing in %r header." % nxtheader
+                    raise AKitCommunicationsProtocolError(errmsg)
+
+                mobj = REGEX_SUBSCRIPTION_TIMEOUT.match(sub_timeout_str)
+                if mobj is not None:
+                    timeout_str = mobj.groups()[0]
+                    sub_timeout = None if timeout_str == "infinite" else int(timeout_str)
+                
+                if sub_sid is not None:
+                    self._subscription_lock.acquire()
+                    try:
+                        if subscription_key in self._subscriptions:
+                            # Create the subscription event variable. It is created with an invalid
+                            # value and marked as uninitialized because we need to get an update
+                            # response in order to set its values.  We can handle the update response
+                            # in a Notify thread.
+                            event_var = self._subscriptions[subscription_key]
+                            event_var.update_subscription_details(sub_sid, sub_timeout)
+
+                            self._sid_to_subscription_key_lookup[sub_sid] = subscription_key
+                    finally:
+                        self._subscription_lock.release()
+                    
+                    # Notify the coordinator which device has this subscription
+                    coord.register_subscription_for_device(sub_sid, self)
+
+            else:
+                resp.raise_for_status()
+
+        return event_var
+
     def _record_embedded_device(self, manufacturer: str, embDevNode: typing.Any, namespaces: str, force_recording: bool = False):
 
         deviceTypeNode = embDevNode.find("deviceType", namespaces=namespaces)

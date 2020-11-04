@@ -16,6 +16,7 @@ NS_XSI = "http://www.w3.org/1999/XMLSchema-instance"
 NS_XSD = "http://www.w3.org/1999/XMLSchema"
 
 NS_UPNP_CONTROL = "urn:schemas-upnp-org:control-1-0"
+NS_UPNP_EVENT = "urn:schemas-upnp-org:event-1-0"
 
 URI_SOAP_ENCODING = "http://schemas.xmlsoap.org/soap/encoding/"
 

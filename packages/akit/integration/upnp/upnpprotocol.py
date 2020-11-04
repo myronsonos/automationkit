@@ -20,6 +20,7 @@ __license__ = "MIT"
 import asyncio
 import netifaces
 import os
+import re
 import selectors
 import socket
 import threading
@@ -30,6 +31,8 @@ import ssdp
 from akit.exceptions import AKitTimeoutError
 
 from asyncio import Protocol
+
+REGEX_NOTIFY_HEADER = re.compile("NOTIFY[ ]+[*/]+[ ]+HTTP/1")
 
 class MSearchTargets:
     ROOTDEVICE = "upnp:rootdevice"
@@ -335,7 +338,8 @@ def msearch_scan(expected_devices, interface_list=None, response_timeout=45, int
 
         missing = [dkey for dkey in expected_devices]
         for dkey in scan_context.found_devices:
-            missing.remove(dkey)
+            if dkey in missing:
+                missing.remove(dkey)
 
         err_msg_lines = []
         err_msg_lines.append("EXPECTED: (%s)" % len(expected_devices))
@@ -376,21 +380,38 @@ def notify_parse_request(content):
     """
     content = content.decode('utf-8')
 
-    respinfo = None
+    resp_headers = None
+    resp_body = None
 
-    resplines = content.splitlines(False)
-    if len(resplines) > 0:
-        header = resplines.pop(0).strip()
-        if header.startswith("NOTIFY *"):
-            respinfo = {}
-            for nxtline in resplines:
-                cidx = nxtline.find(":")
-                if cidx > -1:
-                    key = nxtline[:cidx].upper()
-                    val = nxtline[cidx+1:].strip()
-                    respinfo[key] = val
+    mobj = REGEX_NOTIFY_HEADER.search(content)
+    if mobj is not None:
+        header_content = None
+        body_content = None
 
-    return respinfo
+        if content.find("\r\n\r\n") > -1:
+            header_content, body_content = content.split("\r\n\r\n", 1)
+        elif content.find("\n\n") > -1:
+            header_content, body_content = content.split("\n\n", 1)
+        else:
+            header_content = content
+
+        resplines = header_content.splitlines(False)
+        
+        # Pop the NOTIFY header
+        resplines.pop(0).strip()
+
+        resp_headers = {}
+        for nxtline in resplines:
+            cidx = nxtline.find(":")
+            if cidx > -1:
+                key = nxtline[:cidx].upper()
+                val = nxtline[cidx+1:].strip()
+                resp_headers[key] = val
+
+        if body_content is not None:
+            resp_body = body_content
+
+    return resp_headers, resp_body
 
 if __name__ == "__main__":
     from akit.integration.landscaping import Landscape

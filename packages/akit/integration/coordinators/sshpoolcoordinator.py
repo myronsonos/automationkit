@@ -61,10 +61,14 @@ class SshPoolCoordinator:
                 if "keypasswd" in sshinfo:
                     keypasswd = sshinfo["keypasswd"]
 
+                allow_agent = False
+                if "allow_agent" in sshinfo:
+                    allow_agent = sshinfo["allow_agent"]
+
                 ip = socket.gethostbyname(host)
                 self._ip_to_host_lookup[ip] = host
 
-                agent = SshAgent(host, username, password=password, keyfile=keyfile, keypasswd=keypasswd)
+                agent = SshAgent(host, username, password=password, keyfile=keyfile, keypasswd=keypasswd, allow_agent=allow_agent)
                 self._agent_table[host] = agent
             else:
                 ssh_config_errors.append(sshinfo)

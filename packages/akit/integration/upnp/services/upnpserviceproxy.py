@@ -165,12 +165,10 @@ class UpnpServiceProxy:
 
         return
 
-    def proxy_subscribe_to_event(self, event_name, timeout=None):
+    def subscribe_to_event(self, eventname, timeout=None):
         """
-            Creates a subscription to the event name specified and returns a
-            UpnpEventVar object that can be used to read the current value for
-            the given event.
+            Creates a subscription to the service events for this service.
         """
         device = self._device_ref()
-        rtnval = device.subscribe_to_event(self.SERVICE_TYPE, event_name, timeout=timeout)
-        return rtnval
+        event_var = device.subscribe_to_event(self.SERVICE_TYPE, eventname, timeout=timeout)
+        return event_var

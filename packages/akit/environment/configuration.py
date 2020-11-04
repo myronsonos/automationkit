@@ -27,7 +27,14 @@ RUNTIME_DEFAULTS = {
             "console": "INFO",
             "logfile": "DEBUG"
         },
-        "logname": "%(jobtype)s.log"
+        "logname": "%(jobtype)s.log",
+        "branched": [
+            {
+                "name": "paramiko.transport",
+                "logname": "paramiko.transport.log",
+                "loglevel": "DEBUG"
+            }
+        ]
     },
     "paths": {
         "landscape": os.sep.join(("~", "akit", "config", "landscape.json")),

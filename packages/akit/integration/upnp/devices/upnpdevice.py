@@ -17,6 +17,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import re
+import typing
 import weakref
 
 from threading import RLock
@@ -31,19 +32,15 @@ from xml.etree.ElementTree import register_namespace
 from xml.etree.ElementTree import dump as dump_node
 from xml.etree.ElementTree import ElementTree
 
-from akit.exceptions import AKitNotOverloadedError
+from akit.exceptions import AKitNotOverloadedError, AKitCommunicationsProtocolError
 from akit.extensible import generate_extension_key
 from akit.paths import normalize_name_for_path
 
-from akit.integration.upnp.upnperrors import AKitCommunicationsProtocolError
 from akit.integration.upnp.upnpprotocol import MSearchKeys
-from akit.integration.upnp.services.upnpeventvar import UpnpEventVar
 
 UPNP_SERVICE1_NAMESPACE = "urn:schemas-upnp-org:service-1-0"
 
 from akit.paths import normalize_name_for_path
-
-REGEX_SUBSCRIPTION_TIMEOUT = re.compile("^seconds-([0-9]+|infinite)", flags=re.IGNORECASE)
 
 class UpnpDevice:
     """
@@ -55,6 +52,10 @@ class UpnpDevice:
     """
 
     DEVICE_IDENTIFIER = None
+
+    MANUFACTURER = "unknown"
+    MODEL_NUMBER = "unknown"
+    MODEL_DESCRIPTION = "unknown"
 
     def __init__(self):
         """
@@ -69,8 +70,6 @@ class UpnpDevice:
         self._services_descriptions = {}
         self._services = {}
 
-        self._subscription_lock = RLock()
-        self._subscriptions = {}
         return
 
     @property
@@ -114,81 +113,6 @@ class UpnpDevice:
         svckey = generate_extension_key(serviceManufacturer, serviceType)
         svc = self._services[svckey]
         return svc
-
-    def subscribe_to_event(self, service_type, event_name, timeout=None):
-        """
-            Creates a subscription to the event name specified and returns a
-            UpnpEventVar object that can be used to read the current value for
-            the given event.
-        """
-        subscribe_success = False
-
-        subscription_key = "{}/{}".format(service_type, event_name)
-
-        new_subscription = False
-        self._subscription_lock.acquire()
-        try:
-            if not subscription_key in self._subscriptions:
-                new_subscription = True
-                # Create the subscription event variable. It is created with an invalid
-                # value and marked as uninitialized because we need to get an update
-                # response in order to set its values.  We can handle the update response
-                # in a Notify thread.
-                event_var = UpnpEventVar(subscription_key, event_name, self._subscription_lock)
-
-                self._subscriptions[subscription_key] = event_var
-        finally:
-            self._subscription_lock.release()
-
-        if new_subscription:
-            # If we created an uninitialized variable and added it to the subsciptions table
-            # we need to statup the subsciption here.  If the startup process fails, we can
-            # later remove the subscription from the subscription table.
-
-            serviceManufacturer = normalize_name_for_path(self.MANUFACTURER)
-            svckey = generate_extension_key(serviceManufacturer, service_type)
-            service = self._services[svckey]
-
-            subscribe_url = urljoin(self.URLBase, service.eventSubURL)
-            subscribe_auth = ""
-
-            callback_url = "<%s>" % callback_url
-
-            headers = { "HOST": self._host, "CALLBACK": callback_url, "NT": "upnp:event"}
-            if timeout is not None:
-                headers["TIMEOUT"] = "Seconds-%s" % timeout
-            resp = requests.request(
-                "SUBSCRIBE", subscribe_url, headers=headers, auth=subscribe_auth
-            )
-            if resp.status_code == 200:
-                # Process the subscription validation response
-                print("========== Subsciption Response ==========")
-                print(resp.content)
-                print("")
-
-                resp_headers = {k.upper(): v for k, v in resp.headers.items()}
-
-                nxtheader = None
-                try:
-                    nxtheader = "SID"
-                    sub_sid = resp_headers[nxtheader]
-
-                    nxtheader = "TIMEOUT"
-                    sub_timeout_str = resp_headers[nxtheader]
-                except KeyError:
-                    errmsg = "Event subscription response was missing in %r header." % nxtheader
-                    raise AKitCommunicationsProtocolError(errmsg)
-
-                mobj = REGEX_SUBSCRIPTION_TIMEOUT.match(sub_timeout_str)
-                if mobj is not None:
-                    timeout_str = mobj.groups()[0]
-                    sub_timeout = None if timeout_str == "infinite" else int(timeout_str)
-                
-                
-            else:
-                resp.raise_for_status()
-
-        return subscribe_success
 
     def to_dict(self, brief=False):
         dval = self._description.to_dict(brief=brief)

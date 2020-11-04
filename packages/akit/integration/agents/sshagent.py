@@ -410,7 +410,7 @@ class SshSession:
 
 class SshAgent:
 
-    def __init__(self, host, username, password=None, keyfile=None, keypasswd=None, port=22, primitive=None, aspects=DEFAULT_ASPECTS):
+    def __init__(self, host, username, password=None, keyfile=None, keypasswd=None, allow_agent=False, port=22, primitive=None, aspects=DEFAULT_ASPECTS):
         self._host = host
         self._ipaddr = socket.gethostbyname(self._host)
         self._port = port
@@ -418,6 +418,7 @@ class SshAgent:
         self._password = password
         self._keyfile = keyfile
         self._keypasswd = keypasswd
+        self._allow_agent = allow_agent
         self._aspects = aspects
         if primitive is None:
             self._primitive = True
@@ -429,6 +430,10 @@ class SshAgent:
         if self._password is None and self._keyfile is None:
             raise AKitInvalidConfigError("SshAgent requires either a 'password' or identity 'keyfile' be specified.")
         return
+
+    @property
+    def allow_agent(self):
+        return self._allow_agent
 
     @property
     def aspects(self):
@@ -677,5 +682,5 @@ class SshAgent:
                 pkey = paramiko.rsakey.RSAKey.from_private_key(kf, password=self._keypasswd)
         ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password, pkey=pkey)
+        ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password, allow_agent=self._allow_agent, pkey=pkey)
         return ssh_client

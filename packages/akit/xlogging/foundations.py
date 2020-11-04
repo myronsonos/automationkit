@@ -24,6 +24,7 @@ import fnmatch
 import logging
 import os
 import sys
+import traceback
 
 from akit.environment.context import Context
 from akit.environment.variables import LOG_LEVEL_NAMES
@@ -59,6 +60,135 @@ def getAutomatonKitLogger():
 
 OTHER_LOGGER_FILTERS = []
 
+
+class LoggingManagerWrapper(logging.Manager):
+    """
+        There is [under normal circumstances] just one Manager instance, which
+        holds the hierarchy of loggers.
+    """
+    def __init__(self, manager):
+        """
+            Initialize the manager with the root node of the logger hierarchy.
+        """
+        self.manager = manager
+        return
+
+    @property
+    def disable(self):
+        return self.manager.disable
+
+    @property
+    def emittedNoHandlerWarning(self):
+        return self.manager.emittedNoHandlerWarning
+
+    @property
+    def loggerClass(self):
+        return self.manager.loggerClass
+
+    @property
+    def loggerDict(self):
+        return self.manager.loggerDict
+
+    @property
+    def logRecordFactory(self):
+        return self.manager.logRecordFactory
+
+    @property
+    def root(self):
+        return self.manager.root
+
+    def getLogger(self, name):
+        """
+            Get a logger with the specified name (channel name), creating it
+            if it doesn't yet exist. This name is a dot-separated hierarchical
+            name, such as "a", "a.b", "a.b.c" or similar.
+
+            If a PlaceHolder existed for the specified name [i.e. the logger
+            didn't exist but a child of it did], replace it with the created
+            logger and fix up the parent/child references which pointed to the
+            placeholder to now point to the logger.
+        """
+        rv = None
+
+        if not isinstance(name, str):
+            raise TypeError('A logger name must be a string')
+
+        logging._acquireLock()
+        try:
+            if name in self.loggerDict:
+                rv = self.loggerDict[name]
+                if isinstance(rv, logging.PlaceHolder):
+                    ph = rv
+                    rv = (self.loggerClass or logging._loggerClass)(name)
+                    rv.manager = self
+                    self.loggerDict[name] = rv
+                    self._fixupChildren(ph, rv)
+                    self._fixupParents(rv)
+            else:
+                rv = (self.loggerClass or logging._loggerClass)(name)
+                rv.manager = self
+                self.loggerDict[name] = rv
+                self._fixupParents(rv)
+        finally:
+            logging._releaseLock()
+
+        return rv
+
+    def matchLoggers(self, pattern):
+        """
+            Finds all the loggers whose name match the associated pattern.
+        """
+        logger_dict = {}
+
+        logging._acquireLock()
+        try:
+            for lname in self.manager.loggerDict.keys():
+                if fnmatch.fnmatch(lname, pattern):
+                    logger_dict[lname] = self.manager.loggerDict[lname]
+        finally:
+            logging._releaseLock()
+
+        return logger_dict
+
+    def setLoggerClass(self, klass):
+        """
+            Set the class to be used when instantiating a logger with this Manager.
+        """
+        self.manager.setLoggerClass(klass)
+        return
+
+    def setLogRecordFactory(self, factory):
+        """
+            Set the factory to be used when instantiating a log record with this
+            Manager.
+        """
+        self.manager.setLogRecordFactory(factory)
+        return
+
+    def _fixupParents(self, alogger):
+        """
+            Ensure that there are either loggers or placeholders all the way
+            from the specified logger to the root of the logger hierarchy.
+        """
+        self.manager._fixupParents(alogger)
+        return
+
+    def _fixupChildren(self, ph, alogger):
+        """
+            Ensure that children of the placeholder ph are connected to the
+            specified logger.
+        """
+        self.manager._fixupChildren(ph, alogger)
+        return
+
+    def _clear_cache(self):
+        """
+            Clear the cache for all loggers in loggerDict
+            Called when level changes are made
+        """
+        self.manager._clear_cache()
+        return
+
 class LoggingDefaults:
 
     DefaultFileLoggingHandler = logging.FileHandler
@@ -71,24 +201,24 @@ class TestKitLoggerWrapper:
 
     def debug(self, msg, *args, **kwargs):
         """
-        Log 'msg % args' with severity 'DEBUG'.
+            Log 'msg % args' with severity 'DEBUG'.
 
-        To pass exception information, use the keyword argument exc_info with
-        a true value, e.g.
+            To pass exception information, use the keyword argument exc_info with
+            a true value, e.g.
 
-        logger.debug("Houston, we have a %s", "thorny problem", exc_info=1)
+            logger.debug("Houston, we have a %s", "thorny problem", exc_info=1)
         """
         self._logger.debug(msg, *args, **kwargs)
         return
 
     def info(self, msg, *args, **kwargs):
         """
-        Log 'msg % args' with severity 'INFO'.
+            Log 'msg % args' with severity 'INFO'.
 
-        To pass exception information, use the keyword argument exc_info with
-        a true value, e.g.
+            To pass exception information, use the keyword argument exc_info with
+            a true value, e.g.
 
-        logger.info("Houston, we have a %s", "interesting problem", exc_info=1)
+            logger.info("Houston, we have a %s", "interesting problem", exc_info=1)
         """
         self._logger.info(msg, *args, **kwargs)
         return
@@ -96,12 +226,12 @@ class TestKitLoggerWrapper:
 
     def warning(self, msg, *args, **kwargs):
         """
-        Log 'msg % args' with severity 'WARNING'.
+            Log 'msg % args' with severity 'WARNING'.
 
-        To pass exception information, use the keyword argument exc_info with
-        a true value, e.g.
+            To pass exception information, use the keyword argument exc_info with
+            a true value, e.g.
 
-        logger.warning("Houston, we have a %s", "bit of a problem", exc_info=1)
+            logger.warning("Houston, we have a %s", "bit of a problem", exc_info=1)
         """
         self._logger.warning(msg, *args, **kwargs)
         return
@@ -112,31 +242,31 @@ class TestKitLoggerWrapper:
 
     def error(self, msg, *args, **kwargs):
         """
-        Log 'msg % args' with severity 'ERROR'.
+            Log 'msg % args' with severity 'ERROR'.
 
-        To pass exception information, use the keyword argument exc_info with
-        a true value, e.g.
+            To pass exception information, use the keyword argument exc_info with
+            a true value, e.g.
 
-        logger.error("Houston, we have a %s", "major problem", exc_info=1)
+            logger.error("Houston, we have a %s", "major problem", exc_info=1)
         """
         self._logger.error(msg, *args, **kwargs)
         return
 
     def exception(self, msg, *args, exc_info=True, **kwargs):
         """
-        Convenience method for logging an ERROR with exception information.
+            Convenience method for logging an ERROR with exception information.
         """
         self._logger.exception(msg, *args, exc_info=exc_info, **kwargs)
         return
 
     def critical(self, msg, *args, **kwargs):
         """
-        Log 'msg % args' with severity 'CRITICAL'.
+            Log 'msg % args' with severity 'CRITICAL'.
 
-        To pass exception information, use the keyword argument exc_info with
-        a true value, e.g.
+            To pass exception information, use the keyword argument exc_info with
+            a true value, e.g.
 
-        logger.critical("Houston, we have a %s", "major disaster", exc_info=1)
+            logger.critical("Houston, we have a %s", "major disaster", exc_info=1)
         """
         self._logger.critical(msg, *args, **kwargs)
         return
@@ -201,8 +331,13 @@ def logging_initialize():
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
+        log_branches = []
+        if "branched" in logging_conf:
+            log_branches = logging_conf["branched"]
+
+
         # Setup the log files
-        _reinitialize_logging(consolelevel, logfilelevel, output_directory, logname)
+        _reinitialize_logging(consolelevel, logfilelevel, output_directory, logname, log_branches)
 
     return
 
@@ -214,19 +349,23 @@ def logging_create_branch_logger(logger_name, logfilename, log_level):
 
         :param logger_name: The name of the logger to create a branch log for.
     """
-    target_logger = logging.getLogger(logger_name)
+    root_logger = logging.getLogger()
 
-    # Setup the relevant log file which will get all the
-    # log entries from loggers that satisified a relevant
-    # logger name prefix match
-    handler = logging.FileHandler(logfilename)
-    handler.setLevel(log_level)
-    for handler in target_logger.handlers:
-        target_logger.removeHandler(handler)
-    target_logger.addHandler(handler)
+    if logger_name in root_logger.manager.loggerDict:
+        target_logger = logging.getLogger(logger_name)
+
+        # Setup the relevant log file which will get all the
+        # log entries from loggers that satisified a relevant
+        # logger name prefix match
+        handler = logging.FileHandler(logfilename)
+        handler.setLevel(log_level)
+        for handler in target_logger.handlers:
+            target_logger.removeHandler(handler)
+        target_logger.addHandler(handler)
+
     return
 
-def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basename):
+def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basename, log_branches):
 
     print("")
     print("NOTE: Console logging set to %r" % consolelevel)
@@ -245,6 +384,8 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
     env["logfile_other"] = other_logfilename
 
     rel_logfilename = os.path.join(output_dir, basecomp + extcomp)
+
+    logging.Logger.manager = LoggingManagerWrapper(logging.Logger.manager)
 
     # Remove all the log handlers from the root logger
     root_logger = logging.getLogger()
@@ -289,6 +430,18 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
 
     root_logger.addHandler(stdout_logger)
     root_logger.addHandler(stderr_logger)
+
+    for binfo in log_branches:
+        try:
+            logger_name = binfo["name"]
+            logfilename = binfo["logname"]
+            log_level = binfo["loglevel"]
+
+            logging_create_branch_logger(logger_name, logfilename, log_level)
+        except Exception as xcpt:
+            errmsg = "Error configuration branch logger." + os.linesep
+            errmsg = traceback.format_exc()
+            root_logger.error(errmsg)
 
     root_logger.info(format_log_section_header("Logging Initiaized"))
 

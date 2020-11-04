@@ -8,6 +8,7 @@ import threading
 import time
 import traceback
 import typing
+import weakref
 
 from io import BytesIO
 
@@ -26,12 +27,14 @@ from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 from akit.integration.upnp.devices.upnprootdevice import device_description_load
 from akit.integration.upnp.devices.upnprootdevice import device_description_find_components
 
+from akit.exceptions import AKitCommunicationsProtocolError
 from akit.integration.upnp.upnperrors import UpnpError
 from akit.integration.upnp.upnpfactory import UpnpFactory
 from akit.integration.upnp.upnpprotocol import MSearchKeys, UpnpProtocol
 from akit.integration.upnp.upnpprotocol import msearch_parse_request, notify_parse_request
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE
 from akit.integration.upnp.upnpprotocol import msearch_scan, MSearchKeys, MSearchRouteKeys
+from akit.integration.upnp.services.upnpeventvar import UpnpEventVar
 
 from akit.networking.interfaces import get_ipv4_address
 
@@ -91,6 +94,8 @@ class UpnpCoordinator:
             self._watched_devices = {}
 
             self._iface_callback_addr_lookup = None
+
+            self._services_subscriptions = {}
         return
 
     @property
@@ -131,16 +136,35 @@ class UpnpCoordinator:
 
         return wlist
 
+    def lookup_callback_url_for_interface(self, ifname):
+        """
+        """
+        callback_url = None
+
+        self._lock.acquire()
+        try:
+            if ifname in self._iface_callback_addr_lookup:
+                callback_url = self._iface_callback_addr_lookup[ifname]
+        finally:
+            self._lock.release()
+
+        return callback_url
+
     def lookup_device_by_mac(self, mac):
         """
             Lookup a UPNP device by its MAC address.
         """
 
         found = None
-        for nxtdev in self.children:
-            if mac == nxtdev.MACAddress:
-                found = nxtdev
-                break
+
+        self._lock.acquire()
+        try:
+            for nxtdev in self._children.values():
+                if mac == nxtdev.MACAddress:
+                    found = nxtdev
+                    break
+        finally:
+            self._lock.release()
 
         return found
 
@@ -150,10 +174,15 @@ class UpnpCoordinator:
         """
 
         found = None
-        for nxtdev in self.children:
-            if usn == nxtdev.USN:
-                found = nxtdev
-                break
+
+        self._lock.acquire()
+        try:
+            for nxtdev in self._children.values():
+                if usn == nxtdev.USN:
+                    found = nxtdev
+                    break
+        finally:
+            self._lock.release()
 
         return found
 
@@ -162,12 +191,44 @@ class UpnpCoordinator:
         """
         found = []
 
-        for usn in usnlist:
-            for nxtdev in self.children:
-                if usn == nxtdev.USN:
-                    found.append(nxtdev)
+        self._lock.acquire()
+        try:
+            for usn in usnlist:
+                for nxtdev in self._children.values():
+                    if usn == nxtdev.USN:
+                        found.append(nxtdev)
+        finally:
+            self._lock.release()
 
         return found
+
+    def lookup_service_instance_by_sid(self, sid):
+        """
+            Lookup a service instance that had registered for subscription callbacks by sid
+        """
+        svc_inst = None
+
+        self._lock.acquire()
+        try:
+            if sid in self._services_subscriptions:
+                svc_inst = self._services_subscriptions[sid]
+        finally:
+            self._lock.release()
+
+        return svc_inst
+
+    def register_subscription_for_device(self, sid, device):
+        """
+            Registers a service instance for event callbacks via a 'sid'.
+        """
+
+        self._lock.acquire()
+        try:
+            self._services_subscriptions[sid] = device
+        finally:
+            self._lock.release()
+
+        return
 
     def startup_scan(self, upnp_hint_list, watchlist=None, exclude_interfaces=[], response_timeout=45, retry=2, force_recording=False):
         """
@@ -259,10 +320,26 @@ class UpnpCoordinator:
 
         return
 
-    def _process_callback(self, ifname, claddr, request):
-        
-        reqinfo = msearch_parse_request(request)
-        self._logger.debug("RESPONDING TO MSEARCH")
+    def _process_subscription_callback(self, ifname, claddr, request):
+
+        self._logger.debug("RESPONDING TO SUBSCRIPTION CALLBACK")
+        self._logger.debug(request)
+
+        req_headers, req_body = notify_parse_request(request)
+
+        sid = req_headers["SID"]
+
+        device = None
+        #lookup the device that needs to handle this subscription
+        self._lock.acquire()
+        try:
+            if sid in self._services_subscriptions:
+                device = self._services_subscriptions[sid]
+        finally:
+            self._lock.release()
+
+        if device is not None:
+            device.process_subscription_callback(sid, req_headers, req_body)
 
         return
 
@@ -275,12 +352,12 @@ class UpnpCoordinator:
 
     def _process_request_for_notify(self, addr, request):
 
-        request_info = notify_parse_request(request)
+        req_headers, req_body = notify_parse_request(request)
 
-        usn = request_info["USN"]
+        usn = req_headers["USN"]
 
         if usn in self._watched_devices:
-            self._process_device_notification(usn, request_info)
+            self._process_device_notification(usn, req_headers)
 
         return
 
@@ -355,7 +432,8 @@ class UpnpCoordinator:
             # Bind to port zero so we can get an ephimeral port address
             sock.bind((service_addr, 0))
 
-            host, port = sock.getsockname()
+            _, port = sock.getsockname()
+            host = get_ipv4_address(ifname)
 
             iface_callback_addr = "%s:%s" % (host, port)
 
@@ -376,7 +454,7 @@ class UpnpCoordinator:
                     while self._running:
                         # Process the requests
                         nxtbuff = asock.recv(1024)
-                        if nxtbuff == 0:
+                        if len(nxtbuff) == 0:
                             break
                         cbbuffer.write(nxtbuff)
                 finally:
@@ -388,7 +466,7 @@ class UpnpCoordinator:
                 cbbuffer.seek(0)
 
                 # Queue the callback workpacket for dispatching by a worker thread
-                wkpacket = (self._process_callback, (ifname, claddr, request))
+                wkpacket = (self._process_subscription_callback, (ifname, claddr, request))
                 self._queue_lock.acquire()
                 try:
                     self._queue_work.append(wkpacket)
@@ -523,7 +601,8 @@ class UpnpCoordinator:
                                 if type(rootdev) == UpnpRootDevice:
                                     rootdev.record_description(urlBase, manufacturer, modelName, docTree, devNode, namespaces=namespaces, force_recording=force_recording)
 
-                                rootdev.initialize(location, deviceinfo)
+                                coord_ref = weakref.ref(self)
+                                rootdev.initialize(coord_ref, location, deviceinfo)
 
                                 # Refresh the description
                                 rootdev.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
@@ -564,6 +643,12 @@ class UpnpCoordinator:
 
 if __name__ == "__main__":
 
+    import paramiko
+    import akit.environment.activate
+
+    from akit.xlogging.foundations import logging_initialize
+    logging_initialize()
+
     from akit.integration.landscaping import Landscape
 
 
@@ -579,7 +664,11 @@ if __name__ == "__main__":
 
     value = devProps.action_GetLEDState()
 
-    devProps.proxy_subscribe_to_event("MicEnabled")
+    var_mic_enabled = devProps.subscribe_to_event("MicEnabled")
+    meval = var_mic_enabled.wait_for_value()
+
+    var_zonename = devProps.subscribe_to_event("ZoneName")
+    znval = var_zonename.wait_for_value()
 
     LEDSTATES = ["Off", "On"]
 
