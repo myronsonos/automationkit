@@ -1,5 +1,5 @@
 """
-.. module:: akit.datum.orm
+.. module:: orm
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Contains the ORM associated with the akit database storage
 

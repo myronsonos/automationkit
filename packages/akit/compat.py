@@ -1,5 +1,5 @@
 """
-.. module:: akit.compat
+.. module:: compat
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that contains functions that are utilized to provide compatibility across different
                operating system platforms and python version.

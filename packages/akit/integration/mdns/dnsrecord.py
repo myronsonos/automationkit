@@ -7,7 +7,7 @@ from typing import Any, Optional, Union, cast
 
 from akit.exceptions import AKitAbstractMethodError
 
-from akit.networking import is_ipv6_address
+from akit.networking.interfaces import is_ipv6_address
 from akit.integration.mdns.dnsconst import DnsEntryClass, DnsEntryType, DnsLiftimePercent
 from akit.integration.mdns.dnsentry import DnsEntry
 

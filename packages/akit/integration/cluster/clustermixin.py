@@ -1,5 +1,5 @@
 """
-.. module:: akit.integration.cluster.clustermixin
+.. module:: clustermixin
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Contains a ClusterMixIn object to use for working with the nodes of a cluster
 

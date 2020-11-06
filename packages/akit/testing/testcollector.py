@@ -1,5 +1,5 @@
 """
-.. module:: akit.testing.testcollector
+.. module:: testcollector
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that contains the `TestCollector` object which is utilized to collection the
                information about the tests, scopes and integration that will be included in an

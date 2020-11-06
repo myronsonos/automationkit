@@ -1,5 +1,5 @@
 """
-.. module:: akit.datum.dbio
+.. module:: dbio
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Contains helper functions for working with specific databases
 

@@ -1,5 +1,5 @@
 """
-.. module:: akit.integration.clients.linuxclientmixin
+.. module:: linuxclientmixin
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Contains a LinuxClientMixIn object to use for working with linux clients
 

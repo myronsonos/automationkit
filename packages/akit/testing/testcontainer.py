@@ -1,10 +1,10 @@
 """
-.. module:: akit.testing.testcontainer
+.. module:: testcontainer
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the base :class:`TestContainer` type and derived categorized test
-               containers such as :class:`ArchitectureTestContainer`, :class:`BrickTestContainer`,
-               :class:`LimitsTestContainer`, :class:`NegativeTestContainer`, :class:`BrickTestContainer`,
-               :class:`SmokeTestContainer`, :class:`StressTestContainer`
+        containers such as :class:`ArchitectureTestContainer`, :class:`BrickTestContainer`,
+        :class:`LimitsTestContainer`, :class:`NegativeTestContainer`, :class:`BrickTestContainer`,
+        :class:`SmokeTestContainer`, :class:`StressTestContainer`
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
@@ -47,12 +47,13 @@ class TestContainer:
         that is used to link testcases to external resources and also as a declaritive way to
         link test cases to the scopes of execution that they should execute in.  `TestContainer`s
         provide:
-            * class and instance methods
-            * class and instance data
-            * integrated entities
-            * a distrubuted context
-            * a target scope that resides in a hierachy of scopes with a determined path
-              and code to be able to enter and exit the target scope
+
+        * class and instance methods
+        * class and instance data
+        * integrated entities
+        * a distrubuted context
+        * a target scope that resides in a hierachy of scopes with a determined path
+          and code to be able to enter and exit the target scope
 
         To integrate a testcase into the 'Automation Kit' test environment, a tester creates a
         test container class that derives from `TestContainer` itself or from a derived test.
@@ -66,7 +67,6 @@ class TestContainer:
         come in through the inclusion of an :class:`akit.mixins.integration.IntegrationMixIn`
         parent type.  The passing on of functionality that is used to interact with a test containers
         target scope of execution should be included through the :class:`akit.mixins.scopes.ScopeMixIn`.
-
     """
 
     def __init__(self, testmethod, recorder, *args, extname=None, parameters=None, **kwargs):

@@ -1,5 +1,5 @@
 """
-.. module:: akit.metadata
+.. module:: metadata
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that contains decorators that can be utilized to attach metadata to automation
                tasks, tests, scopes, and integrations.

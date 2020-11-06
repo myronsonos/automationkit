@@ -1,5 +1,5 @@
 """
-.. module:: akit.integration.upnp.protocols.msearch
+.. module:: upnpprotocols
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the :class:`MSearchRootDeviceProtocol` class and
                associated diagnostic.

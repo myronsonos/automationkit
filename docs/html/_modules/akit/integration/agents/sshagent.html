@@ -1,0 +1,853 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>akit.integration.agents.sshagent &#8212; Automation Kit 1.0.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for akit.integration.agents.sshagent</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: sshagent</span>
+<span class="sd">    :platform: Darwin, Linux, Unix, Windows</span>
+<span class="sd">    :synopsis: Module containing the :class:`SshAgent` class and associated diagnostic.</span>
+
+<span class="sd">.. moduleauthor:: Myron Walker &lt;myron.walker@gmail.com&gt;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Myron Walker&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2020, Myron W Walker&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.0.0&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Myron Walker&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;myron.walker@gmail.com&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Development&quot;</span> <span class="c1"># Prototype, Development or Production</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">stat</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">akit.aspects</span> <span class="kn">import</span> <span class="n">RunPattern</span><span class="p">,</span> <span class="n">DEFAULT_ASPECTS</span>
+<span class="kn">from</span> <span class="nn">akit.exceptions</span> <span class="kn">import</span> <span class="n">AKitInvalidConfigError</span>
+
+<span class="kn">from</span> <span class="nn">akit.xlogging.foundations</span> <span class="kn">import</span> <span class="n">getAutomatonKitLogger</span>
+
+<span class="kn">import</span> <span class="nn">paramiko</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">getAutomatonKitLogger</span><span class="p">()</span>
+
+<span class="n">DEFAULT_SSH_TIMEOUT</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">DEFAULT_SSH_RETRY_INTERVAL</span> <span class="o">=</span> <span class="o">.</span><span class="mi">5</span>
+
+<span class="c1">#                    PERMS          LINKS   OWNER       GROUPS    SIZE   MONTH  DAY  TIME    NAME</span>
+<span class="c1">#                  rwxrwxrwx         24      myron      myron     4096   Jul    4   00:37  PCBs</span>
+<span class="n">REGEX_DIRECTORY_ENTRY</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([\S]+)[\s]+([0-9]+)[\s]+([\S]+)[\s]+([\S]+)[\s]+([0-9]+)[\s]+([A-za-z]+[\s]+[0-9]+[\s]+[0-9:]+)[\s]+([\S\s]+)&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="lookup_entry_type"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.lookup_entry_type">[docs]</a><span class="k">def</span> <span class="nf">lookup_entry_type</span><span class="p">(</span><span class="n">pdir</span><span class="p">,</span> <span class="n">ename</span><span class="p">,</span> <span class="n">finfo</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determines the entry type labelto assign to a file entry based on the st_mode of the file information.</span>
+
+<span class="sd">        :param pdir: The parent directory of the file, passed for logging purposes.</span>
+<span class="sd">        :type pdir: str</span>
+<span class="sd">        :param ename: The entry name of the file in the directory listing.</span>
+<span class="sd">        :type ename: str</span>
+<span class="sd">        :param finfo: The file information as returned by lstat on the file entry.</span>
+<span class="sd">        :type finfo: lstat result</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">etype</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_ISREG</span><span class="p">(</span><span class="n">finfo</span><span class="o">.</span><span class="n">st_mode</span><span class="p">):</span>
+        <span class="n">etype</span> <span class="o">=</span> <span class="s2">&quot;file&quot;</span>
+    <span class="k">elif</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_ISDIR</span><span class="p">(</span><span class="n">finfo</span><span class="o">.</span><span class="n">st_mode</span><span class="p">):</span>
+        <span class="n">etype</span> <span class="o">=</span> <span class="s2">&quot;dir&quot;</span>
+    <span class="k">elif</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_ISLNK</span><span class="p">(</span><span class="n">finfo</span><span class="o">.</span><span class="n">st_mode</span><span class="p">):</span>
+        <span class="n">etype</span> <span class="o">=</span> <span class="s2">&quot;link&quot;</span>
+    <span class="k">elif</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_ISCHR</span><span class="p">(</span><span class="n">finfo</span><span class="o">.</span><span class="n">st_mode</span><span class="p">):</span>
+        <span class="n">etype</span> <span class="o">=</span> <span class="s2">&quot;char&quot;</span>
+    <span class="k">elif</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_ISBLK</span><span class="p">(</span><span class="n">finfo</span><span class="o">.</span><span class="n">st_mode</span><span class="p">):</span>
+        <span class="n">etype</span> <span class="o">=</span> <span class="s2">&quot;block&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;ERROR: Unknown entry type. pdir=</span><span class="si">%s</span><span class="s2">, ename=</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pdir</span><span class="p">,</span> <span class="n">ename</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">etype</span></div>
+
+<div class="viewcode-block" id="primitive_list_directory"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.primitive_list_directory">[docs]</a><span class="k">def</span> <span class="nf">primitive_list_directory</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">directory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Uses a primitive method to create a list of the files and folders in a directory</span>
+<span class="sd">        by running the &#39;ls -al&#39; commands on the directory.  This is required if the SSH</span>
+<span class="sd">        server does not support sftp.</span>
+
+<span class="sd">        :param ssh_client: A :class:`paramiko.SSHClient` object that has already been connected</span>
+<span class="sd">                           to the remote server.</span>
+<span class="sd">        :type ssh_client: :class:`paramiko.SSHClient`</span>
+<span class="sd">        :param directory: The remote directory to get a list catalog for.</span>
+<span class="sd">        :type directory: str </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">entries</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">ls_cmd</span> <span class="o">=</span> <span class="s2">&quot;ls -al </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">directory</span>
+
+    <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh_execute_command</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">ls_cmd</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">primitive_parse_directory_listing</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">stdout</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Allow permission denied errors</span>
+        <span class="k">if</span> <span class="n">stderr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Permission denied&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;Error attempting to get a primitive directory listing.</span><span class="se">\n</span><span class="s2">    CMD=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">    STDERR:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ls_cmd</span><span class="p">,</span> <span class="n">stderr</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">entries</span></div>
+
+<div class="viewcode-block" id="primitive_list_tree"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.primitive_list_tree">[docs]</a><span class="k">def</span> <span class="nf">primitive_list_tree</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">treeroot</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Uses a primitive method to create an information tree about the files and folders</span>
+<span class="sd">        in a directory tree by running &#39;ls -al&#39; commands on the directory tree.  This is</span>
+<span class="sd">        required if the SSH server does not support sftp.</span>
+
+<span class="sd">        :param ssh_client: A :class:`paramiko.SSHClient` object that has already been connected</span>
+<span class="sd">                           to the remote server.</span>
+<span class="sd">        :type ssh_client: :class:`paramiko.SSHClient`</span>
+<span class="sd">        :param treeroot: The remote root directory to get a directory tree catalog for.</span>
+<span class="sd">        :type treeroot: str</span>
+<span class="sd">        :param max_depth: The maximum descent depth to go to when building the tree catalog.</span>
+<span class="sd">        :type max_depth: int </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">level_items</span> <span class="o">=</span> <span class="n">primitive_list_directory</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">treeroot</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">max_depth</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">treeroot</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+            <span class="n">treeroot</span> <span class="o">=</span> <span class="n">treeroot</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+
+        <span class="k">for</span> <span class="n">nxtitem</span> <span class="ow">in</span> <span class="n">level_items</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">nxtname</span> <span class="o">=</span> <span class="n">nxtitem</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">nxtitem</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;dir&quot;</span><span class="p">:</span>
+                <span class="n">nxtroot</span> <span class="o">=</span> <span class="n">treeroot</span> <span class="o">+</span> <span class="n">nxtname</span>
+                <span class="n">nxtchildren</span> <span class="o">=</span> <span class="n">primitive_list_tree_recurse</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">nxtroot</span><span class="p">,</span> <span class="n">max_depth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">nxtitem</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">nxtchildren</span><span class="p">)</span>
+
+    <span class="n">tree_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">treeroot</span><span class="p">,</span>
+        <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">level_items</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">tree_info</span></div>
+
+<div class="viewcode-block" id="primitive_list_tree_recurse"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.primitive_list_tree_recurse">[docs]</a><span class="k">def</span> <span class="nf">primitive_list_tree_recurse</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">,</span> <span class="n">remaining</span><span class="p">):</span>
+
+    <span class="n">level_items</span> <span class="o">=</span> <span class="n">primitive_list_directory</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">remaining</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rootdir</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+            <span class="n">rootdir</span> <span class="o">=</span> <span class="n">rootdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+
+        <span class="k">for</span> <span class="n">nxtitem</span> <span class="ow">in</span> <span class="n">level_items</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">nxtname</span> <span class="o">=</span> <span class="n">nxtitem</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">nxtitem</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;dir&quot;</span><span class="p">:</span>
+                <span class="n">nxtroot</span> <span class="o">=</span> <span class="n">rootdir</span> <span class="o">+</span> <span class="n">nxtname</span>
+                <span class="n">nxtchildren</span> <span class="o">=</span> <span class="n">primitive_list_tree_recurse</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">nxtroot</span><span class="p">,</span> <span class="n">remaining</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">nxtitem</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">nxtchildren</span><span class="p">)</span>
+
+    <span class="n">children_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">level_items</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">children_info</span></div>
+
+<div class="viewcode-block" id="primitive_parse_directory_listing"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.primitive_parse_directory_listing">[docs]</a><span class="k">def</span> <span class="nf">primitive_parse_directory_listing</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;name&quot;: &quot;blah&quot;,</span>
+<span class="sd">            &quot;type&quot;: &quot;dir&quot;, # dir, file, link</span>
+<span class="sd">            &quot;owner&quot;: &quot;root&quot;,</span>
+<span class="sd">            &quot;group&quot;: &quot;root&quot;,</span>
+<span class="sd">            &quot;modified&quot;: &quot;Jul  4 00:37&quot;</span>
+<span class="sd">            &quot;size&quot;: 1234</span>
+<span class="sd">        }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">entries</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">listing_lines</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">nxtline</span> <span class="ow">in</span> <span class="n">listing_lines</span><span class="p">:</span>
+        <span class="n">nxtline</span> <span class="o">=</span> <span class="n">nxtline</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="n">mobj</span> <span class="o">=</span> <span class="n">REGEX_DIRECTORY_ENTRY</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">nxtline</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mobj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mgroups</span> <span class="o">=</span> <span class="n">mobj</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+
+            <span class="n">name</span> <span class="o">=</span> <span class="n">mgroups</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span> <span class="ow">or</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;..&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">perms</span> <span class="o">=</span> <span class="n">mgroups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">perms_tc</span> <span class="o">=</span> <span class="n">perms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">etype</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">perms_tc</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+                <span class="n">etype</span> <span class="o">=</span> <span class="s2">&quot;file&quot;</span>
+            <span class="k">elif</span> <span class="n">perms_tc</span> <span class="o">==</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span>
+                <span class="n">etype</span> <span class="o">=</span> <span class="s2">&quot;dir&quot;</span>
+            <span class="k">elif</span> <span class="n">perms_tc</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+                <span class="n">etype</span> <span class="o">=</span> <span class="s2">&quot;link&quot;</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; -&gt; &quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">perms_tc</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+                <span class="n">etype</span> <span class="o">=</span> <span class="s2">&quot;char&quot;</span>
+            <span class="k">elif</span> <span class="n">perms_tc</span> <span class="o">==</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span>
+                <span class="n">etype</span> <span class="o">=</span> <span class="s2">&quot;block&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown directory listing entry type. dir=</span><span class="si">%s</span><span class="s2"> tc=</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">perms_tc</span><span class="p">))</span>
+
+            <span class="n">dentry</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;perms&quot;</span><span class="p">:</span> <span class="n">perms</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">etype</span><span class="p">,</span>
+                <span class="s2">&quot;owner&quot;</span><span class="p">:</span> <span class="n">mgroups</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="s2">&quot;group&quot;</span><span class="p">:</span> <span class="n">mgroups</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">mgroups</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                <span class="s2">&quot;modified&quot;</span><span class="p">:</span> <span class="n">mgroups</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+            <span class="p">}</span>
+
+            <span class="n">entries</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dentry</span>
+
+    <span class="k">return</span> <span class="n">entries</span></div>
+
+<div class="viewcode-block" id="primitive_pull_file"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.primitive_pull_file">[docs]</a><span class="k">def</span> <span class="nf">primitive_pull_file</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">,</span> <span class="n">localpath</span><span class="p">):</span>
+
+    <span class="n">copycmd</span> <span class="o">=</span> <span class="s2">&quot;cat </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">remotepath</span>
+
+    <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh_execute_command</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">copycmd</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">status</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error pulling file using command. cmd=</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">copycmd</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">localpath</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">lfile</span><span class="p">:</span>
+        <span class="n">lfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+
+<div class="viewcode-block" id="primitive_push_file"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.primitive_push_file">[docs]</a><span class="k">def</span> <span class="nf">primitive_push_file</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">localpath</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;primitive_push_file: not implemented&quot;</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+<div class="viewcode-block" id="sftp_list_directory"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.sftp_list_directory">[docs]</a><span class="k">def</span> <span class="nf">sftp_list_directory</span><span class="p">(</span><span class="n">sftp</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">userlookup</span><span class="p">,</span> <span class="n">grouplookup</span><span class="p">):</span>
+
+    <span class="n">entries</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sftp</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+        <span class="n">directory_items</span> <span class="o">=</span> <span class="n">sftp</span><span class="o">.</span><span class="n">listdir</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">nname</span> <span class="ow">in</span> <span class="n">directory_items</span><span class="p">:</span>
+            <span class="n">ninfo</span> <span class="o">=</span> <span class="n">sftp</span><span class="o">.</span><span class="n">lstat</span><span class="p">(</span><span class="n">nname</span><span class="p">)</span>
+            <span class="n">perms</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">dentry</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">nname</span><span class="p">,</span>
+                <span class="s2">&quot;perms&quot;</span><span class="p">:</span> <span class="n">perms</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">lookup_entry_type</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">nname</span><span class="p">,</span> <span class="n">ninfo</span><span class="p">),</span>
+                <span class="s2">&quot;owner&quot;</span><span class="p">:</span> <span class="n">userlookup</span><span class="p">(</span><span class="n">ninfo</span><span class="o">.</span><span class="n">st_uid</span><span class="p">),</span>
+                <span class="s2">&quot;group&quot;</span><span class="p">:</span> <span class="n">grouplookup</span><span class="p">(</span><span class="n">ninfo</span><span class="o">.</span><span class="n">st_gid</span><span class="p">),</span>
+                <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">ninfo</span><span class="o">.</span><span class="n">st_size</span><span class="p">,</span>
+                <span class="s2">&quot;accessed&quot;</span><span class="p">:</span> <span class="n">ninfo</span><span class="o">.</span><span class="n">st_atime</span><span class="p">,</span>
+                <span class="s2">&quot;modified&quot;</span><span class="p">:</span> <span class="n">ninfo</span><span class="o">.</span><span class="n">st_mtime</span>
+            <span class="p">}</span>
+
+            <span class="n">entries</span><span class="p">[</span><span class="n">nname</span><span class="p">]</span> <span class="o">=</span> <span class="n">dentry</span>
+    <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">entries</span></div>
+
+<div class="viewcode-block" id="sftp_list_tree"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.sftp_list_tree">[docs]</a><span class="k">def</span> <span class="nf">sftp_list_tree</span><span class="p">(</span><span class="n">sftp</span><span class="p">,</span> <span class="n">treeroot</span><span class="p">,</span> <span class="n">userlookup</span><span class="p">,</span> <span class="n">grouplookup</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+    <span class="n">level_items</span> <span class="o">=</span> <span class="n">sftp_list_directory</span><span class="p">(</span><span class="n">sftp</span><span class="p">,</span> <span class="n">treeroot</span><span class="p">,</span> <span class="n">userlookup</span><span class="p">,</span> <span class="n">grouplookup</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">max_depth</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">treeroot</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+            <span class="n">treeroot</span> <span class="o">=</span> <span class="n">treeroot</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+
+        <span class="k">for</span> <span class="n">nxtitem</span> <span class="ow">in</span> <span class="n">level_items</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">nxtname</span> <span class="o">=</span> <span class="n">nxtitem</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">nxtitem</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;dir&quot;</span><span class="p">:</span>
+                <span class="n">nxtroot</span> <span class="o">=</span> <span class="n">treeroot</span> <span class="o">+</span> <span class="n">nxtname</span>
+                <span class="n">nxtchildren</span> <span class="o">=</span> <span class="n">sftp_list_tree_recurse</span><span class="p">(</span><span class="n">sftp</span><span class="p">,</span> <span class="n">nxtroot</span><span class="p">,</span> <span class="n">userlookup</span><span class="p">,</span> <span class="n">grouplookup</span><span class="p">,</span> <span class="n">max_depth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">nxtitem</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">nxtchildren</span><span class="p">)</span>
+
+    <span class="n">tree_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">treeroot</span><span class="p">,</span>
+        <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">level_items</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">tree_info</span></div>
+
+<div class="viewcode-block" id="sftp_list_tree_recurse"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.sftp_list_tree_recurse">[docs]</a><span class="k">def</span> <span class="nf">sftp_list_tree_recurse</span><span class="p">(</span><span class="n">sftp</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">,</span> <span class="n">userlookup</span><span class="p">,</span> <span class="n">grouplookup</span><span class="p">,</span> <span class="n">remaining</span><span class="p">):</span>
+
+    <span class="n">level_items</span> <span class="o">=</span> <span class="n">sftp_list_directory</span><span class="p">(</span><span class="n">sftp</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">,</span> <span class="n">userlookup</span><span class="p">,</span> <span class="n">grouplookup</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">remaining</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rootdir</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+            <span class="n">rootdir</span> <span class="o">=</span> <span class="n">rootdir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+
+        <span class="k">for</span> <span class="n">nxtitem</span> <span class="ow">in</span> <span class="n">level_items</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">nxtname</span> <span class="o">=</span> <span class="n">nxtitem</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">nxtitem</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;dir&quot;</span><span class="p">:</span>
+                <span class="n">nxtroot</span> <span class="o">=</span> <span class="n">rootdir</span> <span class="o">+</span> <span class="n">nxtname</span>
+                <span class="n">nxtchildren</span> <span class="o">=</span> <span class="n">sftp_list_tree_recurse</span><span class="p">(</span><span class="n">sftp</span><span class="p">,</span> <span class="n">nxtroot</span><span class="p">,</span> <span class="n">userlookup</span><span class="p">,</span> <span class="n">grouplookup</span><span class="p">,</span> <span class="n">remaining</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">nxtitem</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">nxtchildren</span><span class="p">)</span>
+
+    <span class="n">children_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">level_items</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">children_info</span></div>
+
+<div class="viewcode-block" id="ssh_execute_command"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.ssh_execute_command">[docs]</a><span class="k">def</span> <span class="nf">ssh_execute_command</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">inactivity_timeout</span><span class="o">=</span><span class="n">DEFAULT_SSH_TIMEOUT</span><span class="p">,</span> <span class="n">inactivity_interval</span><span class="o">=</span><span class="n">DEFAULT_SSH_RETRY_INTERVAL</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">1024</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs a command on a remote server using the specified ssh_client.  We implement our own version of ssh_execute_command</span>
+<span class="sd">        in order to have better control over the timeouts and to make sure all the checks are sequenced properly in order</span>
+<span class="sd">        to prevent SSH lockups.</span>
+
+<span class="sd">        :param ssh_client: The :class:`paramiko.SSHClient` object to utilize when running the command.</span>
+<span class="sd">        :type ssh_client: :class:`paramiko.SSHClient`</span>
+<span class="sd">        :param command: The commandline to run.</span>
+<span class="sd">        :type command: str</span>
+<span class="sd">        :param inactivity_timeout: The timeout for the channel for the ssh transaction.</span>
+<span class="sd">        :type inactivity_timeout: float</span>
+<span class="sd">        :param inactivity_interval: The retry interval to wait for the channel to have data ready.</span>
+<span class="sd">        :type inactivity_interval: float</span>
+<span class="sd">        :param chunk_size: The size of the chunks that are read during receive operations</span>
+<span class="sd">        :type chunk_size: int</span>
+
+<span class="sd">        :returns: A tuple with the command result code, the standard output and the standard error output.</span>
+<span class="sd">        :rtype: (int, str, str)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">stdout_buffer</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+    <span class="n">stderr_buffer</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">inactivity_timeout</span>
+
+    <span class="n">channel</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="o">.</span><span class="n">get_transport</span><span class="p">()</span><span class="o">.</span><span class="n">open_session</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">inactivity_timeout</span><span class="p">)</span>
+    <span class="n">channel</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Grab exit status ready before checking to see if stdout_ready or stderr_ready are True</span>
+        <span class="n">exit_status_ready</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">exit_status_ready</span><span class="p">()</span>
+        <span class="n">stdout_ready</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">recv_ready</span><span class="p">()</span>
+        <span class="n">stderr_ready</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">recv_stderr_ready</span><span class="p">()</span>
+
+        <span class="c1"># If stdout_ready or stderr_ready are true, we read this round</span>
+        <span class="k">if</span> <span class="n">stdout_ready</span> <span class="ow">or</span> <span class="n">stderr_ready</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">stdout_ready</span><span class="p">:</span>
+                <span class="n">rcv_data</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">)</span>
+                <span class="n">stdout_buffer</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">rcv_data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">stderr_ready</span><span class="p">:</span>
+                <span class="n">rcv_data</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">recv_stderr</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">)</span>
+                <span class="n">stderr_buffer</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">rcv_data</span><span class="p">)</span>
+
+            <span class="c1"># We only want to timeout if there is inactivity</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">inactivity_timeout</span>
+        <span class="c1"># If we did not ready any data this round and our exit status was ready, its time to exit</span>
+        <span class="k">elif</span> <span class="n">exit_status_ready</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">recv_exit_status</span><span class="p">()</span>
+            <span class="k">break</span>
+        <span class="c1"># We didn&#39;t have any data to read and our exit status was not ready, go to sleep for interval</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">now_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">now_time</span> <span class="o">&gt;</span> <span class="n">end_time</span><span class="p">:</span>
+                <span class="n">diff_time</span> <span class="o">=</span> <span class="n">now_time</span> <span class="o">-</span> <span class="n">start_time</span>
+                <span class="n">err_msg</span> <span class="o">=</span> <span class="s2">&quot;Timeout while executing SSH command.</span><span class="se">\n</span><span class="s2">    command=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">    start=</span><span class="si">%r</span><span class="s2"> end=</span><span class="si">%r</span><span class="s2"> now=</span><span class="si">%r</span><span class="s2"> diff=</span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="n">command</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">now_time</span><span class="p">,</span> <span class="n">diff_time</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+
+            <span class="c1"># If we did not timeout, go to sleep for the interval before we make another attempt to read</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">inactivity_interval</span><span class="p">)</span>
+
+        <span class="c1"># End while True</span>
+
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout_buffer</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">stdout_buffer</span>
+
+    <span class="n">stderr</span> <span class="o">=</span> <span class="n">stderr_buffer</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">stderr_buffer</span>
+
+    <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span></div>
+
+<div class="viewcode-block" id="SshSession"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.SshSession">[docs]</a><span class="k">class</span> <span class="nc">SshSession</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keypasswd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_agent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">aspects</span><span class="o">=</span><span class="n">DEFAULT_ASPECTS</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ipaddr</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">host</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keyfile</span> <span class="o">=</span> <span class="n">keyfile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keypasswd</span> <span class="o">=</span> <span class="n">keypasswd</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allow_agent</span> <span class="o">=</span> <span class="n">allow_agent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aspects</span> <span class="o">=</span> <span class="n">aspects</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ssh_client</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_primitive_mode</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AKitInvalidConfigError</span><span class="p">(</span><span class="s2">&quot;SshAgent requires either a &#39;password&#39; or identity &#39;keyfile&#39; be specified.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ssh_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_client</span><span class="p">()</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ex_val</span><span class="p">,</span> <span class="n">ex_type</span><span class="p">,</span> <span class="n">ex_tb</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ssh_client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">handled</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">handled</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">allow_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allow_agent</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">aspects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aspects</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">host</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_host</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">keyfile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyfile</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">keypasswd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keypasswd</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ipaddr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ipaddr</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">password</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_password</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">username</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_username</span>
+
+<div class="viewcode-block" id="SshSession.run_cmd"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.SshSession.run_cmd">[docs]</a>    <span class="k">def</span> <span class="nf">run_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">aspects</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">aspects</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">aspects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aspects</span>
+
+        <span class="n">timeout</span><span class="o">=</span><span class="n">aspects</span><span class="o">.</span><span class="n">inactivity_timeout</span>
+        <span class="n">interval</span><span class="o">=</span><span class="n">aspects</span><span class="o">.</span><span class="n">inactivity_interval</span>
+
+        <span class="n">status</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">stderr</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">aspects</span><span class="o">.</span><span class="n">run_pattern</span> <span class="o">==</span> <span class="n">RunPattern</span><span class="o">.</span><span class="n">SINGLE_RUN</span><span class="p">:</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh_execute_command</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssh_client</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">inactivity_timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">inactivity_interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">aspects</span><span class="o">.</span><span class="n">run_pattern</span> <span class="o">==</span> <span class="n">RunPattern</span><span class="o">.</span><span class="n">RUN_UNTIL_SUCCESS</span><span class="p">:</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh_execute_command</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssh_client</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">inactivity_timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">inactivity_interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+        <span class="k">elif</span> <span class="n">aspects</span><span class="o">.</span><span class="n">run_pattern</span> <span class="o">==</span> <span class="n">RunPattern</span><span class="o">.</span><span class="n">RUN_WHILE_SUCCESS</span><span class="p">:</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh_execute_command</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssh_client</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">inactivity_timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">inactivity_interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">status</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span></div>
+
+    <span class="k">def</span> <span class="nf">_create_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pkey</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pkey</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">pkey</span><span class="o">.</span><span class="n">PKey</span><span class="o">.</span><span class="n">from_private_key_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keyfile</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_keypasswd</span><span class="p">)</span>
+        <span class="n">ssh_client</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+        <span class="n">ssh_client</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+        <span class="n">ssh_client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ipaddr</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span> <span class="n">pkey</span><span class="o">=</span><span class="n">pkey</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ssh_client</span></div>
+
+
+<div class="viewcode-block" id="SshAgent"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.SshAgent">[docs]</a><span class="k">class</span> <span class="nc">SshAgent</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keypasswd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_agent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aspects</span><span class="o">=</span><span class="n">DEFAULT_ASPECTS</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ipaddr</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keyfile</span> <span class="o">=</span> <span class="n">keyfile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keypasswd</span> <span class="o">=</span> <span class="n">keypasswd</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allow_agent</span> <span class="o">=</span> <span class="n">allow_agent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aspects</span> <span class="o">=</span> <span class="n">aspects</span>
+        <span class="k">if</span> <span class="n">primitive</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_primitive</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_primitive</span> <span class="o">=</span> <span class="n">primitive</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_user_lookup_table</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_group_lookup_table</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AKitInvalidConfigError</span><span class="p">(</span><span class="s2">&quot;SshAgent requires either a &#39;password&#39; or identity &#39;keyfile&#39; be specified.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">allow_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allow_agent</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">aspects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aspects</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">host</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_host</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">keyfile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyfile</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">keypasswd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keypasswd</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ipaddr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ipaddr</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">password</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_password</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">username</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_username</span>
+
+<div class="viewcode-block" id="SshAgent.run_cmd"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.SshAgent.run_cmd">[docs]</a>    <span class="k">def</span> <span class="nf">run_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">aspects</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ssh_client</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">aspects</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">aspects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aspects</span>
+
+        <span class="n">inactivity_timeout</span><span class="o">=</span><span class="n">aspects</span><span class="o">.</span><span class="n">inactivity_timeout</span>
+        <span class="n">inactivity_interval</span><span class="o">=</span><span class="n">aspects</span><span class="o">.</span><span class="n">inactivity_interval</span>
+
+        <span class="n">cleanup_client</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">stderr</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ssh_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ssh_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_client</span><span class="p">()</span>
+                <span class="n">cleanup_client</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">aspects</span><span class="o">.</span><span class="n">run_pattern</span> <span class="o">==</span> <span class="n">RunPattern</span><span class="o">.</span><span class="n">SINGLE_RUN</span><span class="p">:</span>
+                <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh_execute_command</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">inactivity_timeout</span><span class="o">=</span><span class="n">inactivity_timeout</span><span class="p">,</span> <span class="n">inactivity_interval</span><span class="o">=</span><span class="n">inactivity_interval</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">aspects</span><span class="o">.</span><span class="n">run_pattern</span> <span class="o">==</span> <span class="n">RunPattern</span><span class="o">.</span><span class="n">RUN_UNTIL_SUCCESS</span><span class="p">:</span>
+                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh_execute_command</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">inactivity_timeout</span><span class="o">=</span><span class="n">inactivity_timeout</span><span class="p">,</span> <span class="n">inactivity_interval</span><span class="o">=</span><span class="n">inactivity_interval</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+            <span class="k">elif</span> <span class="n">aspects</span><span class="o">.</span><span class="n">run_pattern</span> <span class="o">==</span> <span class="n">RunPattern</span><span class="o">.</span><span class="n">RUN_WHILE_SUCCESS</span><span class="p">:</span>
+                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh_execute_command</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">inactivity_timeout</span><span class="o">=</span><span class="n">inactivity_timeout</span><span class="p">,</span> <span class="n">inactivity_interval</span><span class="o">=</span><span class="n">inactivity_interval</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">status</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cleanup_client</span><span class="p">:</span>
+                <span class="n">ssh_client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">del</span> <span class="n">ssh_client</span>
+
+        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span></div>
+
+<div class="viewcode-block" id="SshAgent.directory_tree"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.SshAgent.directory_tree">[docs]</a>    <span class="k">def</span> <span class="nf">directory_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ssh_client</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">dir_info</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">cleanup_client</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ssh_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ssh_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_client</span><span class="p">()</span>
+                <span class="n">cleanup_client</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_primitive</span><span class="p">:</span>
+                <span class="n">transport</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="o">.</span><span class="n">get_transport</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+
+                    <span class="n">sftp</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SFTPClient</span><span class="o">.</span><span class="n">from_transport</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">dir_info</span> <span class="o">=</span> <span class="n">sftp_list_tree</span><span class="p">(</span><span class="n">sftp</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_user_by_uid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_group_by_uid</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="n">depth</span><span class="p">)</span>
+                    <span class="k">finally</span><span class="p">:</span>
+                        <span class="n">sftp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dir_info</span> <span class="o">=</span> <span class="n">primitive_list_tree</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="n">depth</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">xcpt</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cleanup_client</span><span class="p">:</span>
+                <span class="n">ssh_client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">del</span> <span class="n">ssh_client</span>
+
+        <span class="k">return</span> <span class="n">dir_info</span></div>
+
+<div class="viewcode-block" id="SshAgent.directory"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.SshAgent.directory">[docs]</a>    <span class="k">def</span> <span class="nf">directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">ssh_client</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">dir_info</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">cleanup_client</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ssh_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ssh_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_client</span><span class="p">()</span>
+                <span class="n">cleanup_client</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_primitive</span><span class="p">:</span>
+                <span class="n">transport</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="o">.</span><span class="n">get_transport</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+
+                    <span class="n">sftp</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SFTPClient</span><span class="o">.</span><span class="n">from_transport</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">dir_info</span> <span class="o">=</span> <span class="n">sftp_list_directory</span><span class="p">(</span><span class="n">sftp</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_user_by_uid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_group_by_uid</span><span class="p">)</span>
+                    <span class="k">finally</span><span class="p">:</span>
+                        <span class="n">sftp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dir_info</span> <span class="o">=</span> <span class="n">primitive_list_directory</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">xcpt</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cleanup_client</span><span class="p">:</span>
+                <span class="n">ssh_client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">del</span> <span class="n">ssh_client</span>
+
+        <span class="k">return</span> <span class="n">dir_info</span></div>
+
+<div class="viewcode-block" id="SshAgent.pull_file"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.SshAgent.pull_file">[docs]</a>    <span class="k">def</span> <span class="nf">pull_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">,</span> <span class="n">localpath</span><span class="p">,</span> <span class="n">ssh_client</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">cleanup_client</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ssh_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ssh_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_client</span><span class="p">()</span>
+                <span class="n">cleanup_client</span> <span class="o">=</span> <span class="kc">True</span>
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_primitive</span><span class="p">:</span>
+                <span class="n">transport</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="o">.</span><span class="n">get_transport</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">sftp</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SFTPClient</span><span class="o">.</span><span class="n">from_transport</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">sftp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">remotepath</span><span class="p">,</span> <span class="n">localpath</span><span class="p">)</span>
+                    <span class="k">finally</span><span class="p">:</span>
+                        <span class="n">sftp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">primitive_pull_file</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">,</span> <span class="n">localpath</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">xcpt</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cleanup_client</span><span class="p">:</span>
+                <span class="n">ssh_client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">del</span> <span class="n">ssh_client</span>
+    
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="SshAgent.push_file"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.SshAgent.push_file">[docs]</a>    <span class="k">def</span> <span class="nf">push_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">localpath</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">,</span> <span class="n">ssh_client</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">cleanup_client</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ssh_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ssh_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_client</span><span class="p">()</span>
+                <span class="n">cleanup_client</span> <span class="o">=</span> <span class="kc">True</span>
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_primitive</span><span class="p">:</span>
+                <span class="n">transport</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="o">.</span><span class="n">get_transport</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">sftp</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SFTPClient</span><span class="o">.</span><span class="n">from_transport</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">sftp</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">localpath</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">)</span>
+                    <span class="k">finally</span><span class="p">:</span>
+                        <span class="n">sftp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">primitive_push_file</span><span class="p">(</span><span class="n">ssh_client</span><span class="p">,</span> <span class="n">localpath</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">xcpt</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cleanup_client</span><span class="p">:</span>
+                <span class="n">ssh_client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">del</span> <span class="n">ssh_client</span>
+
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="SshAgent.lookup_user_by_uid"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.SshAgent.lookup_user_by_uid">[docs]</a>    <span class="k">def</span> <span class="nf">lookup_user_by_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_lookup_table</span><span class="p">:</span>
+            <span class="n">username</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_lookup_table</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="s2">&quot;id -n -u </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">uid</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">username</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_user_lookup_table</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">username</span>
+
+        <span class="k">return</span> <span class="n">username</span></div>
+
+<div class="viewcode-block" id="SshAgent.lookup_group_by_uid"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.SshAgent.lookup_group_by_uid">[docs]</a>    <span class="k">def</span> <span class="nf">lookup_group_by_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gid</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">grpname</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">gid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_group_lookup_table</span><span class="p">:</span>
+            <span class="n">grpname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_group_lookup_table</span><span class="p">[</span><span class="n">gid</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="s2">&quot;id -n -g </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">gid</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">grpname</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_group_lookup_table</span><span class="p">[</span><span class="n">gid</span><span class="p">]</span> <span class="o">=</span> <span class="n">grpname</span>
+
+        <span class="k">return</span> <span class="n">grpname</span></div>
+    
+<div class="viewcode-block" id="SshAgent.verify_connectivity"><a class="viewcode-back" href="../../../../_apidoc/akit.integration.agents.html#akit.integration.agents.sshagent.SshAgent.verify_connectivity">[docs]</a>    <span class="k">def</span> <span class="nf">verify_connectivity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Method that can be used to verify connectivity to the target computer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vok</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">hello_cmd</span> <span class="o">=</span> <span class="s2">&quot;echo Hello&quot;</span>
+        <span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">hello_cmd</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Hello&quot;</span><span class="p">:</span>
+            <span class="n">vok</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">vok</span></div>
+
+    <span class="k">def</span> <span class="nf">_create_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pkey</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keyfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">kf</span><span class="p">:</span>
+                <span class="n">pkey</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">rsakey</span><span class="o">.</span><span class="n">RSAKey</span><span class="o">.</span><span class="n">from_private_key</span><span class="p">(</span><span class="n">kf</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_keypasswd</span><span class="p">)</span>
+        <span class="n">ssh_client</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+        <span class="n">ssh_client</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+        <span class="n">ssh_client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ipaddr</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_password</span><span class="p">,</span> <span class="n">allow_agent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_allow_agent</span><span class="p">,</span> <span class="n">pkey</span><span class="o">=</span><span class="n">pkey</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ssh_client</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Automation Kit</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_apidoc/modules.html">akit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Myron W. Walker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

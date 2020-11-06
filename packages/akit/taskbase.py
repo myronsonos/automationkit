@@ -1,6 +1,6 @@
 
 """
-.. module:: akit.taskbase
+.. module:: taskbase
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module which contains the :class:`TaskBase` object which is used as the base.
 
@@ -15,8 +15,6 @@ __maintainer__ = "Myron Walker"
 __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
-
-from akit.scope import requires_scope
 
 class TaskBase:
 

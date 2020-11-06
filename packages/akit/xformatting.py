@@ -1,5 +1,5 @@
 """
-.. module:: akit.xformatting
+.. module:: xformatting
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module which contains functions for formatting text.
 

@@ -1,5 +1,5 @@
 """
-.. module:: akit.integration.landscape
+.. module:: landscape
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the :class:`TestLandscape` class and associated diagnostic.
 

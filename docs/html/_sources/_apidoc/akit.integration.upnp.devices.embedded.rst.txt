@@ -1,0 +1,29 @@
+akit.integration.upnp.devices.embedded package
+==============================================
+
+Submodules
+----------
+
+akit.integration.upnp.devices.embedded.mediarenderer module
+-----------------------------------------------------------
+
+.. automodule:: akit.integration.upnp.devices.embedded.mediarenderer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+akit.integration.upnp.devices.embedded.mediaserver module
+---------------------------------------------------------
+
+.. automodule:: akit.integration.upnp.devices.embedded.mediaserver
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: akit.integration.upnp.devices.embedded
+   :members:
+   :undoc-members:
+   :show-inheritance:

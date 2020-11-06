@@ -1,5 +1,5 @@
 """
-.. module:: akit.networking.interfaces
+.. module:: interfaces
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Contains helper functions for working with internet interfaces
 
@@ -127,7 +127,7 @@ def get_correspondance_ip_address(ref_ip: str, ref_port: int, addr_family=socket
 
     return corr_ip
 
-def is_ipv6_address(self, candidate: str) -> str:
+def is_ipv6_address(candidate: str) -> str:
     """
         Checks to see if 'candidate' is an ipv6 address.
 

@@ -1,5 +1,5 @@
 """
-.. module:: akit.xthreading.looper
+.. module:: looper
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that contains a Looper for repeating a loop function useful
         for repeated, work packet or queue processing.

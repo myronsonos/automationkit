@@ -1,5 +1,5 @@
 """
-.. module:: akit.cryptography.pkey
+.. module:: pkey
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that contains methods for detecting the type of a private key file and
                for working with private key files.

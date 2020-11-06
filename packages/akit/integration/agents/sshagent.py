@@ -1,5 +1,5 @@
 """
-.. module:: akit.integration.agents.sshagent
+.. module:: sshagent
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the :class:`SshAgent` class and associated diagnostic.
 
@@ -24,7 +24,11 @@ import time
 from akit.aspects import RunPattern, DEFAULT_ASPECTS
 from akit.exceptions import AKitInvalidConfigError
 
+from akit.xlogging.foundations import getAutomatonKitLogger
+
 import paramiko
+
+logger = getAutomatonKitLogger()
 
 DEFAULT_SSH_TIMEOUT = 300
 DEFAULT_SSH_RETRY_INTERVAL = .5
@@ -33,6 +37,16 @@ DEFAULT_SSH_RETRY_INTERVAL = .5
 #                  rwxrwxrwx         24      myron      myron     4096   Jul    4   00:37  PCBs
 REGEX_DIRECTORY_ENTRY = re.compile(r"([\S]+)[\s]+([0-9]+)[\s]+([\S]+)[\s]+([\S]+)[\s]+([0-9]+)[\s]+([A-za-z]+[\s]+[0-9]+[\s]+[0-9:]+)[\s]+([\S\s]+)")
 def lookup_entry_type(pdir, ename, finfo):
+    """
+        Determines the entry type labelto assign to a file entry based on the st_mode of the file information.
+
+        :param pdir: The parent directory of the file, passed for logging purposes.
+        :type pdir: str
+        :param ename: The entry name of the file in the directory listing.
+        :type ename: str
+        :param finfo: The file information as returned by lstat on the file entry.
+        :type finfo: lstat result
+    """
     etype = None
     if stat.S_ISREG(finfo.st_mode):
         etype = "file"
@@ -54,6 +68,12 @@ def primitive_list_directory(ssh_client, directory):
         Uses a primitive method to create a list of the files and folders in a directory
         by running the 'ls -al' commands on the directory.  This is required if the SSH
         server does not support sftp.
+
+        :param ssh_client: A :class:`paramiko.SSHClient` object that has already been connected
+                           to the remote server.
+        :type ssh_client: :class:`paramiko.SSHClient`
+        :param directory: The remote directory to get a list catalog for.
+        :type directory: str 
     """
     entries = None
 
@@ -76,6 +96,14 @@ def primitive_list_tree(ssh_client, treeroot, max_depth=1):
         Uses a primitive method to create an information tree about the files and folders
         in a directory tree by running 'ls -al' commands on the directory tree.  This is
         required if the SSH server does not support sftp.
+
+        :param ssh_client: A :class:`paramiko.SSHClient` object that has already been connected
+                           to the remote server.
+        :type ssh_client: :class:`paramiko.SSHClient`
+        :param treeroot: The remote root directory to get a directory tree catalog for.
+        :type treeroot: str
+        :param max_depth: The maximum descent depth to go to when building the tree catalog.
+        :type max_depth: int 
     """
     
     level_items = primitive_list_directory(ssh_client, treeroot)
@@ -340,7 +368,7 @@ def ssh_execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIME
     return status, stdout, stderr
 
 class SshSession:
-    def __init__(self, host, username, password=None, keyfile=None, keypasswd=None, port=22, aspects=DEFAULT_ASPECTS):
+    def __init__(self, host, username, password=None, keyfile=None, keypasswd=None, allow_agent=False, port=22, aspects=DEFAULT_ASPECTS):
         self._host = host
         self._ipaddr = socket.gethostbyname(host)
         self._port = port
@@ -348,6 +376,7 @@ class SshSession:
         self._password = password
         self._keyfile = keyfile
         self._keypasswd = keypasswd
+        self._allow_agent = allow_agent
         self._aspects = aspects
         self._ssh_client = None
         self._primitive_mode = False
@@ -364,6 +393,42 @@ class SshSession:
         self._ssh_client.close()
         handled = False
         return handled
+
+    @property
+    def allow_agent(self):
+        return self._allow_agent
+
+    @property
+    def aspects(self):
+        return self._aspects
+
+    @property
+    def host(self):
+        return self._host
+
+    @property
+    def keyfile(self):
+        return self._keyfile
+
+    @property
+    def keypasswd(self):
+        return self._keypasswd
+
+    @property
+    def ipaddr(self):
+        return self._ipaddr
+
+    @property
+    def password(self):
+        return self._password
+
+    @property
+    def port(self):
+        return self._port
+
+    @property
+    def username(self):
+        return self._username
 
     def run_cmd(self, command, aspects=None):
 

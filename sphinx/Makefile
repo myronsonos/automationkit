@@ -3,8 +3,8 @@
 
 # You can set these variables from the command line.
 SPHINXOPTS    = -E
-SPHINXBUILD   = ./bin/sphinx-build
-SPHINXAPIDOC   = ./bin/sphinx-apidoc
+SPHINXBUILD   = ../_local/venv/bin/sphinx-build
+SPHINXAPIDOC   = ../_local/venv/bin/sphinx-apidoc
 SOURCEDIR     = source
 BUILDDIR      = ../docs/
 APIDOCDIR     = "$(SOURCEDIR)/_apidoc"
@@ -18,6 +18,9 @@ help:
 
 apidoc:
 	@$(SPHINXAPIDOC) --output-dir "$(APIDOCDIR)" "$(PACKAGESDIR)" 
+
+apidoc-full:
+	@$(SPHINXAPIDOC) -f --output-dir "$(APIDOCDIR)" "$(PACKAGESDIR)" 
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).

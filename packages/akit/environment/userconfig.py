@@ -1,5 +1,5 @@
 """
-.. module:: akit.environment.userconfig
+.. module:: userconfig
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that is utilized to provide a mechanism for the user to override configuration defaults by
                specifying them in a file.

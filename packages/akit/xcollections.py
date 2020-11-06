@@ -1,5 +1,5 @@
 """
-.. module:: akit.xcollections
+.. module:: xcollections
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module which contains classes that are enhancements of the collections classes
 

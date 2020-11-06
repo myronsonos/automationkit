@@ -1,5 +1,5 @@
 """
-.. module:: akit.testing.entrypoints
+.. module:: entrypoints
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: A set of standaridized entry point functions that provide standardized test environment
                startup and test run commencement utilizing the :class:`akit.testing.testsequencer.TestSequencer`
@@ -26,16 +26,17 @@ import sys
 import uuid
 
 # Force the default configuration to load if it is not already loaded
-import akit.testing.activate
+import akit.environment.activate
 
-from akit.context import Context
+from akit.environment.context import Context
+from akit.environment.variables import LOG_LEVEL_NAMES
 
 from akit.paths import get_path_for_testresults
 from akit.recorders import JsonResultRecorder
 from akit.testing.utilities import find_testmodule_root, find_testmodule_fullname
 from akit.testing.testjob import DefaultTestJob
 from akit.testing.testsequencer import TestSequencer
-from akit.xlogging.foundations import LEVEL_NAMES, logging_initialize, getAutomatonKitLogger
+from akit.xlogging.foundations import logging_initialize, getAutomatonKitLogger
 
 logger = getAutomatonKitLogger()
 
@@ -55,8 +56,8 @@ def generic_test_entrypoint():
 
     base_parser.add_argument("-i", "--include", dest="includes", action="append", default=[], help="Add an include search statement.")
     base_parser.add_argument("-x", "--exclude", dest="excludes", action="append", default=[], help="Add an exclude filter statement.")
-    base_parser.add_argument("--console-level", dest="consolelevel", action="store", default="INFO", choices=LEVEL_NAMES, help="The logging level for console output.")
-    base_parser.add_argument("--logfile-level", dest="logfilelevel", action="store", default="DEBUG", choices=LEVEL_NAMES, help="The logging level for logfile output.")
+    base_parser.add_argument("--console-level", dest="consolelevel", action="store", default="INFO", choices=LOG_LEVEL_NAMES, help="The logging level for console output.")
+    base_parser.add_argument("--logfile-level", dest="logfilelevel", action="store", default="DEBUG", choices=LOG_LEVEL_NAMES, help="The logging level for logfile output.")
 
     test_module = sys.modules["__main__"]
 

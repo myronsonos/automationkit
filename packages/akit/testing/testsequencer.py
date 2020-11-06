@@ -1,11 +1,10 @@
 """
-.. module:: akit.testing.testsequencer
+.. module:: testsequencer
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the base :class:`TestSequencer` type which is use to control
-               the flow of the automation environment startup and test execution sequence.
+        the flow of the automation environment startup and test execution sequence.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
-
 """
 
 __author__ = "Myron Walker"

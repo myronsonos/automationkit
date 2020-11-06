@@ -1,6 +1,6 @@
 
 """
-.. module:: akit.recorders
+.. module:: recorders
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module which contains the :class:`TaskBase` object which is used as the base.
 

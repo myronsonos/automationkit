@@ -1,8 +1,8 @@
 """
-.. module:: akit.testing.testref
+.. module:: testref
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the base :class:`TestRef` type used to reference to
-               tests that will be included into an a test execution graph.
+        tests that will be included into an a test execution graph.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """

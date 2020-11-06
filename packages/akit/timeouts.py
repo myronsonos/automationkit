@@ -1,5 +1,5 @@
 """
-.. module:: akit.timeouts
+.. module:: timeouts
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module which contains framework timeout constants.
 

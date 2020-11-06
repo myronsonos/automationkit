@@ -1,5 +1,5 @@
 """
-.. module:: akit.exceptions
+.. module:: exceptions
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the exceptions that are raised by the code in the Automation Kit
 

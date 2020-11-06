@@ -1,5 +1,5 @@
 """
-.. module:: akit.integration.upnp.device.upnpdevice
+.. module:: upnpdevice
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the :class:`UpnpDevice` class and associated diagnostic.
 

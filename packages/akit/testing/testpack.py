@@ -1,5 +1,5 @@
 """
-.. module:: akit.testing.testpack
+.. module:: testpack
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that is contains the :class:`TestPack` class which is utilized as the collection point
                which associates a set of tests with their execution scopes.
@@ -43,7 +43,6 @@ class TestPack(ScopeMixIn):
         Scopes:
             * Collect Resources utilized in a Scope of Execution for a group of tests
             * Setup and TearDown of scope
-
     """
 
     name = ""           # TestPack Friendly Name

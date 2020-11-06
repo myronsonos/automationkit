@@ -1,5 +1,5 @@
 """
-.. module:: akit.extensible
+.. module:: extensible
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing classes that enable the discovery of extensions
 

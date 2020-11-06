@@ -1,8 +1,8 @@
 """
-.. module:: akit.testing.testjob
+.. module:: testjob
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that is contains the :class:`TestJob` class which is utilized for each test
-               run as the parent container for all test results.
+        run as the parent container for all test results.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """

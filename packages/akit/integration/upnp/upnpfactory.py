@@ -1,5 +1,5 @@
 """
-.. module:: akit.integration.upnp.upnpfactory
+.. module:: upnpfactory
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the :class:`UpnpFactory` class and associated diagnostic.
 

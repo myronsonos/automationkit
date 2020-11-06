@@ -1,5 +1,5 @@
 """
-.. module:: akit.environment.context
+.. module:: context
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that contains the :class:`Context` object and :class:`ContextCursor` that
                are used to maintain the shared automation context.

@@ -1,12 +1,12 @@
 """
-.. module:: akit.xlogging.foundations
+.. module:: foundations
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module which contains framework logging functions which extend the functionality to
-               the python :module:`logging` module.
+        the python :module:`logging` module.
 
 .. note:: The modules that are named `xsomething` like this module are prefixed with an `x` character to
-          indicate they extend the functionality of a base python module and the `x` is pre-pended to
-          prevent module name collisions with python modules.
+        indicate they extend the functionality of a base python module and the `x` is pre-pended to
+        prevent module name collisions with python modules.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """

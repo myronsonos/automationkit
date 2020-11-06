@@ -1,5 +1,5 @@
 """
-.. module:: akit.xthreading.looperqueue
+.. module:: looperqueue
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that contains a :class:`LooperQueue` which provides a thread-safe queue for
         for the :class:`Looper` and :class:`LooperPool`.

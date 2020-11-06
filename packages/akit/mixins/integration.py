@@ -1,13 +1,11 @@
 """
-.. module:: akit.mixins.integration
+.. module:: integration
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the :class:`IntegrationMixIn` class and associated reflection methods.
-
-    The :class:`IntegrationMixIn` derived classes can be used to integraton automation resources and roles
-    into the test environment.
+        The :class:`IntegrationMixIn` derived classes can be used to integraton automation resources and roles
+        into the test environment.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
-
 """
 
 __author__ = "Myron Walker"

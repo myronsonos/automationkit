@@ -1,5 +1,5 @@
 """
-.. module:: akit.aspects
+.. module:: aspects
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that contains the :class:`Aspects` class and the constants used to provide aspect behaviors.
 

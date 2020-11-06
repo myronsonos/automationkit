@@ -1,5 +1,5 @@
 """
-.. module:: akit.environment.configuration
+.. module:: configuration
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that contains the default runtime configration dictionary and the functions that
                are used to load the automation configuration file and overlay the settings on top of the

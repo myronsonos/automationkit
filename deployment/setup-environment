@@ -100,6 +100,9 @@ if [ ! -f $INITIALIZED_FILE ]; then
         # MSCODE Environment Dependencies
         pip install pylint
 
+        # Development Modules
+        pip install sphinx
+
         # Install pylint into the virtual environment
         pip install coverage
         pip install ipython

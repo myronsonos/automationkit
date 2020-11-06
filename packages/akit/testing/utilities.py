@@ -1,5 +1,5 @@
 """
-.. module:: akit.testing.utilities
+.. module:: utilities
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing utility functions utilized by the objects in the testing module.
 

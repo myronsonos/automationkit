@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>akit.integration.coordinators package &#8212; Automation Kit 1.0.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="akit.integration.mdns package" href="akit.integration.mdns.html" />
+    <link rel="prev" title="akit.integration.cluster package" href="akit.integration.cluster.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="akit-integration-coordinators-package">
+<h1>akit.integration.coordinators package<a class="headerlink" href="#akit-integration-coordinators-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-akit.integration.coordinators.sshpoolcoordinator">
+<span id="akit-integration-coordinators-sshpoolcoordinator-module"></span><h2>akit.integration.coordinators.sshpoolcoordinator module<a class="headerlink" href="#module-akit.integration.coordinators.sshpoolcoordinator" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-sshpoolcoordinator"></span><dl class="py class">
+<dt id="akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator">
+<em class="property">class </em><code class="sig-prename descclassname">akit.integration.coordinators.sshpoolcoordinator.</code><code class="sig-name descname">SshPoolCoordinator</code><a class="reference internal" href="../_modules/akit/integration/coordinators/sshpoolcoordinator.html#SshPoolCoordinator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The <a class="reference internal" href="#akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator" title="akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator"><code class="xref py py-class docutils literal notranslate"><span class="pre">SshPoolCoordinator</span></code></a> creates a pool of agents that can be used to
+coordinate the interop activities of the automation process and remote SSH
+nodes.</p>
+<dl class="py method">
+<dt id="akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.attach_to_devices">
+<code class="sig-name descname">attach_to_devices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sshdevices</span></em>, <em class="sig-param"><span class="n">upnp_coord</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/sshpoolcoordinator.html#SshPoolCoordinator.attach_to_devices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.attach_to_devices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.device_agents">
+<em class="property">property </em><code class="sig-name descname">device_agents</code><a class="headerlink" href="#akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.device_agents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.load_from_config">
+<code class="sig-name descname">load_from_config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lscape</span></em>, <em class="sig-param"><span class="n">upnp_coord</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/sshpoolcoordinator.html#SshPoolCoordinator.load_from_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.load_from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the <a class="reference internal" href="#akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator" title="akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator"><code class="xref py py-class docutils literal notranslate"><span class="pre">SshPoolCoordinator</span></code></a> connection info from the config file.  The
+optional upnp_coord parameter is provided when the config file contains UPNP devices
+that support SSH.  The <code class="xref py py-class docutils literal notranslate"><span class="pre">UpnpCoordinator</span></code> passed as the upnp_coord must be started
+up so it will have the opportunity to resolve the IP address of the upnp devices.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.lookup_agent_by_host">
+<code class="sig-name descname">lookup_agent_by_host</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/sshpoolcoordinator.html#SshPoolCoordinator.lookup_agent_by_host"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.lookup_agent_by_host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Looks up the agent for a device by its hostname.  If the
+agent is not found then the API returns None.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.lookup_agent_by_ip">
+<code class="sig-name descname">lookup_agent_by_ip</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ip</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/sshpoolcoordinator.html#SshPoolCoordinator.lookup_agent_by_ip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.lookup_agent_by_ip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Looks up the agent for a device by its ip address.  If the
+agent is not found then the API returns None.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.lookup_agent_by_usn">
+<code class="sig-name descname">lookup_agent_by_usn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">usn</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/sshpoolcoordinator.html#SshPoolCoordinator.lookup_agent_by_usn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.lookup_agent_by_usn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Looks up the agent for a UPNP device by its USN.  If the
+agent is not found then the API returns None.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.verify_connectivity">
+<code class="sig-name descname">verify_connectivity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cmd</span><span class="o">=</span><span class="default_value">&quot;echo 'It Works'&quot;</span></em>, <em class="sig-param"><span class="n">user</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raiseerror</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/sshpoolcoordinator.html#SshPoolCoordinator.verify_connectivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.sshpoolcoordinator.SshPoolCoordinator.verify_connectivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loops through the nodes in the SSH pool and utilizes the
+credentials for the specified user in order to verify
+connectivity with the remote node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cmd</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – A command to run on the remote machine in order
+to verify that ssh connectivity can be establish.</p></li>
+<li><p><strong>user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The name of the user credentials to use for connectivity.
+If the ‘user’ parameter is not provided, then the 
+credentials of the default or priviledged user will be used.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-akit.integration.coordinators.upnpcoordinator">
+<span id="akit-integration-coordinators-upnpcoordinator-module"></span><h2>akit.integration.coordinators.upnpcoordinator module<a class="headerlink" href="#module-akit.integration.coordinators.upnpcoordinator" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-upnpcoordinator"></span><dl class="py class">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator">
+<em class="property">class </em><code class="sig-prename descclassname">akit.integration.coordinators.upnpcoordinator.</code><code class="sig-name descname">UpnpCoordinator</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/upnpcoordinator.html#UpnpCoordinator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.agents">
+<em class="property">property </em><code class="sig-name descname">agents</code><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.agents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.children">
+<em class="property">property </em><code class="sig-name descname">children</code><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.children" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.initialized">
+<code class="sig-name descname">initialized</code><em class="property"> = False</em><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.initialized" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.instance">
+<code class="sig-name descname">instance</code><em class="property"> = None</em><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.instance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.lookup_callback_url_for_interface">
+<code class="sig-name descname">lookup_callback_url_for_interface</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ifname</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/upnpcoordinator.html#UpnpCoordinator.lookup_callback_url_for_interface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.lookup_callback_url_for_interface" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.lookup_device_by_mac">
+<code class="sig-name descname">lookup_device_by_mac</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mac</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/upnpcoordinator.html#UpnpCoordinator.lookup_device_by_mac"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.lookup_device_by_mac" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lookup a UPNP device by its MAC address.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.lookup_device_by_usn">
+<code class="sig-name descname">lookup_device_by_usn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">usn</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/upnpcoordinator.html#UpnpCoordinator.lookup_device_by_usn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.lookup_device_by_usn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lookup a UPNP device by its USN id.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.lookup_device_list_by_usn">
+<code class="sig-name descname">lookup_device_list_by_usn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">usnlist</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/upnpcoordinator.html#UpnpCoordinator.lookup_device_list_by_usn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.lookup_device_list_by_usn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.lookup_service_instance_by_sid">
+<code class="sig-name descname">lookup_service_instance_by_sid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sid</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/upnpcoordinator.html#UpnpCoordinator.lookup_service_instance_by_sid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.lookup_service_instance_by_sid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lookup a service instance that had registered for subscription callbacks by sid</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.register_subscription_for_device">
+<code class="sig-name descname">register_subscription_for_device</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sid</span></em>, <em class="sig-param"><span class="n">device</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/upnpcoordinator.html#UpnpCoordinator.register_subscription_for_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.register_subscription_for_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers a service instance for event callbacks via a ‘sid’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.startup_scan">
+<code class="sig-name descname">startup_scan</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upnp_hint_list</span></em>, <em class="sig-param"><span class="n">watchlist</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">exclude_interfaces</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">response_timeout</span><span class="o">=</span><span class="default_value">45</span></em>, <em class="sig-param"><span class="n">retry</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">force_recording</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/coordinators/upnpcoordinator.html#UpnpCoordinator.startup_scan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.startup_scan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts up and initilizes the UPNP coordinator by utilizing a hint list to determine
+what network interfaces to setup UPNP monitoring on.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.watch_devices">
+<em class="property">property </em><code class="sig-name descname">watch_devices</code><a class="headerlink" href="#akit.integration.coordinators.upnpcoordinator.UpnpCoordinator.watch_devices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-akit.integration.coordinators">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-akit.integration.coordinators" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-coordinators"></span></div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Automation Kit</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">akit</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="akit.html">akit package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">akit</a><ul>
+  <li><a href="akit.html">akit package</a><ul>
+  <li><a href="akit.integration.html">akit.integration package</a><ul>
+      <li>Previous: <a href="akit.integration.cluster.html" title="previous chapter">akit.integration.cluster package</a></li>
+      <li>Next: <a href="akit.integration.mdns.html" title="next chapter">akit.integration.mdns package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Myron W. Walker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/_apidoc/akit.integration.coordinators.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

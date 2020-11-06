@@ -1,5 +1,5 @@
 """
-.. module:: akit.integration.upnp.xml.upnpdevice1
+.. module:: upnpdevice1
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the Xml classes used to process the Xml content
                in a UPNP Device1 description document.

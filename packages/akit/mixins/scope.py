@@ -1,14 +1,11 @@
 """
-    .. module:: akit.mixins.scope
+.. module:: scope
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module containing the :class:`ScopeMixIn` class and associated reflection methods.
+        The :class:`ScopeMixIn` derived classes can be used to provide setup and teardown of test
+        automation scopes of execution for groups of tests.
 
-    A scope represents a predefined state that is reached by the execution of code.  The state represents a
-    requirement that is needed to be met in order for a task to be able to run.
-
-    Scopes have a name that is like a file system path /environment/configuration
-
-    Scopes can contain state and they are deposited into the context in a leaf just like other nodes.
-
-
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
 
 __author__ = "Myron Walker"
@@ -45,6 +42,14 @@ class ScopeMixIn(ContextUser):
 
         The :class:`ScopeMixIn` instance level code is utilized to inter-operate with the state of the scope and also
         provides scope specific functionality.
+
+        ..notes :
+            A scope represents a predefined state that is reached by the execution of code.  The state represents a
+            requirement that is needed to be met in order for a task to be able to run.
+
+            Scopes have a name that is like a file system path /environment/configuration
+
+            Scopes can contain state and they are deposited into the context in a leaf just like other nodes.
 
     """
 

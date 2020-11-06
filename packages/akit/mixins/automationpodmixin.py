@@ -1,5 +1,5 @@
 """
-.. module:: akit.integration.mixins.automationpodmixin
+.. module:: automationpodmixin
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Contains a ClusterMixIn object to use for working with the nodes of a cluster
 
@@ -16,7 +16,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 from akit.integration.landscaping import Landscape
-from akit.integration.agents.upnpagent import UpnpAgent
+from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 from akit.integration.upnp.upnpprotocol import inline_msearch
 
 from akit.mixins.integration import IntegrationMixIn
@@ -35,7 +35,7 @@ class AutomationPodMixIn(IntegrationMixIn):
     upnp_devices_pool = None
     upnp_devices_inuse = None
 
-    upnp_agent = None
+    upnp_coord = None
 
     def __init__(self, *args, **kwargs):
         """
@@ -86,8 +86,7 @@ class AutomationPodMixIn(IntegrationMixIn):
         found_devices, matching_devices = inline_msearch(cls.upnp_devices_expected)
 
         # If the inline m-search was successful, then go ahead and startup the UpnpAgent
-        cls.upnp_agent = UpnpAgent()
-        cls.start()
+        cls.upnp_coord = UpnpCoordinator()
         return
 
     @classmethod

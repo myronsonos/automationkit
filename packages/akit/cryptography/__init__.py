@@ -1,5 +1,5 @@
 """
-.. module:: akit.cryptography
+.. module:: cryptography
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Package that contains cryptography utilities.
 

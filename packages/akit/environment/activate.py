@@ -1,5 +1,5 @@
 """
-.. module:: akit.environment.activate
+.. module:: activate
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that is utilized by test files to ensure the test environment is initialized in
                the correct order.
@@ -21,6 +21,21 @@ import os
 from datetime import datetime
 
 from akit.xtime import parse_datetime
+
+# =======================================================================================
+# The way we start up the test framework and the order which things come up in is a very
+# important part of the automation process.  It effects whether or not logging is brought
+# up consistently before all modules start using it.  It ensures that no matter how we
+# enter into an automation process, whether via a test runner, terminal, or debugging a single
+# file that we properly parse arguments and settings and launch the automation process
+# consistently.
+#
+# Because of these necessities, we setup the activate module so it is the first thing
+# scripts and tests files that consume the test framework will import to ensure the
+# startup process is always consistent
+#
+# The framework has a special activation module :module:`akit.environment.console` that is
+# used when bringing up the test framework in a console.  This special method redirects
 
 # Step 1 - Force the default configuration to load if it is not already loaded
 from akit.environment.configuration import RUNTIME_CONFIGURATION

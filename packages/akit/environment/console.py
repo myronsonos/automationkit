@@ -1,5 +1,5 @@
 """
-.. module:: akit.environment.activate
+.. module:: console
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module that is utilized by interactive consoles to activate the environment
                with logging to the console minimized in order to provide a good interactive

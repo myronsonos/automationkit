@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-.. script:: akit.timeouts
+.. module:: testrunner.py
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Script used to run 'TestJobs', 'TestPacks' and 'Tests'.
 
