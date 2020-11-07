@@ -275,6 +275,23 @@ class Landscape:
 
         return device_list
 
+    def get_muse_devices(self, exclude_upnp=False):
+        """
+            Returns a list of devices that support Sonos muse protocol.
+        """
+        muse_device_list = []
+
+        for devinfo in self.get_devices():
+            dev_type = devinfo["deviceType"]
+
+            if exclude_upnp and dev_type == "network/upnp":
+                continue
+
+            if "muse" in devinfo:
+                muse_device_list.append(devinfo)
+
+        return muse_device_list
+
     def get_ssh_devices(self, exclude_upnp=False):
         """
             Returns a list of devices that support ssh.

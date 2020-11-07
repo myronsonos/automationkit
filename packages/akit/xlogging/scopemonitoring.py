@@ -1,5 +1,5 @@
 """
-.. module:: akit.xlogging.scopemonitor
+.. module:: scopemonitor
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module which contains the :class:`ScopeMonitor` object which monitors thread entrapment
                withing a specified scope.

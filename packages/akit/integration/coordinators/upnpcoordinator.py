@@ -82,51 +82,66 @@ class UpnpCoordinator:
         if not self.initialized:
             self.initialized = True
 
+            # ============================ Fixed Variables ============================
+            # These variables are fixed at the start of the UpnpCoordinator and because
+            # they are fixed, we don't protect them with the all.
+            self._logger = getAutomatonKitLogger()
+
             self._control_point = control_point
             self._worker_count = workers
-            self._worker_threads = []
             self._watch_all = watch_all
-
-            self._callback_threads = []
-
-            self._logger = getAutomatonKitLogger()
 
             self._factory = UpnpFactory()
 
-            self._lock = threading.RLock()
+            self._running = False
 
+            # The count for the shutdown gate semaphore is set at startup so we don't
+            # need to lock protect it.  Once it is set, it is fixed for the lifespan
+            # of the UpnpCoordinator
             self._shutdown_gate = None
 
-            self._agents = []
+            # ======================= Coordinator Lock Variables =======================
+            # These variables are protected and read/write synchronized by the coordinator
+            # lock.  They are all prefixed with _cl_ so it is easy to identify in code
+            # if the lock is being held properly when the variables are being accessed.
 
-            self._children = {}
+            self._coord_lock = threading.RLock()
 
+            # Callback threads are created on a per interface basis so we use a list
+            # to manage them.
+            self._cl_callback_threads = []
+            
+            # We don't want our threads that are answering requests or filtering traffic
+            # to do extensive amounts of work, so we have a pool of worker threads that
+            # that work is dispatched to for incoming requests and information processing.
+            self._cl_worker_threads = []
+
+            # Collection that manages UPNP device loop by location -> UpnpRootDevice
+            self._cl_children = {}
+
+            # A lookup table from USN -> devinfo for devices that were declared as
+            # watched devices, the watched devices are devices that will be monitored
+            # under special constraints and the coordinator will ensure they are found
+            # during startup and will expend thread resources to ensure they are updated
+            self._cl_watched_devices = {}
+
+            self._cl_iface_callback_addr_lookup = None
+
+            # A lookup table that store device registrations for differen subscription id(s)
+            # The UpnpCoordinator spins up one thread per interface that needs to be monitored
+            # for callback traffic from devices and provides a callback URL for subscriptions
+            # to the devices,  the callback threads use this table to dispatch subscription
+            # callbacks on given interfaces to the appropriate device. So UpnpEventVar instances
+            # can be updated.
+            self._cl_subscription_id_to_device = {}
+
+            # =========================== Queue Lock Variables ==========================
+            # Variables that manage the work queue and dispatching of work to worker threads
             self._queue_lock = threading.RLock()
             self._queue_available = threading.Semaphore(0)
             self._queue_work = []
 
-            self._worker_pool = []
-
-            self._running = False
-
-            self._watched_devices = {}
-
-            self._iface_callback_addr_lookup = None
-
-            self._services_subscriptions = {}
         return
-
-    @property
-    def agents(self):
-        aglist = EMPTY_LIST
-
-        self._lock.acquire()
-        try:
-            aglist = [a for a in self._agents]
-        finally:
-            self._lock.release()
-
-        return aglist
 
     @property
     def children(self):
@@ -134,11 +149,11 @@ class UpnpCoordinator:
         """
         chlist = EMPTY_LIST
 
-        self._lock.acquire()
+        self._coord_lock.acquire()
         try:
-            chlist = [c for c in self._children.values()]
+            chlist = [c for c in self._cl_children.values()]
         finally:
-            self._lock.release()
+            self._coord_lock.release()
 
         return chlist
 
@@ -146,11 +161,11 @@ class UpnpCoordinator:
     def watch_devices(self):
         wlist = []
 
-        self._lock.acquire()
+        self._coord_lock.acquire()
         try:
-            wlist = [wd for wd in self._watched_devices.values()]
+            wlist = [wd for wd in self._cl_watched_devices.values()]
         finally:
-            self._lock.release()
+            self._coord_lock.release()
 
         return wlist
 
@@ -159,12 +174,12 @@ class UpnpCoordinator:
         """
         callback_url = None
 
-        self._lock.acquire()
+        self._coord_lock.acquire()
         try:
-            if ifname in self._iface_callback_addr_lookup:
-                callback_url = self._iface_callback_addr_lookup[ifname]
+            if ifname in self._cl_iface_callback_addr_lookup:
+                callback_url = self._cl_iface_callback_addr_lookup[ifname]
         finally:
-            self._lock.release()
+            self._coord_lock.release()
 
         return callback_url
 
@@ -175,14 +190,14 @@ class UpnpCoordinator:
 
         found = None
 
-        self._lock.acquire()
+        self._coord_lock.acquire()
         try:
-            for nxtdev in self._children.values():
+            for nxtdev in self._cl_children.values():
                 if mac == nxtdev.MACAddress:
                     found = nxtdev
                     break
         finally:
-            self._lock.release()
+            self._coord_lock.release()
 
         return found
 
@@ -193,14 +208,14 @@ class UpnpCoordinator:
 
         found = None
 
-        self._lock.acquire()
+        self._coord_lock.acquire()
         try:
-            for nxtdev in self._children.values():
+            for nxtdev in self._cl_children.values():
                 if usn == nxtdev.USN:
                     found = nxtdev
                     break
         finally:
-            self._lock.release()
+            self._coord_lock.release()
 
         return found
 
@@ -209,14 +224,14 @@ class UpnpCoordinator:
         """
         found = []
 
-        self._lock.acquire()
+        self._coord_lock.acquire()
         try:
             for usn in usnlist:
-                for nxtdev in self._children.values():
+                for nxtdev in self._cl_children.values():
                     if usn == nxtdev.USN:
                         found.append(nxtdev)
         finally:
-            self._lock.release()
+            self._coord_lock.release()
 
         return found
 
@@ -226,12 +241,12 @@ class UpnpCoordinator:
         """
         svc_inst = None
 
-        self._lock.acquire()
+        self._coord_lock.acquire()
         try:
-            if sid in self._services_subscriptions:
-                svc_inst = self._services_subscriptions[sid]
+            if sid in self._cl_subscription_id_to_device:
+                svc_inst = self._cl_subscription_id_to_device[sid]
         finally:
-            self._lock.release()
+            self._coord_lock.release()
 
         return svc_inst
 
@@ -240,11 +255,11 @@ class UpnpCoordinator:
             Registers a service instance for event callbacks via a 'sid'.
         """
 
-        self._lock.acquire()
+        self._coord_lock.acquire()
         try:
-            self._services_subscriptions[sid] = device
+            self._cl_subscription_id_to_device[sid] = device
         finally:
-            self._lock.release()
+            self._coord_lock.release()
 
         return
 
@@ -253,6 +268,14 @@ class UpnpCoordinator:
             Starts up and initilizes the UPNP coordinator by utilizing a hint list to determine
             what network interfaces to setup UPNP monitoring on.
         """
+
+        if self._running:
+            raise AkitRuntimeError("UpnpCoordinator.startup_scan called twice, The UpnpCoordinator is already running.")
+
+        # Because we only allow this method to be called once, We don't need to lock the UpnpCoordinator
+        # for most of this activity because the only thread with a reference to use is the caller.  At
+        # the end of this function when we startup all the callback and worker threads is when we need to
+        # start using the lock. 
         if upnp_hint_list is None:
             upnp_hint_list = []
 
@@ -306,7 +329,7 @@ class UpnpCoordinator:
             for dev in self.children:
                 devusn = dev.USN
                 if devusn in watchlist:
-                    self._watched_devices[devusn] = dev
+                    self._cl_watched_devices[devusn] = dev
 
         self._start_all_threads()
 
@@ -349,12 +372,12 @@ class UpnpCoordinator:
 
         device = None
         #lookup the device that needs to handle this subscription
-        self._lock.acquire()
+        self._coord_lock.acquire()
         try:
-            if sid in self._services_subscriptions:
-                device = self._services_subscriptions[sid]
+            if sid in self._cl_subscription_id_to_device:
+                device = self._cl_subscription_id_to_device[sid]
         finally:
-            self._lock.release()
+            self._coord_lock.release()
 
         if device is not None:
             device.process_subscription_callback(sid, req_headers, req_body)
@@ -374,7 +397,7 @@ class UpnpCoordinator:
 
         usn = req_headers["USN"]
 
-        if usn in self._watched_devices:
+        if usn in self._cl_watched_devices:
             self._process_device_notification(usn, req_headers)
 
         return
@@ -391,8 +414,7 @@ class UpnpCoordinator:
                 ifacelist.append(ifname)
         ifacecount = len(ifacelist)
 
-        self._shutdown_gate = threading.Semaphore(1)
-
+        self._coord_lock.acquire()
         try:
             sgate = threading.Event()
 
@@ -405,9 +427,16 @@ class UpnpCoordinator:
                 sgate.clear()
                 wthread = threading.Thread(name="UpnpCoordinator - Worker(%d)" % wkrid, target=self._thread_entry_worker, 
                                                    daemon=True, args=(sgate,))
-                self._worker_threads.append(wthread)
-                wthread.start()
-                sgate.wait()
+                self._cl_worker_threads.append(wthread)
+
+                # Release the coordinator lock while starting up the thread so we are not holding it
+                # so the new thread can get access to register itself with internal UpnpCoordinator state
+                self._coord_lock.release()
+                try:
+                    wthread.start()
+                    sgate.wait()
+                finally:
+                    self._coord_lock.acquire()
 
             # Spin-up the Monitor thread so it can monitor notification traffic
             sgate.clear()
@@ -417,16 +446,23 @@ class UpnpCoordinator:
             sgate.wait()
 
             # Spin-up a Callback thread for each interface
-            self._iface_callback_addr_lookup = {}
+            self._cl_iface_callback_addr_lookup = {}
 
             for ifaceidx in range(0, ifacecount):
                 ifname = ifacelist[ifaceidx]
                 sgate.clear()
                 cbthread = threading.Thread(name="UpnpCoordinator - Callback(%s)" % ifname, target=self._thread_entry_callback, 
                                                     daemon=True, args=(sgate, ifname))
-                self._callback_threads.append(cbthread)
-                cbthread.start()
-                sgate.wait()
+                self._cl_callback_threads.append(cbthread)
+
+                # Release the coordinator lock while starting up the thread so we are not holding it
+                # so the new thread can get access to register itself with internal UpnpCoordinator state
+                self._coord_lock.release()
+                try:
+                    cbthread.start()
+                    sgate.wait()
+                finally:
+                    self._coord_lock.acquire()
 
         except:
             self._running = False
@@ -435,6 +471,8 @@ class UpnpCoordinator:
                 self._shutdown_gate.release()
 
             raise
+        finally:
+            self._coord_lock.release()
 
         return
 
@@ -455,7 +493,7 @@ class UpnpCoordinator:
 
             iface_callback_addr = "%s:%s" % (host, port)
 
-            self._iface_callback_addr_lookup[ifname] = iface_callback_addr
+            self._cl_iface_callback_addr_lookup[ifname] = iface_callback_addr
 
             # Set the start gate to allow the thread spinning us up to continue
             sgate.set()
@@ -600,12 +638,12 @@ class UpnpCoordinator:
 
                     try:
                         # Acquire the lock before we decide if the location exists in the children table
-                        self._lock.acquire()
-                        if location not in self._children:
+                        self._coord_lock.acquire()
+                        if location not in self._cl_children:
                             try:
                                 # Unlock while we do some expensive stuff, we have already decided to
                                 # create the device
-                                self._lock.release()
+                                self._coord_lock.release()
 
                                 try:
                                     # We create the device
@@ -625,17 +663,17 @@ class UpnpCoordinator:
                                 # Refresh the description
                                 rootdev.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
                             finally:
-                                self._lock.acquire()
+                                self._coord_lock.acquire()
 
                             # If the device is still not in the table, add it
-                            if location not in self._children:
-                                self._children[location] = rootdev
+                            if location not in self._cl_children:
+                                self._cl_children[location] = rootdev
                         else:
-                            rootdev = self._children[location]
+                            rootdev = self._cl_children[location]
                             # Refresh the description
                             rootdev.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
                     finally:
-                        self._lock.release()
+                        self._coord_lock.release()
                 except:
                     errmsg_lines = [
                         "ERROR: Unable to parse description for. IP: %s LOCATION: %s" % (ip_addr, location)

@@ -1,5 +1,5 @@
 """
-.. module:: akit.integration.upnp.services.upnpeventvar
+.. module:: upnpeventvar
     :platform: Darwin, Linux, Unix, Windows
     :synopsis: Module containing the :class:`UpnpEventVar` class which is used to maintain
                variable subscription values and associated metadata.

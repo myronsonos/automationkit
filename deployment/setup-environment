@@ -99,6 +99,7 @@ if [ ! -f $INITIALIZED_FILE ]; then
 
         # MSCODE Environment Dependencies
         pip install pylint
+        pip install rope
 
         # Development Modules
         pip install sphinx
