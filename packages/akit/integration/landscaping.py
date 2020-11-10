@@ -29,9 +29,6 @@ from akit.environment.context import Context
 from akit.exceptions import AKitConfigurationError, AKitSemanticError
 from akit.paths import get_expanded_path
 
-from akit.integration.coordinators.sshpoolcoordinator import SshPoolCoordinator
-from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
-
 from akit.integration.clients.linuxclientmixin import LinuxClientMixIn
 from akit.integration.clients.windowsclientmixin import WindowsClientMixIn
 from akit.integration.cluster.clustermixin import ClusterMixIn
@@ -213,17 +210,38 @@ class Landscape:
         """
             Initializes the Singleton initializer class
         """
-        this_cls = type(self)
-        if not this_cls._initialized:
-            this_cls._initialized = True
+        thisType = type(self)
+        if not thisType._initialized:
+            thisType._initialized = True
             self._landscape_info = None
+            self._environment_info = None
+            self._environment_label = None
+            self._environment_muse = None
+
             self._logger = getAutomatonKitLogger()
+
+            self._has_muse_devices = False
             self._has_upnp_devices = False
             self._has_ssh_devices = False
+
+            self._muse_coord = None
             self._upnp_coord = None
             self._ssh_coord = None
+
             self.initialize()
         return
+
+    @property
+    def environment(self):
+        return self._environment_info
+
+    @property
+    def environment_label(self):
+        return self._environment_label
+
+    @property
+    def environment_muse(self):
+        return self._environment_muse
 
     @property
     def name(self):
@@ -231,6 +249,10 @@ class Landscape:
         if "name" in self.landscape_info:
             lname = self.landscape_info["name"]
         return lname
+
+    @property
+    def has_muse_devices(self):
+        return self._has_muse_devices
 
     @property
     def has_ssh_devices(self):
@@ -243,6 +265,10 @@ class Landscape:
     @property
     def landscape_info(self):
         return self._landscape_info
+
+    @property
+    def muse_coord(self):
+        return self._muse_coord
 
     @property
     def ssh_coord(self):
@@ -361,6 +387,23 @@ class Landscape:
             err_msg = "Error loading the landscape file from (%s)" % landscape_file
             raise AKitConfigurationError(err_msg) from xcpt
 
+        if "environment" not in self._landscape_info:
+            err_msg = "The landscape file must have an 'environment' decription. (%s)" % landscape_file
+            raise AKitConfigurationError(err_msg) 
+
+        self._environment_info = self._landscape_info["environment"]
+        if "label" not in self._environment_info:
+            err_msg = "The landscape 'environment' decription must have a 'label' member (development, production, test). (%s)" % landscape_file
+            raise AKitConfigurationError(err_msg) 
+
+        self._environment_label = self._environment_info["label"]
+
+        if "muse" in self._environment_info:
+            self._environment_muse = self._environment_info["muse"]
+            if ("authhost" not in self._environment_muse) or ("ctlhost" not in self._environment_muse) or ("version" not in self._environment_muse):
+                err_msg = "The landscape 'environment/muse' decription must have both a 'envhost' and 'version' members. (%s)" % landscape_file
+                raise AKitConfigurationError(err_msg)
+
         return
 
     def diagnostic(self, diaglabel, diags):
@@ -454,13 +497,18 @@ class Landscape:
 
         upnp_device_list = []
         ssh_device_list = []
+        muse_device_list = []
 
         for devinfo in self.get_devices():
             dev_type = devinfo["deviceType"]
             if dev_type == "network/upnp":
                 upnp_device_list.append(devinfo)
+                if "muse" in devinfo:
+                    muse_device_list.append(devinfo)
                 if "ssh" in devinfo:
                     ssh_device_list.append(devinfo)
+            elif dev_type == "network/muse":
+                muse_device_list.append(devinfo)
             elif dev_type == "network/ssh":
                 ssh_device_list.append(devinfo)
             else:
@@ -474,15 +522,31 @@ class Landscape:
                 self._logger.error(errmsg)
 
         if len(upnp_device_list) > 0:
+            from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
+
             self._has_upnp_devices = True
             upnp_hint_list = self.get_upnp_device_lookup_table()
             self._upnp_coord = UpnpCoordinator()
             self._upnp_coord.startup_scan(upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=["lo"])
 
         if len(ssh_device_list) > 0:
+            from akit.integration.coordinators.sshpoolcoordinator import SshPoolCoordinator
+
             self._has_ssh_devices = True
             self._ssh_coord = SshPoolCoordinator()
             self._ssh_coord.attach_to_devices(ssh_device_list, upnp_coord=self._upnp_coord)
+
+        if len(muse_device_list) > 0 and self._environment_muse is not None:
+            envlabel = self.environment_label
+            muse_authhost = self._environment_muse["authhost"]
+            muse_ctlhost = self._environment_muse["ctlhost"]
+            muse_version = self._environment_muse["version"]
+
+            from akit.integration.coordinators.musecoordinator import MuseCoordinator
+
+            self._has_muse_devices = True
+            self._muse_coord = MuseCoordinator()
+            self._muse_coord.attach_to_devices(envlabel, muse_authhost, muse_ctlhost, muse_version, muse_device_list, upnp_coord=self._upnp_coord)
 
         return
 

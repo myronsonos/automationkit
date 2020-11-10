@@ -52,9 +52,9 @@ class UpnpFactory:
         """
             Initializes the Singleton initializer class
         """
-        this_cls = type(self)
-        if not this_cls._initialized:
-            this_cls._initialized = True
+        thisType = type(self)
+        if not thisType._initialized:
+            thisType._initialized = True
             self._embedded_device_registry = {}
             self._root_device_registry = {}
             self._service_registry = {}

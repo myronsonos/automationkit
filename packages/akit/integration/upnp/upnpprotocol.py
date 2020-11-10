@@ -412,24 +412,3 @@ def notify_parse_request(content):
             resp_body = body_content
 
     return resp_headers, resp_body
-
-if __name__ == "__main__":
-    from akit.integration.landscaping import Landscape
-
-    landscape = Landscape()
-    expected_upnp_devices = [usn for usn in landscape.get_upnp_device_lookup_table().keys()]
-
-    found_devices, matching_devices = msearch_scan(expected_upnp_devices)
-
-    print()
-    print("FOUND DEVICES")
-    for devkey, devinfo in found_devices.items():
-        print("    USN: %s " % devkey)
-
-    print()
-    print("MATCHING DEVICES")
-    for devkey, devinfo in matching_devices.items():
-        print("    USN: %s " % devkey)
-
-    print()
-    print("Done")

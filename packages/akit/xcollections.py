@@ -14,6 +14,20 @@ __maintainer__ = "Myron Walker"
 __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
+
+def insert_into_ordered_list_ascending(ordered_list, item):
+    ordered_list = []
+    index = None
+    for i in range(0, len(ordered_list)):
+        if ordered_list[i] > item:
+            index = i
+
+    if index is not None:
+        ordered_list.insert(index, item)
+    else:
+        ordered_list.append(item)
+    return
+
 class CaseInsensitiveDict(dict):
 
     @classmethod

@@ -37,13 +37,12 @@ from xml.etree.ElementTree import register_namespace
 
 from akit.integration import upnp as upnp_module
 
-from akit.exceptions import AKitSemanticError, AKitTimeoutError
+from akit.exceptions import AKitRuntimeError, AKitCommunicationsProtocolError, AKitSemanticError, AKitTimeoutError
 
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 from akit.integration.upnp.devices.upnprootdevice import device_description_load
 from akit.integration.upnp.devices.upnprootdevice import device_description_find_components
 
-from akit.exceptions import AKitCommunicationsProtocolError
 from akit.integration.upnp.upnperrors import UpnpError
 from akit.integration.upnp.upnpfactory import UpnpFactory
 from akit.integration.upnp.upnpprotocol import MSearchKeys, UpnpProtocol
@@ -79,8 +78,9 @@ class UpnpCoordinator:
         return cls.instance
 
     def __init__(self, control_point=False, workers=5, watch_all=False):
-        if not self.initialized:
-            self.initialized = True
+        thisType = type(self)
+        if not thisType.initialized:
+            thisType.initialized = True
 
             # ============================ Fixed Variables ============================
             # These variables are fixed at the start of the UpnpCoordinator and because
@@ -270,7 +270,7 @@ class UpnpCoordinator:
         """
 
         if self._running:
-            raise AkitRuntimeError("UpnpCoordinator.startup_scan called twice, The UpnpCoordinator is already running.")
+            raise AKitRuntimeError("UpnpCoordinator.startup_scan called twice, The UpnpCoordinator is already running.")
 
         # Because we only allow this method to be called once, We don't need to lock the UpnpCoordinator
         # for most of this activity because the only thread with a reference to use is the caller.  At
@@ -710,6 +710,11 @@ if __name__ == "__main__":
 
     lscape = Landscape()
     lscape.first_contact()
+
+    #muse_coord = lscape.muse_coord
+    #firstMuseAgent = muse_coord.device_agents[0]
+
+    #firstMuseAgent.households()
 
     upnpcoord = lscape.upnp_coord
     firstdev = upnpcoord.watch_devices[0]

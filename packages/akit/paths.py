@@ -62,7 +62,7 @@ def get_directory_for_module(module):
         Returns the directory for a module
     """
     if hasattr(module, '__path__'):
-        module_dir = str(module.__path__._path[0]).rstrip(os.sep)
+        module_dir = str(module.__path__[0]).rstrip(os.sep)
     elif hasattr(module, '__file__'):
         module_dir = os.path.dirname(module.__file__).rstrip(os.sep)
     else:

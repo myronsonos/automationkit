@@ -21,10 +21,12 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import os
+import threading
 import time
 import traceback
 import uuid
 
+from akit.xcollections import insert_into_ordered_list_ascending
 from akit.xformatting import split_and_indent_lines
 from akit.xlogging.foundations import getAutomatonKitLogger
 
@@ -33,12 +35,97 @@ DEFAULT_MONITORED_SCOPE_TIMEOUT = 600
 logger = getAutomatonKitLogger()
 
 class ScopeMonitor:
+    """
+        The :class:`ScopeMonitor` object is utilized to provide monitoring of threads that are entering
+        sections of code that might have a tendency to block and cause disruptions in automation processes.
+
+        The :class:`ScopeMonitor` takes pre-dictive work packets for logging from threads entering critical
+        sections of code monitored by :class:`MonitoredScope` instances used in a 'with' statement.
+
+        ..code-block:: python
+
+            with MonitoredScope("RunCommand", "Running command on cluster node (%s)" % nodeip) as mscope:
+                cluster.run_cmd(1, "echo blah")
+
+        The use of a :class:`MonitoredScope` remove the necessity to log prior to entering a critical
+        section of code but allows log entrys to be pre-emptively handed off to the :class:`ScopeMonitor`
+        thread for contingent processing should a the thread fail to return from the critical section of
+        code in a timely manner.
+    """
+
+    SCOPE_MONITOR_INTERVAL = 5
+
+    instance = None
+    initialized = False
+
+    def __new__(cls, **kwargs):
+        """
+            Constructs new instances of the :class:`ScopeMonitor` object. The 
+            :class:`ScopeMonitor` object is a singleton so following instantiations
+            of the object will reference the existing singleton
+        """
+
+        if cls.instance is None:
+            cls.instance = super(ScopeMonitor, cls).__new__(cls)
+        return cls.instance
 
     def __init__(self):
+        thisType = type(self)
+        if not thisType.initialized:
+            thisType.initialized = True
+
+            self._monitors = []
+            self._monitors_lock = threading.RLock()
+
+            self._timer = threading.Timer(self.SCOPE_MONITOR_INTERVAL, self._monitor_tick, kwargs={ "name": "ScopeMonitorTimer", "daemon": True })
+        return
+
+    def register_monitor(self, monitor):
+
+        self._monitors_lock.acquire()
+        try:
+            insert_into_ordered_list_ascending(self._monitors, monitor)
+        finally:
+            self._monitors_lock.release()
+
+        return
+
+    def _monitor_tick(self, sgate):
+
+        self._monitors_lock.acquire()
+        try:
+            if len(self._monitors) > 0:
+                while True:
+                    firstMonitor = self._monitors[0]
+                    if firstMonitor.expired:
+                        firstMonitor.trigger_notification()
+                        del self._monitors[0]
+                    else:
+                        break
+        finally:
+            self._monitors_lock.release()
+
         return
 
 
+global_scope_monitor = None
+
 class MonitoredScope:
+    """
+        The :class:`MonitoredScope` object is utilized in order to provide monitoring on threads
+        that are entering sections of code that might have a tendency to block and cause disruptions
+        in automation processes.  The monitored scope allows for the creation of scopes of code execution
+        that can capture contextual information and hand it to a monitor thread that can then log an error
+        message if the thread entering the monitored context does not return from the context with a
+        specified period of time.
+
+        This solves the problem of reducing log clutter by not having to log at the entry of problematic
+        sections of code, but delay the logging until the thread has failed to exit in a timely manner and
+        ensure the logging can happen by passing the work off to another thread that is running in a safer
+        context.
+    """
+
+    ERROR_COMPARISON_TYPE_MESSAGE = "Comparison is only support between two 'ScopeMonitor' objects."
 
     def __init__(self, label, message, timeout=DEFAULT_MONITORED_SCOPE_TIMEOUT):
         self._id = str(uuid.uuid4())
@@ -58,13 +145,77 @@ class MonitoredScope:
         return
 
     def __enter__(self):
+        """
+        """
+        global global_scope_monitor
+
+        if global_scope_monitor is None:
+            global_scope_monitor = ScopeMonitor()
+
+        global_scope_monitor.register_monitor(self)
+
         return self
 
     def __exit__(self, ex_type, ex_inst, ex_tb):
-
+        """
+        """
         self._exited = True
 
         return False
+
+    def __eq__(self, other):
+        """
+            Perform comparison between ScopeMonitor(left) == ScopeMonitor(right)
+        """
+        if not isinstance(other, ScopeMonitor):
+            raise ValueError(self.ERROR_COMPARISON_TYPE_MESSAGE)
+
+        return self._end_time == other._end_time
+
+    def __ge__(self, other):
+        """
+            Perform comparison between ScopeMonitor(left) >= ScopeMonitor(right)
+        """
+        if not isinstance(other, ScopeMonitor):
+            raise ValueError(self.ERROR_COMPARISON_TYPE_MESSAGE)
+
+        return self._end_time >= other._end_time
+
+    def __gt__(self, other):
+        """
+            Perform comparison between ScopeMonitor(left) > ScopeMonitor(right)
+        """
+        if not isinstance(other, ScopeMonitor):
+            raise ValueError(self.ERROR_COMPARISON_TYPE_MESSAGE)
+
+        return self._end_time > other._end_time
+
+    def __le__(self, other):
+        """
+            Perform comparison between ScopeMonitor(left) <= ScopeMonitor(right)
+        """
+        if not isinstance(other, ScopeMonitor):
+            raise ValueError(self.ERROR_COMPARISON_TYPE_MESSAGE)
+
+        return self._end_time <= other._end_time
+
+    def __lt__(self, other):
+        """
+            Perform comparison between ScopeMonitor(left) < ScopeMonitor(right)
+        """
+        if not isinstance(other, ScopeMonitor):
+            raise ValueError(self.ERROR_COMPARISON_TYPE_MESSAGE)
+
+        return self._end_time < other._end_time
+
+    def __ne__(self, other):
+        """
+            Perform comparison between ScopeMonitor(left) != ScopeMonitor(right)
+        """
+        if not isinstance(other, ScopeMonitor):
+            raise ValueError(self.ERROR_COMPARISON_TYPE_MESSAGE)
+
+        return self._end_time != other._end_time
 
     @property
     def exited(self):
