@@ -29,7 +29,7 @@ from akit.integration.upnp.services.upnpserviceproxy import UpnpServiceProxy
 from akit.integration.upnp.extensions import dynamic as dynamic_extensions
 from akit.integration.upnp.extensions import standard as standard_extensions
 
-from akit.extensible import collect_extensions_under_module
+from akit.extensible import collect_extensions_under_code_container
 
 class UpnpFactory:
     """
@@ -58,10 +58,10 @@ class UpnpFactory:
             self._embedded_device_registry = {}
             self._root_device_registry = {}
             self._service_registry = {}
-            self._scan_for_device_extensions_under_module(dynamic_extensions)
-            self._scan_for_device_extensions_under_module(standard_extensions)
-            self._scan_for_service_extensions_under_module(dynamic_extensions)
-            self._scan_for_service_extensions_under_module(standard_extensions)
+            self._scan_for_device_extensions_under_code_container(dynamic_extensions)
+            self._scan_for_device_extensions_under_code_container(standard_extensions)
+            self._scan_for_service_extensions_under_code_container(dynamic_extensions)
+            self._scan_for_service_extensions_under_code_container(standard_extensions)
         return
 
     def create_embedded_device_instance(self, manufacturer:str, modelNumber: str, modelDescription: str):
@@ -102,18 +102,18 @@ class UpnpFactory:
             self._service_registry[extkey] = extcls
         return
 
-    def _scan_for_device_extensions_under_module(self, module):
-        extcoll = collect_extensions_under_module(module, UpnpRootDevice)
-        for extname, extcls in extcoll:
+    def _scan_for_device_extensions_under_code_container(self, container):
+        extcoll = collect_extensions_under_code_container(container, UpnpRootDevice)
+        for _, extcls in extcoll:
             if hasattr(extcls, "MANUFACTURER") and hasattr(extcls, "MODEL_NUMBER") and hasattr(extcls, "MODEL_DESCRIPTION"):
                 extkey = generate_extension_key(getattr(extcls, "MANUFACTURER"),
                     getattr(extcls, "MODEL_NUMBER"), getattr(extcls, "MODEL_DESCRIPTION"))
                 self._register_root_device(extkey, extcls)
         return
 
-    def _scan_for_service_extensions_under_module(self, module):
-        extcoll = collect_extensions_under_module(module, UpnpServiceProxy)
-        for extname, extcls in extcoll:
+    def _scan_for_service_extensions_under_code_container(self, container):
+        extcoll = collect_extensions_under_code_container(container, UpnpServiceProxy)
+        for _, extcls in extcoll:
             if (hasattr(extcls, "SERVICE_MANUFACTURER") and hasattr(extcls, "SERVICE_TYPE")):
                 svc_manufacturer = getattr(extcls, "SERVICE_MANUFACTURER")
                 svc_type = getattr(extcls, "SERVICE_TYPE")

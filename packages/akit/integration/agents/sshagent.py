@@ -20,11 +20,16 @@ import re
 import socket
 import stat
 import time
+import weakref
+
+from typing import Callable, List, Optional
 
 from akit.aspects import RunPattern, DEFAULT_ASPECTS
 from akit.exceptions import AKitInvalidConfigError
 
 from akit.xlogging.foundations import getAutomatonKitLogger
+
+from akit.integration.landscaping.landscapedeviceextension import LandscapeDeviceExtension
 
 import paramiko
 
@@ -36,7 +41,7 @@ DEFAULT_SSH_RETRY_INTERVAL = .5
 #                    PERMS          LINKS   OWNER       GROUPS    SIZE   MONTH  DAY  TIME    NAME
 #                  rwxrwxrwx         24      myron      myron     4096   Jul    4   00:37  PCBs
 REGEX_DIRECTORY_ENTRY = re.compile(r"([\S]+)[\s]+([0-9]+)[\s]+([\S]+)[\s]+([\S]+)[\s]+([0-9]+)[\s]+([A-za-z]+[\s]+[0-9]+[\s]+[0-9:]+)[\s]+([\S\s]+)")
-def lookup_entry_type(pdir, ename, finfo):
+def lookup_entry_type(pdir: str, ename: str, finfo: paramiko.SFTPAttributes):
     """
         Determines the entry type labelto assign to a file entry based on the st_mode of the file information.
 
@@ -63,7 +68,7 @@ def lookup_entry_type(pdir, ename, finfo):
 
     return etype
 
-def primitive_list_directory(ssh_client, directory):
+def primitive_list_directory(ssh_client: paramiko.SSHClient, directory: str):
     """
         Uses a primitive method to create a list of the files and folders in a directory
         by running the 'ls -al' commands on the directory.  This is required if the SSH
@@ -91,7 +96,7 @@ def primitive_list_directory(ssh_client, directory):
 
     return entries
 
-def primitive_list_tree(ssh_client, treeroot, max_depth=1):
+def primitive_list_tree(ssh_client: paramiko.SSHClient, treeroot: str, max_depth: int=1):
     """
         Uses a primitive method to create an information tree about the files and folders
         in a directory tree by running 'ls -al' commands on the directory tree.  This is
@@ -126,7 +131,7 @@ def primitive_list_tree(ssh_client, treeroot, max_depth=1):
 
     return tree_info
 
-def primitive_list_tree_recurse(ssh_client, rootdir, remaining):
+def primitive_list_tree_recurse(ssh_client: paramiko.SSHClient, rootdir: str, remaining: int):
 
     level_items = primitive_list_directory(ssh_client, rootdir)
 
@@ -147,7 +152,7 @@ def primitive_list_tree_recurse(ssh_client, rootdir, remaining):
 
     return children_info
 
-def primitive_parse_directory_listing(dir, content):
+def primitive_parse_directory_listing(dir:str, content: str):
     """
         {
             "name": "blah",
@@ -204,7 +209,7 @@ def primitive_parse_directory_listing(dir, content):
 
     return entries
 
-def primitive_pull_file(ssh_client, remotepath, localpath):
+def primitive_pull_file(ssh_client: paramiko.SSHClient, remotepath: str, localpath: str):
 
     copycmd = "cat %s" % remotepath
 
@@ -218,7 +223,7 @@ def primitive_pull_file(ssh_client, remotepath, localpath):
 
     return
 
-def primitive_push_file(ssh_client, localpath, remotepath):
+def primitive_push_file(ssh_client: paramiko.SSHClient, localpath: str, remotepath: str):
     raise Exception("primitive_push_file: not implemented")
     return
 
@@ -250,7 +255,7 @@ def sftp_list_directory(sftp, directory, userlookup, grouplookup):
 
     return entries
 
-def sftp_list_tree(sftp, treeroot, userlookup, grouplookup, max_depth=1):
+def sftp_list_tree(sftp: paramiko.SFTPClient, treeroot: str, userlookup: Callable[[int, Optional[bool]], str], grouplookup: Callable[[int, Optional[bool]], str], max_depth: int=1):
 
     level_items = sftp_list_directory(sftp, treeroot, userlookup, grouplookup)
 
@@ -272,7 +277,7 @@ def sftp_list_tree(sftp, treeroot, userlookup, grouplookup, max_depth=1):
 
     return tree_info
 
-def sftp_list_tree_recurse(sftp, rootdir, userlookup, grouplookup, remaining):
+def sftp_list_tree_recurse(sftp: paramiko.SFTPClient, rootdir: str, userlookup: Callable[[int, Optional[bool]], str], grouplookup: Callable[[int, Optional[bool]], str], remaining: int):
 
     level_items = sftp_list_directory(sftp, rootdir, userlookup, grouplookup)
 
@@ -293,7 +298,7 @@ def sftp_list_tree_recurse(sftp, rootdir, userlookup, grouplookup, remaining):
 
     return children_info
 
-def ssh_execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIMEOUT, inactivity_interval=DEFAULT_SSH_RETRY_INTERVAL, chunk_size=1024):
+def ssh_execute_command(ssh_client: paramiko.SSHClient, command: str, inactivity_timeout: float=DEFAULT_SSH_TIMEOUT, inactivity_interval: float=DEFAULT_SSH_RETRY_INTERVAL, chunk_size: int=1024, attach_pty: bool=False):
     """
         Runs a command on a remote server using the specified ssh_client.  We implement our own version of ssh_execute_command
         in order to have better control over the timeouts and to make sure all the checks are sequenced properly in order
@@ -368,7 +373,7 @@ def ssh_execute_command(ssh_client, command, inactivity_timeout=DEFAULT_SSH_TIME
     return status, stdout, stderr
 
 class SshSession:
-    def __init__(self, host, username, password=None, keyfile=None, keypasswd=None, allow_agent=False, port=22, aspects=DEFAULT_ASPECTS):
+    def __init__(self, host: str, username: str, password=None, keyfile=None, keypasswd=None, allow_agent=False, port=22, aspects=DEFAULT_ASPECTS):
         self._host = host
         self._ipaddr = socket.gethostbyname(host)
         self._port = port
@@ -473,9 +478,10 @@ class SshSession:
         return ssh_client
 
 
-class SshAgent:
+class SshAgent(LandscapeDeviceExtension):
 
     def __init__(self, host, username, password=None, keyfile=None, keypasswd=None, allow_agent=False, port=22, primitive=None, aspects=DEFAULT_ASPECTS):
+        super(SshAgent, self).__init__()
         self._host = host
         self._ipaddr = socket.gethostbyname(self._host)
         self._port = port
@@ -531,6 +537,22 @@ class SshAgent:
     @property
     def username(self):
         return self._username
+
+    def initialize(self, coord_ref: weakref.ReferenceType, basedevice_ref: weakref.ReferenceType, extid: str, location: str, configinfo: dict):
+        """
+            Initializes the landscape device extension.
+
+            :param coord_ref: A weak reference to the coordinator that is managing interactions through this
+                              device extension.
+            :type coord_ref: weakref.ReferenceType
+            :param extid: A unique reference that can be used to identify this device via the coordinator even if its location changes.
+            :type extid: str
+            :param location: The location reference where this device can be found via the coordinator.
+            :type location: str
+            :param 
+        """
+        LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
+        return
 
     def run_cmd(self, command, aspects=None, ssh_client=None):
 
@@ -701,7 +723,7 @@ class SshAgent:
 
         return
 
-    def lookup_user_by_uid(self, uid, update=False):
+    def lookup_user_by_uid(self, uid: int, update=False):
         username = None
 
         if uid in self._user_lookup_table:
@@ -714,7 +736,7 @@ class SshAgent:
 
         return username
 
-    def lookup_group_by_uid(self, gid, update=False):
+    def lookup_group_by_uid(self, gid: int, update=False):
         grpname = None
 
         if gid in self._group_lookup_table:

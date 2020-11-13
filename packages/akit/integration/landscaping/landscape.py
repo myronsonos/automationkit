@@ -1,0 +1,540 @@
+"""
+.. module:: landscape
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module containing the :class:`TestLandscape` class and associated diagnostic.
+
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+
+"""
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@gmail.com"
+__status__ = "Development" # Prototype, Development or Production
+__license__ = "MIT"
+
+import inspect
+import os
+import threading
+import traceback
+import yaml
+
+import pprint
+
+from akit.compat import import_by_name
+
+from akit.environment.variables import VARIABLES
+from akit.environment.context import Context
+
+from akit.exceptions import AKitConfigurationError, AKitSemanticError
+
+from akit.paths import get_expanded_path
+
+
+from akit.xformatting import split_and_indent_lines
+from akit.xlogging.foundations import getAutomatonKitLogger
+
+from akit.integration.landscaping.landscapedescription import LandscapeDescription
+from akit.integration.landscaping.landscapedevice import LandscapeDevice
+from akit.integration.landscaping.landscapedeviceextension import LandscapeDeviceExtension
+
+
+class Landscape:
+    """
+        The base class for all derived :class:`Landscape` objects.  The :class:`Landscape`
+        object is a singleton object that provides access to the resources and test
+        environment level methods.
+    """
+    landscape_description = LandscapeDescription
+    landscape_device = LandscapeDevice
+    landscape_device_extension = LandscapeDeviceExtension
+
+    landscape_lock = threading.Lock()
+    landscape_initialized = threading.Event()
+
+    _landscape_type = None
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        """
+            Constructs new instances of the Landscape object from the :class:`Landscape`
+            type or from a derived type that is found in the module specified in the
+            :module:`akit.environment.variables` module or by setting the
+            'AKIT_LANDSCAPE_MODULE' environment variable.
+        """
+        if cls._instance is None:
+            if cls._landscape_type is None:
+                cls._instance = super(Landscape, cls).__new__(cls)
+            else:
+                cls._instance = super(Landscape, cls._landscape_type).__new__(cls._landscape_type)
+            # Put any initialization here.
+        return cls._instance
+        
+    def __init__(self):
+        """
+            Initializes the Singleton initializer class
+        """
+
+        thisType = type(self)
+
+        self.landscape_lock.acquire()
+        try:
+            
+            if not thisType._initialized:
+                thisType._initialized = True
+
+                self._landscape_info = None
+                self._environment_info = None
+                self._environment_label = None
+                self._environment_muse = None
+
+                self._logger = getAutomatonKitLogger()
+
+                self._has_muse_devices = False
+                self._has_upnp_devices = False
+                self._has_ssh_devices = False
+
+                self._muse_coord = None
+                self._upnp_coord = None
+                self._ssh_coord = None
+
+                self._all_devices = {}
+
+                self._initialize()
+        finally:
+            self.landscape_lock.release()
+
+        return
+
+    @property
+    def environment(self):
+        self.landscape_initialized.wait()
+        return self._environment_info
+
+    @property
+    def environment_label(self):
+        self.landscape_initialized.wait()
+        return self._environment_label
+
+    @property
+    def environment_muse(self):
+        self.landscape_initialized.wait()
+        return self._environment_muse
+
+    @property
+    def name(self):
+        self.landscape_initialized.wait()
+        lname = None
+        if "name" in self.landscape_info:
+            lname = self.landscape_info["name"]
+        return lname
+
+    @property
+    def has_muse_devices(self):
+        self.landscape_initialized.wait()
+        return self._has_muse_devices
+
+    @property
+    def has_ssh_devices(self):
+        self.landscape_initialized.wait()
+        return self._has_ssh_devices
+
+    @property
+    def has_upnp_devices(self):
+        self.landscape_initialized.wait()
+        return self._has_upnp_devices
+
+    @property
+    def landscape_info(self):
+        self.landscape_initialized.wait()
+        return self._landscape_info
+
+    @property
+    def muse_coord(self):
+        self.landscape_initialized.wait()
+        return self._muse_coord
+
+    @property
+    def ssh_coord(self):
+        self.landscape_initialized.wait()
+        return self._ssh_coord
+
+    @property
+    def upnp_coord(self):
+        self.landscape_initialized.wait()
+        return self._upnp_coord
+
+    @property
+    def databases(self):
+        """
+            Returns the database configuration information from the landscape file.
+        """
+        self.landscape_initialized.wait()
+        db_info = self.landscape_info["databases"]
+        return db_info
+
+    def diagnostic(self, diaglabel, diags):
+        """
+            Can be called in order to perform a diagnostic capture across the test landscape.
+
+            :param diaglabel: The label to use for the diagnostic.
+            :type diaglabel: str
+            :param diags: A dictionary of diagnostics to run.
+            :type diags: dict
+        """
+        self.landscape_initialized.wait()
+        return
+    
+    def first_contact(self):
+        """
+            This method should be called as early as possible in order to ensure the entities in the
+            automation landscape exist and the authentication credentials provided for these entities
+            are valid and usable to interact with these entities.
+
+            :returns list: list of failing entities
+        """
+        self.landscape_initialized.wait()
+
+        error_lists = []
+
+        if self._has_upnp_devices and self._upnp_coord is None:
+            raise AKitConfigurationError("UpnpCoordinator initialization failure.")
+
+        if self._has_ssh_devices and self._ssh_coord is None:
+            raise AKitConfigurationError("SshPoolCoordinator initialization failure.")
+
+        available_upnp_devices = self.get_upnp_device_configs(ssh_only=True)
+        available_ssh_devices = self.get_ssh_device_configs(exclude_upnp=True)
+
+        self._logger.info("===================== Initiating SSH First Contact with Landscape Devices =====================")
+        self._logger.info("")
+
+
+        if len(available_upnp_devices) == 0 and len(available_ssh_devices) == 0:
+            self._logger.info("No SSH Devices Found...")
+
+        if len(available_upnp_devices) > 0:
+            self._logger.info("UPNP DEVICES:")
+            for devinfo in available_upnp_devices:
+                usn = devinfo["upnp"]["USN"]
+                agent = self._ssh_coord.lookup_agent_by_usn(usn)
+                self._logger.info("    Verifying USN={} HOST={} IP={}".format(usn, agent.host, agent.ipaddr))
+                if not agent.verify_connectivity():
+                    error_lists.append(devinfo)
+            self._logger.info("")
+
+        if len(available_ssh_devices) > 0:
+            self._logger.info("SSH DEVICES:")
+            for devinfo in available_ssh_devices:
+                sshinfo = devinfo["ssh"]
+                host = sshinfo["host"]
+                agent = self._ssh_coord.lookup_agent_by_host(host)
+                self._logger.info("    Verifying HOST={} IP={}".format(agent.host, agent.ipaddr))
+                if not agent.verify_connectivity():
+                    error_lists.append(devinfo)
+            self._logger.info("")
+
+        return error_lists
+
+    def get_device_configs(self):
+        """
+            Returns the list of devices from the landscape.  This will
+            skip any device that has a "skip": true member.
+        """
+        self.landscape_initialized.wait()
+
+        device_config_list = self._internal_get_device_configs()
+
+        return device_config_list
+
+    def get_muse_device_configs(self, exclude_upnp=False):
+        """
+            Returns a list of devices that support Sonos muse protocol.
+        """
+        self.landscape_initialized.wait()
+
+        muse_device_config_list = []
+
+        for devinfo in self._internal_get_device_configs():
+            dev_type = devinfo["deviceType"]
+
+            if exclude_upnp and dev_type == "network/upnp":
+                continue
+
+            if "muse" in devinfo:
+                muse_device_config_list.append(devinfo)
+
+        return muse_device_config_list
+
+    def get_ssh_device_configs(self, exclude_upnp=False):
+        """
+            Returns a list of devices that support ssh.
+        """
+        self.landscape_initialized.wait()
+
+        ssh_device_config_list = []
+
+        for devinfo in self._internal_get_device_configs():
+            dev_type = devinfo["deviceType"]
+
+            if exclude_upnp and dev_type == "network/upnp":
+                continue
+
+            if "ssh" in devinfo:
+                ssh_device_config_list.append(devinfo)
+
+        return ssh_device_config_list
+
+    def get_upnp_device_configs(self, ssh_only=False):
+        """
+            Returns a list of UPNP device information dictionaries.
+        """
+        self.landscape_initialized.wait()
+
+        upnp_device_config_list = self._internal_get_upnp_device_configs(ssh_only=ssh_only)
+
+        return upnp_device_config_list
+
+    def get_upnp_device_config_lookup_table(self):
+        """
+            Returns a USN lookup table for upnp devices.
+        """
+        self.landscape_initialized.wait()
+
+        upnp_device_table = self._internal_get_upnp_device_config_lookup_table()
+
+        return upnp_device_table
+
+    def register_integration_point(self, role, mixin):
+        """
+            This method should be called from the attach_to_environment methods from individual mixins
+            in order to register the base level integrations.  Integrations can be hierarchical so it
+            is only necessary to register the root level integration mixins, the descendant mixins can
+            be called from the root level mixins.
+
+            :param role: The name of a role to assign for a mixin.
+            :type role: str
+            :param mixin: The mixin to register for the associated role.
+            :type mixin: MixIn
+        """
+        self.landscape_initialized.wait()
+
+        if role not in self._integrations:
+            self._ordered_roles.append(role)
+            self._integrations[role] = mixin
+        else:
+            raise AKitSemanticError("A mixin with the role %r was already registered." % role)
+
+        return
+
+    def _initialize(self):
+        """
+            Called by '__init__' once at the beginning of the lifetime of a Landscape derived
+            type.  This allows the derived types to participate in a customized intialization
+            process.
+        """
+
+        self._ordered_roles = []
+        self._integrations = {}
+
+        context = Context()
+        try:
+            landscape_file = get_expanded_path(context.lookup("/environment/configuration/paths/landscape"))
+            lscape_desc = self.landscape_description()
+            self._landscape_info = lscape_desc.load(landscape_file)
+        except Exception as xcpt:
+            err_msg = "Error loading the landscape file from (%s)%s%s" % (
+                landscape_file, os.linesep, traceback.format_exc())
+            raise AKitConfigurationError(err_msg) from xcpt
+
+        if "environment" not in self._landscape_info:
+            err_msg = "The landscape file must have an 'environment' decription. (%s)" % landscape_file
+            raise AKitConfigurationError(err_msg) 
+
+        self._environment_info = self._landscape_info["environment"]
+        if "label" not in self._environment_info:
+            err_msg = "The landscape 'environment' decription must have a 'label' member (development, production, test). (%s)" % landscape_file
+            raise AKitConfigurationError(err_msg) 
+
+        self._environment_label = self._environment_info["label"]
+
+        if "muse" in self._environment_info:
+            self._environment_muse = self._environment_info["muse"]
+            if ("authhost" not in self._environment_muse) or ("ctlhost" not in self._environment_muse) or ("version" not in self._environment_muse):
+                err_msg = "The landscape 'environment/muse' decription must have both a 'envhost' and 'version' members. (%s)" % landscape_file
+                raise AKitConfigurationError(err_msg)
+
+        self._initialize_device_coordinators()
+
+        # Set the landscape_initialized even to allow other threads to use the APIs of the Landscape object
+        self.landscape_initialized.set()
+
+        # We need to wait till we have initialized the landscape before we start registering integration points
+        self.landscape_description.register_integration_points(self)
+
+        return
+
+    def _initialize_device_coordinators(self):
+        """
+            Initializes the device coordinators according the the information specified in the
+            'devices' portion of the configuration file.
+        """
+
+        upnp_device_list = []
+        ssh_device_list = []
+        muse_device_list = []
+
+        for dev_config_info in self._internal_get_device_configs():
+            dev_type = dev_config_info["deviceType"]
+            if dev_type == "network/upnp":
+                upnp_device_list.append(dev_config_info)
+                if "muse" in dev_config_info:
+                    muse_device_list.append(dev_config_info)
+                if "ssh" in dev_config_info:
+                    ssh_device_list.append(dev_config_info)
+            elif dev_type == "network/muse":
+                muse_device_list.append(dev_config_info)
+            elif dev_type == "network/ssh":
+                ssh_device_list.append(dev_config_info)
+            else:
+                errmsg_lines = [
+                    "Unknown device type %r in configuration file." % dev_type,
+                    "DEVICE INFO:"
+                ]
+                errmsg_lines.extend(split_and_indent_lines(pprint.pformat(dev_config_info, indent=4), 1))
+                
+                errmsg = os.linesep.join(errmsg_lines)
+                self._logger.error(errmsg)
+
+        # Setup to pass the landscape to attach_to_devices calls
+        lscape = self
+
+        if len(upnp_device_list) > 0:
+            from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
+
+            self._has_upnp_devices = True
+            upnp_hint_list = self._internal_get_upnp_device_config_lookup_table()
+            self._upnp_coord = UpnpCoordinator()
+            self._upnp_coord.startup_scan(lscape, upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=["lo"])
+
+        if len(ssh_device_list) > 0:
+            from akit.integration.coordinators.sshpoolcoordinator import SshPoolCoordinator
+
+            self._has_ssh_devices = True
+            self._ssh_coord = SshPoolCoordinator()
+            self._ssh_coord.attach_to_devices(lscape, ssh_device_list, upnp_coord=self._upnp_coord)
+
+        if len(muse_device_list) > 0 and self._environment_muse is not None:
+            envlabel = self._environment_label
+            muse_authhost = self._environment_muse["authhost"]
+            muse_ctlhost = self._environment_muse["ctlhost"]
+            muse_version = self._environment_muse["version"]
+
+            from akit.integration.coordinators.musecoordinator import MuseCoordinator
+
+            self._has_muse_devices = True
+            self._muse_coord = MuseCoordinator()
+            self._muse_coord.attach_to_devices(lscape, envlabel, muse_authhost, muse_ctlhost, muse_version, muse_device_list, upnp_coord=self._upnp_coord)
+
+        return
+    
+    def _internal_get_device_configs(self):
+        """
+            Returns the list of devices from the landscape.  This will
+            skip any device that has a "skip": true member.  This should not be called
+            until after the _landscape_info variable has been set.
+        """
+
+        if self._landscape_info is None:
+            raise AKitSemanticError("The _internal_get_device_configs method should not be called until _landscape_info has been set.")
+
+        device_config_list = []
+
+        pod_info = self._landscape_info["pod"]
+        for dev_config_info in pod_info["devices"]:
+            if "skip" in dev_config_info and dev_config_info["skip"]:
+                continue
+            device_config_list.append(dev_config_info)
+
+        return device_config_list
+
+    def _internal_get_upnp_device_configs(self, ssh_only=False):
+        """
+            Returns a list of UPNP device information dictionaries.
+        """
+
+        upnp_device_config_list = []
+
+        for device_config in self._internal_get_device_configs():
+            dev_type = device_config["deviceType"]
+
+            if dev_type != "network/upnp":
+                continue
+
+            if ssh_only and "ssh" in device_config:
+                upnp_device_config_list.append(device_config)
+            else:
+                upnp_device_config_list.append(device_config)
+
+        return upnp_device_config_list
+
+    def _internal_get_upnp_device_config_lookup_table(self):
+        """
+            Returns a USN lookup table for upnp devices.
+        """
+
+        upnp_device_config_list = self._internal_get_upnp_device_configs()
+
+        upnp_device_config_table = {}
+        for device_config in upnp_device_config_list:
+            usn = device_config["upnp"]["USN"]
+            upnp_device_config_table[usn] = device_config
+
+        return upnp_device_config_table
+
+    def _internal_lookup_device(self, keyid):
+        device = None
+        if keyid in self._all_devices:
+            device = self._all_devices[keyid]
+        return device
+
+    def _internal_register_device(self, keyid, device):
+        self._all_devices[keyid] = device
+        return
+
+def is_subclass_of_landscape(cand_type):
+    """
+        Returns a boolean value indicating if the candidate type is a subclass
+        of :class:`Landscape`.
+    """
+    is_scol = False
+    if inspect.isclass(cand_type) and issubclass(cand_type, Landscape):
+        is_scol = True
+    return is_scol
+
+def load_and_set_landscape_type(lscape_module):
+    """
+        Scans the module provided for :class:`Landscape` derived classes and will
+        take the first one and assign it as the current runtime landscape type.
+    """
+    class_items = inspect.getmembers(lscape_module, is_subclass_of_landscape)
+    for _, cls_type in class_items:
+        type_module_name = cls_type.__module__
+        if type_module_name == lscape_module.__name__:
+            Landscape._landscape_type = cls_type
+            break
+    return
+
+if VARIABLES.AKIT_LANDSCAPE_MODULE is not None:
+    lscape_module = import_by_name(VARIABLES.AKIT_LANDSCAPE_MODULE)
+    load_and_set_landscape_type(lscape_module)
+    check_landscape = Landscape()
+    pass
+
+if __name__ == "__main__":
+    lscape = Landscape()
+    lscape.first_contact()

@@ -29,19 +29,45 @@ FORMAT_DATETIME = "%Y-%m-%dT%H:%M:%S"
 def current_time_millis() -> float:
     """
         Current system time in milliseconds
+
+        :returns: Time in milliseconds
+        :rtype: float
     """
     return time.time() * 1000
 
-def format_time_with_fractional(tsecs) -> str:
+def format_time_with_fractional(tsecs: float) -> str:
+    """
+        Format the time in seconds as a fractional in seconds.
+
+        :param tsecs: Time in seconds as a float.
+        :type tsecs: float
+
+        :returns: Formatted time in (seconds).(fractions of seconds)
+        :rtype: str
+    """
     sec_comp = int(tsecs)
     frac_comp = (tsecs - sec_comp) * 1000
     dtstr = "%s.%03d" % (time.strftime(FORMAT_DATETIME, time.gmtime(sec_comp)), frac_comp)
     return dtstr
 
-def parse_datetime(dtstr, format=FORMAT_DATETIME):
+def parse_datetime(dtstr: str, format: str=FORMAT_DATETIME) -> datetime:
+    """
+        Parses a date time from string and includes the microseconds component.
+
+        :param dtstr: The date in the form of a date time string.
+        :type dtstr: str
+        :param format: The format string to when parsing the datetime string.
+        :type format: str
+
+        :returns: The datetime from the parsed string.
+        :rtype: :class:`datetime.datetime`
+    """
     microsecs = 0
+
     if dtstr.find(".") > 0:
         dtstr, msecstr = dtstr.split(".")
         microsecs = int(msecstr)
+
     dtobj = datetime(*time.strptime(dtstr, format)[:6], microsecs)
+
     return dtobj

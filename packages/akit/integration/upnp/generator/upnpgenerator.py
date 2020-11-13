@@ -8,7 +8,7 @@ from argparse import ArgumentParser, ArgumentError
 from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import fromstring as xml_fromstring
 
-from akit.paths import ensure_directory_is_module
+from akit.paths import ensure_directory_is_package
 
 from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 
@@ -117,7 +117,7 @@ def generate_upnp_service_proxy(servicesDir, serviceManufacturer, serviceType, v
     if not os.path.exists(servicesDir):
         os.makedirs(servicesDir)
 
-    ensure_directory_is_module(servicesDir, moduleTitle="Services directory module")
+    ensure_directory_is_package(servicesDir, moduleTitle="Services directory module")
 
     service_type_parts = serviceType.split(":")
 

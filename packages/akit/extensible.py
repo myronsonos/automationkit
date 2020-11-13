@@ -19,7 +19,7 @@ import inspect
 import os
 
 from akit.compat import import_by_name
-from akit.paths import get_directory_for_module
+from akit.paths import get_directory_for_code_container
 
 class LoadableExtension:
     """
@@ -28,7 +28,7 @@ class LoadableExtension:
     """
     pass
 
-def collect_extensions_under_module(module, ext_base_type):
+def collect_extensions_under_code_container(container, ext_base_type):
 
     ext_collection = []
 
@@ -39,26 +39,26 @@ def collect_extensions_under_module(module, ext_base_type):
         result = False
 
         if inspect.isclass(obj):
-            obj_module = obj.__module__
-            if obj_module == nxtmod.__name__ and LoadableExtension in obj.__bases__:
+            obj_container = obj.__module__
+            if obj_container == nxtmod.__name__ and LoadableExtension in obj.__bases__:
                 result = issubclass(obj, ext_base_type) and obj is not ext_base_type
         return result
 
-    module_name = module.__name__
-    module_dir = get_directory_for_module(module)
-    module_parts = module_name.split(".")
-    module_root = os.sep.join(module_dir.split(os.sep)[:-len(module_parts)])
-    rootlen = len(module_root)
+    container_name = container.__name__
+    container_dir = get_directory_for_code_container(container)
+    container_parts = container_name.split(".")
+    container_root = os.sep.join(container_dir.split(os.sep)[:-len(container_parts)])
+    rootlen = len(container_root)
 
-    for dirpath, dirnames, filenames in os.walk(module_dir):
+    for dirpath, _, filenames in os.walk(container_dir):
         leafdir = dirpath[rootlen:].lstrip(os.sep)
-        leafmodule = leafdir.replace(os.sep, ".")
+        leafcontainer = leafdir.replace(os.sep, ".")
         for nxtfile in filenames:
             nfbase, nfext = os.path.splitext(nxtfile)
             if nfext != ".py":
                 continue
 
-            nxtmodname = "%s.%s" % (leafmodule, nfbase)
+            nxtmodname = "%s.%s" % (leafcontainer, nfbase)
             nxtmod = import_by_name(nxtmodname)
             if nxtmod is None:
                 continue

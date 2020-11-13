@@ -35,9 +35,10 @@ from xml.etree.ElementTree import fromstring as xml_fromstring
 from xml.etree.ElementTree import ElementTree, Element, SubElement
 from xml.etree.ElementTree import register_namespace
 
-from akit.integration import upnp as upnp_module
-
 from akit.exceptions import AKitRuntimeError, AKitCommunicationsProtocolError, AKitSemanticError, AKitTimeoutError
+
+from akit.integration import upnp as upnp_module
+from akit.integration.landscaping.landscapedevice import LandscapeDevice
 
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 from akit.integration.upnp.devices.upnprootdevice import device_description_load
@@ -263,7 +264,7 @@ class UpnpCoordinator:
 
         return
 
-    def startup_scan(self, upnp_hint_list, watchlist=None, exclude_interfaces=[], response_timeout=45, retry=2, force_recording=False):
+    def startup_scan(self, lscape, upnp_hint_list, watchlist=None, exclude_interfaces=[], response_timeout=45, retry=2, force_recording=False):
         """
             Starts up and initilizes the UPNP coordinator by utilizing a hint list to determine
             what network interfaces to setup UPNP monitoring on.
@@ -275,7 +276,7 @@ class UpnpCoordinator:
         # Because we only allow this method to be called once, We don't need to lock the UpnpCoordinator
         # for most of this activity because the only thread with a reference to use is the caller.  At
         # the end of this function when we startup all the callback and worker threads is when we need to
-        # start using the lock. 
+        # start using the lock.
         if upnp_hint_list is None:
             upnp_hint_list = []
 
@@ -288,6 +289,8 @@ class UpnpCoordinator:
         found_devices = {}
         matching_devices = {}
         missing_devices = []
+
+        config_lookup = lscape._internal_get_upnp_device_config_lookup_table()
 
         for ridx in range(0, retry):
             if ridx > 0:
@@ -308,7 +311,7 @@ class UpnpCoordinator:
             devmsg_lines.append("    %s" % dkey)
             addr = dval[MSearchKeys.IP]
             location = dval[MSearchKeys.LOCATION]
-            self._update_root_device(addr, location, dval, force_recording=force_recording)
+            self._update_root_device(lscape, config_lookup, addr, location, dval, force_recording=force_recording)
         devmsg_lines.append("")
 
         devmsg_lines.append("MATCHING DEVICES:")
@@ -616,16 +619,19 @@ class UpnpCoordinator:
         
         return
 
-    def _update_root_device(self, ip_addr: str, location: str, deviceinfo: dict, force_recording: bool = False):
+    def _update_root_device(self, lscape, config_lookup, ip_addr: str, location: str, deviceinfo: dict, force_recording: bool = False):
         """
         """
-        
         rootdev = None
 
         if MSearchKeys.USN in deviceinfo:
             try:
                 usn = deviceinfo[MSearchKeys.USN]
                 devuuid = usn.split("::")[0]
+
+                configinfo = None
+                if usn in config_lookup:
+                    configinfo = config_lookup[usn]
 
                 docTree = device_description_load(location)
     
@@ -636,6 +642,7 @@ class UpnpCoordinator:
                     deviceDescParts = device_description_find_components(location, docTree, namespaces=namespaces)
                     devNode, urlBase, manufacturer, modelName, modelNumber, modelDescription = deviceDescParts
 
+                    dev_extension = None
                     try:
                         # Acquire the lock before we decide if the location exists in the children table
                         self._coord_lock.acquire()
@@ -647,31 +654,40 @@ class UpnpCoordinator:
 
                                 try:
                                     # We create the device
-                                    rootdev = self._create_root_device(manufacturer, modelNumber, modelDescription)
+                                    dev_extension = self._create_root_device(manufacturer, modelNumber, modelDescription)
                                 except:
                                     errmsg = "ERROR: Unable to create device mfg=%s model=%s desc=%s\nTRACEBACK:\n" % (manufacturer, modelNumber, modelDescription)
                                     errmsg += traceback.format_exc()
                                     self._logger.error(errmsg)
                                     raise
 
-                                if type(rootdev) == UpnpRootDevice:
-                                    rootdev.record_description(urlBase, manufacturer, modelName, docTree, devNode, namespaces=namespaces, force_recording=force_recording)
+                                if type(dev_extension) == UpnpRootDevice:
+                                    dev_extension.record_description(urlBase, manufacturer, modelName, docTree, devNode, namespaces=namespaces, force_recording=force_recording)
 
                                 coord_ref = weakref.ref(self)
-                                rootdev.initialize(coord_ref, location, deviceinfo)
+
+                                basedevice = LandscapeDevice("network/upnp", deviceinfo)
+
+                                basedevice_ref = weakref.ref(basedevice)
+                                
+                                dev_extension.initialize(coord_ref, basedevice_ref, usn, location, configinfo, deviceinfo)
 
                                 # Refresh the description
-                                rootdev.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
+                                dev_extension.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
+
+                                basedevice.attach_extension("upnp", dev_extension)
+
+                                lscape._internal_register_device(usn, basedevice)
                             finally:
                                 self._coord_lock.acquire()
 
                             # If the device is still not in the table, add it
                             if location not in self._cl_children:
-                                self._cl_children[location] = rootdev
+                                self._cl_children[location] = dev_extension
                         else:
-                            rootdev = self._cl_children[location]
+                            dev_extension = self._cl_children[location]
                             # Refresh the description
-                            rootdev.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
+                            dev_extension.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
                     finally:
                         self._coord_lock.release()
                 except:
@@ -705,7 +721,7 @@ if __name__ == "__main__":
     from akit.xlogging.foundations import logging_initialize
     logging_initialize()
 
-    from akit.integration.landscaping import Landscape
+    from akit.integration.landscaping.landscape import Landscape
 
 
     lscape = Landscape()

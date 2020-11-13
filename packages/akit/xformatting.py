@@ -19,9 +19,11 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import List
+
 from io import StringIO
 
-def indent_lines(msg, level, indent=4):
+def indent_lines(msg: str, level: int, indent: int=4) -> str:
     """
         Takes a string and splits it into multiple lines, then indents each line
         to the specified level using 'indent' spaces for each level.
@@ -48,7 +50,7 @@ def indent_lines(msg, level, indent=4):
     
     return indented.getvalue()
 
-def split_and_indent_lines(msg, level, indent=4):
+def split_and_indent_lines(msg: str, level: int, indent: int=4) -> List[str]:
     """
         Takes a string and splits it into multiple lines, then indents each line
         to the specified level using 'indent' spaces for each level.

@@ -18,6 +18,7 @@ __license__ = "MIT"
 
 import socket
 import ssl
+import weakref
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
@@ -25,6 +26,7 @@ from akit.paths import get_expanded_path
 from akit.xlogging.foundations import getAutomatonKitLogger
 
 from akit.integration.agents.museagent import MuseAgent
+from akit.integration.landscaping.landscapedevice import LandscapeDevice
 
 class MuseCoordinator:
     """
@@ -68,7 +70,7 @@ class MuseCoordinator:
         dalist = [a for a in self._agent_table.values()]
         return dalist
 
-    def attach_to_devices(self, envlabel, authhost, ctlhost, version, musedevices, upnp_coord=None):
+    def attach_to_devices(self, lscape, envlabel, authhost, ctlhost, version, musedevices, upnp_coord=None):
 
         self._envlabel = envlabel
         self._authhost = authhost
@@ -77,15 +79,15 @@ class MuseCoordinator:
 
         muse_config_errors = []
 
-        for musedev in musedevices:
-            devtype = musedev["deviceType"]
-            museinfo = musedev["muse"]
+        for musedev_config in musedevices:
+            devtype = musedev_config["deviceType"]
+            museinfo = musedev_config["muse"]
             host = None
 
             if "host" in museinfo:
                 host = museinfo["host"]
             elif devtype == "network/upnp":
-                usn = musedev["upnp"]["USN"]
+                usn = musedev_config["upnp"]["USN"]
                 if upnp_coord is not None:
                     dev = upnp_coord.lookup_device_by_usn(usn)
                     if dev is None:
@@ -111,6 +113,19 @@ class MuseCoordinator:
 
                 agent = MuseAgent(envlabel, authhost, ctlhost, host, username, password, apikey, secret, bearer=bearer, version=self._version)
                 self._agent_table[host] = agent
+
+                coord_ref = weakref.ref(self)
+
+                basedevice = None
+                if usn is not None:
+                    basedevice = lscape._internal_lookup_device(usn)
+                    basedevice.attach_extension("muse", agent)
+                else:
+                    basedevice = LandscapeDevice("network/muse", musedev_config)
+                    basedevice.attach_extension("muse", agent)
+
+                basedevice_ref = weakref.ref(basedevice)
+                agent.initialize(coord_ref, basedevice_ref, host, ip, musedev_config)
             else:
                 muse_config_errors.append(museinfo)
 
@@ -165,4 +180,4 @@ class MuseCoordinator:
 
         self._callback_server = HTTPServer(('localhost', 5000), AuthenticationCallbackHandler)
 
-        welf._callback_server.server_forever()
+        self._callback_server.server_forever()

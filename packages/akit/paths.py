@@ -31,6 +31,9 @@ def collect_python_modules(searchdir: str) -> List[str]:
         of all of the python module files or .py files.  This method allows
         for python namespaces by not forcing the root folder to contain a
         __init__.py file.
+
+        :params searchdir: The root directory to search when collecting python modules.
+        :type searchdir: str
     """
     pyfiles = []
 
@@ -43,37 +46,56 @@ def collect_python_modules(searchdir: str) -> List[str]:
 
     return pyfiles
 
-def ensure_directory_is_module(moduleDir, moduleTitle: Optional[str] = None):
+def ensure_directory_is_package(packageDir: str, packageTitle: Optional[str] = None):
     """
-        Ensures that a directory is represented to python as a module by checking to see if the
+        Ensures that a directory is represented to python as a package by checking to see if the
         directory has an __init__.py file and if not it adds one.
+
+        :param packageDir: The direcotry to represent as a package.
+        :type packageDir: str
+        :param packageTitle: Optional title to be written into the documentation string in the package file.
+        :type packageTitle: str
     """
-    serviceDirInit = os.path.join(moduleDir, "__init__.py")
+    serviceDirInit = os.path.join(packageDir, "__init__.py")
     if not os.path.exists(serviceDirInit):
         with open(serviceDirInit, 'w') as initf:
             initf.write('"""\n')
-            if moduleTitle is not None:
-                initf.write('   %s\n' % moduleTitle)
+            if packageTitle is not None:
+                initf.write('   %s\n' % packageTitle)
             initf.write('"""\n')
     return
 
-def get_directory_for_module(module):
+def get_directory_for_code_container(container: str):
     """
-        Returns the directory for a module
+        Returns the directory for a code container (module or package)
+
+        :param container: The code container you want to get a directory for.
+        :type container: str
+
+        :returns: The string that represents the parent directory of the code
+                  container specified.
+        :rtype: str
     """
-    if hasattr(module, '__path__'):
-        module_dir = str(module.__path__[0]).rstrip(os.sep)
-    elif hasattr(module, '__file__'):
-        module_dir = os.path.dirname(module.__file__).rstrip(os.sep)
+    if hasattr(container, '__path__'):
+        container_dir = str(container.__path__[0]).rstrip(os.sep)
+    elif hasattr(container, '__file__'):
+        container_dir = os.path.dirname(container.__file__).rstrip(os.sep)
     else:
         raise AKitRuntimeError("Unable to get parent dir for module")
 
-    return module_dir
+    return container_dir
 
 def get_expanded_path(path: str) -> str:
     """
         Returns a path expanded using expanduser, expandvars and abspath for
         the provided path.
+
+        :param path: A path which you want to expand to a full path, expanding the
+                     user, variables and relative path syntax.
+        :type path: str
+
+        :returns: The expanded path
+        :rtype: str
     """
     exp_path = os.path.abspath(os.path.expandvars(os.path.expanduser(path)))
     return exp_path
@@ -81,6 +103,13 @@ def get_expanded_path(path: str) -> str:
 def get_path_for_artifacts(label) -> str:
     """
         Returns a path in the form (testresultdir)/artifacts/(label)
+
+        :param label: A label to associate with the collection of artifacts. The label is used for
+                      the name of the artifact container folder.
+        :type label: str
+
+        :returns: A path that is descendant from (testresultdir)/artifacts
+        :rtype: str
     """
     trdir = get_path_for_testresults()
     afdir = os.path.join(trdir, "artifacts", label)

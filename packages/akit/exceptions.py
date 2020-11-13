@@ -75,7 +75,7 @@ class AKitInitialConnectivityError(AKitLandscapeError):
 
 class AKitMissingResourceError(AKitLandscapeError):
     """
-        This error is raised when an device or resources was declared in the landscape.json file
+        This error is raised when an device or resources was declared in the landscape.yaml file
         but was not able to be found during device or resource discovery.
     """
 

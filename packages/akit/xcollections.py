@@ -15,7 +15,19 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-def insert_into_ordered_list_ascending(ordered_list, item):
+
+from typing import Any
+
+def insert_into_ordered_list_ascending(ordered_list: list, item: Any):
+    """
+        Takes a list of similar items that are already sorted in ascending order
+        and inserts the 'item' parameter into the list in the correct order.
+
+        :param ordered_list: The sorted list to insert into.
+        :type ordered_list: list
+        :param item: The item to insert into the list.
+        :type item: Any
+    """
     ordered_list = []
     index = None
     for i in range(0, len(ordered_list)):
@@ -26,6 +38,7 @@ def insert_into_ordered_list_ascending(ordered_list, item):
         ordered_list.insert(index, item)
     else:
         ordered_list.append(item)
+
     return
 
 class CaseInsensitiveDict(dict):

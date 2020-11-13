@@ -42,6 +42,7 @@ UPNP_SERVICE1_NAMESPACE = "urn:schemas-upnp-org:service-1-0"
 
 from akit.paths import normalize_name_for_path
 
+
 class UpnpDevice:
     """
         The UPNP Root device is the base device for the hierarchy that is
@@ -50,8 +51,6 @@ class UpnpDevice:
 
         http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf
     """
-
-    DEVICE_IDENTIFIER = None
 
     MANUFACTURER = "unknown"
     MODEL_NUMBER = "unknown"

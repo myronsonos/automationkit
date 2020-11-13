@@ -1,14 +1,18 @@
 
 import base64
-from html.parser import HTMLParser
 import http
 import os
 import requests
 import socket
 import uuid
+import weakref
+
+from html.parser import HTMLParser
 
 from akit.aspects import RunPattern, DEFAULT_ASPECTS
 from akit.exceptions import AKitHTTPRequestError
+
+from akit.integration.landscaping.landscapedeviceextension import LandscapeDeviceExtension
 
 class HEADER_NAMES:
     AUTHORIZATION = "authorization"
@@ -19,9 +23,11 @@ CONTENT_TYPE_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded;charset=ut
 
 REDIRECT_URI = "https://0.0.0.0:5000/callback"
 
-class MuseAgent:
+class MuseAgent(LandscapeDeviceExtension):
 
     def __init__(self, envlabel, authhost, ctlhost, host, username, password, apikey, secret, bearer=None, version="v3", port=1443, verify=False, aspects=DEFAULT_ASPECTS):
+        super(MuseAgent, self).__init__()
+
         self._envlabel = envlabel
         self._authhost = authhost
         self._ctlhost = ctlhost
@@ -39,8 +45,8 @@ class MuseAgent:
 
         self._basic_auth = self._generate_basic_auth()
         
-        if self._bearer_token is None:
-            self._bearer_token = self.auth_get_bearer_token()
+        #if self._bearer_token is None:
+        #    self._bearer_token = self.auth_get_bearer_token()
         return
 
     @property
@@ -82,6 +88,22 @@ class MuseAgent:
     @property
     def version(self):
         return self._version
+
+    def initialize(self, coord_ref: weakref.ReferenceType, basedevice_ref: weakref.ReferenceType, extid: str, location: str, configinfo: dict):
+        """
+            Initializes the landscape device extension.
+
+            :param coord_ref: A weak reference to the coordinator that is managing interactions through this
+                              device extension.
+            :type coord_ref: weakref.ReferenceType
+            :param extid: A unique reference that can be used to identify this device via the coordinator even if its location changes.
+            :type extid: str
+            :param location: The location reference where this device can be found via the coordinator.
+            :type location: str
+            :param 
+        """
+        LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
+        return
 
     def auth_get_bearer_token(self):
 

@@ -17,9 +17,12 @@ __license__ = "MIT"
 
 import socket
 import time
+import weakref
 
 from akit.paths import get_expanded_path
 from akit.xlogging.foundations import getAutomatonKitLogger
+
+from akit.integration.landscaping.landscapedevice import LandscapeDevice
 
 from akit.integration.agents.sshagent import SshAgent
 
@@ -42,19 +45,20 @@ class SshPoolCoordinator:
         dalist = [a for a in self._agent_table.values()]
         return dalist
 
-    def attach_to_devices(self, sshdevices, upnp_coord=None):
+    def attach_to_devices(self, lscape, sshdevices, upnp_coord=None):
 
         ssh_config_errors = []
 
-        for sshdev in sshdevices:
-            devtype = sshdev["deviceType"]
-            sshinfo = sshdev["ssh"]
+        for sshdev_config in sshdevices:
+            devtype = sshdev_config["deviceType"]
+            sshinfo = sshdev_config["ssh"]
             host = None
+            usn = None
 
             if "host" in sshinfo:
                 host = sshinfo["host"]
             elif devtype == "network/upnp":
-                usn = sshdev["upnp"]["USN"]
+                usn = sshdev_config["upnp"]["USN"]
                 if upnp_coord is not None:
                     dev = upnp_coord.lookup_device_by_usn(usn)
                     if dev is None:
@@ -85,25 +89,25 @@ class SshPoolCoordinator:
                 self._ip_to_host_lookup[ip] = host
 
                 agent = SshAgent(host, username, password=password, keyfile=keyfile, keypasswd=keypasswd, allow_agent=allow_agent)
+
                 self._agent_table[host] = agent
+
+                coord_ref = weakref.ref(self)
+
+                basedevice = None
+                if usn is not None:
+                    basedevice = lscape._internal_lookup_device(usn)
+                    basedevice.attach_extension("ssh", agent)
+                else:
+                    basedevice = LandscapeDevice("network/ssh", sshdev_config)
+                    basedevice.attach_extension("ssh", agent)
+
+                basedevice_ref = weakref.ref(basedevice)
+                agent.initialize(coord_ref, basedevice_ref, host, ip, sshdev_config)
             else:
                 ssh_config_errors.append(sshinfo)
 
         return ssh_config_errors
-
-    def load_from_config(self, lscape, upnp_coord=None):
-        """
-            Loads the :class:`SshPoolCoordinator` connection info from the config file.  The
-            optional upnp_coord parameter is provided when the config file contains UPNP devices
-            that support SSH.  The :class:`UpnpCoordinator` passed as the upnp_coord must be started
-            up so it will have the opportunity to resolve the IP address of the upnp devices.
-        """
-
-        sshdevices = lscape.get_ssh_devices()
-
-        self.attach_to_devices(sshdevices, upnp_coord=upnp_coord)
-
-        return
 
     def lookup_agent_by_host(self, host):
         """

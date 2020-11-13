@@ -39,6 +39,8 @@ from akit.exceptions import AKitCommunicationsProtocolError
 from akit.extensible import generate_extension_key
 from akit.paths import normalize_name_for_path
 
+from akit.integration.landscaping.landscapedeviceextension import LandscapeDeviceExtension
+
 from akit.integration.upnp.upnpprotocol import MSearchKeys, MSearchRouteKeys
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice, normalize_name_for_path
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE, UpnpDevice1Device, UpnpDevice1SpecVersion
@@ -114,7 +116,7 @@ def device_description_find_components(location, docTree, namespaces={"": UPNP_D
 
     return devNode, urlBase, manufacturer, modelName, modelNumber, modelDescription
 
-class UpnpRootDevice(UpnpDevice):
+class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
     """
         The UPNP Root device is the base device for the hierarchy that is
         associated with a unique network devices location.  The :class:`UpnpRootDevice`
@@ -206,10 +208,6 @@ class UpnpRootDevice(UpnpDevice):
         return self._ip_address
 
     @property
-    def location(self):
-        return self._location
-
-    @property
     def MACAddress(self):
         desc = self.description
         return desc.MACAddress
@@ -248,11 +246,20 @@ class UpnpRootDevice(UpnpDevice):
     def USN(self):
         return self._usn
 
-    def initialize(self, coord_ref: weakref.ReferenceType, location: str, devinfo: dict):
+    def initialize(self, coord_ref: weakref.ReferenceType, basedevice_ref: weakref.ReferenceType, extid: str, location: str, configinfo: dict, devinfo: dict):
         """
+            Initializes the landscape device extension.
+
+            :param coord_ref: A weak reference to the coordinator that is managing interactions through this
+                              device extension.
+            :type coord_ref: weakref.ReferenceType
+            :param extid: A unique reference that can be used to identify this device via the coordinator even if its location changes.
+            :type extid: str
+            :param location: The location reference where this device can be found via the coordinator.
+            :type location: str
+            :param 
         """
-        self._coord_ref = coord_ref
-        self._location = location
+        LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
 
         self._cachecontrol = devinfo.pop(MSearchKeys.CACHE_CONTROL)
         self._ext = devinfo.pop(MSearchKeys.EXT)
