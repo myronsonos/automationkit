@@ -114,6 +114,10 @@ if [ ! -f $INITIALIZED_FILE ]; then
         pip install sqlalchemy
         pip install sqlalchemy_utils
         pip install ssdp
+        pip install pyyaml
+
+        # Third Party Hardware
+        pip install dlipower
 
         # Website and REST service dependencies
         pip install gunicorn
