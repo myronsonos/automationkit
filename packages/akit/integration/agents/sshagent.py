@@ -16,6 +16,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+import os
 import re
 import socket
 import stat
@@ -26,8 +27,9 @@ import weakref
 from typing import Callable, List, Optional, Sequence, Union
 
 from akit.aspects import Aspects, LoggingPattern, RunPattern, DEFAULT_ASPECTS
-from akit.exceptions import AKitInvalidConfigError, AKitNotOverloadedError
+from akit.exceptions import AKitInvalidConfigError, AKitNotOverloadedError, AKitTimeoutError
 
+from akit.xformatting import indent_lines
 from akit.xlogging.foundations import getAutomatonKitLogger
 from akit.xlogging.scopemonitoring import MonitoredScope
 
@@ -224,7 +226,12 @@ def primitive_pull_file(ssh_client: paramiko.SSHClient, remotepath: str, localpa
     status, stdout, stderr = ssh_execute_command(ssh_client, copycmd)
 
     if status != 0:
-        raise Exception("Error pulling file using command. cmd=%s" % copycmd)
+        errmsg_lines = [
+            "Error pulling file using command. cmd=%s" % copycmd,
+            "STDERR:",
+            indent_lines(stderr, 1)
+        ]
+        raise Exception(os.linesep.join(errmsg_lines))
 
     with open(localpath, 'w') as lfile:
         lfile.write(stdout)
@@ -492,7 +499,7 @@ class SshBase:
         vok = False
 
         hello_cmd = "echo Hello"
-        status, stdout, stderr = self.run_cmd(hello_cmd)
+        status, stdout, _ = self.run_cmd(hello_cmd)
         if status == 0 and stdout.strip() == "Hello":
             vok = True
 
@@ -622,6 +629,21 @@ class SshBase:
                 elif status in exp_status:
                     break
 
+                now_time = time.time()
+                if now_time > end_time:
+                    elapsed = now_time - start_time
+                    tomsg_lines = [
+                        "Timeout waiting for command failure. start=%f end=%f elapsed=%f" % (start_time, end_time, elapsed),
+                        "CMD: %s" % command,
+                        "STDOUT:",
+                        indent_lines(stdout, 1),
+                        "STDERR:",
+                        indent_lines(stderr, 1),
+                    ]
+                    raise AKitTimeoutError(os.linesep.join(tomsg_lines))
+
+                time.sleep(completion_interval)
+
         # RUN_WHILE_SUCCESS, run the command while it is succeeds or a completion timeout has occured
         elif aspects.run_pattern == RunPattern.RUN_WHILE_SUCCESS:
 
@@ -641,6 +663,21 @@ class SshBase:
                         break
                 elif status not in exp_status:
                     break
+
+                now_time = time.time()
+                if now_time > end_time:
+                    elapsed = now_time - start_time
+                    tomsg_lines = [
+                        "Timeout waiting for command failure. start=%f end=%f elapsed=%f" % (start_time, end_time, elapsed),
+                        "CMD: %s" % command,
+                        "STDOUT:",
+                        indent_lines(stdout, 1),
+                        "STDERR:",
+                        indent_lines(stderr, 1),
+                    ]
+                    raise AKitTimeoutError(os.linesep.join(tomsg_lines))
+
+                time.sleep(completion_interval)
 
         return status, stdout, stderr
 
