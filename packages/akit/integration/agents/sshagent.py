@@ -601,7 +601,7 @@ class SshBase:
         if aspects.run_pattern == RunPattern.SINGLE_RUN:
 
                 # Setup a monitored scope for the call to the remote device in case of timeout failure
-                with MonitoredScope("RUNCMD-SINGLE_RUN", monmsg, timeout=inactivity_timeout + monitor_delay) as ms:
+                with MonitoredScope("RUNCMD-SINGLE_RUN", monmsg, timeout=inactivity_timeout + monitor_delay) as _:
 
                     status, stdout, stderr = ssh_execute_command(ssh_client, command, pty_params=pty_params,
                         inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
@@ -617,7 +617,7 @@ class SshBase:
             while True:
 
                 # Setup a monitored scope for the call to the remote device in case of timeout failure
-                with MonitoredScope("RUNCMD-RUN_UNTIL_SUCCESS", monmsg, timeout=inactivity_timeout + monitor_delay) as ms:
+                with MonitoredScope("RUNCMD-RUN_UNTIL_SUCCESS", monmsg, timeout=inactivity_timeout + monitor_delay) as _:
                     status, stdout, stderr = ssh_execute_command(ssh_client, command, pty_params=pty_params, 
                         inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
 

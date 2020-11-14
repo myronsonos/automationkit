@@ -63,53 +63,69 @@ class AKitError(Exception):
 
         if len(self._context) > 0:
             stack_frames = self._collect_stack_frames()
-            for co_name, co_argcount, co_varnames, co_locals, co_lineno, co_filename in stack_frames:
+            stack_frames_len = len(stack_frames)
+            for co_filename, co_lineno, co_name, co_code, co_context in stack_frames:
                 
                 exmsg_lines.extend([
-                    '  File "%s", line %d, in %s' % (co_filename, co_lineno, co_name)
+                    '  File "%s", line %d, in %s' % (co_filename, co_lineno, co_name),
+                    "    %s" % co_code
                 ])
                 if co_name in self._context:
                     cxtinfo = self._context[co_name] 
                     exmsg_lines.append('    %s:' % cxtinfo["label"])
                     exmsg_lines.extend(split_and_indent_lines(cxtinfo["content"], 2, indent=3))
+                elif co_context is not None and len(co_context) > 0 and stack_frames_len > 1:
+                    exmsg_lines.append('    CONTEXT:')
+                    firstline = co_context[0]
+                    lstrip_len = len(firstline) - len(firstline.lstrip())
+                    co_context = [cline[lstrip_len:] for cline in co_context]
+                    co_context = ["      %s" % cline for cline in co_context]
+                    exmsg_lines.extend(co_context)
+                exmsg_lines.append('')
 
         exmsg = os.linesep.join(exmsg_lines)
         return exmsg
 
     def _collect_stack_frames(self):
 
-        nxt_tb = self.__traceback__
         last_items = None
+        tb_code = None
+        tb_lineno = None
         traceback_list = []
-        while True:
-            nxt_frame = nxt_tb.tb_frame
-            nxt_code = nxt_frame.f_code
-            co_name = nxt_code.co_name
-            co_arg_names = nxt_code.co_varnames[:nxt_code.co_argcount]
-            co_argcount = nxt_code.co_argcount
-            co_locals = nxt_frame.f_locals
-            items = [nxt_code.co_name, co_argcount, co_arg_names, co_locals, nxt_frame.f_lineno, nxt_code.co_filename]
 
-            callsite = None
+        for tb_frame, tb_lineno in traceback.walk_tb(self.__traceback__):
+            tb_code = tb_frame.f_code
+            co_filename = tb_code.co_filename
+            co_name = tb_code.co_name
+            co_arg_names = tb_code.co_varnames[:tb_code.co_argcount]
+            co_argcount = tb_code.co_argcount
+            co_locals = tb_frame.f_locals
 
-            frame_info = inspect.getframeinfo(nxt_frame)
+            items = [co_filename, tb_lineno, co_name, "", None]
+            if last_items is not None:
+                code_args = []
+                for argidx in range(0, co_argcount):
+                    argname = co_arg_names[argidx]
+                    argval = co_locals[argname]
+                    code_args.append("%s=%r" % (argname, argval))
 
-            code_args = []
-            for argidx in range(0, co_argcount):
-                argname = co_arg_names[argidx]
-                argval = co_locals[argname]
-                code_args.append("%s=%r" % (argname, argval))
+                last_items[-2] = "%s(%s)" % (co_name, ", ".join(code_args))
 
-            callsite = '%s(%s)' % (co_name, ", ".join(code_args))
+            last_items = items
 
             traceback_list.append(items)
             last_items = items
 
-            nxt_tb = nxt_tb.tb_next
-            if nxt_tb is None:
-                break
+        if os.path.exists(co_filename) and co_filename.endswith(".py"):
+            context_lines, context_startline = inspect.getsourcelines(tb_code)
+            context_lines = [cline.rstrip() for cline in context_lines]
+            clindex = (tb_lineno - context_startline)
+            last_items[-2] = context_lines[clindex].strip()
+            last_items[-1] = context_lines
 
         return traceback_list
+
+
 
 # ==================================================================================
 #                            BASE ERROR CLASSIFICATIONS

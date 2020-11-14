@@ -275,15 +275,19 @@ class MonitoredScope:
         """
         if not self._triggered:
             self._triggered = True
-            if self.expired and self._diag_func:
-                diagmsg = self._diag_func(*self._diag_args, **self._diag_kwargs)
+            if self.expired:
 
                 errlines = [
                     "MonitoredScope({}): Timeout waiting for thread to exit monitored scope.".format(self._label),
                     "MESSAGE: {}".format(self._message),
-                    "DIAGNOSTIC:"
+                    
                 ]
-                errlines.extend(split_and_indent_lines(diagmsg, 1))
+
+                if  self._diag_func:
+                    errlines.append("DIAGNOSTIC:")
+
+                    diagmsg = self._diag_func(*self._diag_args, **self._diag_kwargs)
+                    errlines.extend(split_and_indent_lines(diagmsg, 1))
 
                 errmsg = os.linesep.join(errlines)
                 logger.error(errmsg)
