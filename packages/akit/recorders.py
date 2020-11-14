@@ -52,8 +52,8 @@ class JsonResultRecorder:
         }
     """
     def __init__(self, title: str, runid: str, start: datetime, summary_filename: str,
-                 result_filename: str, branch: typing.Optional[str]=None, build: typing.Optional[str]=None,
-                flavor: typing.Optional[str]=None):
+                 result_filename: str, branch: typing.Optional[str] = None, build: typing.Optional[str] = None,
+                flavor: typing.Optional[str] = None):
         self._title = title
         self._runid = runid
         self._start = start

@@ -19,15 +19,17 @@ __license__ = "MIT"
 import re
 import socket
 import stat
+import threading
 import time
 import weakref
 
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Sequence, Union
 
-from akit.aspects import RunPattern, DEFAULT_ASPECTS
+from akit.aspects import Aspects, LoggingPattern, RunPattern, DEFAULT_ASPECTS
 from akit.exceptions import AKitInvalidConfigError
 
 from akit.xlogging.foundations import getAutomatonKitLogger
+from akit.xlogging.scopemonitoring import MonitoredScope
 
 from akit.integration.landscaping.landscapedeviceextension import LandscapeDeviceExtension
 
@@ -37,6 +39,12 @@ logger = getAutomatonKitLogger()
 
 DEFAULT_SSH_TIMEOUT = 300
 DEFAULT_SSH_RETRY_INTERVAL = .5
+
+DEFAULT_FAILURE_LABEL = "Failure"
+DEFAULT_SUCCESS_LABEL = "Success"
+
+TEMPLATE_COMMAND_FAILURE = "RUNCMD: {} running CMD=%s{}STDOUT:{}%s{}STDERR:{}%s{}".format(DEFAULT_FAILURE_LABEL, *([os.linesep] * 5))
+TEMPLATE_COMMAND_SUCCESS = "RUNCMD: {} running CMD=%s{}STDOUT:{}%s{}STDERR:{}%s{}".format(DEFAULT_SUCCESS_LABEL, *([os.linesep] * 5))
 
 #                    PERMS          LINKS   OWNER       GROUPS    SIZE   MONTH  DAY  TIME    NAME
 #                  rwxrwxrwx         24      myron      myron     4096   Jul    4   00:37  PCBs
@@ -298,7 +306,7 @@ def sftp_list_tree_recurse(sftp: paramiko.SFTPClient, rootdir: str, userlookup: 
 
     return children_info
 
-def ssh_execute_command(ssh_client: paramiko.SSHClient, command: str, inactivity_timeout: float=DEFAULT_SSH_TIMEOUT, inactivity_interval: float=DEFAULT_SSH_RETRY_INTERVAL, chunk_size: int=1024, attach_pty: bool=False):
+def ssh_execute_command(ssh_client: paramiko.SSHClient, command: str, pty_params=None, inactivity_timeout: float=DEFAULT_SSH_TIMEOUT, inactivity_interval: float=DEFAULT_SSH_RETRY_INTERVAL, chunk_size: int=1024, attach_pty: bool=False):
     """
         Runs a command on a remote server using the specified ssh_client.  We implement our own version of ssh_execute_command
         in order to have better control over the timeouts and to make sure all the checks are sequenced properly in order
@@ -326,6 +334,10 @@ def ssh_execute_command(ssh_client: paramiko.SSHClient, command: str, inactivity
     end_time = start_time + inactivity_timeout
 
     channel = ssh_client.get_transport().open_session(timeout=inactivity_timeout)
+
+    if pty_params is not None:
+        channel.get_pty(**pty_params)
+
     channel.exec_command(command)
 
     while True:
@@ -372,134 +384,32 @@ def ssh_execute_command(ssh_client: paramiko.SSHClient, command: str, inactivity
 
     return status, stdout, stderr
 
-class SshSession:
-    def __init__(self, host: str, username: str, password=None, keyfile=None, keypasswd=None, allow_agent=False, port=22, aspects=DEFAULT_ASPECTS):
+class SshBase:
+
+    def __init__(self, host: str, username: str, password: Optional[str] = None, keyfile: Optional[str] = None, keypasswd: Optional[str] = None,
+                 allow_agent: bool = False, users: Optional[dict] = None, port: int = 22, primitive: bool = False, pty_params: Optional[dict] = None,
+                 aspects=DEFAULT_ASPECTS):
+
         self._host = host
-        self._ipaddr = socket.gethostbyname(host)
-        self._port = port
+        
         self._username = username
         self._password = password
         self._keyfile = keyfile
         self._keypasswd = keypasswd
         self._allow_agent = allow_agent
-        self._aspects = aspects
-        self._ssh_client = None
-        self._primitive_mode = False
-
-        if self._password is None and self._keyfile is None:
-            raise AKitInvalidConfigError("SshAgent requires either a 'password' or identity 'keyfile' be specified.")
-        return
-
-    def __enter__(self):
-        self._ssh_client = self._create_client()
-        return
-
-    def __exit__(self, ex_val, ex_type, ex_tb):
-        self._ssh_client.close()
-        handled = False
-        return handled
-
-    @property
-    def allow_agent(self):
-        return self._allow_agent
-
-    @property
-    def aspects(self):
-        return self._aspects
-
-    @property
-    def host(self):
-        return self._host
-
-    @property
-    def keyfile(self):
-        return self._keyfile
-
-    @property
-    def keypasswd(self):
-        return self._keypasswd
-
-    @property
-    def ipaddr(self):
-        return self._ipaddr
-
-    @property
-    def password(self):
-        return self._password
-
-    @property
-    def port(self):
-        return self._port
-
-    @property
-    def username(self):
-        return self._username
-
-    def run_cmd(self, command, aspects=None):
-
-        if aspects is None:
-            aspects = self._aspects
-
-        timeout=aspects.inactivity_timeout
-        interval=aspects.inactivity_interval
-
-        status = None
-        stdout = None
-        stderr = None
-
-        if aspects.run_pattern == RunPattern.SINGLE_RUN:
-            status, stdout, stderr = ssh_execute_command(self._ssh_client, command, inactivity_timeout=timeout, inactivity_interval=interval)
-
-        elif aspects.run_pattern == RunPattern.RUN_UNTIL_SUCCESS:
-            while True:
-                status, stdout, stderr = ssh_execute_command(self._ssh_client, command, inactivity_timeout=timeout, inactivity_interval=interval)
-                if status == 0:
-                    break
-                else:
-                    pass
-
-        elif aspects.run_pattern == RunPattern.RUN_WHILE_SUCCESS:
-            while True:
-                status, stdout, stderr = ssh_execute_command(self._ssh_client, command, inactivity_timeout=timeout, inactivity_interval=interval)
-                if status != 0:
-                    break
-                else:
-                    pass
-
-        return status, stdout, stderr
-
-    def _create_client(self):
-        pkey = None
-        if self._keyfile is not None:
-            pkey = paramiko.pkey.PKey.from_private_key_file(self._keyfile, password=self._keypasswd)
-        ssh_client = paramiko.SSHClient()
-        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password, pkey=pkey)
-        return ssh_client
-
-
-class SshAgent(LandscapeDeviceExtension):
-
-    def __init__(self, host, username, password=None, keyfile=None, keypasswd=None, allow_agent=False, port=22, primitive=None, aspects=DEFAULT_ASPECTS):
-        super(SshAgent, self).__init__()
-        self._host = host
-        self._ipaddr = socket.gethostbyname(self._host)
+        self._users = users
         self._port = port
-        self._username = username
-        self._password = password
-        self._keyfile = keyfile
-        self._keypasswd = keypasswd
-        self._allow_agent = allow_agent
-        self._aspects = aspects
-        if primitive is None:
-            self._primitive = True
         self._primitive = primitive
+        self._pty_params = pty_params
+        self._aspects = aspects
+
+        self._ipaddr = socket.gethostbyname(self._host)
 
         self._user_lookup_table = {}
         self._group_lookup_table = {}
 
-        if self._password is None and self._keyfile is None:
-            raise AKitInvalidConfigError("SshAgent requires either a 'password' or identity 'keyfile' be specified.")
+        if self._password is None and self._keyfile is None and not allow_agent:
+            raise AKitInvalidConfigError("SshAgent requires either a 'password', an identity 'keyfile' or allow_agent=True be specified.")
         return
 
     @property
@@ -535,193 +445,16 @@ class SshAgent(LandscapeDeviceExtension):
         return self._port
 
     @property
+    def pty_params(self):
+        return self._pty_params
+
+    @property
     def username(self):
         return self._username
 
-    def initialize(self, coord_ref: weakref.ReferenceType, basedevice_ref: weakref.ReferenceType, extid: str, location: str, configinfo: dict):
-        """
-            Initializes the landscape device extension.
-
-            :param coord_ref: A weak reference to the coordinator that is managing interactions through this
-                              device extension.
-            :type coord_ref: weakref.ReferenceType
-            :param extid: A unique reference that can be used to identify this device via the coordinator even if its location changes.
-            :type extid: str
-            :param location: The location reference where this device can be found via the coordinator.
-            :type location: str
-            :param 
-        """
-        LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
-        return
-
-    def run_cmd(self, command, aspects=None, ssh_client=None):
-
-        if aspects is None:
-            aspects = self._aspects
-
-        inactivity_timeout=aspects.inactivity_timeout
-        inactivity_interval=aspects.inactivity_interval
-
-        cleanup_client = False
-        status = None
-        stdout = None
-        stderr = None
-        try:
-            if ssh_client is None:
-                ssh_client = self._create_client()
-                cleanup_client = True
-
-            if aspects.run_pattern == RunPattern.SINGLE_RUN:
-                status, stdout, stderr = ssh_execute_command(ssh_client, command, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
-
-            elif aspects.run_pattern == RunPattern.RUN_UNTIL_SUCCESS:
-                while True:
-                    status, stdout, stderr = ssh_execute_command(ssh_client, command, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
-                    if status == 0:
-                        break
-                    else:
-                        pass
-
-            elif aspects.run_pattern == RunPattern.RUN_WHILE_SUCCESS:
-                while True:
-                    status, stdout, stderr = ssh_execute_command(ssh_client, command, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
-                    if status != 0:
-                        break
-                    else:
-                        pass
-
-        finally:
-            if cleanup_client:
-                ssh_client.close()
-                del ssh_client
-
-        return status, stdout, stderr
-
-    def directory_tree(self, root_dir, depth=1, ssh_client=None):
-
-        dir_info = {}
-
-        cleanup_client = False
-        try:
-            if ssh_client is None:
-                ssh_client = self._create_client()
-                cleanup_client = True
-
-            if not self._primitive:
-                transport = ssh_client.get_transport()
-                try:
-
-                    sftp = paramiko.SFTPClient.from_transport(transport)
-                    try:
-                        dir_info = sftp_list_tree(sftp, root_dir, self.lookup_user_by_uid, self.lookup_group_by_uid, max_depth=depth)
-                    finally:
-                        sftp.close()
-                finally:
-                    transport.close()
-            else:
-                dir_info = primitive_list_tree(ssh_client, root_dir, max_depth=depth)
-
-        except Exception as xcpt:
-            raise
-        finally:
-            if cleanup_client:
-                ssh_client.close()
-                del ssh_client
-
-        return dir_info
-
-    def directory(self, root_dir, ssh_client=None):
-
-        dir_info = {}
-
-        cleanup_client = False
-        try:
-            if ssh_client is None:
-                ssh_client = self._create_client()
-                cleanup_client = True
-
-            if not self._primitive:
-                transport = ssh_client.get_transport()
-                try:
-
-                    sftp = paramiko.SFTPClient.from_transport(transport)
-                    try:
-                        dir_info = sftp_list_directory(sftp, root_dir, self.lookup_user_by_uid, self.lookup_group_by_uid)
-                    finally:
-                        sftp.close()
-                finally:
-                    transport.close()
-            else:
-                dir_info = primitive_list_directory(ssh_client, root_dir)
-
-        except Exception as xcpt:
-            raise
-        finally:
-            if cleanup_client:
-                ssh_client.close()
-                del ssh_client
-
-        return dir_info
-
-    def pull_file(self, remotepath, localpath, ssh_client=None):
-
-        cleanup_client = False
-        try:
-            if ssh_client is None:
-                ssh_client = self._create_client()
-                cleanup_client = True
-            
-            if not self._primitive:
-                transport = ssh_client.get_transport()
-                try:
-                    sftp = paramiko.SFTPClient.from_transport(transport)
-                    try:
-                        sftp.get(remotepath, localpath)
-                    finally:
-                        sftp.close()
-                finally:
-                    transport.close()
-            else:
-                primitive_pull_file(ssh_client, remotepath, localpath)
-
-        except Exception as xcpt:
-            raise
-        finally:
-            if cleanup_client:
-                ssh_client.close()
-                del ssh_client
-    
-        return
-
-    def push_file(self, localpath, remotepath, ssh_client=None):
-
-        cleanup_client = False
-        try:
-            if ssh_client is None:
-                ssh_client = self._create_client()
-                cleanup_client = True
-            
-            if not self._primitive:
-                transport = ssh_client.get_transport()
-                try:
-                    sftp = paramiko.SFTPClient.from_transport(transport)
-                    try:
-                        sftp.put(localpath, remotepath)
-                    finally:
-                        sftp.close()
-                finally:
-                    transport.close()
-            else:
-                primitive_push_file(ssh_client, localpath, remotepath)
-
-        except Exception as xcpt:
-            raise
-        finally:
-            if cleanup_client:
-                ssh_client.close()
-                del ssh_client
-
-        return
+    @property
+    def users(self):
+        return self._users
 
     def lookup_user_by_uid(self, uid: int, update=False):
         username = None
@@ -765,9 +498,350 @@ class SshAgent(LandscapeDeviceExtension):
     def _create_client(self):
         pkey = None
         if self._keyfile is not None:
-            with open(self._keyfile) as kf:
-                pkey = paramiko.rsakey.RSAKey.from_private_key(kf, password=self._keypasswd)
+            pkey = paramiko.pkey.PKey.from_private_key_file(self._keyfile, password=self._keypasswd)
         ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password, allow_agent=self._allow_agent, pkey=pkey)
+        ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password, pkey=pkey)
         return ssh_client
+
+    def _directory_tree(self, ssh_client, root_dir, depth=1):
+
+        dir_info = {}
+
+        if not self._primitive:
+            transport = ssh_client.get_transport()
+            try:
+
+                sftp = paramiko.SFTPClient.from_transport(transport)
+                try:
+                    dir_info = sftp_list_tree(sftp, root_dir, self.lookup_user_by_uid, self.lookup_group_by_uid, max_depth=depth)
+                finally:
+                    sftp.close()
+            finally:
+                transport.close()
+        else:
+            dir_info = primitive_list_tree(ssh_client, root_dir, max_depth=depth)
+
+        return dir_info
+
+    def _directory(self, ssh_client, root_dir):
+
+        dir_info = {}
+
+        if not self._primitive:
+            transport = ssh_client.get_transport()
+            try:
+
+                sftp = paramiko.SFTPClient.from_transport(transport)
+                try:
+                    dir_info = sftp_list_directory(sftp, root_dir, self.lookup_user_by_uid, self.lookup_group_by_uid)
+                finally:
+                    sftp.close()
+            finally:
+                transport.close()
+        else:
+            dir_info = primitive_list_directory(ssh_client, root_dir)
+
+        return dir_info
+
+    def _log_command_result(self, command, status, stdout, stderr, exp_status, logging_pattern):
+
+        if type(exp_status) == int:
+            if status == exp_status:
+                if logging_pattern == LoggingPattern.ALL_RESULTS or logging_pattern == LoggingPattern.SUCCESS_ONLY:
+                    logger.info(TEMPLATE_COMMAND_SUCCESS % (command, stdout, stderr) )
+        else:
+            if status in exp_status:
+                if logging_pattern == LoggingPattern.ALL_RESULTS or logging_pattern == LoggingPattern.SUCCESS_ONLY:
+                    logger.info(TEMPLATE_COMMAND_SUCCESS % (command, stdout, stderr))
+            else:
+                if logging_pattern == LoggingPattern.ALL_RESULTS or logging_pattern == LoggingPattern.FAILURE_ONLY:
+                    logger.error(TEMPLATE_COMMAND_FAILURE % (command, stdout, stderr))
+        return
+
+    def _run_cmd(self, ssh_client, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None):
+
+        # Go through the overrides and if they are not passed use the agent defaults.
+        if pty_params is None:
+            pty_params = self._pty_params
+
+        if aspects is None:
+            aspects = self._aspects
+
+        if user is not None:
+            if self._users is None:
+                errmsg = "In order to pass a 'user' parameter, you must create the SSHAgent with a 'users' parameter with a dictionary of user credentials."
+                raise AKitInvalidConfigError(errmsg)
+            if user not in self._users:
+                errmsg = "The specified 'user=%s' was not found in the users credentials provided to SSHAgent."
+
+        completion_timeout = aspects.completion_timeout
+        completion_interval = aspects.completion_interval
+        inactivity_timeout = aspects.inactivity_timeout
+        inactivity_interval = aspects.inactivity_interval
+        monitor_delay = aspects.monitor_delay
+        logging_pattern = aspects.logging_pattern
+
+        status, stdout, stderr = None, None, None
+
+        this_thr = threading.current_thread()
+        monmsg= "Thread failed to exit monitored scope. thid=%s thname=%s cmd=%s" % (this_thr.ident, this_thr.name, command)
+
+        # Run the command using the SINGLE_RUN pattern, we run it once and then return the result
+        if aspects.run_pattern == RunPattern.SINGLE_RUN:
+
+                # Setup a monitored scope for the call to the remote device in case of timeout failure
+                with MonitoredScope("RUNCMD-SINGLE_RUN", monmsg, timeout=inactivity_timeout + monitor_delay) as ms:
+
+                    status, stdout, stderr = ssh_execute_command(ssh_client, command, pty_params=pty_params,
+                        inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
+
+                self._log_command_result(self, command, status, stdout, stderr, exp_status, logging_pattern)
+
+        # RUN_UNTIL_SUCCESS, run the command until we get a successful expected result or a completion timeout has occured
+        elif aspects.run_pattern == RunPattern.RUN_UNTIL_SUCCESS:
+
+            start_time = time.time()
+            end_time = start_time + completion_timeout
+
+            while True:
+
+                # Setup a monitored scope for the call to the remote device in case of timeout failure
+                with MonitoredScope("RUNCMD-RUN_UNTIL_SUCCESS", monmsg, timeout=inactivity_timeout + monitor_delay) as ms:
+                    status, stdout, stderr = ssh_execute_command(ssh_client, command, pty_params=pty_params, 
+                        inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
+
+                self._log_command_result(self, command, status, stdout, stderr, exp_status, logging_pattern)
+
+                if type(exp_status) == int:
+                    if status == exp_status:
+                        break
+                elif status in exp_status:
+                    break
+
+        # RUN_WHILE_SUCCESS, run the command while it is succeeds or a completion timeout has occured
+        elif aspects.run_pattern == RunPattern.RUN_WHILE_SUCCESS:
+
+            start_time = time.time()
+            end_time = start_time + completion_timeout
+
+            while True:
+
+                with MonitoredScope("RUNCMD-RUN_WHILE_SUCCESS", monmsg, timeout=inactivity_timeout + monitor_delay) as ms:
+                    status, stdout, stderr = ssh_execute_command(ssh_client, command, pty_params=pty_params,
+                        inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
+
+                if type(exp_status) == int:
+                    if status != exp_status:
+                        break
+                elif status not in exp_status:
+                    break
+
+        return status, stdout, stderr
+
+    def _pull_file(self, ssh_client, remotepath, localpath):
+
+        if not self._primitive:
+            transport = ssh_client.get_transport()
+            try:
+                sftp = paramiko.SFTPClient.from_transport(transport)
+                try:
+                    sftp.get(remotepath, localpath)
+                finally:
+                    sftp.close()
+            finally:
+                transport.close()
+        else:
+            primitive_pull_file(ssh_client, remotepath, localpath)
+
+        return
+
+    def _push_file(self, ssh_client, localpath, remotepath):
+
+        if not self._primitive:
+            transport = ssh_client.get_transport()
+            try:
+                sftp = paramiko.SFTPClient.from_transport(transport)
+                try:
+                    sftp.put(localpath, remotepath)
+                finally:
+                    sftp.close()
+            finally:
+                transport.close()
+        else:
+            primitive_push_file(ssh_client, localpath, remotepath)
+
+        return
+
+
+class SshSession(SshBase):
+    def __init__(self, host: str, username: str, password: str=None, keyfile: Optional[str] = None, keypasswd: Optional[str] = None,
+                 allow_agent: bool=False, users: Optional[dict] = None, port:int=22, primitive: bool = False, pty_params: Optional[dict] = None,
+                 aspects: Aspects=DEFAULT_ASPECTS):
+        SshBase.__init__(self, host, username, password=password, keyfile=keyfile, keypasswd=keypasswd, allow_agent=allow_agent, users=users,
+                         port=port, primitive=primitive, pty_params=pty_params, aspects=aspects)
+
+        self._ssh_client = None
+        return
+
+    def __enter__(self):
+        self._ssh_client = self._create_client()
+        return
+
+    def __exit__(self, ex_val, ex_type, ex_tb):
+        self._ssh_client.close()
+        handled = False
+        return handled
+
+    def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None):
+
+        status, stdout, stderr = self._run_cmd(self._ssh_client, command, user=user, pty_params=pty_params, aspects=aspects)
+
+        return status, stdout, stderr
+
+    def directory_tree(self, root_dir, depth=1, ssh_client=None):
+
+        dir_info = self._directory_tree(self._ssh_client, root_dir, depth=depth)
+
+        return dir_info
+
+    def directory(self, root_dir, ssh_client=None):
+
+        dir_info = self._directory(self._ssh_client, root_dir)
+
+        return dir_info
+
+    def pull_file(self, remotepath, localpath, ssh_client=None):
+
+        self._pull_file(self._ssh_client, remotepath, localpath)
+
+        return
+
+    def push_file(self, localpath, remotepath, ssh_client=None):
+
+        self._push_file(self._ssh_client, localpath, remotepath)
+
+        return
+
+
+class SshAgent(SshBase, LandscapeDeviceExtension):
+
+    def __init__(self, host: str, username: str, password: Optional[str] = None, keyfile: Optional[str] = None, keypasswd: Optional[str] = None,
+                 allow_agent: bool = False, users: Optional[dict] = None, port: int = 22, primitive: bool = False, pty_params: Optional[dict] = None,
+                 aspects=DEFAULT_ASPECTS):
+        SshBase.__init__(self, host, username, password=password, keyfile=keyfile, keypasswd=keypasswd, allow_agent=allow_agent, users=users,
+                         port=port, primitive=primitive, pty_params=pty_params, aspects=aspects)
+        LandscapeDeviceExtension.__init__(self)
+        return
+
+    def initialize(self, coord_ref: weakref.ReferenceType, basedevice_ref: weakref.ReferenceType, extid: str, location: str, configinfo: dict):
+        """
+            Initializes the landscape device extension. It is not required to call this function in order to use an SSHAgent, it is used
+            when an agent is attached to a LandscapeDevice as a device extension.
+
+            :param coord_ref: A weak reference to the coordinator that is managing interactions through this
+                              device extension.
+            :type coord_ref: weakref.ReferenceType
+            :param extid: A unique reference that can be used to identify this device via the coordinator even if its location changes.
+            :type extid: str
+            :param location: The location reference where this device can be found via the coordinator.
+            :type location: str
+            :param 
+        """
+        LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
+        return
+
+    def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None):
+
+        cleanup_client = False
+
+        status, stdout, stderr = None, None, None
+
+        try:
+            if ssh_client is None:
+                # If we are not passed in a client to use, we create one
+                # and then clean it up before returning
+                ssh_client = self._create_client()
+                cleanup_client = True
+
+            status, stdout, stderr = self._run_cmd(ssh_client, command, exp_status=exp_status, user=user, pty_params=pty_params, aspects=aspects)
+
+        finally:
+            # If we created a client, clean it up
+            if cleanup_client:
+                ssh_client.close()
+                del ssh_client
+
+        return status, stdout, stderr
+
+    def directory_tree(self, root_dir, depth=1, ssh_client=None):
+
+        dir_info = {}
+
+        cleanup_client = False
+        try:
+            if ssh_client is None:
+                ssh_client = self._create_client()
+                cleanup_client = True
+
+            dir_info = self._directory_tree(ssh_client, root_dir, depth=depth)
+
+        finally:
+            if cleanup_client:
+                ssh_client.close()
+                del ssh_client
+
+        return dir_info
+
+    def directory(self, root_dir, ssh_client=None):
+
+        dir_info = {}
+
+        cleanup_client = False
+        try:
+            if ssh_client is None:
+                ssh_client = self._create_client()
+                cleanup_client = True
+
+            dir_info = self._directory(ssh_client, root_dir)
+
+        finally:
+            if cleanup_client:
+                ssh_client.close()
+                del ssh_client
+
+        return dir_info
+
+    def pull_file(self, remotepath, localpath, ssh_client=None):
+
+        cleanup_client = False
+        try:
+            if ssh_client is None:
+                ssh_client = self._create_client()
+                cleanup_client = True
+            
+            self._pull_file(ssh_client, remotepath, localpath)
+
+        finally:
+            if cleanup_client:
+                ssh_client.close()
+                del ssh_client
+
+        return
+
+    def push_file(self, localpath, remotepath, ssh_client=None):
+
+        cleanup_client = False
+        try:
+            if ssh_client is None:
+                ssh_client = self._create_client()
+                cleanup_client = True
+            
+            self._push_file(ssh_client, localpath, remotepath)
+
+        finally:
+            if cleanup_client:
+                ssh_client.close()
+                del ssh_client
+
+        return

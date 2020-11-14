@@ -14,10 +14,102 @@ __maintainer__ = "Myron Walker"
 __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
+
+import inspect
+import os
+
+from akit.xinspect import get_caller_function_name
+from akit.xformatting import split_and_indent_lines
+
 class AKitError(Exception):
     """
-        The base error object for Automation Kit errors.
+        The base error object for Automation Kit errors.  The :class:`AKitError` serves as aa base
+        type and also provides some additional functionality for adding context to errors and
+        formatting exception output.
     """
+    def __init__(self, *args, **kwargs):
+        super(AKitError, self).__init__(*args, **kwargs)
+        self._context = {}
+        return
+
+    def add_context(self, content, label="CONTEXT"):
+        """
+            Adds context to an exception and associates it with the function context
+            on the stack.
+        """
+        caller_name = get_caller_function_name()
+
+        self._context[caller_name] = {
+            "label": label,
+            "content": content
+        }
+
+        return
+
+    def format_exc(self):
+        """
+            Format the exception along with any added context.
+
+
+        """
+        etypename = type(self).__name__
+        eargs = self.args
+
+
+        exmsg_lines = [
+            "%s: %r" % (etypename, eargs),
+            "TRACEBACK (most recent call last):"
+        ]
+
+        if len(self._context) > 0:
+            stack_frames = self._collect_stack_frames()
+            for co_name, co_argcount, co_varnames, co_locals, co_lineno, co_filename in stack_frames:
+                
+                exmsg_lines.extend([
+                    '  File "%s", line %d, in %s' % (co_filename, co_lineno, co_name)
+                ])
+                if co_name in self._context:
+                    cxtinfo = self._context[co_name] 
+                    exmsg_lines.append('    %s:' % cxtinfo["label"])
+                    exmsg_lines.extend(split_and_indent_lines(cxtinfo["content"], 2, indent=3))
+
+        exmsg = os.linesep.join(exmsg_lines)
+        return exmsg
+
+    def _collect_stack_frames(self):
+
+        nxt_tb = self.__traceback__
+        last_items = None
+        traceback_list = []
+        while True:
+            nxt_frame = nxt_tb.tb_frame
+            nxt_code = nxt_frame.f_code
+            co_name = nxt_code.co_name
+            co_arg_names = nxt_code.co_varnames[:nxt_code.co_argcount]
+            co_argcount = nxt_code.co_argcount
+            co_locals = nxt_frame.f_locals
+            items = [nxt_code.co_name, co_argcount, co_arg_names, co_locals, nxt_frame.f_lineno, nxt_code.co_filename]
+
+            callsite = None
+
+            frame_info = inspect.getframeinfo(nxt_frame)
+
+            code_args = []
+            for argidx in range(0, co_argcount):
+                argname = co_arg_names[argidx]
+                argval = co_locals[argname]
+                code_args.append("%s=%r" % (argname, argval))
+
+            callsite = '%s(%s)' % (co_name, ", ".join(code_args))
+
+            traceback_list.append(items)
+            last_items = items
+
+            nxt_tb = nxt_tb.tb_next
+            if nxt_tb is None:
+                break
+
+        return traceback_list
 
 # ==================================================================================
 #                            BASE ERROR CLASSIFICATIONS
@@ -159,4 +251,39 @@ class AKitNotOverloadedError(AKitSemanticError):
     """
         This error is raised when a method that must be overloaded has not been overridden. 
     """
+
+
+if __name__ == "__main__":
+
+    import traceback
+
+    def testfuncA(a):
+        raise AKitError("Blah")
+        return
+
+    def testfuncB(b, c, d="d"):
+        try:
+            testfuncA("*a")
+        except AKitError as xcpt:
+            xcpt.add_context("I am and testfuncB and i see this.")
+            raise
+        return
+
+    def testfuncC(e, f, g="g"):
+        try:
+            testfuncB("*b", "*c", d="*d")
+        except AKitError as xcpt:
+            xcpt.add_context("I am and testfuncC and i see that.")
+            raise
+        return
+
+    try:
+        testfuncC("*e", "*f", g="*g")
+    except AKitError as xcpt:
+        print()
+        errmsg = xcpt.format_exc()
+        print(errmsg)
+        print()
+        print(traceback.format_exc())
+        print()
 

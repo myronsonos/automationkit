@@ -15,25 +15,61 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+class RunPattern:
+    SINGLE_RUN = 0
+    RUN_UNTIL_SUCCESS = 1
+    RUN_WHILE_SUCCESS = 2
+
+class LoggingPattern:
+    ALL_RESULTS = 0
+    FAILURE_ONLY = 1
+    SUCCESS_ONLY = 2
+
+
 DEFAULT_COMPLETION_TIMEOUT = 600
 DEFAULT_COMPLETION_INTERVAL = 10
 
 DEFAULT_INACTIVITY_TIMEOUT = 600
 DEFAULT_INACTIVITY_INTERVAL = 5
 
-class RunPattern:
-    SINGLE_RUN = 0
-    RUN_UNTIL_SUCCESS = 1
-    RUN_WHILE_SUCCESS = 2
+DEFAULT_MONITOR_DELAY = 30
+
+DEFAULT_LOGGING_PATTERN = LoggingPattern.ALL_RESULTS
 
 class Aspects:
+    """
+        Aspects are utilized with the interop APIs and agents such as the :class:`SSHAgent` class in order
+        to modify the behavior of APIs with respect to retry parameter such as timeout, interval, looping patterns
+        logging, etc.  The aspects object provides a way to package this common criteria into a single parameter
+        or constant you can  pass to multiple APIs
+    """
+
     def __init__(self, run_pattern=RunPattern.SINGLE_RUN, completion_timeout=DEFAULT_COMPLETION_TIMEOUT, completion_interval=DEFAULT_COMPLETION_INTERVAL,
-                       inactivity_timeout=DEFAULT_INACTIVITY_TIMEOUT, inactivity_interval=DEFAULT_INACTIVITY_INTERVAL):
+                       inactivity_timeout=DEFAULT_INACTIVITY_TIMEOUT, inactivity_interval=DEFAULT_INACTIVITY_INTERVAL, monitor_delay=DEFAULT_MONITOR_DELAY,
+                       logging_pattern=DEFAULT_LOGGING_PATTERN):
+        """
+            Creates an :class:`Aspects` package.
+
+            :param run_pattern: The :class:`RunPattern` that the API should exhibit such as SINGLE_RUN, RUN_UNTIL_SUCCESS, RUN_WHILE_SUCCESS
+            :type run_pattern: :class:`RunPattern`
+            :param completion_timeout: The time in seconds as a float that is the max time before timeout for the activity to complete.
+            :type completion_timeout: float
+            :param completion_interval: The time in seconds as a float that is waited before reattempting an activity.
+            :type completion_interval: float
+            :param inactivity_timeout: The time in seconds as a float that is the max time before timeout that is waited before a :class:`TimeoutError`
+                                       is raised due to inactivity.
+            :type inactivity_timeout: float
+            :param inactivity_interval: The time in seconds as a float that is waited before reattempting an activity.
+            :type inactivity_interval: float
+        """
         self.run_pattern = run_pattern
         self.completion_timeout = completion_timeout
         self.completion_interval = completion_interval
         self.inactivity_timeout = inactivity_timeout
         self.inactivity_interval = inactivity_interval
+        self.monitor_delay = monitor_delay
+        self.logging_pattern = logging_pattern
+
         return
 
 DEFAULT_ASPECTS = Aspects()
