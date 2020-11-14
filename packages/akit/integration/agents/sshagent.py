@@ -26,7 +26,7 @@ import weakref
 from typing import Callable, List, Optional, Sequence, Union
 
 from akit.aspects import Aspects, LoggingPattern, RunPattern, DEFAULT_ASPECTS
-from akit.exceptions import AKitInvalidConfigError
+from akit.exceptions import AKitInvalidConfigError, AKitNotOverloadedError
 
 from akit.xlogging.foundations import getAutomatonKitLogger
 from akit.xlogging.scopemonitoring import MonitoredScope
@@ -481,7 +481,10 @@ class SshBase:
                 self._group_lookup_table[gid] = grpname
 
         return grpname
-    
+
+    def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None):
+        raise AKitNotOverloadedError("SshBase.run_cmd must be overloaded by derived class '%s'." % type(self).__name__)
+
     def verify_connectivity(self):
         """
             Method that can be used to verify connectivity to the target computer.
@@ -596,7 +599,7 @@ class SshBase:
                     status, stdout, stderr = ssh_execute_command(ssh_client, command, pty_params=pty_params,
                         inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
 
-                self._log_command_result(self, command, status, stdout, stderr, exp_status, logging_pattern)
+                self._log_command_result(command, status, stdout, stderr, exp_status, logging_pattern)
 
         # RUN_UNTIL_SUCCESS, run the command until we get a successful expected result or a completion timeout has occured
         elif aspects.run_pattern == RunPattern.RUN_UNTIL_SUCCESS:
@@ -611,7 +614,7 @@ class SshBase:
                     status, stdout, stderr = ssh_execute_command(ssh_client, command, pty_params=pty_params, 
                         inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
 
-                self._log_command_result(self, command, status, stdout, stderr, exp_status, logging_pattern)
+                self._log_command_result(command, status, stdout, stderr, exp_status, logging_pattern)
 
                 if type(exp_status) == int:
                     if status == exp_status:
@@ -630,6 +633,8 @@ class SshBase:
                 with MonitoredScope("RUNCMD-RUN_WHILE_SUCCESS", monmsg, timeout=inactivity_timeout + monitor_delay) as ms:
                     status, stdout, stderr = ssh_execute_command(ssh_client, command, pty_params=pty_params,
                         inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
+
+                self._log_command_result(command, status, stdout, stderr, exp_status, logging_pattern)
 
                 if type(exp_status) == int:
                     if status != exp_status:
