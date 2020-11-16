@@ -57,7 +57,7 @@ class AKitError(Exception):
 
 
         exmsg_lines = [
-            "%s: %r" % (etypename, eargs),
+            "%s: %s" % (etypename, repr(eargs).rstrip(",")),
             "TRACEBACK (most recent call last):"
         ]
 

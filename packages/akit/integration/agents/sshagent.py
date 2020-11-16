@@ -45,6 +45,9 @@ DEFAULT_SSH_RETRY_INTERVAL = .5
 DEFAULT_FAILURE_LABEL = "Failure"
 DEFAULT_SUCCESS_LABEL = "Success"
 
+INTERACTIVE_PROMPT="PROMPT%:%:%"
+INTERACTIVE_PROMPT_BYTES = INTERACTIVE_PROMPT.encode('utf-8')
+
 TEMPLATE_COMMAND_FAILURE = "RUNCMD: {} running CMD=%s{}STDOUT:{}%s{}STDERR:{}%s{}".format(DEFAULT_FAILURE_LABEL, *([os.linesep] * 5))
 TEMPLATE_COMMAND_SUCCESS = "RUNCMD: {} running CMD=%s{}STDOUT:{}%s{}STDERR:{}%s{}".format(DEFAULT_SUCCESS_LABEL, *([os.linesep] * 5))
 
@@ -240,7 +243,6 @@ def primitive_pull_file(ssh_client: paramiko.SSHClient, remotepath: str, localpa
 
 def primitive_push_file(ssh_client: paramiko.SSHClient, localpath: str, remotepath: str):
     raise Exception("primitive_push_file: not implemented")
-    return
 
 def sftp_list_directory(sftp, directory, userlookup, grouplookup):
 
@@ -391,6 +393,81 @@ def ssh_execute_command(ssh_client: paramiko.SSHClient, command: str, pty_params
 
     return status, stdout, stderr
 
+def ssh_execute_command_in_channel(ssh_channel: paramiko.Channel, command: str, read_timeout: float=2, inactivity_timeout: float=DEFAULT_SSH_TIMEOUT, inactivity_interval: float=DEFAULT_SSH_RETRY_INTERVAL, chunk_size: int=1024, status_check=False):
+    """
+        Runs a command on a remote server using the specified ssh_client.  We implement our own version of ssh_execute_command
+        in order to have better control over the timeouts and to make sure all the checks are sequenced properly in order
+        to prevent SSH lockups.
+
+        :param ssh_client: The :class:`paramiko.SSHClient` object to utilize when running the command.
+        :type ssh_client: :class:`paramiko.SSHClient`
+        :param command: The commandline to run.
+        :type command: str
+        :param inactivity_timeout: The timeout for the channel for the ssh transaction.
+        :type inactivity_timeout: float
+        :param inactivity_interval: The retry interval to wait for the channel to have data ready.
+        :type inactivity_interval: float
+        :param chunk_size: The size of the chunks that are read during receive operations
+        :type chunk_size: int
+
+        :returns: A tuple with the command result code, the standard output and the standard error output.
+        :rtype: (int, str, str)
+    """
+    status = None
+    stdout_buffer = bytearray()
+    stderr_buffer = bytearray()
+
+    start_time = time.time()
+    end_time = start_time + inactivity_timeout
+
+    ssh_channel.sendall(command + "\n")
+
+    stdout_pipe_timeout = 0
+    stderr_pipe_timeout = 0
+    while True:
+        if stdout_pipe_timeout < 2:
+            try:
+                rcv_data = ssh_channel.in_buffer.read(chunk_size, read_timeout)
+                stdout_buffer.extend(rcv_data)
+                if rcv_data.endswith(INTERACTIVE_PROMPT_BYTES):
+                    stdout_pipe_timeout = 2
+            except paramiko.buffered_pipe.PipeTimeout as pto:
+                stdout_pipe_timeout += 1
+
+        if stderr_pipe_timeout < 2:
+            try:
+                rcv_data = ssh_channel.in_stderr_buffer.read(chunk_size, read_timeout)
+                stderr_buffer.extend(rcv_data)
+            except paramiko.buffered_pipe.PipeTimeout as pto:
+                stderr_pipe_timeout += 1
+
+        if stdout_pipe_timeout > 1 and stderr_pipe_timeout > 1:
+            break
+
+        # End while True
+
+    if not status_check:
+        _, status_stdout, status_stderr = ssh_execute_command_in_channel(ssh_channel, "echo $?", read_timeout=read_timeout, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval, chunk_size=chunk_size, status_check=True)
+
+    stdout = stdout_buffer.decode()
+    del stdout_buffer
+
+    if not stdout.startswith(command):
+        errmsg = "The first line should have been an echo of our command."
+        raise Exception(errmsg)
+
+    if not stdout.endswith(INTERACTIVE_PROMPT):
+        errmsg = "The first line should have been an echo of our command."
+        raise Exception(errmsg)
+
+    stdout = stdout[len(command):-len(INTERACTIVE_PROMPT)].strip()
+
+    stderr = stderr_buffer.decode()
+    del stderr_buffer
+
+    return status, stdout, stderr
+
+
 class SshBase:
 
     def __init__(self, host: str, username: str, password: Optional[str] = None, keyfile: Optional[str] = None, keypasswd: Optional[str] = None,
@@ -505,13 +582,37 @@ class SshBase:
 
         return vok
 
-    def _create_client(self):
+    def _create_client(self, session_user=None):
+
+        cl_username = self._username
+        cl_password = self._password
+        cl_keyfile = self._keyfile
+        cl_keypasswd = self._keypasswd
+        cl_allow_agent = self._allow_agent
+
+        if session_user is not None:
+            if session_user not in self._users:
+                errmsg_list = [
+                    "No credentials found for the specified user '%s'." % session_user
+                ]
+                errmsg = os.linesep.join(errmsg_list)
+                raise AKitInvalidConfigError(errmsg)
+
+            user_creds = self._users[session_user]
+
+            cl_username = user_creds["username"]
+            cl_password = user_creds["password"]
+            cl_keyfile = user_creds["keyfile"]
+            cl_keypasswd = user_creds["keypasswd"]
+            cl_allow_agent = user_creds["allow_agent"]
+
         pkey = None
         if self._keyfile is not None:
-            pkey = paramiko.pkey.PKey.from_private_key_file(self._keyfile, password=self._keypasswd)
+            pkey = paramiko.pkey.PKey.from_private_key_file(cl_keyfile, password=cl_keypasswd)
+
         ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client.connect(self._ipaddr, port=self._port, username=self._username, password=self._password, pkey=pkey)
+        ssh_client.connect(self._ipaddr, port=self._port, username=cl_username, password=cl_password, pkey=pkey, allow_agent=cl_allow_agent)
         return ssh_client
 
     def _directory_tree(self, ssh_client, root_dir, depth=1):
@@ -569,7 +670,7 @@ class SshBase:
                     logger.error(TEMPLATE_COMMAND_FAILURE % (command, stdout, stderr))
         return
 
-    def _run_cmd(self, ssh_client, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None):
+    def _run_cmd(self, ssh_runner, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None):
 
         # Go through the overrides and if they are not passed use the agent defaults.
         if pty_params is None:
@@ -603,7 +704,7 @@ class SshBase:
                 # Setup a monitored scope for the call to the remote device in case of timeout failure
                 with MonitoredScope("RUNCMD-SINGLE_RUN", monmsg, timeout=inactivity_timeout + monitor_delay) as _:
 
-                    status, stdout, stderr = ssh_execute_command(ssh_client, command, pty_params=pty_params,
+                    status, stdout, stderr = self._ssh_execute_command(ssh_runner, command, pty_params=pty_params,
                         inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
 
                 self._log_command_result(command, status, stdout, stderr, exp_status, logging_pattern)
@@ -618,7 +719,7 @@ class SshBase:
 
                 # Setup a monitored scope for the call to the remote device in case of timeout failure
                 with MonitoredScope("RUNCMD-RUN_UNTIL_SUCCESS", monmsg, timeout=inactivity_timeout + monitor_delay) as _:
-                    status, stdout, stderr = ssh_execute_command(ssh_client, command, pty_params=pty_params, 
+                    status, stdout, stderr = self._ssh_execute_command(ssh_runner, command, pty_params=pty_params, 
                         inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
 
                 self._log_command_result(command, status, stdout, stderr, exp_status, logging_pattern)
@@ -652,8 +753,8 @@ class SshBase:
 
             while True:
 
-                with MonitoredScope("RUNCMD-RUN_WHILE_SUCCESS", monmsg, timeout=inactivity_timeout + monitor_delay) as ms:
-                    status, stdout, stderr = ssh_execute_command(ssh_client, command, pty_params=pty_params,
+                with MonitoredScope("RUNCMD-RUN_WHILE_SUCCESS", monmsg, timeout=inactivity_timeout + monitor_delay) as _:
+                    status, stdout, stderr = self._ssh_execute_command(ssh_runner, command, pty_params=pty_params,
                         inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
 
                 self._log_command_result(command, status, stdout, stderr, exp_status, logging_pattern)
@@ -715,20 +816,55 @@ class SshBase:
 
         return
 
+    def _ssh_execute_command(self, ssh_runner, command: str, pty_params=None, inactivity_timeout: float=DEFAULT_SSH_TIMEOUT, inactivity_interval: float=DEFAULT_SSH_RETRY_INTERVAL, chunk_size: int=1024, attach_pty: bool=False):
+        status, stdout, stderr = ssh_execute_command(ssh_runner, command, pty_params=pty_params, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
+        return status, stdout, stderr
+
 
 class SshSession(SshBase):
     def __init__(self, host: str, username: str, password: str=None, keyfile: Optional[str] = None, keypasswd: Optional[str] = None,
                  allow_agent: bool=False, users: Optional[dict] = None, port:int=22, primitive: bool = False, pty_params: Optional[dict] = None,
-                 aspects: Aspects=DEFAULT_ASPECTS):
+                 session_user=None, interactive=False, aspects: Aspects=DEFAULT_ASPECTS):
         SshBase.__init__(self, host, username, password=password, keyfile=keyfile, keypasswd=keypasswd, allow_agent=allow_agent, users=users,
                          port=port, primitive=primitive, pty_params=pty_params, aspects=aspects)
 
+        self._session_user = session_user
+        self._interactive = interactive
+        self._read_timeout = 2
+
         self._ssh_client = None
+        self._ssh_runner = None
         return
 
     def __enter__(self):
         self._ssh_client = self._create_client()
-        return
+
+        if self._interactive:
+            inactivity_timeout = self._aspects.inactivity_timeout
+
+            channel = self._ssh_client.get_transport().open_session(timeout=inactivity_timeout)
+
+            if self._pty_params is not None:
+                channel.get_pty(**self._pty_params)
+            else:
+                channel.get_pty()
+
+            channel.invoke_shell()
+            channel.sendall("export PS1=%s\n" % INTERACTIVE_PROMPT)
+
+            leader = b""
+            try:
+                while True:
+                    out = channel.in_buffer.read(1028, self._read_timeout)
+                    leader += out
+            except paramiko.buffered_pipe.PipeTimeout as pto:
+                pass
+
+            self._ssh_runner = channel
+        else:
+            self._ssh_runner = self._ssh_client
+
+        return self
 
     def __exit__(self, ex_val, ex_type, ex_tb):
         self._ssh_client.close()
@@ -737,7 +873,7 @@ class SshSession(SshBase):
 
     def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None):
 
-        status, stdout, stderr = self._run_cmd(self._ssh_client, command, user=user, pty_params=pty_params, aspects=aspects)
+        status, stdout, stderr = self._run_cmd(self._ssh_runner, command, user=user, pty_params=pty_params, aspects=aspects)
 
         return status, stdout, stderr
 
@@ -764,6 +900,13 @@ class SshSession(SshBase):
         self._push_file(self._ssh_client, localpath, remotepath)
 
         return
+
+    def _ssh_execute_command(self, ssh_runner, command: str, pty_params=None, inactivity_timeout: float=DEFAULT_SSH_TIMEOUT, inactivity_interval: float=DEFAULT_SSH_RETRY_INTERVAL, chunk_size: int=1024, attach_pty: bool=False):
+        if self._interactive:
+            status, stdout, stderr = ssh_execute_command_in_channel(ssh_runner, command, read_timeout=self._read_timeout, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
+        else:
+            status, stdout, stderr = ssh_execute_command(ssh_runner, command, pty_params=pty_params, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
+        return status, stdout, stderr
 
 
 class SshAgent(SshBase, LandscapeDeviceExtension):
@@ -792,6 +935,11 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
         """
         LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
         return
+
+    def open_session(self, primitive: bool = False, pty_params: Optional[dict] = None, interactive=False, aspects=DEFAULT_ASPECTS):
+        session = SshSession(self._host, self._username, password=self._password, keyfile=self._keyfile, keypasswd=self._keypasswd, allow_agent=self._allow_agent,
+                             users=self._users, port=self._port, primitive=primitive, pty_params=pty_params, interactive=interactive, aspects=aspects)
+        return session
 
     def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None):
 
@@ -887,3 +1035,4 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
                 del ssh_client
 
         return
+
