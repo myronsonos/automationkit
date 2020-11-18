@@ -39,7 +39,7 @@ The **Automation Kit** allows enterprise users to organize and customize the ord
 ## Automation Software Stack
 The **Automation Kit** is meant to serve as a foundation of an automation software stack.  The diagram below and the descriptions in this section describe the automation software stack that the **Automation Kit** is meant to be a part of.
 
-![Test Automation Software Stack](images/testing-software-deps.jpg)
+![Test Automation Software Stack](testing-software-stack-deps.svg)
 
 The four layer software stack that is shown in the diagram helps to break down the test automation stack into major groups which serves to establish good patterns and practices for maintaining the software stack.  The patterns span different disciplines of the software development process.
 
