@@ -39,28 +39,33 @@ The **Automation Kit** allows enterprise users to organize and customize the ord
 ## Automation Software Stack
 The **Automation Kit** is meant to serve as a foundation of an automation software stack.  The diagram below and the descriptions in this section describe the automation software stack that the **Automation Kit** is meant to be a part of.
 
-![Test Automation Software Stack](images/testing-software-stack-deps.jpg?raw=true)
+![Test Automation Software Stack](./images/testing-software-stack-deps.jpg?raw=true)
 
 The four layer software stack that is shown in the diagram helps to break down the test automation stack into major groups which serves to establish good patterns and practices for maintaining the software stack.  The patterns span different disciplines of the software development process.
 
 The **Automation Kit** servers as the core layer in the above software stack.  It provides the foundation components on which to build a distributed automation software stack and provides extensibility to make it easy to adapt the core layer to different automation scenarios and to build an integration layer on top of.  This makes it easier to use the **Automation Kit** as the foundation for any distributed automation project and itegrate it into an enterprise continuous integration system.
 
 ### Product Alignment ###
-Blah
+The software stack divides the source code up by product alignment.  This seperation of product alignment means that source code can more easily be partitioned for deployment in the enterprise.  The core and intergation components of the software stack that are not closely aligned with the product under test, can be stored in repositories and deployed based on repository style deployment techniques.
 
-![Product Alignment](images/testing-software-alignment.jpg?raw=true)
+![Product Alignment](./images/testing-software-stack-alignment.jpg?raw=true)
 
-### Risk and Impact ###
-Blah
+From the diagram you can see that the mid-tier and test code are the most closely aligned to the the product code and can be kept in the source tree with the product code.  This means that changes to features and assocatied tests can be versioned in the branch along with the feature code.
 
-![Risk and Impact](images/testing-software-impact.jpg?raw=true)
+### Risk, Impact and Testing Scope ###
+The software stack also divides up the code by Risk and Impact.  Because the core and integration code is a central dependency for the mid-tier and test code.  They have a higher risk when it comes to code changes.  They also are shared and so have higher impact.
 
-### Testing Scope ###
-Blah
+![Risk and Impact](./images/testing-software-stack-impact.jpg?raw=true)
 
-![Testing Scope](images/testing-software-testscopes.jpg?raw=true)
+The fact that we seperate out the higher impact code into different layers, means that we can establish different patterns and practices that are followed with working with the code at the given layers in the stack.  This is important as it allows us to make changes to lower impact product code easier for testers but still maintaining quality in the high impact code.  We can also put special layer appropriate testing proceedures in place for the code at the core and intergation layers.
+
+![Testing Scope](./images/testing-software-stack-testscopes.jpg?raw=true)
+
+The diagram above shows how we can establish appropriate testing patterns and practices for the code being merged into each level of the software stack.
+
 
 ### Code Placement ###
+In order to maintain good code organization, testing scopes and dependency alignment.  We need to make sure that new code added to the software stack is integrated into the software stack at the appropriate layer based on function, testing requirments, usage and consumption, and impact/risk.  In order to help keep things in order, its important to have some rules that help engineers make good decisions about where the code being integrated belongs in the software stack.
 
 #### Core ####
 * Not specific to a manufacturer
