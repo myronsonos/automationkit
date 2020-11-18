@@ -18,7 +18,7 @@ The **Automation Kit** is designed for enterprise level distributed automation *
 ## Faster Classification of Issues
 One of the key philosophies behind the **Automation Kit** design is one of being able quickly and efficiently identify the nature of issues that come up during automation runs.  The **Automation Kit** initially classifies errors into one of four categories:
 
-* **Configuration** - We identify configuration issues quickly and classify the so as configuration related issues so as to ensure that we don't waist time troubleshooting configuration related issues.
+* **Configuration** - We identify configuration issues quickly and classify them so configuration related issues so as to ensure that we don't waist time troubleshooting configuration related issues.
 * **Environment** - The **Automation Kit** performs an initial diagnostic scan of the automation landscape and all the resources declared to be necessary to run a series of tasks or tests in order to provide indications of environmental failures as early as possible.  This is important to ensure that we do not generate noise in automation results that are not related to the automation tasks or tests that might fail.
 * **Error** - The **Automation Kit** classifies un-expected errors or errors that are not founded in an expectation of a result as an **Error** condition.  This helps to ensure these errors are given an appropriate initial direction or indication that the issues is a problem in the automation code and not an issue in the code that is the target of the automation run.
 * **Failure** - The **AutomationKit** classifies failures that are associated with an expectation of behavior from a target under test as failures.  This allows for the proper initial classification of an issue as being a problem that is likely failure in the target of the automation and the behavior or result it should have exhibited.
@@ -35,4 +35,16 @@ The **Automation Kit** utilizes its object model to allow tasks and tests to pro
 
 ## Automation Job, Scope and Flow Control 
 The **Automation Kit** allows enterprise users to organize and customize the ordering of automation scope engagements and the flow of an automation job.  This provides the automation engineer the ability to control the engagement of automation scopes of execution and allows for optimal use of time and overlapping of scopes of execution in a test run.
+
+## Automation Software Stack
+The **Automation Kit** is meant to serve as a foundation of an automation software stack.  The diagram below and the descriptions in this section describe the automation software stack that the **Automation Kit** is meant to be a part of.
+
+    +------------------+       +------------------+       +------------------+       +------------------+
+    |                  |       |                  |       |                  |       |                  |
+    |       Core       | <---- |   Integration    | <---- |     Mid-Tier     | <---- |      Tests       |
+    |                  |       |                  |       |                  |       |                  |
+    +------------------+       +------------------+       +------------------+       +------------------+
+
+
+The **Automation Kit** servers as the core layer in the above software stack.  It provides the foundation components on which to build a distributed automation software stack and provides extensibility to make it easy to adapt the core layer to different automation scenarios and to build an integration layer on top of.  This makes it easier to use the **Automation Kit** as the foundation for any distributed automation project and itegrate it into an enterprise continuous integration system.
 
