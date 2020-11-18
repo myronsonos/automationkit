@@ -39,12 +39,15 @@ The **Automation Kit** allows enterprise users to organize and customize the ord
 ## Automation Software Stack
 The **Automation Kit** is meant to serve as a foundation of an automation software stack.  The diagram below and the descriptions in this section describe the automation software stack that the **Automation Kit** is meant to be a part of.
 
+~~~~~ {.ditaa .no-separation}
+
     +------------------+       +------------------+       +------------------+       +------------------+
     |                  |       |                  |       |                  |       |                  |
     |       Core       | <---- |   Integration    | <---- |     Mid-Tier     | <---- |      Tests       |
     |                  |       |                  |       |                  |       |                  |
     +------------------+       +------------------+       +------------------+       +------------------+
 
+~~~~~
 
 The **Automation Kit** servers as the core layer in the above software stack.  It provides the foundation components on which to build a distributed automation software stack and provides extensibility to make it easy to adapt the core layer to different automation scenarios and to build an integration layer on top of.  This makes it easier to use the **Automation Kit** as the foundation for any distributed automation project and itegrate it into an enterprise continuous integration system.
 
