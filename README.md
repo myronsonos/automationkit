@@ -46,15 +46,16 @@ The four layer software stack that is shown in the diagram helps to break down t
 The **Automation Kit** servers as the core layer in the above software stack.  It provides the foundation components on which to build a distributed automation software stack and provides extensibility to make it easy to adapt the core layer to different automation scenarios and to build an integration layer on top of.  This makes it easier to use the **Automation Kit** as the foundation for any distributed automation project and itegrate it into an enterprise continuous integration system.
 
 ### Product Alignment ###
-![Test Automation Software Stack](images/testing-software-alignment.jpg?raw=true)
+
+![Product Alignment](images/testing-software-alignment.jpg?raw=true)
 
 ### Risk and Impact ###
 
-![Test Automation Software Stack](images/testing-software-impact.jpg?raw=true)
+![Risk and Impact](images/testing-software-impact.jpg?raw=true)
 
 ### Testing Scope ###
 
-![Test Automation Software Stack](images/testing-software-testscopes.jpg?raw=true)
+![Testing Scope](images/testing-software-testscopes.jpg?raw=true)
 
 ### Code Placement ###
 
