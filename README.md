@@ -39,22 +39,22 @@ The **Automation Kit** allows enterprise users to organize and customize the ord
 ## Automation Software Stack
 The **Automation Kit** is meant to serve as a foundation of an automation software stack.  The diagram below and the descriptions in this section describe the automation software stack that the **Automation Kit** is meant to be a part of.
 
-![Test Automation Software Stack](images/testing-software-deps.png)
+![Test Automation Software Stack](images/testing-software-deps.jpg)
 
 The four layer software stack that is shown in the diagram helps to break down the test automation stack into major groups which serves to establish good patterns and practices for maintaining the software stack.  The patterns span different disciplines of the software development process.
 
 The **Automation Kit** servers as the core layer in the above software stack.  It provides the foundation components on which to build a distributed automation software stack and provides extensibility to make it easy to adapt the core layer to different automation scenarios and to build an integration layer on top of.  This makes it easier to use the **Automation Kit** as the foundation for any distributed automation project and itegrate it into an enterprise continuous integration system.
 
 ### Product Alignment ###
-![Test Automation Software Stack](images/testing-software-alignment.png)
+![Test Automation Software Stack](images/testing-software-alignment.jpg)
 
 ### Risk and Impact ###
 
-![Test Automation Software Stack](images/testing-software-impact.png)
+![Test Automation Software Stack](images/testing-software-impact.jpg)
 
 ### Testing Scope ###
 
-![Test Automation Software Stack](images/testing-software-testscopes.png)
+![Test Automation Software Stack](images/testing-software-testscopes.jpg)
 
 ### Code Placement ###
 
