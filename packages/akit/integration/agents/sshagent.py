@@ -941,7 +941,7 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
                              users=self._users, port=self._port, primitive=primitive, pty_params=pty_params, interactive=interactive, aspects=aspects)
         return session
 
-    def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None):
+    def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None, ssh_client: Optional[paramiko.SSHClient]=None):
 
         cleanup_client = False
 

@@ -170,6 +170,7 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
         self._subscription_lock = threading.RLock()
         self._subscriptions = {}
+        self._variables = {}
         self._sid_to_subscription_key_lookup = {}
         return
 
@@ -283,8 +284,8 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
         self._subscription_lock.acquire()
         try:
-            if subscription_key in self._subscriptions:
-                event_var = self._subscriptions[subscription_key]
+            if subscription_key in self._variables:
+                event_var = self._variables[subscription_key]
         finally:
             self._subscription_lock.release()
 
@@ -328,7 +329,9 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
                         self._subscription_lock.acquire()
                         try:
                             if otherkey in self._subscriptions:
-                                othervar = self._subscriptions[subscription_key]
+                                othervar = self._subscriptions[otherkey]
+                            elif otherkey in self._variables:
+                                othervar = self._variables[otherkey]
                         finally:
                             self._subscription_lock.release()
                         
@@ -340,8 +343,8 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
                             # create a none subscribed entry for the variable and its value
                             self._subscription_lock.acquire()
                             try:
-                                event_var = UpnpEventVar(subscription_key, event_name, self._subscription_lock, value=event_value)
-                                self._subscriptions[subscription_key] = event_var
+                                event_var = UpnpEventVar(otherkey, event_name, self._subscription_lock, value=event_value)
+                                self._variables[otherkey] = event_var
                             finally:
                                 self._subscription_lock.release()
         return
@@ -398,11 +401,12 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
                 event_var = UpnpEventVar(subscription_key, event_name, self._subscription_lock)
 
                 self._subscriptions[subscription_key] = event_var
-            else:
+                self._variables[subscription_key] = event_var
+            elif subscription_key in self._variables:
                 # We could have an entry for this variable due to a first notify property broadcast,
                 # so look to to see if we have a variable and see if it is missing an SID or if its
                 # subscription has expired.  If either of these are true we should create a subscription 
-                event_var = self._subscriptions[subscription_key]
+                event_var = self._variables[subscription_key]
                 if event_var.sid is None:
                     new_subscription = True
                 elif event_var.expired:
@@ -463,15 +467,16 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
                 if sub_sid is not None:
                     self._subscription_lock.acquire()
                     try:
-                        if subscription_key in self._subscriptions:
+                        event_var = None
+                        if subscription_key in self._variables:
                             # Create the subscription event variable. It is created with an invalid
                             # value and marked as uninitialized because we need to get an update
                             # response in order to set its values.  We can handle the update response
                             # in a Notify thread.
-                            event_var = self._subscriptions[subscription_key]
-                            event_var.update_subscription_details(sub_sid, sub_timeout)
+                            event_var = self._variables[subscription_key]
 
-                            self._sid_to_subscription_key_lookup[sub_sid] = subscription_key
+                        event_var.update_subscription_details(sub_sid, sub_timeout)
+                        self._sid_to_subscription_key_lookup[sub_sid] = subscription_key
                     finally:
                         self._subscription_lock.release()
                     
