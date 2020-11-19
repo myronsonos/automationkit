@@ -15,6 +15,11 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:HTControl:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "IRRepeaterState": { "data_type": "string", "default": None, "allowed_list": "['On', 'Off', 'Disabled']"},
+        "TOSLinkConnected": { "data_type": "boolean", "default": None, "allowed_list": None},
+    }
 
 
     def action_CommitLearnedIRCodes(self, Name, extract_returns=True):
@@ -27,7 +32,7 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Name": Name,
         }
 
-        out_params = self.proxy_call_action("CommitLearnedIRCodes", arguments=arguments)
+        out_params = self._proxy_call_action("CommitLearnedIRCodes", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -46,7 +51,7 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetIRRepeaterState", arguments=arguments)
+        out_params = self._proxy_call_action("GetIRRepeaterState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -65,7 +70,7 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetLEDFeedbackState", arguments=arguments)
+        out_params = self._proxy_call_action("GetLEDFeedbackState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -86,7 +91,7 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Timeout": Timeout,
         }
 
-        out_params = self.proxy_call_action("IdentifyIRRemote", arguments=arguments)
+        out_params = self._proxy_call_action("IdentifyIRRemote", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -105,7 +110,7 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("IsRemoteConfigured", arguments=arguments)
+        out_params = self._proxy_call_action("IsRemoteConfigured", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -127,7 +132,7 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Timeout": Timeout,
         }
 
-        out_params = self.proxy_call_action("LearnIRCode", arguments=arguments)
+        out_params = self._proxy_call_action("LearnIRCode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -148,7 +153,7 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredIRRepeaterState": DesiredIRRepeaterState,
         }
 
-        out_params = self.proxy_call_action("SetIRRepeaterState", arguments=arguments)
+        out_params = self._proxy_call_action("SetIRRepeaterState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -169,7 +174,7 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "LEDFeedbackState": LEDFeedbackState,
         }
 
-        out_params = self.proxy_call_action("SetLEDFeedbackState", arguments=arguments)
+        out_params = self._proxy_call_action("SetLEDFeedbackState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

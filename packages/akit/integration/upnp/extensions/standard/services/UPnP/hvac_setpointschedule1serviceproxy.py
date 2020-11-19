@@ -15,6 +15,8 @@ class HVAC_SetpointSchedule1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:HVAC_SetpointSchedule:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_GetEventsPerDay(self, SubmittedDayOfWeek, extract_returns=True):
@@ -27,7 +29,7 @@ class HVAC_SetpointSchedule1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SubmittedDayOfWeek": SubmittedDayOfWeek,
         }
 
-        out_params = self.proxy_call_action("GetEventsPerDay", arguments=arguments)
+        out_params = self._proxy_call_action("GetEventsPerDay", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -52,7 +54,7 @@ class HVAC_SetpointSchedule1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewCoolingSetpoint": NewCoolingSetpoint,
         }
 
-        out_params = self.proxy_call_action("SetEventParameters", arguments=arguments)
+        out_params = self._proxy_call_action("SetEventParameters", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

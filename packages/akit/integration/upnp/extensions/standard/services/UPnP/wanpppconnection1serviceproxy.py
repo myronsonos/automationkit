@@ -15,6 +15,8 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANPPPConnection:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_AddPortMapping(self, NewRemoteHost, NewExternalPort, NewProtocol, NewInternalPort, NewInternalClient, NewEnabled, NewPortMappingDescription, NewLeaseDuration, extract_returns=True):
@@ -34,7 +36,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewLeaseDuration": NewLeaseDuration,
         }
 
-        out_params = self.proxy_call_action("AddPortMapping", arguments=arguments)
+        out_params = self._proxy_call_action("AddPortMapping", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -56,7 +58,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewPassword": NewPassword,
         }
 
-        out_params = self.proxy_call_action("ConfigureConnection", arguments=arguments)
+        out_params = self._proxy_call_action("ConfigureConnection", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -79,7 +81,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewProtocol": NewProtocol,
         }
 
-        out_params = self.proxy_call_action("DeletePortMapping", arguments=arguments)
+        out_params = self._proxy_call_action("DeletePortMapping", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -98,7 +100,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("ForceTermination", arguments=arguments)
+        out_params = self._proxy_call_action("ForceTermination", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -117,7 +119,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetAutoDisconnectTime", arguments=arguments)
+        out_params = self._proxy_call_action("GetAutoDisconnectTime", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -136,7 +138,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetConnectionTypeInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetConnectionTypeInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -155,7 +157,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetExternalIPAddress", arguments=arguments)
+        out_params = self._proxy_call_action("GetExternalIPAddress", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -176,7 +178,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewPortMappingIndex": NewPortMappingIndex,
         }
 
-        out_params = self.proxy_call_action("GetGenericPortMappingEntry", arguments=arguments)
+        out_params = self._proxy_call_action("GetGenericPortMappingEntry", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -195,7 +197,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetIdleDisconnectTime", arguments=arguments)
+        out_params = self._proxy_call_action("GetIdleDisconnectTime", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -214,7 +216,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetLinkLayerMaxBitRates", arguments=arguments)
+        out_params = self._proxy_call_action("GetLinkLayerMaxBitRates", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -233,7 +235,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetNATRSIPStatus", arguments=arguments)
+        out_params = self._proxy_call_action("GetNATRSIPStatus", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -252,7 +254,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPPPAuthenticationProtocol", arguments=arguments)
+        out_params = self._proxy_call_action("GetPPPAuthenticationProtocol", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -271,7 +273,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPPPCompressionProtocol", arguments=arguments)
+        out_params = self._proxy_call_action("GetPPPCompressionProtocol", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -290,7 +292,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPPPEncryptionProtocol", arguments=arguments)
+        out_params = self._proxy_call_action("GetPPPEncryptionProtocol", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -309,7 +311,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPassword", arguments=arguments)
+        out_params = self._proxy_call_action("GetPassword", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -332,7 +334,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewProtocol": NewProtocol,
         }
 
-        out_params = self.proxy_call_action("GetSpecificPortMappingEntry", arguments=arguments)
+        out_params = self._proxy_call_action("GetSpecificPortMappingEntry", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -351,7 +353,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetStatusInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetStatusInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -370,7 +372,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetUserName", arguments=arguments)
+        out_params = self._proxy_call_action("GetUserName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -389,7 +391,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetWarnDisconnectDelay", arguments=arguments)
+        out_params = self._proxy_call_action("GetWarnDisconnectDelay", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -408,7 +410,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("RequestConnection", arguments=arguments)
+        out_params = self._proxy_call_action("RequestConnection", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -427,7 +429,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("RequestTermination", arguments=arguments)
+        out_params = self._proxy_call_action("RequestTermination", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -448,7 +450,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewAutoDisconnectTime": NewAutoDisconnectTime,
         }
 
-        out_params = self.proxy_call_action("SetAutoDisconnectTime", arguments=arguments)
+        out_params = self._proxy_call_action("SetAutoDisconnectTime", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -469,7 +471,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewConnectionType": NewConnectionType,
         }
 
-        out_params = self.proxy_call_action("SetConnectionType", arguments=arguments)
+        out_params = self._proxy_call_action("SetConnectionType", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -490,7 +492,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewIdleDisconnectTime": NewIdleDisconnectTime,
         }
 
-        out_params = self.proxy_call_action("SetIdleDisconnectTime", arguments=arguments)
+        out_params = self._proxy_call_action("SetIdleDisconnectTime", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -511,7 +513,7 @@ class WANPPPConnection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewWarnDisconnectDelay": NewWarnDisconnectDelay,
         }
 
-        out_params = self.proxy_call_action("SetWarnDisconnectDelay", arguments=arguments)
+        out_params = self._proxy_call_action("SetWarnDisconnectDelay", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

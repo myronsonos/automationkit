@@ -15,6 +15,8 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_GetActiveConnection(self, NewActiveConnectionIndex, extract_returns=True):
@@ -27,7 +29,7 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
             "NewActiveConnectionIndex": NewActiveConnectionIndex,
         }
 
-        out_params = self.proxy_call_action("GetActiveConnection", arguments=arguments)
+        out_params = self._proxy_call_action("GetActiveConnection", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -46,7 +48,7 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetCommonLinkProperties", arguments=arguments)
+        out_params = self._proxy_call_action("GetCommonLinkProperties", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -65,7 +67,7 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetEnabledForInternet", arguments=arguments)
+        out_params = self._proxy_call_action("GetEnabledForInternet", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -84,7 +86,7 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetMaximumActiveConnections", arguments=arguments)
+        out_params = self._proxy_call_action("GetMaximumActiveConnections", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -103,7 +105,7 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTotalBytesReceived", arguments=arguments)
+        out_params = self._proxy_call_action("GetTotalBytesReceived", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -122,7 +124,7 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTotalBytesSent", arguments=arguments)
+        out_params = self._proxy_call_action("GetTotalBytesSent", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -141,7 +143,7 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTotalPacketsReceived", arguments=arguments)
+        out_params = self._proxy_call_action("GetTotalPacketsReceived", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -160,7 +162,7 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTotalPacketsSent", arguments=arguments)
+        out_params = self._proxy_call_action("GetTotalPacketsSent", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -179,7 +181,7 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetWANAccessProvider", arguments=arguments)
+        out_params = self._proxy_call_action("GetWANAccessProvider", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -200,7 +202,7 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
             "NewEnabledForInternet": NewEnabledForInternet,
         }
 
-        out_params = self.proxy_call_action("SetEnabledForInternet", arguments=arguments)
+        out_params = self._proxy_call_action("SetEnabledForInternet", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

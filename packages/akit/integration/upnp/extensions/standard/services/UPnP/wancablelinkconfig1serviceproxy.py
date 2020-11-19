@@ -15,6 +15,8 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANCableLinkConfig:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_GetBPIEncryptionEnabled(self, extract_returns=True):
@@ -25,7 +27,7 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetBPIEncryptionEnabled", arguments=arguments)
+        out_params = self._proxy_call_action("GetBPIEncryptionEnabled", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +46,7 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetCableLinkConfigInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetCableLinkConfigInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +65,7 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetConfigFile", arguments=arguments)
+        out_params = self._proxy_call_action("GetConfigFile", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -82,7 +84,7 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDownstreamFrequency", arguments=arguments)
+        out_params = self._proxy_call_action("GetDownstreamFrequency", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -101,7 +103,7 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDownstreamModulation", arguments=arguments)
+        out_params = self._proxy_call_action("GetDownstreamModulation", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -120,7 +122,7 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTFTPServer", arguments=arguments)
+        out_params = self._proxy_call_action("GetTFTPServer", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -139,7 +141,7 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetUpstreamChannelID", arguments=arguments)
+        out_params = self._proxy_call_action("GetUpstreamChannelID", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -158,7 +160,7 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetUpstreamFrequency", arguments=arguments)
+        out_params = self._proxy_call_action("GetUpstreamFrequency", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -177,7 +179,7 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetUpstreamModulation", arguments=arguments)
+        out_params = self._proxy_call_action("GetUpstreamModulation", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -196,7 +198,7 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetUpstreamPowerLevel", arguments=arguments)
+        out_params = self._proxy_call_action("GetUpstreamPowerLevel", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

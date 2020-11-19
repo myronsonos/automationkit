@@ -15,6 +15,10 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ScheduledRecording:2'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "LastChange": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_BrowseRecordSchedules(self, Filter, StartingIndex, RequestedCount, SortCriteria, extract_returns=True):
@@ -30,7 +34,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SortCriteria": SortCriteria,
         }
 
-        out_params = self.proxy_call_action("BrowseRecordSchedules", arguments=arguments)
+        out_params = self._proxy_call_action("BrowseRecordSchedules", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -55,7 +59,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SortCriteria": SortCriteria,
         }
 
-        out_params = self.proxy_call_action("BrowseRecordTasks", arguments=arguments)
+        out_params = self._proxy_call_action("BrowseRecordTasks", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -76,7 +80,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Elements": Elements,
         }
 
-        out_params = self.proxy_call_action("CreateRecordSchedule", arguments=arguments)
+        out_params = self._proxy_call_action("CreateRecordSchedule", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -97,7 +101,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RecordScheduleID": RecordScheduleID,
         }
 
-        out_params = self.proxy_call_action("DeleteRecordSchedule", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteRecordSchedule", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -118,7 +122,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RecordTaskID": RecordTaskID,
         }
 
-        out_params = self.proxy_call_action("DeleteRecordTask", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteRecordTask", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -139,7 +143,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RecordScheduleID": RecordScheduleID,
         }
 
-        out_params = self.proxy_call_action("DisableRecordSchedule", arguments=arguments)
+        out_params = self._proxy_call_action("DisableRecordSchedule", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -160,7 +164,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RecordTaskID": RecordTaskID,
         }
 
-        out_params = self.proxy_call_action("DisableRecordTask", arguments=arguments)
+        out_params = self._proxy_call_action("DisableRecordTask", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -181,7 +185,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RecordScheduleID": RecordScheduleID,
         }
 
-        out_params = self.proxy_call_action("EnableRecordSchedule", arguments=arguments)
+        out_params = self._proxy_call_action("EnableRecordSchedule", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -202,7 +206,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RecordTaskID": RecordTaskID,
         }
 
-        out_params = self.proxy_call_action("EnableRecordTask", arguments=arguments)
+        out_params = self._proxy_call_action("EnableRecordTask", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -224,7 +228,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Filter": Filter,
         }
 
-        out_params = self.proxy_call_action("GetAllowedValues", arguments=arguments)
+        out_params = self._proxy_call_action("GetAllowedValues", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -245,7 +249,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DataTypeID": DataTypeID,
         }
 
-        out_params = self.proxy_call_action("GetPropertyList", arguments=arguments)
+        out_params = self._proxy_call_action("GetPropertyList", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -267,7 +271,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Filter": Filter,
         }
 
-        out_params = self.proxy_call_action("GetRecordSchedule", arguments=arguments)
+        out_params = self._proxy_call_action("GetRecordSchedule", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -288,7 +292,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RecordScheduleID": RecordScheduleID,
         }
 
-        out_params = self.proxy_call_action("GetRecordScheduleConflicts", arguments=arguments)
+        out_params = self._proxy_call_action("GetRecordScheduleConflicts", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -310,7 +314,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Filter": Filter,
         }
 
-        out_params = self.proxy_call_action("GetRecordTask", arguments=arguments)
+        out_params = self._proxy_call_action("GetRecordTask", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -331,7 +335,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RecordTaskID": RecordTaskID,
         }
 
-        out_params = self.proxy_call_action("GetRecordTaskConflicts", arguments=arguments)
+        out_params = self._proxy_call_action("GetRecordTaskConflicts", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -350,7 +354,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSortCapabilities", arguments=arguments)
+        out_params = self._proxy_call_action("GetSortCapabilities", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -369,7 +373,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetStateUpdateID", arguments=arguments)
+        out_params = self._proxy_call_action("GetStateUpdateID", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -390,7 +394,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RecordTaskID": RecordTaskID,
         }
 
-        out_params = self.proxy_call_action("ResetRecordTask", arguments=arguments)
+        out_params = self._proxy_call_action("ResetRecordTask", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

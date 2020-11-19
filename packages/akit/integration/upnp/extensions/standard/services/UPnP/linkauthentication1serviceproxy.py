@@ -15,6 +15,11 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:LinkAuthentication:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "LastChange": { "data_type": "string", "default": None, "allowed_list": None},
+        "LastError": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_AddEntry(self, NewIdentifier, NewSecret, NewSecretType, NewAuthType, NewAuthState, NewCredentialState, NewDescription, NewMACAddress, NewCredentialDuration, NewLinkedIdentifier, extract_returns=True):
@@ -36,7 +41,7 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewLinkedIdentifier": NewLinkedIdentifier,
         }
 
-        out_params = self.proxy_call_action("AddEntry", arguments=arguments)
+        out_params = self._proxy_call_action("AddEntry", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -57,7 +62,7 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewIdentifier": NewIdentifier,
         }
 
-        out_params = self.proxy_call_action("DeleteEntry", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteEntry", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -76,7 +81,7 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("FactoryDefaultReset", arguments=arguments)
+        out_params = self._proxy_call_action("FactoryDefaultReset", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -97,7 +102,7 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewIndex": NewIndex,
         }
 
-        out_params = self.proxy_call_action("GetGenericEntry", arguments=arguments)
+        out_params = self._proxy_call_action("GetGenericEntry", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -116,7 +121,7 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetNumberOfEntries", arguments=arguments)
+        out_params = self._proxy_call_action("GetNumberOfEntries", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -137,7 +142,7 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewIdentifierKey": NewIdentifierKey,
         }
 
-        out_params = self.proxy_call_action("GetSpecificEntry", arguments=arguments)
+        out_params = self._proxy_call_action("GetSpecificEntry", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -156,7 +161,7 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("ResetAuthentication", arguments=arguments)
+        out_params = self._proxy_call_action("ResetAuthentication", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -186,7 +191,7 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewLinkedIdentifier": NewLinkedIdentifier,
         }
 
-        out_params = self.proxy_call_action("UpdateEntry", arguments=arguments)
+        out_params = self._proxy_call_action("UpdateEntry", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

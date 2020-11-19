@@ -15,6 +15,14 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:SystemProperties:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "CustomerID": { "data_type": "string", "default": None, "allowed_list": None},
+        "ThirdPartyHash": { "data_type": "string", "default": None, "allowed_list": None},
+        "UpdateID": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "UpdateIDX": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "VoiceUpdateID": { "data_type": "ui4", "default": None, "allowed_list": None},
+    }
 
 
     def action_AddAccountX(self, AccountType, AccountID, AccountPassword, extract_returns=True):
@@ -29,7 +37,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "AccountPassword": AccountPassword,
         }
 
-        out_params = self.proxy_call_action("AddAccountX", arguments=arguments)
+        out_params = self._proxy_call_action("AddAccountX", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -57,7 +65,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "AccountTier": AccountTier,
         }
 
-        out_params = self.proxy_call_action("AddOAuthAccountX", arguments=arguments)
+        out_params = self._proxy_call_action("AddOAuthAccountX", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -76,7 +84,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("DoPostUpdateTasks", arguments=arguments)
+        out_params = self._proxy_call_action("DoPostUpdateTasks", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -99,7 +107,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewAccountMd": NewAccountMd,
         }
 
-        out_params = self.proxy_call_action("EditAccountMd", arguments=arguments)
+        out_params = self._proxy_call_action("EditAccountMd", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -122,7 +130,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewAccountPassword": NewAccountPassword,
         }
 
-        out_params = self.proxy_call_action("EditAccountPasswordX", arguments=arguments)
+        out_params = self._proxy_call_action("EditAccountPasswordX", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -143,7 +151,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RDMValue": RDMValue,
         }
 
-        out_params = self.proxy_call_action("EnableRDM", arguments=arguments)
+        out_params = self._proxy_call_action("EnableRDM", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -162,7 +170,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetRDM", arguments=arguments)
+        out_params = self._proxy_call_action("GetRDM", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -183,7 +191,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "VariableName": VariableName,
         }
 
-        out_params = self.proxy_call_action("GetString", arguments=arguments)
+        out_params = self._proxy_call_action("GetString", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -204,7 +212,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "AccountType": AccountType,
         }
 
-        out_params = self.proxy_call_action("GetWebCode", arguments=arguments)
+        out_params = self._proxy_call_action("GetWebCode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -227,7 +235,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "AccountPassword": AccountPassword,
         }
 
-        out_params = self.proxy_call_action("ProvisionCredentialedTrialAccountX", arguments=arguments)
+        out_params = self._proxy_call_action("ProvisionCredentialedTrialAccountX", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -251,7 +259,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "AccountKey": AccountKey,
         }
 
-        out_params = self.proxy_call_action("RefreshAccountCredentialsX", arguments=arguments)
+        out_params = self._proxy_call_action("RefreshAccountCredentialsX", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -272,7 +280,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "VariableName": VariableName,
         }
 
-        out_params = self.proxy_call_action("Remove", arguments=arguments)
+        out_params = self._proxy_call_action("Remove", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -294,7 +302,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "AccountID": AccountID,
         }
 
-        out_params = self.proxy_call_action("RemoveAccount", arguments=arguments)
+        out_params = self._proxy_call_action("RemoveAccount", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -320,7 +328,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "OAuthDeviceID": OAuthDeviceID,
         }
 
-        out_params = self.proxy_call_action("ReplaceAccountX", arguments=arguments)
+        out_params = self._proxy_call_action("ReplaceAccountX", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -339,7 +347,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("ResetThirdPartyCredentials", arguments=arguments)
+        out_params = self._proxy_call_action("ResetThirdPartyCredentials", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -361,7 +369,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "AccountNickname": AccountNickname,
         }
 
-        out_params = self.proxy_call_action("SetAccountNicknameX", arguments=arguments)
+        out_params = self._proxy_call_action("SetAccountNicknameX", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -383,7 +391,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "StringValue": StringValue,
         }
 
-        out_params = self.proxy_call_action("SetString", arguments=arguments)
+        out_params = self._proxy_call_action("SetString", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

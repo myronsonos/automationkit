@@ -15,6 +15,8 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANPOTSLinkConfig:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_GetCallRetryInfo(self, extract_returns=True):
@@ -25,7 +27,7 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetCallRetryInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetCallRetryInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +46,7 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDataCompression", arguments=arguments)
+        out_params = self._proxy_call_action("GetDataCompression", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +65,7 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDataModulationSupported", arguments=arguments)
+        out_params = self._proxy_call_action("GetDataModulationSupported", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -82,7 +84,7 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDataProtocol", arguments=arguments)
+        out_params = self._proxy_call_action("GetDataProtocol", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -101,7 +103,7 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFclass", arguments=arguments)
+        out_params = self._proxy_call_action("GetFclass", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -120,7 +122,7 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetISPInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetISPInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -139,7 +141,7 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPlusVTRCommandSupported", arguments=arguments)
+        out_params = self._proxy_call_action("GetPlusVTRCommandSupported", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -161,7 +163,7 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewDelayBetweenRetries": NewDelayBetweenRetries,
         }
 
-        out_params = self.proxy_call_action("SetCallRetryInfo", arguments=arguments)
+        out_params = self._proxy_call_action("SetCallRetryInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -184,7 +186,7 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewLinkType": NewLinkType,
         }
 
-        out_params = self.proxy_call_action("SetISPInfo", arguments=arguments)
+        out_params = self._proxy_call_action("SetISPInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

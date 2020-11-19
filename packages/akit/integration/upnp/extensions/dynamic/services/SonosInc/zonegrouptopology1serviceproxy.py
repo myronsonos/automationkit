@@ -15,6 +15,20 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ZoneGroupTopology:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "AlarmRunSequence": { "data_type": "string", "default": None, "allowed_list": None},
+        "AreasUpdateID": { "data_type": "string", "default": None, "allowed_list": None},
+        "AvailableSoftwareUpdate": { "data_type": "string", "default": None, "allowed_list": None},
+        "MuseHouseholdId": { "data_type": "string", "default": None, "allowed_list": None},
+        "NetsettingsUpdateID": { "data_type": "string", "default": None, "allowed_list": None},
+        "SourceAreasUpdateID": { "data_type": "string", "default": None, "allowed_list": None},
+        "ThirdPartyMediaServersX": { "data_type": "string", "default": None, "allowed_list": None},
+        "ZoneGroupID": { "data_type": "string", "default": None, "allowed_list": None},
+        "ZoneGroupName": { "data_type": "string", "default": None, "allowed_list": None},
+        "ZoneGroupState": { "data_type": "string", "default": None, "allowed_list": None},
+        "ZonePlayerUUIDsInGroup": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_BeginSoftwareUpdate(self, UpdateURL, Flags, ExtraOptions, extract_returns=True):
@@ -29,7 +43,7 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ExtraOptions": ExtraOptions,
         }
 
-        out_params = self.proxy_call_action("BeginSoftwareUpdate", arguments=arguments)
+        out_params = self._proxy_call_action("BeginSoftwareUpdate", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -52,7 +66,7 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Version": Version,
         }
 
-        out_params = self.proxy_call_action("CheckForUpdate", arguments=arguments)
+        out_params = self._proxy_call_action("CheckForUpdate", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -71,7 +85,7 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetZoneGroupAttributes", arguments=arguments)
+        out_params = self._proxy_call_action("GetZoneGroupAttributes", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -90,7 +104,7 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetZoneGroupState", arguments=arguments)
+        out_params = self._proxy_call_action("GetZoneGroupState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -113,7 +127,7 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MobileIPAndPort": MobileIPAndPort,
         }
 
-        out_params = self.proxy_call_action("RegisterMobileDevice", arguments=arguments)
+        out_params = self._proxy_call_action("RegisterMobileDevice", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -132,7 +146,7 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("ReportAlarmStartedRunning", arguments=arguments)
+        out_params = self._proxy_call_action("ReportAlarmStartedRunning", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -154,7 +168,7 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredAction": DesiredAction,
         }
 
-        out_params = self.proxy_call_action("ReportUnresponsiveDevice", arguments=arguments)
+        out_params = self._proxy_call_action("ReportUnresponsiveDevice", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -176,7 +190,7 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Type": Type,
         }
 
-        out_params = self.proxy_call_action("SubmitDiagnostics", arguments=arguments)
+        out_params = self._proxy_call_action("SubmitDiagnostics", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

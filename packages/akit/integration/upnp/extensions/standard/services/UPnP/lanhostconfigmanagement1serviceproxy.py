@@ -15,6 +15,8 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:LANHostConfigManagement:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_DeleteDNSServer(self, NewDNSServers, extract_returns=True):
@@ -27,7 +29,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewDNSServers": NewDNSServers,
         }
 
-        out_params = self.proxy_call_action("DeleteDNSServer", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteDNSServer", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -48,7 +50,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewIPRouters": NewIPRouters,
         }
 
-        out_params = self.proxy_call_action("DeleteIPRouter", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteIPRouter", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -69,7 +71,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewReservedAddresses": NewReservedAddresses,
         }
 
-        out_params = self.proxy_call_action("DeleteReservedAddress", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteReservedAddress", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -88,7 +90,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetAddressRange", arguments=arguments)
+        out_params = self._proxy_call_action("GetAddressRange", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -107,7 +109,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDHCPRelay", arguments=arguments)
+        out_params = self._proxy_call_action("GetDHCPRelay", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -126,7 +128,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDHCPServerConfigurable", arguments=arguments)
+        out_params = self._proxy_call_action("GetDHCPServerConfigurable", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -145,7 +147,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDNSServers", arguments=arguments)
+        out_params = self._proxy_call_action("GetDNSServers", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -164,7 +166,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDomainName", arguments=arguments)
+        out_params = self._proxy_call_action("GetDomainName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -183,7 +185,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetIPRoutersList", arguments=arguments)
+        out_params = self._proxy_call_action("GetIPRoutersList", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -202,7 +204,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetReservedAddresses", arguments=arguments)
+        out_params = self._proxy_call_action("GetReservedAddresses", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -221,7 +223,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSubnetMask", arguments=arguments)
+        out_params = self._proxy_call_action("GetSubnetMask", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -243,7 +245,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewMaxAddress": NewMaxAddress,
         }
 
-        out_params = self.proxy_call_action("SetAddressRange", arguments=arguments)
+        out_params = self._proxy_call_action("SetAddressRange", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -264,7 +266,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewDHCPRelay": NewDHCPRelay,
         }
 
-        out_params = self.proxy_call_action("SetDHCPRelay", arguments=arguments)
+        out_params = self._proxy_call_action("SetDHCPRelay", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -285,7 +287,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewDHCPServerConfigurable": NewDHCPServerConfigurable,
         }
 
-        out_params = self.proxy_call_action("SetDHCPServerConfigurable", arguments=arguments)
+        out_params = self._proxy_call_action("SetDHCPServerConfigurable", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -306,7 +308,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewDNSServers": NewDNSServers,
         }
 
-        out_params = self.proxy_call_action("SetDNSServer", arguments=arguments)
+        out_params = self._proxy_call_action("SetDNSServer", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -327,7 +329,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewDomainName": NewDomainName,
         }
 
-        out_params = self.proxy_call_action("SetDomainName", arguments=arguments)
+        out_params = self._proxy_call_action("SetDomainName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -348,7 +350,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewIPRouters": NewIPRouters,
         }
 
-        out_params = self.proxy_call_action("SetIPRouter", arguments=arguments)
+        out_params = self._proxy_call_action("SetIPRouter", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -369,7 +371,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewReservedAddresses": NewReservedAddresses,
         }
 
-        out_params = self.proxy_call_action("SetReservedAddress", arguments=arguments)
+        out_params = self._proxy_call_action("SetReservedAddress", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -390,7 +392,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewSubnetMask": NewSubnetMask,
         }
 
-        out_params = self.proxy_call_action("SetSubnetMask", arguments=arguments)
+        out_params = self._proxy_call_action("SetSubnetMask", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

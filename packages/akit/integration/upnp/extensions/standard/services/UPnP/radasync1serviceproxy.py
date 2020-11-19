@@ -15,6 +15,8 @@ class RADASync1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RADASync:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_AddRemoteDevices(self, DeviceList, ID, extract_returns=True):
@@ -28,7 +30,7 @@ class RADASync1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ID": ID,
         }
 
-        out_params = self.proxy_call_action("AddRemoteDevices", arguments=arguments)
+        out_params = self._proxy_call_action("AddRemoteDevices", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -49,7 +51,7 @@ class RADASync1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ID": ID,
         }
 
-        out_params = self.proxy_call_action("HeartbeatUpdate", arguments=arguments)
+        out_params = self._proxy_call_action("HeartbeatUpdate", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -71,7 +73,7 @@ class RADASync1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ID": ID,
         }
 
-        out_params = self.proxy_call_action("RemoveRemoteDevices", arguments=arguments)
+        out_params = self._proxy_call_action("RemoveRemoteDevices", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -93,7 +95,7 @@ class RADASync1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ID": ID,
         }
 
-        out_params = self.proxy_call_action("SetDDDLocation", arguments=arguments)
+        out_params = self._proxy_call_action("SetDDDLocation", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

@@ -15,6 +15,10 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'MicrosoftCorporation'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RenderingControl:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "LastChange": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_GetMute(self, InstanceID, Channel, extract_returns=True):
@@ -28,7 +32,7 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Channel": Channel,
         }
 
-        out_params = self.proxy_call_action("GetMute", arguments=arguments)
+        out_params = self._proxy_call_action("GetMute", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -50,7 +54,7 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Channel": Channel,
         }
 
-        out_params = self.proxy_call_action("GetVolume", arguments=arguments)
+        out_params = self._proxy_call_action("GetVolume", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -71,7 +75,7 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("ListPresets", arguments=arguments)
+        out_params = self._proxy_call_action("ListPresets", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -93,7 +97,7 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "PresetName": PresetName,
         }
 
-        out_params = self.proxy_call_action("SelectPreset", arguments=arguments)
+        out_params = self._proxy_call_action("SelectPreset", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -116,7 +120,7 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredMute": DesiredMute,
         }
 
-        out_params = self.proxy_call_action("SetMute", arguments=arguments)
+        out_params = self._proxy_call_action("SetMute", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -139,7 +143,7 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredVolume": DesiredVolume,
         }
 
-        out_params = self.proxy_call_action("SetVolume", arguments=arguments)
+        out_params = self._proxy_call_action("SetVolume", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

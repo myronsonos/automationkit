@@ -15,6 +15,11 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Messaging:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "NewMessages": { "data_type": "string", "default": None, "allowed_list": None},
+        "SessionUpdates": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_AcceptSession(self, SessionID, extract_returns=True):
@@ -27,7 +32,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SessionID": SessionID,
         }
 
-        out_params = self.proxy_call_action("AcceptSession", arguments=arguments)
+        out_params = self._proxy_call_action("AcceptSession", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -48,7 +53,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SessionID": SessionID,
         }
 
-        out_params = self.proxy_call_action("CancelFileTransfer", arguments=arguments)
+        out_params = self._proxy_call_action("CancelFileTransfer", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -69,7 +74,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SessionID": SessionID,
         }
 
-        out_params = self.proxy_call_action("CloseSession", arguments=arguments)
+        out_params = self._proxy_call_action("CloseSession", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -93,7 +98,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SupportedContentType": SupportedContentType,
         }
 
-        out_params = self.proxy_call_action("CreateSession", arguments=arguments)
+        out_params = self._proxy_call_action("CreateSession", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -114,7 +119,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MessageID": MessageID,
         }
 
-        out_params = self.proxy_call_action("DeleteMessage", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteMessage", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -135,7 +140,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SessionID": SessionID,
         }
 
-        out_params = self.proxy_call_action("GetFileTransferSession", arguments=arguments)
+        out_params = self._proxy_call_action("GetFileTransferSession", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -154,7 +159,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetMessagingCapabilities", arguments=arguments)
+        out_params = self._proxy_call_action("GetMessagingCapabilities", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -173,7 +178,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetNewMessages", arguments=arguments)
+        out_params = self._proxy_call_action("GetNewMessages", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -192,7 +197,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSessionUpdates", arguments=arguments)
+        out_params = self._proxy_call_action("GetSessionUpdates", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -215,7 +220,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SessionStatus": SessionStatus,
         }
 
-        out_params = self.proxy_call_action("GetSessions", arguments=arguments)
+        out_params = self._proxy_call_action("GetSessions", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -234,7 +239,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTelephonyIdentity", arguments=arguments)
+        out_params = self._proxy_call_action("GetTelephonyIdentity", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -255,7 +260,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SessionID": SessionID,
         }
 
-        out_params = self.proxy_call_action("JoinSession", arguments=arguments)
+        out_params = self._proxy_call_action("JoinSession", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -276,7 +281,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SessionID": SessionID,
         }
 
-        out_params = self.proxy_call_action("LeaveSession", arguments=arguments)
+        out_params = self._proxy_call_action("LeaveSession", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -302,7 +307,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SessionClass": SessionClass,
         }
 
-        out_params = self.proxy_call_action("ModifySession", arguments=arguments)
+        out_params = self._proxy_call_action("ModifySession", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -323,7 +328,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MessageID": MessageID,
         }
 
-        out_params = self.proxy_call_action("ReadMessage", arguments=arguments)
+        out_params = self._proxy_call_action("ReadMessage", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -347,7 +352,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SessionID": SessionID,
         }
 
-        out_params = self.proxy_call_action("SearchMessages", arguments=arguments)
+        out_params = self._proxy_call_action("SearchMessages", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -368,7 +373,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MessageToSend": MessageToSend,
         }
 
-        out_params = self.proxy_call_action("SendMessage", arguments=arguments)
+        out_params = self._proxy_call_action("SendMessage", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -389,7 +394,7 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "FileInfoList": FileInfoList,
         }
 
-        out_params = self.proxy_call_action("StartFileTransfer", arguments=arguments)
+        out_params = self._proxy_call_action("StartFileTransfer", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

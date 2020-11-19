@@ -15,6 +15,15 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:CallManagement:2'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "CallBackAvailability": { "data_type": "string", "default": None, "allowed_list": None},
+        "CallInfo": { "data_type": "string", "default": None, "allowed_list": None},
+        "ParallelCallInfo": { "data_type": "string", "default": None, "allowed_list": None},
+        "PushInfo": { "data_type": "string", "default": None, "allowed_list": None},
+        "TelCPNameList": { "data_type": "string", "default": None, "allowed_list": None},
+        "VoiceMailInfo": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_AcceptCall(self, TelCPName, SecretKey, TargetCallID, MediaCapabilityInfo, CallMode, extract_returns=True):
@@ -31,7 +40,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CallMode": CallMode,
         }
 
-        out_params = self.proxy_call_action("AcceptCall", arguments=arguments)
+        out_params = self._proxy_call_action("AcceptCall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -55,7 +64,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MediaCapabilityInfo": MediaCapabilityInfo,
         }
 
-        out_params = self.proxy_call_action("AcceptModifyCall", arguments=arguments)
+        out_params = self._proxy_call_action("AcceptModifyCall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -76,7 +85,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ParallelCalleeID": ParallelCalleeID,
         }
 
-        out_params = self.proxy_call_action("AcceptParallelCall", arguments=arguments)
+        out_params = self._proxy_call_action("AcceptParallelCall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -100,7 +109,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CallMode": CallMode,
         }
 
-        out_params = self.proxy_call_action("ChangeCallMode", arguments=arguments)
+        out_params = self._proxy_call_action("ChangeCallMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -124,7 +133,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewMonopolizer": NewMonopolizer,
         }
 
-        out_params = self.proxy_call_action("ChangeMonopolizer", arguments=arguments)
+        out_params = self._proxy_call_action("ChangeMonopolizer", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -147,7 +156,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewTelCPName": NewTelCPName,
         }
 
-        out_params = self.proxy_call_action("ChangeTelCPName", arguments=arguments)
+        out_params = self._proxy_call_action("ChangeTelCPName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -168,7 +177,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CallBackID": CallBackID,
         }
 
-        out_params = self.proxy_call_action("ClearCallBack", arguments=arguments)
+        out_params = self._proxy_call_action("ClearCallBack", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -187,7 +196,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("ClearCallLogs", arguments=arguments)
+        out_params = self._proxy_call_action("ClearCallLogs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -210,7 +219,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "VoiceMailID": VoiceMailID,
         }
 
-        out_params = self.proxy_call_action("DeleteVoiceMail", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteVoiceMail", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -232,7 +241,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CallType": CallType,
         }
 
-        out_params = self.proxy_call_action("EnhancedInitiateCall", arguments=arguments)
+        out_params = self._proxy_call_action("EnhancedInitiateCall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -251,7 +260,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetCallBackInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetCallBackInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -274,7 +283,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TargetCallID": TargetCallID,
         }
 
-        out_params = self.proxy_call_action("GetCallInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetCallInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -293,7 +302,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetCallLogs", arguments=arguments)
+        out_params = self._proxy_call_action("GetCallLogs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -314,7 +323,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TCMediaCapabilityInfo": TCMediaCapabilityInfo,
         }
 
-        out_params = self.proxy_call_action("GetMediaCapabilities", arguments=arguments)
+        out_params = self._proxy_call_action("GetMediaCapabilities", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -335,7 +344,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "PushInfoList": PushInfoList,
         }
 
-        out_params = self.proxy_call_action("GetPushInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetPushInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -354,7 +363,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTelCPNameList", arguments=arguments)
+        out_params = self._proxy_call_action("GetTelCPNameList", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -373,7 +382,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTelephonyIdentity", arguments=arguments)
+        out_params = self._proxy_call_action("GetTelephonyIdentity", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -396,7 +405,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "VoiceMailID": VoiceMailID,
         }
 
-        out_params = self.proxy_call_action("GetVoiceMail", arguments=arguments)
+        out_params = self._proxy_call_action("GetVoiceMail", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -420,7 +429,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "IgnoreReason": IgnoreReason,
         }
 
-        out_params = self.proxy_call_action("IgnoreCall", arguments=arguments)
+        out_params = self._proxy_call_action("IgnoreCall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -441,7 +450,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CalleeID": CalleeID,
         }
 
-        out_params = self.proxy_call_action("InitiateCall", arguments=arguments)
+        out_params = self._proxy_call_action("InitiateCall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -462,7 +471,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ParallelCallerID": ParallelCallerID,
         }
 
-        out_params = self.proxy_call_action("InitiateParallelCall", arguments=arguments)
+        out_params = self._proxy_call_action("InitiateParallelCall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -486,7 +495,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MediaCapabilityInfo": MediaCapabilityInfo,
         }
 
-        out_params = self.proxy_call_action("ModifyCall", arguments=arguments)
+        out_params = self._proxy_call_action("ModifyCall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -507,7 +516,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CalleeID": CalleeID,
         }
 
-        out_params = self.proxy_call_action("RegisterCallBack", arguments=arguments)
+        out_params = self._proxy_call_action("RegisterCallBack", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -529,7 +538,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CurrentSecretKey": CurrentSecretKey,
         }
 
-        out_params = self.proxy_call_action("RegisterTelCPName", arguments=arguments)
+        out_params = self._proxy_call_action("RegisterTelCPName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -553,7 +562,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RejectReason": RejectReason,
         }
 
-        out_params = self.proxy_call_action("RejectCall", arguments=arguments)
+        out_params = self._proxy_call_action("RejectCall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -579,7 +588,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CallMode": CallMode,
         }
 
-        out_params = self.proxy_call_action("StartCall", arguments=arguments)
+        out_params = self._proxy_call_action("StartCall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -604,7 +613,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MediaCapabilityInfo": MediaCapabilityInfo,
         }
 
-        out_params = self.proxy_call_action("StartMediaTransfer", arguments=arguments)
+        out_params = self._proxy_call_action("StartMediaTransfer", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -627,7 +636,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CallID": CallID,
         }
 
-        out_params = self.proxy_call_action("StopCall", arguments=arguments)
+        out_params = self._proxy_call_action("StopCall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -649,7 +658,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SecretKey": SecretKey,
         }
 
-        out_params = self.proxy_call_action("UnregisterTelCPName", arguments=arguments)
+        out_params = self._proxy_call_action("UnregisterTelCPName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -671,7 +680,7 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MaxWaitingTime": MaxWaitingTime,
         }
 
-        out_params = self.proxy_call_action("WaitingForCall", arguments=arguments)
+        out_params = self._proxy_call_action("WaitingForCall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

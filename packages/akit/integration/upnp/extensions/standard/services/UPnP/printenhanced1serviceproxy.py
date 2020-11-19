@@ -15,6 +15,16 @@ class PrintEnhanced1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:PrintEnhanced:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "ContentCompleteList": { "data_type": "string", "default": None, "allowed_list": None},
+        "JobAbortState": { "data_type": "string", "default": None, "allowed_list": None},
+        "JobEndState": { "data_type": "string", "default": None, "allowed_list": None},
+        "JobIdList": { "data_type": "string", "default": None, "allowed_list": None},
+        "JobMediaSheetsCompleted": { "data_type": "i4", "default": None, "allowed_list": None},
+        "PrinterState": { "data_type": "string", "default": "idle", "allowed_list": "['idle', 'processing', 'stopped']"},
+        "PrinterStateReasons": { "data_type": "string", "default": "none", "allowed_list": "['none', 'attention-required', 'media-jam', 'paused', 'door-open', 'media-low', 'media-empty', 'output-area-almost-full', 'output-area-full', 'marker-supply-low', 'marker-supply-empty', 'marker-failure', 'media-change-request']"},
+    }
 
 
     def action_CancelJob(self, JobId, extract_returns=True):
@@ -27,7 +37,7 @@ class PrintEnhanced1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "JobId": JobId,
         }
 
-        out_params = self.proxy_call_action("CancelJob", arguments=arguments)
+        out_params = self._proxy_call_action("CancelJob", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -57,7 +67,7 @@ class PrintEnhanced1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "PrintQuality": PrintQuality,
         }
 
-        out_params = self.proxy_call_action("CreateJob", arguments=arguments)
+        out_params = self._proxy_call_action("CreateJob", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -88,7 +98,7 @@ class PrintEnhanced1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CriticalAttributesList": CriticalAttributesList,
         }
 
-        out_params = self.proxy_call_action("CreateJobV2", arguments=arguments)
+        out_params = self._proxy_call_action("CreateJobV2", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -120,7 +130,7 @@ class PrintEnhanced1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SourceURI": SourceURI,
         }
 
-        out_params = self.proxy_call_action("CreateURIJob", arguments=arguments)
+        out_params = self._proxy_call_action("CreateURIJob", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -141,7 +151,7 @@ class PrintEnhanced1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "JobId": JobId,
         }
 
-        out_params = self.proxy_call_action("GetJobAttributes", arguments=arguments)
+        out_params = self._proxy_call_action("GetJobAttributes", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -163,7 +173,7 @@ class PrintEnhanced1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MediaType": MediaType,
         }
 
-        out_params = self.proxy_call_action("GetMargins", arguments=arguments)
+        out_params = self._proxy_call_action("GetMargins", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -185,7 +195,7 @@ class PrintEnhanced1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MediaType": MediaType,
         }
 
-        out_params = self.proxy_call_action("GetMediaList", arguments=arguments)
+        out_params = self._proxy_call_action("GetMediaList", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -204,7 +214,7 @@ class PrintEnhanced1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPrinterAttributes", arguments=arguments)
+        out_params = self._proxy_call_action("GetPrinterAttributes", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -223,7 +233,7 @@ class PrintEnhanced1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPrinterAttributesV2", arguments=arguments)
+        out_params = self._proxy_call_action("GetPrinterAttributesV2", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

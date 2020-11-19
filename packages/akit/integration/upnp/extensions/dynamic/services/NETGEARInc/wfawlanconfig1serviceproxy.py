@@ -15,6 +15,12 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'NETGEARInc'
     SERVICE_TYPE = 'urn:schemas-wifialliance-org:service:WFAWLANConfig:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "APStatus": { "data_type": "ui1", "default": None, "allowed_list": None},
+        "STAStatus": { "data_type": "ui1", "default": None, "allowed_list": None},
+        "WLANEvent": { "data_type": "bin.base64", "default": None, "allowed_list": None},
+    }
 
 
     def action_DelAPSettings(self, NewAPSettings, extract_returns=True):
@@ -27,7 +33,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewAPSettings": NewAPSettings,
         }
 
-        out_params = self.proxy_call_action("DelAPSettings", arguments=arguments)
+        out_params = self._proxy_call_action("DelAPSettings", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -48,7 +54,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewSTASettings": NewSTASettings,
         }
 
-        out_params = self.proxy_call_action("DelSTASettings", arguments=arguments)
+        out_params = self._proxy_call_action("DelSTASettings", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -69,7 +75,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewMessage": NewMessage,
         }
 
-        out_params = self.proxy_call_action("GetAPSettings", arguments=arguments)
+        out_params = self._proxy_call_action("GetAPSettings", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -88,7 +94,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDeviceInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetDeviceInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -109,7 +115,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewMessage": NewMessage,
         }
 
-        out_params = self.proxy_call_action("GetSTASettings", arguments=arguments)
+        out_params = self._proxy_call_action("GetSTASettings", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -130,7 +136,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewInMessage": NewInMessage,
         }
 
-        out_params = self.proxy_call_action("PutMessage", arguments=arguments)
+        out_params = self._proxy_call_action("PutMessage", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -153,7 +159,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewWLANEventMAC": NewWLANEventMAC,
         }
 
-        out_params = self.proxy_call_action("PutWLANResponse", arguments=arguments)
+        out_params = self._proxy_call_action("PutWLANResponse", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -174,7 +180,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewAPSettings": NewAPSettings,
         }
 
-        out_params = self.proxy_call_action("RebootAP", arguments=arguments)
+        out_params = self._proxy_call_action("RebootAP", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -195,7 +201,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewSTASettings": NewSTASettings,
         }
 
-        out_params = self.proxy_call_action("RebootSTA", arguments=arguments)
+        out_params = self._proxy_call_action("RebootSTA", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -216,7 +222,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewMessage": NewMessage,
         }
 
-        out_params = self.proxy_call_action("ResetAP", arguments=arguments)
+        out_params = self._proxy_call_action("ResetAP", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -237,7 +243,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewMessage": NewMessage,
         }
 
-        out_params = self.proxy_call_action("ResetSTA", arguments=arguments)
+        out_params = self._proxy_call_action("ResetSTA", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -258,7 +264,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewAPSettings": NewAPSettings,
         }
 
-        out_params = self.proxy_call_action("SetAPSettings", arguments=arguments)
+        out_params = self._proxy_call_action("SetAPSettings", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -277,7 +283,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("SetSTASettings", arguments=arguments)
+        out_params = self._proxy_call_action("SetSTASettings", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -298,7 +304,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewMessage": NewMessage,
         }
 
-        out_params = self.proxy_call_action("SetSelectedRegistrar", arguments=arguments)
+        out_params = self._proxy_call_action("SetSelectedRegistrar", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

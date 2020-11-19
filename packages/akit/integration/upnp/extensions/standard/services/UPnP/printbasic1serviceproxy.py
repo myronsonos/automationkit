@@ -15,6 +15,14 @@ class PrintBasic1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:PrintBasic:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "JobEndState": { "data_type": "string", "default": None, "allowed_list": None},
+        "JobIdList": { "data_type": "string", "default": None, "allowed_list": None},
+        "JobMediaSheetsCompleted": { "data_type": "i4", "default": None, "allowed_list": None},
+        "PrinterState": { "data_type": "string", "default": "idle", "allowed_list": "['idle', 'processing', 'stopped']"},
+        "PrinterStateReasons": { "data_type": "string", "default": "none", "allowed_list": "['none', 'attention-required', 'media-jam', 'paused', 'door-open', 'media-low', 'media-empty', 'output-area-almost-full', 'output-area-full', 'marker-supply-low', 'marker-supply-empty', 'marker-failure', 'media-change-request']"},
+    }
 
 
     def action_CancelJob(self, JobId, extract_returns=True):
@@ -27,7 +35,7 @@ class PrintBasic1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "JobId": JobId,
         }
 
-        out_params = self.proxy_call_action("CancelJob", arguments=arguments)
+        out_params = self._proxy_call_action("CancelJob", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -57,7 +65,7 @@ class PrintBasic1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "PrintQuality": PrintQuality,
         }
 
-        out_params = self.proxy_call_action("CreateJob", arguments=arguments)
+        out_params = self._proxy_call_action("CreateJob", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -78,7 +86,7 @@ class PrintBasic1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "JobId": JobId,
         }
 
-        out_params = self.proxy_call_action("GetJobAttributes", arguments=arguments)
+        out_params = self._proxy_call_action("GetJobAttributes", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -97,7 +105,7 @@ class PrintBasic1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPrinterAttributes", arguments=arguments)
+        out_params = self._proxy_call_action("GetPrinterAttributes", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

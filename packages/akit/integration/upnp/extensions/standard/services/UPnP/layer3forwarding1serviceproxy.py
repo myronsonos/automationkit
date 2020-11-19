@@ -15,6 +15,8 @@ class Layer3Forwarding1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Layer3Forwarding:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_GetDefaultConnectionService(self, extract_returns=True):
@@ -25,7 +27,7 @@ class Layer3Forwarding1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDefaultConnectionService", arguments=arguments)
+        out_params = self._proxy_call_action("GetDefaultConnectionService", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -46,7 +48,7 @@ class Layer3Forwarding1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewDefaultConnectionService": NewDefaultConnectionService,
         }
 
-        out_params = self.proxy_call_action("SetDefaultConnectionService", arguments=arguments)
+        out_params = self._proxy_call_action("SetDefaultConnectionService", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

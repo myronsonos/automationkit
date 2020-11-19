@@ -15,6 +15,10 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WLANConfiguration:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "TotalAssociations": { "data_type": "ui2", "default": None, "allowed_list": None},
+    }
 
 
     def action_FactoryDefaultReset(self, extract_returns=True):
@@ -25,7 +29,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("FactoryDefaultReset", arguments=arguments)
+        out_params = self._proxy_call_action("FactoryDefaultReset", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +48,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("Get11iBeaconSecurityProperties", arguments=arguments)
+        out_params = self._proxy_call_action("Get11iBeaconSecurityProperties", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +67,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetAuthenticationServiceMode", arguments=arguments)
+        out_params = self._proxy_call_action("GetAuthenticationServiceMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -82,7 +86,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetAutoRateFallBackMode", arguments=arguments)
+        out_params = self._proxy_call_action("GetAutoRateFallBackMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -101,7 +105,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetBSSID", arguments=arguments)
+        out_params = self._proxy_call_action("GetBSSID", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -120,7 +124,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetBasicBeaconSecurityProperties", arguments=arguments)
+        out_params = self._proxy_call_action("GetBasicBeaconSecurityProperties", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -139,7 +143,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetBeaconAdvertisement", arguments=arguments)
+        out_params = self._proxy_call_action("GetBeaconAdvertisement", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -158,7 +162,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetBeaconType", arguments=arguments)
+        out_params = self._proxy_call_action("GetBeaconType", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -177,7 +181,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetByteStatistics", arguments=arguments)
+        out_params = self._proxy_call_action("GetByteStatistics", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -196,7 +200,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetChannelInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetChannelInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -215,7 +219,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetChannelsInUse", arguments=arguments)
+        out_params = self._proxy_call_action("GetChannelsInUse", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -234,7 +238,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDataTransmissionRateInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetDataTransmissionRateInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -253,7 +257,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDefaultWEPKeyIndex", arguments=arguments)
+        out_params = self._proxy_call_action("GetDefaultWEPKeyIndex", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -272,7 +276,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDeviceOperationMode", arguments=arguments)
+        out_params = self._proxy_call_action("GetDeviceOperationMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -291,7 +295,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFailureStatusInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetFailureStatusInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -312,7 +316,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewAssociatedDeviceIndex": NewAssociatedDeviceIndex,
         }
 
-        out_params = self.proxy_call_action("GetGenericAssociatedDeviceInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetGenericAssociatedDeviceInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -331,7 +335,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetInsecureOutOfBandAccessMode", arguments=arguments)
+        out_params = self._proxy_call_action("GetInsecureOutOfBandAccessMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -350,7 +354,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetLocationDescription", arguments=arguments)
+        out_params = self._proxy_call_action("GetLocationDescription", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -369,7 +373,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPacketStatistics", arguments=arguments)
+        out_params = self._proxy_call_action("GetPacketStatistics", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -390,7 +394,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewPreSharedKeyIndex": NewPreSharedKeyIndex,
         }
 
-        out_params = self.proxy_call_action("GetPreSharedKey", arguments=arguments)
+        out_params = self._proxy_call_action("GetPreSharedKey", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -409,7 +413,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetRadioMode", arguments=arguments)
+        out_params = self._proxy_call_action("GetRadioMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -428,7 +432,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetRegulatoryDomain", arguments=arguments)
+        out_params = self._proxy_call_action("GetRegulatoryDomain", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -447,7 +451,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSSID", arguments=arguments)
+        out_params = self._proxy_call_action("GetSSID", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -466,7 +470,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSecurityKeys", arguments=arguments)
+        out_params = self._proxy_call_action("GetSecurityKeys", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -487,7 +491,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewAssociatedDeviceMACAddress": NewAssociatedDeviceMACAddress,
         }
 
-        out_params = self.proxy_call_action("GetSpecificAssociatedDeviceInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetSpecificAssociatedDeviceInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -506,7 +510,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTotalAssociations", arguments=arguments)
+        out_params = self._proxy_call_action("GetTotalAssociations", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -525,7 +529,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetWPABeaconSecurityProperties", arguments=arguments)
+        out_params = self._proxy_call_action("GetWPABeaconSecurityProperties", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -544,7 +548,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("ResetAuthentication", arguments=arguments)
+        out_params = self._proxy_call_action("ResetAuthentication", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -566,7 +570,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewIEEE11iAuthenticationMode": NewIEEE11iAuthenticationMode,
         }
 
-        out_params = self.proxy_call_action("Set11iBeaconSecurityProperties", arguments=arguments)
+        out_params = self._proxy_call_action("Set11iBeaconSecurityProperties", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -587,7 +591,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewAuthenticationServiceMode": NewAuthenticationServiceMode,
         }
 
-        out_params = self.proxy_call_action("SetAuthenticationServiceMode", arguments=arguments)
+        out_params = self._proxy_call_action("SetAuthenticationServiceMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -608,7 +612,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewAutoRateFallBackEnabled": NewAutoRateFallBackEnabled,
         }
 
-        out_params = self.proxy_call_action("SetAutoRateFallBackMode", arguments=arguments)
+        out_params = self._proxy_call_action("SetAutoRateFallBackMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -630,7 +634,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewBasicAuthenticationMode": NewBasicAuthenticationMode,
         }
 
-        out_params = self.proxy_call_action("SetBasicBeaconSecurityProperties", arguments=arguments)
+        out_params = self._proxy_call_action("SetBasicBeaconSecurityProperties", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -651,7 +655,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewBeaconAdvertisementEnabled": NewBeaconAdvertisementEnabled,
         }
 
-        out_params = self.proxy_call_action("SetBeaconAdvertisement", arguments=arguments)
+        out_params = self._proxy_call_action("SetBeaconAdvertisement", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -672,7 +676,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewBeaconType": NewBeaconType,
         }
 
-        out_params = self.proxy_call_action("SetBeaconType", arguments=arguments)
+        out_params = self._proxy_call_action("SetBeaconType", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -693,7 +697,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewChannel": NewChannel,
         }
 
-        out_params = self.proxy_call_action("SetChannel", arguments=arguments)
+        out_params = self._proxy_call_action("SetChannel", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -715,7 +719,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewOperationalDataTransmissionRates": NewOperationalDataTransmissionRates,
         }
 
-        out_params = self.proxy_call_action("SetDataTransmissionRates", arguments=arguments)
+        out_params = self._proxy_call_action("SetDataTransmissionRates", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -736,7 +740,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewDefaultWEPKeyIndex": NewDefaultWEPKeyIndex,
         }
 
-        out_params = self.proxy_call_action("SetDefaultWEPKeyIndex", arguments=arguments)
+        out_params = self._proxy_call_action("SetDefaultWEPKeyIndex", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -763,7 +767,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewDistanceFromRoot": NewDistanceFromRoot,
         }
 
-        out_params = self.proxy_call_action("SetDeviceOperationMode", arguments=arguments)
+        out_params = self._proxy_call_action("SetDeviceOperationMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -784,7 +788,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewInsecureOutOfBandAccessEnabled": NewInsecureOutOfBandAccessEnabled,
         }
 
-        out_params = self.proxy_call_action("SetInsecureOutOfBandAccessMode", arguments=arguments)
+        out_params = self._proxy_call_action("SetInsecureOutOfBandAccessMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -805,7 +809,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewLocationDescription": NewLocationDescription,
         }
 
-        out_params = self.proxy_call_action("SetLocationDescription", arguments=arguments)
+        out_params = self._proxy_call_action("SetLocationDescription", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -828,7 +832,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewPSKPassphrase": NewPSKPassphrase,
         }
 
-        out_params = self.proxy_call_action("SetPreSharedKey", arguments=arguments)
+        out_params = self._proxy_call_action("SetPreSharedKey", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -849,7 +853,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewRadioEnabled": NewRadioEnabled,
         }
 
-        out_params = self.proxy_call_action("SetRadioMode", arguments=arguments)
+        out_params = self._proxy_call_action("SetRadioMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -870,7 +874,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewRegulatoryDomain": NewRegulatoryDomain,
         }
 
-        out_params = self.proxy_call_action("SetRegulatoryDomain", arguments=arguments)
+        out_params = self._proxy_call_action("SetRegulatoryDomain", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -891,7 +895,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewSSID": NewSSID,
         }
 
-        out_params = self.proxy_call_action("SetSSID", arguments=arguments)
+        out_params = self._proxy_call_action("SetSSID", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -917,7 +921,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewKeyPassphrase": NewKeyPassphrase,
         }
 
-        out_params = self.proxy_call_action("SetSecurityKeys", arguments=arguments)
+        out_params = self._proxy_call_action("SetSecurityKeys", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -939,7 +943,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewWPAAuthenticationMode": NewWPAAuthenticationMode,
         }
 
-        out_params = self.proxy_call_action("SetWPABeaconSecurityProperties", arguments=arguments)
+        out_params = self._proxy_call_action("SetWPABeaconSecurityProperties", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

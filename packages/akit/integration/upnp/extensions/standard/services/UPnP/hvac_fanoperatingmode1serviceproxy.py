@@ -15,6 +15,8 @@ class HVAC_FanOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:HVAC_FanOperatingMode:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_GetFanStatus(self, extract_returns=True):
@@ -25,7 +27,7 @@ class HVAC_FanOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFanStatus", arguments=arguments)
+        out_params = self._proxy_call_action("GetFanStatus", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +46,7 @@ class HVAC_FanOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetMode", arguments=arguments)
+        out_params = self._proxy_call_action("GetMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +65,7 @@ class HVAC_FanOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetName", arguments=arguments)
+        out_params = self._proxy_call_action("GetName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -84,7 +86,7 @@ class HVAC_FanOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewMode": NewMode,
         }
 
-        out_params = self.proxy_call_action("SetMode", arguments=arguments)
+        out_params = self._proxy_call_action("SetMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -105,7 +107,7 @@ class HVAC_FanOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewName": NewName,
         }
 
-        out_params = self.proxy_call_action("SetName", arguments=arguments)
+        out_params = self._proxy_call_action("SetName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

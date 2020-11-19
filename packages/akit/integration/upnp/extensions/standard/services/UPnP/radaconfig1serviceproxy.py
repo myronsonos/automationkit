@@ -15,6 +15,10 @@ class RADAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RADAConfig:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "SystemInfoUpdateID": { "data_type": "ui4", "default": None, "allowed_list": None},
+    }
 
 
     def action_EditFilter(self, Filter, extract_returns=True):
@@ -27,7 +31,7 @@ class RADAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Filter": Filter,
         }
 
-        out_params = self.proxy_call_action("EditFilter", arguments=arguments)
+        out_params = self._proxy_call_action("EditFilter", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -48,7 +52,7 @@ class RADAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ID": ID,
         }
 
-        out_params = self.proxy_call_action("GetSystemInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetSystemInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

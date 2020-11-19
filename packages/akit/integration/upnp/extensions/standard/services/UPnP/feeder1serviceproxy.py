@@ -15,6 +15,10 @@ class Feeder1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Feeder:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "MorePages": { "data_type": "boolean", "default": "0", "allowed_list": None},
+    }
 
 
     def action_Eject(self, JobIDIn, EntireDocumentIn, extract_returns=True):
@@ -28,7 +32,7 @@ class Feeder1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "EntireDocumentIn": EntireDocumentIn,
         }
 
-        out_params = self.proxy_call_action("Eject", arguments=arguments)
+        out_params = self._proxy_call_action("Eject", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -47,7 +51,7 @@ class Feeder1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFeederMode", arguments=arguments)
+        out_params = self._proxy_call_action("GetFeederMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -66,7 +70,7 @@ class Feeder1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetState", arguments=arguments)
+        out_params = self._proxy_call_action("GetState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -87,7 +91,7 @@ class Feeder1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "JobIDIn": JobIDIn,
         }
 
-        out_params = self.proxy_call_action("Load", arguments=arguments)
+        out_params = self._proxy_call_action("Load", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -108,7 +112,7 @@ class Feeder1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "JobIDIn": JobIDIn,
         }
 
-        out_params = self.proxy_call_action("Reset", arguments=arguments)
+        out_params = self._proxy_call_action("Reset", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -130,7 +134,7 @@ class Feeder1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "FeederModeIn": FeederModeIn,
         }
 
-        out_params = self.proxy_call_action("SetFeederMode", arguments=arguments)
+        out_params = self._proxy_call_action("SetFeederMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

@@ -15,6 +15,10 @@ class MusicServices1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:MusicServices:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "ServiceListVersion": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_GetSessionId(self, ServiceId, Username, extract_returns=True):
@@ -28,7 +32,7 @@ class MusicServices1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Username": Username,
         }
 
-        out_params = self.proxy_call_action("GetSessionId", arguments=arguments)
+        out_params = self._proxy_call_action("GetSessionId", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -47,7 +51,7 @@ class MusicServices1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("ListAvailableServices", arguments=arguments)
+        out_params = self._proxy_call_action("ListAvailableServices", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -66,7 +70,7 @@ class MusicServices1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("UpdateAvailableServices", arguments=arguments)
+        out_params = self._proxy_call_action("UpdateAvailableServices", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

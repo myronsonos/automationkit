@@ -15,6 +15,8 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:BasicManagement:2'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_BandwidthTest(self, BandwidthTestSpec, TestEndpoint, TestSchedule, TestSessID, extract_returns=True):
@@ -30,7 +32,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TestSessID": TestSessID,
         }
 
-        out_params = self.proxy_call_action("BandwidthTest", arguments=arguments)
+        out_params = self._proxy_call_action("BandwidthTest", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -49,7 +51,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("BaselineReset", arguments=arguments)
+        out_params = self._proxy_call_action("BaselineReset", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -70,7 +72,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TestID": TestID,
         }
 
-        out_params = self.proxy_call_action("CancelTest", arguments=arguments)
+        out_params = self._proxy_call_action("CancelTest", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -89,7 +91,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetACLData", arguments=arguments)
+        out_params = self._proxy_call_action("GetACLData", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -108,7 +110,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetActiveTestIDs", arguments=arguments)
+        out_params = self._proxy_call_action("GetActiveTestIDs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -127,7 +129,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetBandwidthTestInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetBandwidthTestInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -148,7 +150,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TestID": TestID,
         }
 
-        out_params = self.proxy_call_action("GetBandwidthTestResult", arguments=arguments)
+        out_params = self._proxy_call_action("GetBandwidthTestResult", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -167,7 +169,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDeviceStatus", arguments=arguments)
+        out_params = self._proxy_call_action("GetDeviceStatus", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -188,7 +190,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TestID": TestID,
         }
 
-        out_params = self.proxy_call_action("GetInterfaceResetResult", arguments=arguments)
+        out_params = self._proxy_call_action("GetInterfaceResetResult", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -209,7 +211,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "LogURI": LogURI,
         }
 
-        out_params = self.proxy_call_action("GetLogInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetLogInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -228,7 +230,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetLogURIs", arguments=arguments)
+        out_params = self._proxy_call_action("GetLogURIs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -249,7 +251,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TestID": TestID,
         }
 
-        out_params = self.proxy_call_action("GetNSLookupResult", arguments=arguments)
+        out_params = self._proxy_call_action("GetNSLookupResult", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -270,7 +272,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TestID": TestID,
         }
 
-        out_params = self.proxy_call_action("GetPingResult", arguments=arguments)
+        out_params = self._proxy_call_action("GetPingResult", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -291,7 +293,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TestID": TestID,
         }
 
-        out_params = self.proxy_call_action("GetSelfTestResult", arguments=arguments)
+        out_params = self._proxy_call_action("GetSelfTestResult", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -310,7 +312,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSequenceMode", arguments=arguments)
+        out_params = self._proxy_call_action("GetSequenceMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -329,7 +331,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTestIDs", arguments=arguments)
+        out_params = self._proxy_call_action("GetTestIDs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -350,7 +352,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TestID": TestID,
         }
 
-        out_params = self.proxy_call_action("GetTestInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetTestInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -371,7 +373,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TestID": TestID,
         }
 
-        out_params = self.proxy_call_action("GetTracerouteResult", arguments=arguments)
+        out_params = self._proxy_call_action("GetTracerouteResult", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -392,7 +394,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Interfaces": Interfaces,
         }
 
-        out_params = self.proxy_call_action("InterfaceReset", arguments=arguments)
+        out_params = self._proxy_call_action("InterfaceReset", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -416,7 +418,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Timeout": Timeout,
         }
 
-        out_params = self.proxy_call_action("NSLookup", arguments=arguments)
+        out_params = self._proxy_call_action("NSLookup", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -441,7 +443,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DSCP": DSCP,
         }
 
-        out_params = self.proxy_call_action("Ping", arguments=arguments)
+        out_params = self._proxy_call_action("Ping", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -460,7 +462,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("Reboot", arguments=arguments)
+        out_params = self._proxy_call_action("Reboot", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -479,7 +481,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("SelfTest", arguments=arguments)
+        out_params = self._proxy_call_action("SelfTest", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -502,7 +504,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "LogLevel": LogLevel,
         }
 
-        out_params = self.proxy_call_action("SetLogInfo", arguments=arguments)
+        out_params = self._proxy_call_action("SetLogInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -523,7 +525,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewSequenceMode": NewSequenceMode,
         }
 
-        out_params = self.proxy_call_action("SetSequenceMode", arguments=arguments)
+        out_params = self._proxy_call_action("SetSequenceMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -548,7 +550,7 @@ class BasicManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DSCP": DSCP,
         }
 
-        out_params = self.proxy_call_action("Traceroute", arguments=arguments)
+        out_params = self._proxy_call_action("Traceroute", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

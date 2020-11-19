@@ -15,6 +15,8 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:FanSpeed:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_GetFanDirection(self, extract_returns=True):
@@ -25,7 +27,7 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFanDirection", arguments=arguments)
+        out_params = self._proxy_call_action("GetFanDirection", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +46,7 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFanDirectionTarget", arguments=arguments)
+        out_params = self._proxy_call_action("GetFanDirectionTarget", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +65,7 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFanSpeed", arguments=arguments)
+        out_params = self._proxy_call_action("GetFanSpeed", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -82,7 +84,7 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFanSpeedTarget", arguments=arguments)
+        out_params = self._proxy_call_action("GetFanSpeedTarget", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -103,7 +105,7 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewDirectionTarget": NewDirectionTarget,
         }
 
-        out_params = self.proxy_call_action("SetFanDirection", arguments=arguments)
+        out_params = self._proxy_call_action("SetFanDirection", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -124,7 +126,7 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewFanSpeedTarget": NewFanSpeedTarget,
         }
 
-        out_params = self.proxy_call_action("SetFanSpeed", arguments=arguments)
+        out_params = self._proxy_call_action("SetFanSpeed", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

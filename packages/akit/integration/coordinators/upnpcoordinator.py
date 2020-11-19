@@ -741,13 +741,18 @@ if __name__ == "__main__":
 
     value = devProps.action_GetLEDState()
 
-    var_mic_enabled = devProps.subscribe_to_event("MicEnabled")
-    meval = var_mic_enabled.wait_for_value(timeout=600)
+    if devProps.subscribe_to_events():
+        var_mic_enabled = devProps.lookup_event_variable("MicEnabled")
+        meval = var_mic_enabled.wait_for_value(timeout=600)
+        print (var_mic_enabled)
 
-    var_zonename = devProps.subscribe_to_event("ZoneName")
-    znval = var_zonename.wait_for_value(timeout=600)
+        var_zonename = devProps.lookup_event_variable("ZoneName")
+        znval = var_zonename.wait_for_value(timeout=600)
+        print (var_zonename)
 
-    isbval = devProps.lookup_event_variable("IsZoneBridge")
+        isbval = devProps.lookup_event_variable("IsZoneBridge")
+        print (isbval)
+
 
     LEDSTATES = ["Off", "On"]
 

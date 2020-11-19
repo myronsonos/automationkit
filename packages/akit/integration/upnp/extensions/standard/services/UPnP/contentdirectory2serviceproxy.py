@@ -15,6 +15,12 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ContentDirectory:2'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "ContainerUpdateIDs": { "data_type": "string", "default": None, "allowed_list": None},
+        "SystemUpdateID": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "TransferIDs": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_Browse(self, ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, extract_returns=True):
@@ -32,7 +38,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SortCriteria": SortCriteria,
         }
 
-        out_params = self.proxy_call_action("Browse", arguments=arguments)
+        out_params = self._proxy_call_action("Browse", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -54,7 +60,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Elements": Elements,
         }
 
-        out_params = self.proxy_call_action("CreateObject", arguments=arguments)
+        out_params = self._proxy_call_action("CreateObject", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -76,7 +82,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ObjectID": ObjectID,
         }
 
-        out_params = self.proxy_call_action("CreateReference", arguments=arguments)
+        out_params = self._proxy_call_action("CreateReference", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -97,7 +103,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ResourceURI": ResourceURI,
         }
 
-        out_params = self.proxy_call_action("DeleteResource", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteResource", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -118,7 +124,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ObjectID": ObjectID,
         }
 
-        out_params = self.proxy_call_action("DestroyObject", arguments=arguments)
+        out_params = self._proxy_call_action("DestroyObject", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -140,7 +146,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DestinationURI": DestinationURI,
         }
 
-        out_params = self.proxy_call_action("ExportResource", arguments=arguments)
+        out_params = self._proxy_call_action("ExportResource", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -159,7 +165,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFeatureList", arguments=arguments)
+        out_params = self._proxy_call_action("GetFeatureList", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -178,7 +184,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSearchCapabilities", arguments=arguments)
+        out_params = self._proxy_call_action("GetSearchCapabilities", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -197,7 +203,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSortCapabilities", arguments=arguments)
+        out_params = self._proxy_call_action("GetSortCapabilities", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -216,7 +222,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSortExtensionCapabilities", arguments=arguments)
+        out_params = self._proxy_call_action("GetSortExtensionCapabilities", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -235,7 +241,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSystemUpdateID", arguments=arguments)
+        out_params = self._proxy_call_action("GetSystemUpdateID", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -256,7 +262,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransferID": TransferID,
         }
 
-        out_params = self.proxy_call_action("GetTransferProgress", arguments=arguments)
+        out_params = self._proxy_call_action("GetTransferProgress", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -278,7 +284,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DestinationURI": DestinationURI,
         }
 
-        out_params = self.proxy_call_action("ImportResource", arguments=arguments)
+        out_params = self._proxy_call_action("ImportResource", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -300,7 +306,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewParentID": NewParentID,
         }
 
-        out_params = self.proxy_call_action("MoveObject", arguments=arguments)
+        out_params = self._proxy_call_action("MoveObject", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -326,7 +332,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SortCriteria": SortCriteria,
         }
 
-        out_params = self.proxy_call_action("Search", arguments=arguments)
+        out_params = self._proxy_call_action("Search", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -347,7 +353,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransferID": TransferID,
         }
 
-        out_params = self.proxy_call_action("StopTransferResource", arguments=arguments)
+        out_params = self._proxy_call_action("StopTransferResource", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -370,7 +376,7 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewTagValue": NewTagValue,
         }
 
-        out_params = self.proxy_call_action("UpdateObject", arguments=arguments)
+        out_params = self._proxy_call_action("UpdateObject", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

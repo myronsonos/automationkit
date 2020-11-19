@@ -15,6 +15,8 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ConfigurationManagement:2'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_CreateInstance(self, MultiInstanceName, ChildrenInitialization, extract_returns=True):
@@ -28,7 +30,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ChildrenInitialization": ChildrenInitialization,
         }
 
-        out_params = self.proxy_call_action("CreateInstance", arguments=arguments)
+        out_params = self._proxy_call_action("CreateInstance", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -49,7 +51,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceIdentifier": InstanceIdentifier,
         }
 
-        out_params = self.proxy_call_action("DeleteInstance", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteInstance", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -70,7 +72,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "StartingNodes": StartingNodes,
         }
 
-        out_params = self.proxy_call_action("GetACLData", arguments=arguments)
+        out_params = self._proxy_call_action("GetACLData", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -89,7 +91,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetAlarmsEnabled", arguments=arguments)
+        out_params = self._proxy_call_action("GetAlarmsEnabled", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -108,7 +110,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetAttributeValuesUpdate", arguments=arguments)
+        out_params = self._proxy_call_action("GetAttributeValuesUpdate", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -129,7 +131,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Parameters": Parameters,
         }
 
-        out_params = self.proxy_call_action("GetAttributes", arguments=arguments)
+        out_params = self._proxy_call_action("GetAttributes", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -148,7 +150,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetConfigurationUpdate", arguments=arguments)
+        out_params = self._proxy_call_action("GetConfigurationUpdate", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -167,7 +169,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetCurrentConfigurationVersion", arguments=arguments)
+        out_params = self._proxy_call_action("GetCurrentConfigurationVersion", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -186,7 +188,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetInconsistentStatus", arguments=arguments)
+        out_params = self._proxy_call_action("GetInconsistentStatus", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -208,7 +210,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SearchDepth": SearchDepth,
         }
 
-        out_params = self.proxy_call_action("GetInstances", arguments=arguments)
+        out_params = self._proxy_call_action("GetInstances", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -230,7 +232,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Filter": Filter,
         }
 
-        out_params = self.proxy_call_action("GetSelectedValues", arguments=arguments)
+        out_params = self._proxy_call_action("GetSelectedValues", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -249,7 +251,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSupportedDataModels", arguments=arguments)
+        out_params = self._proxy_call_action("GetSupportedDataModels", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -268,7 +270,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSupportedDataModelsUpdate", arguments=arguments)
+        out_params = self._proxy_call_action("GetSupportedDataModelsUpdate", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -290,7 +292,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SearchDepth": SearchDepth,
         }
 
-        out_params = self.proxy_call_action("GetSupportedParameters", arguments=arguments)
+        out_params = self._proxy_call_action("GetSupportedParameters", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -309,7 +311,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSupportedParametersUpdate", arguments=arguments)
+        out_params = self._proxy_call_action("GetSupportedParametersUpdate", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -330,7 +332,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Parameters": Parameters,
         }
 
-        out_params = self.proxy_call_action("GetValues", arguments=arguments)
+        out_params = self._proxy_call_action("GetValues", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -351,7 +353,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "StateVariableValue": StateVariableValue,
         }
 
-        out_params = self.proxy_call_action("SetAlarmsEnabled", arguments=arguments)
+        out_params = self._proxy_call_action("SetAlarmsEnabled", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -372,7 +374,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NodeAttributeValueList": NodeAttributeValueList,
         }
 
-        out_params = self.proxy_call_action("SetAttributes", arguments=arguments)
+        out_params = self._proxy_call_action("SetAttributes", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -393,7 +395,7 @@ class ConfigurationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ParameterValueList": ParameterValueList,
         }
 
-        out_params = self.proxy_call_action("SetValues", arguments=arguments)
+        out_params = self._proxy_call_action("SetValues", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

@@ -15,6 +15,12 @@ class TemperatureSensor1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:TemperatureSensor:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "Application": { "data_type": "string", "default": "Room", "allowed_list": "['Room', 'Outdoor', 'Pipe', 'AirDuct']"},
+        "CurrentTemperature": { "data_type": "i4", "default": "2000", "allowed_list": None},
+        "Name": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_GetApplication(self, extract_returns=True):
@@ -25,7 +31,7 @@ class TemperatureSensor1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetApplication", arguments=arguments)
+        out_params = self._proxy_call_action("GetApplication", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +50,7 @@ class TemperatureSensor1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetCurrentTemperature", arguments=arguments)
+        out_params = self._proxy_call_action("GetCurrentTemperature", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +69,7 @@ class TemperatureSensor1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetName", arguments=arguments)
+        out_params = self._proxy_call_action("GetName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -84,7 +90,7 @@ class TemperatureSensor1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewApplication": NewApplication,
         }
 
-        out_params = self.proxy_call_action("SetApplication", arguments=arguments)
+        out_params = self._proxy_call_action("SetApplication", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -105,7 +111,7 @@ class TemperatureSensor1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewName": NewName,
         }
 
-        out_params = self.proxy_call_action("SetName", arguments=arguments)
+        out_params = self._proxy_call_action("SetName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

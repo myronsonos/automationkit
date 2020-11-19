@@ -15,6 +15,8 @@ class RemoteUIServer1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RemoteUIServer:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_GetCompatibleUIs(self, InputDeviceProfile, UIFilter, extract_returns=True):
@@ -28,7 +30,7 @@ class RemoteUIServer1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "UIFilter": UIFilter,
         }
 
-        out_params = self.proxy_call_action("GetCompatibleUIs", arguments=arguments)
+        out_params = self._proxy_call_action("GetCompatibleUIs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -50,7 +52,7 @@ class RemoteUIServer1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Lifetime": Lifetime,
         }
 
-        out_params = self.proxy_call_action("SetUILifetime", arguments=arguments)
+        out_params = self._proxy_call_action("SetUILifetime", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

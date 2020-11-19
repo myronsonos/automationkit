@@ -15,6 +15,10 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:AddressBook:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "IncomingRequest": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_Accept(self, RequestID, extract_returns=True):
@@ -27,7 +31,7 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RequestID": RequestID,
         }
 
-        out_params = self.proxy_call_action("Accept", arguments=arguments)
+        out_params = self._proxy_call_action("Accept", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -49,7 +53,7 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ShareInfo": ShareInfo,
         }
 
-        out_params = self.proxy_call_action("FetchcontactInfo", arguments=arguments)
+        out_params = self._proxy_call_action("FetchcontactInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -70,7 +74,7 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NetworkAddressBookID": NetworkAddressBookID,
         }
 
-        out_params = self.proxy_call_action("ImportContacts", arguments=arguments)
+        out_params = self._proxy_call_action("ImportContacts", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -91,7 +95,7 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RequestID": RequestID,
         }
 
-        out_params = self.proxy_call_action("Reject", arguments=arguments)
+        out_params = self._proxy_call_action("Reject", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -110,7 +114,7 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("RetrieveIncomingRequests", arguments=arguments)
+        out_params = self._proxy_call_action("RetrieveIncomingRequests", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -133,7 +137,7 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TargetContacts": TargetContacts,
         }
 
-        out_params = self.proxy_call_action("ShareContacts", arguments=arguments)
+        out_params = self._proxy_call_action("ShareContacts", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -155,7 +159,7 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ShareInfo": ShareInfo,
         }
 
-        out_params = self.proxy_call_action("SharePCC", arguments=arguments)
+        out_params = self._proxy_call_action("SharePCC", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

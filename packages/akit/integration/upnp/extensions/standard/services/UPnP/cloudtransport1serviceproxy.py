@@ -15,6 +15,8 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:CloudTransport:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_ConnectMethod(self, Host, MethodLine, extract_returns=True):
@@ -28,7 +30,7 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MethodLine": MethodLine,
         }
 
-        out_params = self.proxy_call_action("ConnectMethod", arguments=arguments)
+        out_params = self._proxy_call_action("ConnectMethod", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -51,7 +53,7 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CRLFFlag": CRLFFlag,
         }
 
-        out_params = self.proxy_call_action("HTTPReadBody", arguments=arguments)
+        out_params = self._proxy_call_action("HTTPReadBody", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -73,7 +75,7 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CRLFFlag": CRLFFlag,
         }
 
-        out_params = self.proxy_call_action("HTTPReadHeaders", arguments=arguments)
+        out_params = self._proxy_call_action("HTTPReadHeaders", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -96,7 +98,7 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Size": Size,
         }
 
-        out_params = self.proxy_call_action("HTTPWriteBody", arguments=arguments)
+        out_params = self._proxy_call_action("HTTPWriteBody", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -118,7 +120,7 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Headers": Headers,
         }
 
-        out_params = self.proxy_call_action("HTTPWriteHeaders", arguments=arguments)
+        out_params = self._proxy_call_action("HTTPWriteHeaders", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

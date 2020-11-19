@@ -15,6 +15,8 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ControlValve:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_GetMinMax(self, extract_returns=True):
@@ -25,7 +27,7 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetMinMax", arguments=arguments)
+        out_params = self._proxy_call_action("GetMinMax", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +46,7 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetMode", arguments=arguments)
+        out_params = self._proxy_call_action("GetMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +65,7 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPosition", arguments=arguments)
+        out_params = self._proxy_call_action("GetPosition", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -82,7 +84,7 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPositionTarget", arguments=arguments)
+        out_params = self._proxy_call_action("GetPositionTarget", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -104,7 +106,7 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewMaxPosition": NewMaxPosition,
         }
 
-        out_params = self.proxy_call_action("SetMinMax", arguments=arguments)
+        out_params = self._proxy_call_action("SetMinMax", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -125,7 +127,7 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewControlMode": NewControlMode,
         }
 
-        out_params = self.proxy_call_action("SetMode", arguments=arguments)
+        out_params = self._proxy_call_action("SetMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -146,7 +148,7 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewPositionTarget": NewPositionTarget,
         }
 
-        out_params = self.proxy_call_action("SetPosition", arguments=arguments)
+        out_params = self._proxy_call_action("SetPosition", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

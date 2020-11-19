@@ -15,6 +15,14 @@ class Scan1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Scan:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "DestinationID": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "FailureCode": { "data_type": "string", "default": "No Error", "allowed_list": "['No Error', 'Jammed', 'Timeout Reached', 'ErredTimeout Reached', 'Destination Not Reachable']"},
+        "ScanLength": { "data_type": "i4", "default": "0", "allowed_list": None},
+        "SideNumber": { "data_type": "i4", "default": "1", "allowed_list": None},
+        "State": { "data_type": "string", "default": "Idle", "allowed_list": "['Idle', 'Reserved', 'NotReady', 'Pending', 'Scanning', 'Finishing', 'Erred']"},
+    }
 
 
     def action_GetConfiguration(self, extract_returns=True):
@@ -25,7 +33,7 @@ class Scan1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetConfiguration", arguments=arguments)
+        out_params = self._proxy_call_action("GetConfiguration", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +52,7 @@ class Scan1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSideInformation", arguments=arguments)
+        out_params = self._proxy_call_action("GetSideInformation", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +71,7 @@ class Scan1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetState", arguments=arguments)
+        out_params = self._proxy_call_action("GetState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -101,7 +109,7 @@ class Scan1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TimeoutIn": TimeoutIn,
         }
 
-        out_params = self.proxy_call_action("StartScan", arguments=arguments)
+        out_params = self._proxy_call_action("StartScan", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

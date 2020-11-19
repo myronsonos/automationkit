@@ -18,12 +18,18 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import requests
+import threading
 import traceback
 
 from xml.etree.ElementTree import fromstring as xml_fromstring
 
+from akit.xlogging.foundations import getAutomatonKitLogger
+
 from akit.integration.upnp.soap import SoapProcessor, SOAPError, SOAPProtocolError, SOAP_TIMEOUT
 from akit.integration.upnp.upnperrors import UpnpError
+from akit.integration.upnp.services.upnpeventvar import UpnpEventVar
+
+logger = getAutomatonKitLogger()
 
 class UpnpServiceProxy:
     """
@@ -31,6 +37,8 @@ class UpnpServiceProxy:
 
     SERVICE_ID = None
     SERVICE_TYPE = None
+
+    SERVICE_EVENT_VARIABLES = {}
 
     def __init__(self):
         self._device_ref = None
@@ -47,6 +55,13 @@ class UpnpServiceProxy:
         self._serviceId = None
 
         self._validate_parameter_values = True
+
+        self._service_lock = threading.RLock()
+        self._variables = {}
+        self._subscription_id = None
+        self._subscription_expiration = None
+
+        self._create_event_variables_from_list()
         return
 
     @property
@@ -85,11 +100,62 @@ class UpnpServiceProxy:
         """
             Creates a subscription to the service events for this service.
         """
-        device = self._device_ref()
-        event_var = device.lookup_event_variable(self.SERVICE_TYPE, eventname)
-        return event_var
+        varobj = None
 
-    def proxy_link_service_to_device(self, device_ref, service_description):
+        varkey = "{}/{}".format(self.SERVICE_TYPE, eventname)
+
+        self._service_lock.acquire()
+        try:
+            varobj = self._variables[varkey]
+        finally:
+            self._service_lock.release()
+
+        return varobj
+
+    def subscribe_to_events(self, timeout=None):
+        """
+            Creates a subscription to the service events for this service.
+        """
+        success = False
+
+        device = self._device_ref()
+        sid, expiration = device.subscribe_to_events(self, timeout=timeout)
+
+        if sid is not None:
+            success = True
+            self._service_lock.acquire()
+            try:
+                self._subscription_id = sid
+                self._subscription_expiration = expiration
+            finally:
+                self._service_lock.release()
+
+        return success
+
+    def yield_service_lock(self):
+        self._service_lock.acquire()
+        try:
+            yield
+        finally:
+            self._service_lock.release()
+
+    def _create_event_variable(self, event_name, data_type=None, default=None, allowed_list=None):
+
+        variable_key = "{}/{}".format(self.SERVICE_TYPE, event_name)
+        event_var = UpnpEventVar(variable_key, event_name, self, data_type=data_type, default=default, allowed_list=allowed_list)
+        self._variables[variable_key] = event_var
+        return
+
+
+    def _create_event_variables_from_list(self):
+
+        for event_name in self.SERVICE_EVENT_VARIABLES:
+            event_info = self.SERVICE_EVENT_VARIABLES[event_name]
+            self._create_event_variable(event_name, **event_info)
+
+        return
+
+    def _proxy_link_service_to_device(self, device_ref, service_description):
 
         device = device_ref()
 
@@ -106,7 +172,7 @@ class UpnpServiceProxy:
 
         return
 
-    def proxy_set_call_parameters(self, host, baseURL, controlURL, eventSubURL, serviceId=None, serviceType=None):
+    def _proxy_set_call_parameters(self, host, baseURL, controlURL, eventSubURL, serviceId=None, serviceType=None):
 
         self._host = host
 
@@ -124,7 +190,7 @@ class UpnpServiceProxy:
         self._serviceType = serviceType
         return
 
-    def proxy_call_action(self, action_name: str, arguments: dict = {}, auth: dict = None, headers: dict = {} ):
+    def _proxy_call_action(self, action_name: str, arguments: dict = {}, auth: dict = None, headers: dict = {} ):
 
         call_url = self.controlURL
         if self._baseURL is not None:
@@ -174,7 +240,7 @@ class UpnpServiceProxy:
 
         return resp_dict
 
-    def proxy_get_variable_value(self, var_name):
+    def _proxy_get_variable_value(self, var_name):
         var_value = None
 
         action_name = "Get" + var_name
@@ -183,7 +249,7 @@ class UpnpServiceProxy:
 
         return var_value
 
-    def proxy_set_variable_value(self, var_name, var_value):
+    def _proxy_set_variable_value(self, var_name, var_value):
 
         action_name = "Set" + var_name
 
@@ -191,10 +257,30 @@ class UpnpServiceProxy:
 
         return
 
-    def subscribe_to_event(self, eventname, timeout=None):
-        """
-            Creates a subscription to the service events for this service.
-        """
-        device = self._device_ref()
-        event_var = device.subscribe_to_event(self.SERVICE_TYPE, eventname, timeout=timeout)
-        return event_var
+    def _update_event_variables(self, propertyNodeList):
+
+        self._service_lock.acquire()
+        try:
+            for propNodeOuter in propertyNodeList:
+                # Get the first node of the outer property node
+                propNode = propNodeOuter.getchildren()[0]
+
+                event_name = propNode.tag
+                event_value = propNode.text
+
+                var_key = "{}/{}".format(self.SERVICE_TYPE, event_name)
+
+                if var_key in self._variables:
+                    varobj = self._variables[var_key]
+                    varobj.sync_update(event_value, service_locked=True)
+                else:
+                    self._service_lock.release()
+                    try:
+                        host = self._device_ref().host
+                        logger.error("UpnpServiceProxy: Received value for unknown host=%s vkey=%s event=%s value=%r" % (host, var_key, event_name, event_value))
+                    finally:
+                        self._service_lock.acquire()
+        finally:
+            self._service_lock.release()
+
+        return

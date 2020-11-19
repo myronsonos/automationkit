@@ -15,6 +15,11 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:AVTransport:2'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "DRMState": { "data_type": "string", "default": "UNKNOWN", "allowed_list": "['OK']"},
+        "LastChange": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_GetCurrentTransportActions(self, InstanceID, extract_returns=True):
@@ -27,7 +32,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("GetCurrentTransportActions", arguments=arguments)
+        out_params = self._proxy_call_action("GetCurrentTransportActions", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -48,7 +53,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("GetDRMState", arguments=arguments)
+        out_params = self._proxy_call_action("GetDRMState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -69,7 +74,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("GetDeviceCapabilities", arguments=arguments)
+        out_params = self._proxy_call_action("GetDeviceCapabilities", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -90,7 +95,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("GetMediaInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetMediaInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -111,7 +116,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("GetMediaInfo_Ext", arguments=arguments)
+        out_params = self._proxy_call_action("GetMediaInfo_Ext", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -132,7 +137,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("GetPositionInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetPositionInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -154,7 +159,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "StateVariableList": StateVariableList,
         }
 
-        out_params = self.proxy_call_action("GetStateVariables", arguments=arguments)
+        out_params = self._proxy_call_action("GetStateVariables", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -175,7 +180,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("GetTransportInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetTransportInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -196,7 +201,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("GetTransportSettings", arguments=arguments)
+        out_params = self._proxy_call_action("GetTransportSettings", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -217,7 +222,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("Next", arguments=arguments)
+        out_params = self._proxy_call_action("Next", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -238,7 +243,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("Pause", arguments=arguments)
+        out_params = self._proxy_call_action("Pause", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -260,7 +265,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Speed": Speed,
         }
 
-        out_params = self.proxy_call_action("Play", arguments=arguments)
+        out_params = self._proxy_call_action("Play", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -281,7 +286,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("Previous", arguments=arguments)
+        out_params = self._proxy_call_action("Previous", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -302,7 +307,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("Record", arguments=arguments)
+        out_params = self._proxy_call_action("Record", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -325,7 +330,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Target": Target,
         }
 
-        out_params = self.proxy_call_action("Seek", arguments=arguments)
+        out_params = self._proxy_call_action("Seek", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -348,7 +353,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CurrentURIMetaData": CurrentURIMetaData,
         }
 
-        out_params = self.proxy_call_action("SetAVTransportURI", arguments=arguments)
+        out_params = self._proxy_call_action("SetAVTransportURI", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -371,7 +376,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NextURIMetaData": NextURIMetaData,
         }
 
-        out_params = self.proxy_call_action("SetNextAVTransportURI", arguments=arguments)
+        out_params = self._proxy_call_action("SetNextAVTransportURI", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -393,7 +398,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewPlayMode": NewPlayMode,
         }
 
-        out_params = self.proxy_call_action("SetPlayMode", arguments=arguments)
+        out_params = self._proxy_call_action("SetPlayMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -415,7 +420,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewRecordQualityMode": NewRecordQualityMode,
         }
 
-        out_params = self.proxy_call_action("SetRecordQualityMode", arguments=arguments)
+        out_params = self._proxy_call_action("SetRecordQualityMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -440,7 +445,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "StateVariableValuePairs": StateVariableValuePairs,
         }
 
-        out_params = self.proxy_call_action("SetStateVariables", arguments=arguments)
+        out_params = self._proxy_call_action("SetStateVariables", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -461,7 +466,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InstanceID": InstanceID,
         }
 
-        out_params = self.proxy_call_action("Stop", arguments=arguments)
+        out_params = self._proxy_call_action("Stop", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

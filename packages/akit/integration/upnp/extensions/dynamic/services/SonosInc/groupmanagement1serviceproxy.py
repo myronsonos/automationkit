@@ -15,6 +15,14 @@ class GroupManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:GroupManagement:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "GroupCoordinatorIsLocal": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "LocalGroupUUID": { "data_type": "string", "default": None, "allowed_list": None},
+        "ResetVolumeAfter": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "VirtualLineInGroupID": { "data_type": "string", "default": None, "allowed_list": None},
+        "VolumeAVTransportURI": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_AddMember(self, MemberID, BootSeq, extract_returns=True):
@@ -28,7 +36,7 @@ class GroupManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "BootSeq": BootSeq,
         }
 
-        out_params = self.proxy_call_action("AddMember", arguments=arguments)
+        out_params = self._proxy_call_action("AddMember", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -49,7 +57,7 @@ class GroupManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MemberID": MemberID,
         }
 
-        out_params = self.proxy_call_action("RemoveMember", arguments=arguments)
+        out_params = self._proxy_call_action("RemoveMember", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -71,7 +79,7 @@ class GroupManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ResultCode": ResultCode,
         }
 
-        out_params = self.proxy_call_action("ReportTrackBufferingResult", arguments=arguments)
+        out_params = self._proxy_call_action("ReportTrackBufferingResult", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -92,7 +100,7 @@ class GroupManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredSourceAreaIds": DesiredSourceAreaIds,
         }
 
-        out_params = self.proxy_call_action("SetSourceAreaIds", arguments=arguments)
+        out_params = self._proxy_call_action("SetSourceAreaIds", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

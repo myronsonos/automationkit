@@ -15,6 +15,16 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:AlarmClock:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "AlarmListVersion": { "data_type": "string", "default": None, "allowed_list": None},
+        "DailyIndexRefreshTime": { "data_type": "string", "default": None, "allowed_list": None},
+        "DateFormat": { "data_type": "string", "default": None, "allowed_list": None},
+        "TimeFormat": { "data_type": "string", "default": None, "allowed_list": None},
+        "TimeGeneration": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "TimeServer": { "data_type": "string", "default": None, "allowed_list": None},
+        "TimeZone": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_CreateAlarm(self, StartLocalTime, Duration, Recurrence, Enabled, RoomUUID, ProgramURI, ProgramMetaData, PlayMode, Volume, IncludeLinkedZones, extract_returns=True):
@@ -36,7 +46,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "IncludeLinkedZones": IncludeLinkedZones,
         }
 
-        out_params = self.proxy_call_action("CreateAlarm", arguments=arguments)
+        out_params = self._proxy_call_action("CreateAlarm", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -57,7 +67,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ID": ID,
         }
 
-        out_params = self.proxy_call_action("DestroyAlarm", arguments=arguments)
+        out_params = self._proxy_call_action("DestroyAlarm", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -76,7 +86,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDailyIndexRefreshTime", arguments=arguments)
+        out_params = self._proxy_call_action("GetDailyIndexRefreshTime", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -95,7 +105,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFormat", arguments=arguments)
+        out_params = self._proxy_call_action("GetFormat", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -116,7 +126,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TimeStamp": TimeStamp,
         }
 
-        out_params = self.proxy_call_action("GetHouseholdTimeAtStamp", arguments=arguments)
+        out_params = self._proxy_call_action("GetHouseholdTimeAtStamp", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -135,7 +145,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTimeNow", arguments=arguments)
+        out_params = self._proxy_call_action("GetTimeNow", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -154,7 +164,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTimeServer", arguments=arguments)
+        out_params = self._proxy_call_action("GetTimeServer", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -173,7 +183,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTimeZone", arguments=arguments)
+        out_params = self._proxy_call_action("GetTimeZone", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -192,7 +202,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTimeZoneAndRule", arguments=arguments)
+        out_params = self._proxy_call_action("GetTimeZoneAndRule", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -213,7 +223,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Index": Index,
         }
 
-        out_params = self.proxy_call_action("GetTimeZoneRule", arguments=arguments)
+        out_params = self._proxy_call_action("GetTimeZoneRule", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -232,7 +242,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("ListAlarms", arguments=arguments)
+        out_params = self._proxy_call_action("ListAlarms", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -253,7 +263,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredDailyIndexRefreshTime": DesiredDailyIndexRefreshTime,
         }
 
-        out_params = self.proxy_call_action("SetDailyIndexRefreshTime", arguments=arguments)
+        out_params = self._proxy_call_action("SetDailyIndexRefreshTime", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -275,7 +285,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredDateFormat": DesiredDateFormat,
         }
 
-        out_params = self.proxy_call_action("SetFormat", arguments=arguments)
+        out_params = self._proxy_call_action("SetFormat", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -297,7 +307,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TimeZoneForDesiredTime": TimeZoneForDesiredTime,
         }
 
-        out_params = self.proxy_call_action("SetTimeNow", arguments=arguments)
+        out_params = self._proxy_call_action("SetTimeNow", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -318,7 +328,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredTimeServer": DesiredTimeServer,
         }
 
-        out_params = self.proxy_call_action("SetTimeServer", arguments=arguments)
+        out_params = self._proxy_call_action("SetTimeServer", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -340,7 +350,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "AutoAdjustDst": AutoAdjustDst,
         }
 
-        out_params = self.proxy_call_action("SetTimeZone", arguments=arguments)
+        out_params = self._proxy_call_action("SetTimeZone", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -371,7 +381,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "IncludeLinkedZones": IncludeLinkedZones,
         }
 
-        out_params = self.proxy_call_action("UpdateAlarm", arguments=arguments)
+        out_params = self._proxy_call_action("UpdateAlarm", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

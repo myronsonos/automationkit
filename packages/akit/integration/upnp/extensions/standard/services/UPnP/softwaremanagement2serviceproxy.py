@@ -15,6 +15,8 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:SoftwareManagement:2'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_GetACLData(self, extract_returns=True):
@@ -25,7 +27,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetACLData", arguments=arguments)
+        out_params = self._proxy_call_action("GetACLData", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +46,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetActiveEUIDs", arguments=arguments)
+        out_params = self._proxy_call_action("GetActiveEUIDs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +65,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDUIDs", arguments=arguments)
+        out_params = self._proxy_call_action("GetDUIDs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -84,7 +86,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DUID": DUID,
         }
 
-        out_params = self.proxy_call_action("GetDUInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetDUInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -103,7 +105,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetEUIDs", arguments=arguments)
+        out_params = self._proxy_call_action("GetEUIDs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -124,7 +126,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "EUID": EUID,
         }
 
-        out_params = self.proxy_call_action("GetEUInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetEUInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -143,7 +145,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetErrorEUIDs", arguments=arguments)
+        out_params = self._proxy_call_action("GetErrorEUIDs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -162,7 +164,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetOperationIDs", arguments=arguments)
+        out_params = self._proxy_call_action("GetOperationIDs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -183,7 +185,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "OperationID": OperationID,
         }
 
-        out_params = self.proxy_call_action("GetOperationInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetOperationInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -202,7 +204,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetRunningEUIDs", arguments=arguments)
+        out_params = self._proxy_call_action("GetRunningEUIDs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -225,7 +227,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "HandleDependencies": HandleDependencies,
         }
 
-        out_params = self.proxy_call_action("Install", arguments=arguments)
+        out_params = self._proxy_call_action("Install", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -247,7 +249,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "HandleDependencies": HandleDependencies,
         }
 
-        out_params = self.proxy_call_action("Start", arguments=arguments)
+        out_params = self._proxy_call_action("Start", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -269,7 +271,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "HandleDependencies": HandleDependencies,
         }
 
-        out_params = self.proxy_call_action("Stop", arguments=arguments)
+        out_params = self._proxy_call_action("Stop", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -291,7 +293,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "HandleDependencies": HandleDependencies,
         }
 
-        out_params = self.proxy_call_action("Uninstall", arguments=arguments)
+        out_params = self._proxy_call_action("Uninstall", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -314,7 +316,7 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "HandleDependencies": HandleDependencies,
         }
 
-        out_params = self.proxy_call_action("Update", arguments=arguments)
+        out_params = self._proxy_call_action("Update", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

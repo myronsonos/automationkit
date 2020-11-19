@@ -17,10 +17,9 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import re
+import threading
 import typing
 import weakref
-
-from threading import RLock
 
 import requests
 
@@ -66,6 +65,8 @@ class UpnpDevice:
         self._host = None
         self._urlBase = None
 
+        self._device_lock = threading.RLock()
+
         self._services_descriptions = {}
         self._services = {}
 
@@ -81,7 +82,15 @@ class UpnpDevice:
 
     @property
     def services(self):
-        return self._services.values()
+        service_list = None
+
+        self._device_lock.acquire()
+        try:
+            service_list = [svc for svc in self._services.values()]
+        finally:
+            self._device_lock.release()
+
+        return service_list
 
     @property
     def services_descriptions(self):
@@ -94,8 +103,9 @@ class UpnpDevice:
     def get_service_description(self, service_type):
 
         svc_content = None
+
         devDesc = self.description
-        
+
         for nxtsvc in devDesc.serviceList:
             if nxtsvc.serviceType == service_type:
                 fullurl = self.URLBase.rstrip("/") + "/" + nxtsvc.SCPDURL.lstrip("/")
@@ -110,42 +120,63 @@ class UpnpDevice:
     def lookup_service(self, serviceManufacturer, serviceType):
         serviceManufacturer = normalize_name_for_path(serviceManufacturer)
         svckey = generate_extension_key(serviceManufacturer, serviceType)
-        svc = self._services[svckey]
+
+        self._device_lock.acquire()
+        try:
+            svc = self._services[svckey]
+        finally:
+            self._device_lock.release()
+
         return svc
 
     def to_dict(self, brief=False):
-        dval = self._description.to_dict(brief=brief)
 
-        dval["URLBase"] = self.URLBase
+        dval = None
+        desc = self._description
 
-        if not brief:
-            serviceDescList = []
-            serviceList = dval["serviceList"]
-            for svc_info in serviceList:
-                svc_type = svc_info["serviceType"]
-                sdurl = self._urlBase.rstrip("/") + "/" + svc_info["SCPDURL"].lstrip("/")
-                sdesc = self._process_full_service_description(sdurl)
-                sdesc["serviceType"] = svc_type
-                serviceDescList.append(sdesc)
+        if desc is not None:
+            dval = desc.to_dict(brief=brief)
 
-            dval["serviceDescriptionList"] = serviceDescList
+            dval["URLBase"] = self.URLBase
+
+            if not brief:
+                serviceDescList = []
+                serviceList = dval["serviceList"]
+                for svc_info in serviceList:
+                    svc_type = svc_info["serviceType"]
+                    sdurl = self._urlBase.rstrip("/") + "/" + svc_info["SCPDURL"].lstrip("/")
+                    sdesc = self._process_full_service_description(sdurl)
+                    sdesc["serviceType"] = svc_type
+                    serviceDescList.append(sdesc)
+
+                dval["serviceDescriptionList"] = serviceDescList
 
         return dval
 
     def to_json(self, brief=False):
-        json_str = self._description.to_json(brief=brief)
+        json_str = None
+        desc = self._description
+
+        if desc is not None:
+            json_str = self._description.to_json(brief=brief)
+
         return json_str
 
-    def _populate_embedded_device_descriptions(self, factory, description):
+    def _locked_populate_embedded_device_descriptions(self, factory, description):
         raise AKitNotOverloadedError("UpnpDevice._populate_embedded_devices: must be overridden.")
         return
 
-    def _populate_icons(self):
-        for icon in self._description.iconList:
-            pass
+    def _locked_populate_icons(self):
+
+        desc = self._description
+
+        if desc is not None:
+            for icon in desc.iconList:
+                pass
+
         return
 
-    def _populate_services_descriptions(self, factory, description):
+    def _locked_populate_services_descriptions(self, factory, description):
 
         for serviceInfo in description.serviceList:
             serviceManufacturer = normalize_name_for_path(serviceInfo.serviceManufacturer)
@@ -158,14 +189,14 @@ class UpnpDevice:
                 svc_inst = factory.create_service_instance(serviceManufacturer, serviceType)
                 if svc_inst is not None:
                     device_ref = weakref.ref(self)
-                    svc_inst.proxy_link_service_to_device(device_ref, serviceInfo)
+                    svc_inst._proxy_link_service_to_device(device_ref, serviceInfo)
                     self._services[svckey] = svc_inst
             else:
                 svc_inst = self._services[svckey]
 
         return
 
-    def _process_full_service_description(self, sdurl):
+    def _locked_process_full_service_description(self, sdurl):
         svcdesc = None
 
         resp = requests.get(sdurl)
@@ -197,7 +228,7 @@ class UpnpDevice:
 
         return svcdesc
 
-    def _process_node_action_list(self, actionListNode, namespaces=None):
+    def _locked_process_node_action_list(self, actionListNode, namespaces=None):
         actionTable = {}
 
         actionNodeList = actionListNode.findall("action", namespaces=namespaces)
@@ -230,7 +261,7 @@ class UpnpDevice:
 
         return actionTable
 
-    def _process_node_spec_version(self, specVersionNode, namespaces=None):
+    def _locked_process_node_spec_version(self, specVersionNode, namespaces=None):
         verInfo = {}
 
         verInfo["major"] = specVersionNode.find("major", namespaces=namespaces).text
@@ -238,7 +269,7 @@ class UpnpDevice:
 
         return verInfo
 
-    def _process_node_state_table(self, serviceStateTableNode, namespaces=None):
+    def _locked_process_node_state_table(self, serviceStateTableNode, namespaces=None):
         variablesTable = {}
         typesTable = {}
         eventsTable = {}

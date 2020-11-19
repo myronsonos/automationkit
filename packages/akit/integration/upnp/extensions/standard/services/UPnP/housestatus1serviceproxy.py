@@ -15,6 +15,12 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:HouseStatus:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "ActivityLevel": { "data_type": "string", "default": "Regular", "allowed_list": "['Regular', 'Asleep', 'HighActivity']"},
+        "DormancyLevel": { "data_type": "string", "default": "Regular", "allowed_list": "['Regular', 'Vacation', 'PetsAtHome']"},
+        "OccupancyState": { "data_type": "string", "default": "Occupied", "allowed_list": "['Occupied', 'Unoccupied', 'Indeterminate']"},
+    }
 
 
     def action_GetActivityLevel(self, extract_returns=True):
@@ -25,7 +31,7 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetActivityLevel", arguments=arguments)
+        out_params = self._proxy_call_action("GetActivityLevel", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +50,7 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDormancyLevel", arguments=arguments)
+        out_params = self._proxy_call_action("GetDormancyLevel", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +69,7 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetOccupancyState", arguments=arguments)
+        out_params = self._proxy_call_action("GetOccupancyState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -84,7 +90,7 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewActivityLevel": NewActivityLevel,
         }
 
-        out_params = self.proxy_call_action("SetActivityLevel", arguments=arguments)
+        out_params = self._proxy_call_action("SetActivityLevel", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -105,7 +111,7 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewDormancyLevel": NewDormancyLevel,
         }
 
-        out_params = self.proxy_call_action("SetDormancyLevel", arguments=arguments)
+        out_params = self._proxy_call_action("SetDormancyLevel", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -126,7 +132,7 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewOccupancyState": NewOccupancyState,
         }
 
-        out_params = self.proxy_call_action("SetOccupancyState", arguments=arguments)
+        out_params = self._proxy_call_action("SetOccupancyState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

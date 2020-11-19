@@ -15,6 +15,10 @@ class MediaManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:MediaManagement:2'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "MediaSessionInfo": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_GetMediaCapabilities(self, TSMediaCapabilityInfo, extract_returns=True):
@@ -27,7 +31,7 @@ class MediaManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TSMediaCapabilityInfo": TSMediaCapabilityInfo,
         }
 
-        out_params = self.proxy_call_action("GetMediaCapabilities", arguments=arguments)
+        out_params = self._proxy_call_action("GetMediaCapabilities", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -48,7 +52,7 @@ class MediaManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TargetMediaSessionID": TargetMediaSessionID,
         }
 
-        out_params = self.proxy_call_action("GetMediaSessionInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetMediaSessionInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -70,7 +74,7 @@ class MediaManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewMediaCapabilityInfo": NewMediaCapabilityInfo,
         }
 
-        out_params = self.proxy_call_action("ModifyMediaSession", arguments=arguments)
+        out_params = self._proxy_call_action("ModifyMediaSession", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -91,7 +95,7 @@ class MediaManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TSMediaCapabilityInfo": TSMediaCapabilityInfo,
         }
 
-        out_params = self.proxy_call_action("StartMediaSession", arguments=arguments)
+        out_params = self._proxy_call_action("StartMediaSession", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -112,7 +116,7 @@ class MediaManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TargetMediaSessionID": TargetMediaSessionID,
         }
 
-        out_params = self.proxy_call_action("StopMediaSession", arguments=arguments)
+        out_params = self._proxy_call_action("StopMediaSession", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

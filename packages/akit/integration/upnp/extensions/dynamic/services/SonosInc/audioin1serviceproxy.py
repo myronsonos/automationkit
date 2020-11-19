@@ -15,6 +15,15 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:AudioIn:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "AudioInputName": { "data_type": "string", "default": None, "allowed_list": None},
+        "Icon": { "data_type": "string", "default": None, "allowed_list": None},
+        "LeftLineInLevel": { "data_type": "i4", "default": None, "allowed_list": None},
+        "LineInConnected": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "Playing": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "RightLineInLevel": { "data_type": "i4", "default": None, "allowed_list": None},
+    }
 
 
     def action_GetAudioInputAttributes(self, extract_returns=True):
@@ -25,7 +34,7 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetAudioInputAttributes", arguments=arguments)
+        out_params = self._proxy_call_action("GetAudioInputAttributes", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +53,7 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetLineInLevel", arguments=arguments)
+        out_params = self._proxy_call_action("GetLineInLevel", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -65,7 +74,7 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ObjectID": ObjectID,
         }
 
-        out_params = self.proxy_call_action("SelectAudio", arguments=arguments)
+        out_params = self._proxy_call_action("SelectAudio", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -87,7 +96,7 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredIcon": DesiredIcon,
         }
 
-        out_params = self.proxy_call_action("SetAudioInputAttributes", arguments=arguments)
+        out_params = self._proxy_call_action("SetAudioInputAttributes", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -109,7 +118,7 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredRightLineInLevel": DesiredRightLineInLevel,
         }
 
-        out_params = self.proxy_call_action("SetLineInLevel", arguments=arguments)
+        out_params = self._proxy_call_action("SetLineInLevel", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -130,7 +139,7 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CoordinatorID": CoordinatorID,
         }
 
-        out_params = self.proxy_call_action("StartTransmissionToGroup", arguments=arguments)
+        out_params = self._proxy_call_action("StartTransmissionToGroup", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -151,7 +160,7 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "CoordinatorID": CoordinatorID,
         }
 
-        out_params = self.proxy_call_action("StopTransmissionToGroup", arguments=arguments)
+        out_params = self._proxy_call_action("StopTransmissionToGroup", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

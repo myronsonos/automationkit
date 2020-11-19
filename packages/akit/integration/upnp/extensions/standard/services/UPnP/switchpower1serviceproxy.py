@@ -15,6 +15,8 @@ class SwitchPower1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:SwitchPower:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_GetStatus(self, extract_returns=True):
@@ -25,7 +27,7 @@ class SwitchPower1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetStatus", arguments=arguments)
+        out_params = self._proxy_call_action("GetStatus", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +46,7 @@ class SwitchPower1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTarget", arguments=arguments)
+        out_params = self._proxy_call_action("GetTarget", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -65,7 +67,7 @@ class SwitchPower1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "newTargetValue": newTargetValue,
         }
 
-        out_params = self.proxy_call_action("SetTarget", arguments=arguments)
+        out_params = self._proxy_call_action("SetTarget", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

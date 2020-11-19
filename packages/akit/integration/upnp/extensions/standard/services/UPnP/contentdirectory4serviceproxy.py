@@ -15,6 +15,15 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ContentDirectory:4'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "ContainerUpdateIDs": { "data_type": "string", "default": None, "allowed_list": None},
+        "DeviceMode": { "data_type": "string", "default": None, "allowed_list": None},
+        "LastChange": { "data_type": "string", "default": None, "allowed_list": None},
+        "SystemUpdateID": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "TransferIDs": { "data_type": "string", "default": None, "allowed_list": None},
+        "TransformStatus": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_Browse(self, ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, extract_returns=True):
@@ -32,7 +41,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SortCriteria": SortCriteria,
         }
 
-        out_params = self.proxy_call_action("Browse", arguments=arguments)
+        out_params = self._proxy_call_action("Browse", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -53,7 +62,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DeviceModeID": DeviceModeID,
         }
 
-        out_params = self.proxy_call_action("CancelDeviceMode", arguments=arguments)
+        out_params = self._proxy_call_action("CancelDeviceMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -74,7 +83,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransformTaskID": TransformTaskID,
         }
 
-        out_params = self.proxy_call_action("CancelTransformTask", arguments=arguments)
+        out_params = self._proxy_call_action("CancelTransformTask", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -96,7 +105,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Elements": Elements,
         }
 
-        out_params = self.proxy_call_action("CreateObject", arguments=arguments)
+        out_params = self._proxy_call_action("CreateObject", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -118,7 +127,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ObjectID": ObjectID,
         }
 
-        out_params = self.proxy_call_action("CreateReference", arguments=arguments)
+        out_params = self._proxy_call_action("CreateReference", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -139,7 +148,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ResourceURI": ResourceURI,
         }
 
-        out_params = self.proxy_call_action("DeleteResource", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteResource", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -160,7 +169,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ObjectID": ObjectID,
         }
 
-        out_params = self.proxy_call_action("DestroyObject", arguments=arguments)
+        out_params = self._proxy_call_action("DestroyObject", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -182,7 +191,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransformSettings": TransformSettings,
         }
 
-        out_params = self.proxy_call_action("EvaluateTransforms", arguments=arguments)
+        out_params = self._proxy_call_action("EvaluateTransforms", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -204,7 +213,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DestinationURI": DestinationURI,
         }
 
-        out_params = self.proxy_call_action("ExportResource", arguments=arguments)
+        out_params = self._proxy_call_action("ExportResource", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -226,7 +235,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DeviceModeRequest": DeviceModeRequest,
         }
 
-        out_params = self.proxy_call_action("ExtendDeviceMode", arguments=arguments)
+        out_params = self._proxy_call_action("ExtendDeviceMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -249,7 +258,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "QueryRequest": QueryRequest,
         }
 
-        out_params = self.proxy_call_action("FreeFormQuery", arguments=arguments)
+        out_params = self._proxy_call_action("FreeFormQuery", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -268,7 +277,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetAllAvailableTransforms", arguments=arguments)
+        out_params = self._proxy_call_action("GetAllAvailableTransforms", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -289,7 +298,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransformResourceObjectDesc": TransformResourceObjectDesc,
         }
 
-        out_params = self.proxy_call_action("GetAllowedTransforms", arguments=arguments)
+        out_params = self._proxy_call_action("GetAllowedTransforms", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -308,7 +317,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetCurrentTransformStatusList", arguments=arguments)
+        out_params = self._proxy_call_action("GetCurrentTransformStatusList", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -327,7 +336,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDeviceMode", arguments=arguments)
+        out_params = self._proxy_call_action("GetDeviceMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -346,7 +355,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDeviceModeStatus", arguments=arguments)
+        out_params = self._proxy_call_action("GetDeviceModeStatus", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -365,7 +374,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFeatureList", arguments=arguments)
+        out_params = self._proxy_call_action("GetFeatureList", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -384,7 +393,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFreeFormQueryCapabilities", arguments=arguments)
+        out_params = self._proxy_call_action("GetFreeFormQueryCapabilities", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -403,7 +412,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPermissionsInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetPermissionsInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -422,7 +431,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSearchCapabilities", arguments=arguments)
+        out_params = self._proxy_call_action("GetSearchCapabilities", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -441,7 +450,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetServiceResetToken", arguments=arguments)
+        out_params = self._proxy_call_action("GetServiceResetToken", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -460,7 +469,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSortCapabilities", arguments=arguments)
+        out_params = self._proxy_call_action("GetSortCapabilities", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -479,7 +488,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSortExtensionCapabilities", arguments=arguments)
+        out_params = self._proxy_call_action("GetSortExtensionCapabilities", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -498,7 +507,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSystemUpdateID", arguments=arguments)
+        out_params = self._proxy_call_action("GetSystemUpdateID", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -519,7 +528,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransferID": TransferID,
         }
 
-        out_params = self.proxy_call_action("GetTransferProgress", arguments=arguments)
+        out_params = self._proxy_call_action("GetTransferProgress", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -541,7 +550,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransformTaskResultFilter": TransformTaskResultFilter,
         }
 
-        out_params = self.proxy_call_action("GetTransformTaskResult", arguments=arguments)
+        out_params = self._proxy_call_action("GetTransformTaskResult", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -562,7 +571,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransformTaskID": TransformTaskID,
         }
 
-        out_params = self.proxy_call_action("GetTransforms", arguments=arguments)
+        out_params = self._proxy_call_action("GetTransforms", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -584,7 +593,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DestinationURI": DestinationURI,
         }
 
-        out_params = self.proxy_call_action("ImportResource", arguments=arguments)
+        out_params = self._proxy_call_action("ImportResource", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -606,7 +615,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewParentID": NewParentID,
         }
 
-        out_params = self.proxy_call_action("MoveObject", arguments=arguments)
+        out_params = self._proxy_call_action("MoveObject", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -627,7 +636,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransformTaskID": TransformTaskID,
         }
 
-        out_params = self.proxy_call_action("PauseTransformTask", arguments=arguments)
+        out_params = self._proxy_call_action("PauseTransformTask", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -649,7 +658,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DeviceModeRequest": DeviceModeRequest,
         }
 
-        out_params = self.proxy_call_action("RequestDeviceMode", arguments=arguments)
+        out_params = self._proxy_call_action("RequestDeviceMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -670,7 +679,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransformTaskID": TransformTaskID,
         }
 
-        out_params = self.proxy_call_action("ResumeTransformTask", arguments=arguments)
+        out_params = self._proxy_call_action("ResumeTransformTask", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -691,7 +700,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransformTaskID": TransformTaskID,
         }
 
-        out_params = self.proxy_call_action("RollbackTransformTask", arguments=arguments)
+        out_params = self._proxy_call_action("RollbackTransformTask", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -717,7 +726,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SortCriteria": SortCriteria,
         }
 
-        out_params = self.proxy_call_action("Search", arguments=arguments)
+        out_params = self._proxy_call_action("Search", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -741,7 +750,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransformRollback": TransformRollback,
         }
 
-        out_params = self.proxy_call_action("StartTransformTask", arguments=arguments)
+        out_params = self._proxy_call_action("StartTransformTask", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -762,7 +771,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TransferID": TransferID,
         }
 
-        out_params = self.proxy_call_action("StopTransferResource", arguments=arguments)
+        out_params = self._proxy_call_action("StopTransferResource", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -785,7 +794,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewTagValue": NewTagValue,
         }
 
-        out_params = self.proxy_call_action("UpdateObject", arguments=arguments)
+        out_params = self._proxy_call_action("UpdateObject", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

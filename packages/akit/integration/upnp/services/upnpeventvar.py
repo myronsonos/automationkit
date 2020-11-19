@@ -18,6 +18,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import time
+import weakref
 
 from enum import IntEnum
 from datetime import datetime
@@ -46,7 +47,8 @@ class UpnpEventVar:
         API is provided to ensure this synchronization.
     """
 
-    def __init__(self, key, name, subscription_lock, sid=None, timeout=None, value=None, timestamp=None):
+    def __init__(self, key, name, service, value=None, data_type=None, default=None,
+                 allowed_list=None, timestamp=None):
         """
             Constructor for the :class:`UpnpEventVar` object.
 
@@ -54,16 +56,15 @@ class UpnpEventVar:
             :type key: str
             :param name: The name of the event this variable is storing information on.
             :type name: str
-            :param subscription_lock: The lock from the :class:`UpnpRootDevice` device that hosts the service this
-                                      variable is referencing state on.
-            :type subscription_lock: :class:`threading.RLock`
-            :param sid: The subscription id or SID assigned to the subscription for this event variable.
-            :type sid: str
-            :param timeout: The timeout assigned to the subscription reference by this :class:`UpnpEventVar` object.
-            :type timeout: float
+            :param service_lock: The lock from the :class:`UpnpServiceProxy` that hosts the service event
+                                 variable list.
+            :type service_lock: :class:`threading.RLock`
             :param value: Optional initially reported value for the variable.  This is used when we have reports for
                           variables that we are not subscribed to.
             :type value: various (str, int, etc)
+
+        
+
             :param timestamp: The timestamp of the creation of this variable.  If a timestamp is passed then a value
                               needs to also be passed.
             :type timestamp: datetime
@@ -71,13 +72,18 @@ class UpnpEventVar:
         """
         self._key = key
         self._name = name
+        self._service_ref = weakref.ref(service)
         self._value = value
-        self._sid = None
-        self._timeout = None
-        self._subscription_lock = subscription_lock
+        self._data_type = data_type
+        self._default = default
+        self._allowed_list = allowed_list
+        self._timestamp = None
 
         if self._value is not None and timestamp is None:
-            timestamp  = datetime.now()
+            self._timestamp  = datetime.now()
+
+        if value is None and default is not None:
+            self._value = default
 
         self._created = timestamp
         self._modified = timestamp
@@ -154,20 +160,6 @@ class UpnpEventVar:
         self._modified = None
         return
 
-    def update_subscription_details(self, sid, timeout):
-        """
-            Called to update the subscription information for this event variable.
-        """
-
-        self._subscription_lock.acquire()
-        try:
-            self._sid = sid
-            self._timeout = timeout
-        finally:
-            self._subscription_lock.release()
-
-        return
-
     def sync_read(self):
         """
             Performs a threadsafe read of the value, modified, and state members of a
@@ -175,8 +167,8 @@ class UpnpEventVar:
         """
         value, modified, state = None, None, UpnpEventVarState.UnInitialized
 
-        self._subscription_lock.acquire()
-        try:
+        service = self._service_ref()
+        for _ in service.yield_service_lock():
             modified = self._modified
 
             if modified == datetime.min:
@@ -185,24 +177,22 @@ class UpnpEventVar:
                 state = UpnpEventVarState.Valid
 
             value = self._value
-        finally:
-            self._subscription_lock.release()
 
         return value, modified, state
 
-    def sync_update(self, value, sid=None):
+    def sync_update(self, value, sid=None, service_locked=False):
         """
             Peforms a threadsafe update of the value, modified and sid members of a
             :class:`UpnpEventVar` instance.
         """
         modified = datetime.now()
-        self._subscription_lock.acquire()
-        try:
-            if sid != None:
-                self._sid = sid
+
+        if service_locked:
             self._value, self._modified = value, modified
-        finally:
-            self._subscription_lock.release()
+        else:
+            service = self._service_ref()
+            for _ in service.yield_service_lock():
+                self._value, self._modified = value, modified
 
         return
 
@@ -261,3 +251,7 @@ class UpnpEventVar:
             now_time = time.time()
 
         return self._value
+
+    def __str__(self):
+        rtnstr = "name={} value={}".format(self._name, self._value)
+        return rtnstr

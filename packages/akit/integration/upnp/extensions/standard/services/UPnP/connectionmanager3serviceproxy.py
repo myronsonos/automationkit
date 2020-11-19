@@ -15,6 +15,13 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ConnectionManager:3'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "CurrentConnectionIDs": { "data_type": "string", "default": None, "allowed_list": None},
+        "DeviceClockInfoUpdates": { "data_type": "string", "default": None, "allowed_list": None},
+        "SinkProtocolInfo": { "data_type": "string", "default": None, "allowed_list": None},
+        "SourceProtocolInfo": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_ConnectionComplete(self, ConnectionID, extract_returns=True):
@@ -27,7 +34,7 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ConnectionID": ConnectionID,
         }
 
-        out_params = self.proxy_call_action("ConnectionComplete", arguments=arguments)
+        out_params = self._proxy_call_action("ConnectionComplete", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -46,7 +53,7 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetCurrentConnectionIDs", arguments=arguments)
+        out_params = self._proxy_call_action("GetCurrentConnectionIDs", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -67,7 +74,7 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ConnectionID": ConnectionID,
         }
 
-        out_params = self.proxy_call_action("GetCurrentConnectionInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetCurrentConnectionInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -86,7 +93,7 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFeatureList", arguments=arguments)
+        out_params = self._proxy_call_action("GetFeatureList", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -105,7 +112,7 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetProtocolInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetProtocolInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -127,7 +134,7 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ItemMetadataList": ItemMetadataList,
         }
 
-        out_params = self.proxy_call_action("GetRendererItemInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetRendererItemInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -151,7 +158,7 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Direction": Direction,
         }
 
-        out_params = self.proxy_call_action("PrepareForConnection", arguments=arguments)
+        out_params = self._proxy_call_action("PrepareForConnection", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

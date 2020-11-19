@@ -15,6 +15,8 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RemoteUIClient:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_AddUIListing(self, InputUIList, extract_returns=True):
@@ -27,7 +29,7 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InputUIList": InputUIList,
         }
 
-        out_params = self.proxy_call_action("AddUIListing", arguments=arguments)
+        out_params = self._proxy_call_action("AddUIListing", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -48,7 +50,7 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RequestedConnections": RequestedConnections,
         }
 
-        out_params = self.proxy_call_action("Connect", arguments=arguments)
+        out_params = self._proxy_call_action("Connect", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -69,7 +71,7 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RequestedDisconnects": RequestedDisconnects,
         }
 
-        out_params = self.proxy_call_action("Disconnect", arguments=arguments)
+        out_params = self._proxy_call_action("Disconnect", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -91,7 +93,7 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Message": Message,
         }
 
-        out_params = self.proxy_call_action("DisplayMessage", arguments=arguments)
+        out_params = self._proxy_call_action("DisplayMessage", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -110,7 +112,7 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetCurrentConnections", arguments=arguments)
+        out_params = self._proxy_call_action("GetCurrentConnections", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -129,7 +131,7 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDeviceProfile", arguments=arguments)
+        out_params = self._proxy_call_action("GetDeviceProfile", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -148,7 +150,7 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetUIListing", arguments=arguments)
+        out_params = self._proxy_call_action("GetUIListing", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -170,7 +172,7 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "InputData": InputData,
         }
 
-        out_params = self.proxy_call_action("ProcessInput", arguments=arguments)
+        out_params = self._proxy_call_action("ProcessInput", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -191,7 +193,7 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "RemoveUIList": RemoveUIList,
         }
 
-        out_params = self.proxy_call_action("RemoveUIListing", arguments=arguments)
+        out_params = self._proxy_call_action("RemoveUIListing", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

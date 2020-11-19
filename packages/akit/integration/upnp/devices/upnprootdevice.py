@@ -53,6 +53,7 @@ from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_EMBEDDEDDEVI
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_ROOTDEVICES
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_SERVICES
 
+from akit.integration.upnp.services.upnpserviceproxy import UpnpServiceProxy
 from akit.integration.upnp.services.upnpeventvar import UpnpEventVar
 
 from akit.integration import upnp as upnp_module
@@ -164,14 +165,13 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
         self._logger = getAutomatonKitLogger()
 
-        self._lock = threading.RLock()
-
         self._coord_ref = None
 
-        self._subscription_lock = threading.RLock()
+        self._root_device_lock = threading.RLock()
+
         self._subscriptions = {}
+        self._sid_to_service_lookup = {}
         self._variables = {}
-        self._sid_to_subscription_key_lookup = {}
         return
 
     @property
@@ -180,21 +180,25 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
     @property
     def description(self):
-        desc = None
-        self._lock.acquire()
-        try:
-            desc = self._description
-        finally:
-            self._lock.release()
+        desc = self._description
         return desc
 
     @property
     def device_descriptions(self):
-        return self._device_descriptions.values()
+        dev_desc = self._device_descriptions
+        if dev_desc is not None:
+            dev_desc_list = [devdesc for devdesc in dev_desc.values()]
+        return dev_desc_list
 
     @property
     def devices(self):
-        return self._devices.values()
+        devices_list = None
+
+        devices = self._devices
+        if devices is not None:
+            devices_list = [dev for dev in devices]
+
+        return devices_list
 
     @property
     def ext(self):
@@ -210,8 +214,11 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
     @property
     def MACAddress(self):
+        macaddr = None
         desc = self.description
-        return desc.MACAddress
+        if desc is not None:
+            macaddr = desc.MACAddress
+        return macaddr
 
     @property
     def mode(self):
@@ -219,7 +226,10 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
     
     @property
     def modelName(self):
-        mname = self.description.modelName
+        mname = None
+        desc = self.description
+        if desc is not None:
+            mname = desc.modelName
         return mname
 
     @property
@@ -232,6 +242,14 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
     @property
     def services(self):
+        services_list = None
+
+        services = self._services
+        if services is not None:
+            services_list = [svc for svc in services]
+
+        return services_list
+
         return self._services.values()
 
     @property
@@ -274,37 +292,30 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
         return
 
     def lookup_device(self, device_type):
-        device = self._devices[device_type]
-        return device
+        device = None
 
-    def lookup_event_variable(self, service_type, event_name):
-        event_var = None
-
-        subscription_key = "{}/{}".format(service_type, event_name)
-
-        self._subscription_lock.acquire()
+        self._device_lock.acquire()
         try:
-            if subscription_key in self._variables:
-                event_var = self._variables[subscription_key]
+            device = self._devices[device_type]
         finally:
-            self._subscription_lock.release()
+            self._device_lock.release()
 
-        return event_var
+        return device
 
     def process_subscription_callback(self, sid, headers, body):
 
-        eventvar = None
-        subscription_key = None
+        have_subscription = False
 
-        self._subscription_lock.acquire()
+        service = None
+
+        self._device_lock.acquire()
         try:
-            subscription_key = self._sid_to_subscription_key_lookup[sid]
-            eventvar = self._subscriptions[subscription_key]
+            service = self._sid_to_service_lookup[sid]
         finally:
-            self._subscription_lock.release()
+            self._device_lock.release()
 
-        if eventvar is not None:
-            service_type, _ = subscription_key.split("/") 
+        if service is not None:
+            service_type = service.SERVICE_TYPE
 
             docTree = ElementTree(xml_fromstring(body))
 
@@ -312,41 +323,8 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
             if psetNode is not None and psetNode.tag == "{%s}propertyset" % NS_UPNP_EVENT:
                 propertyNodeList = psetNode.findall("{%s}property" % NS_UPNP_EVENT)
-                for propNodeOuter in propertyNodeList:
-                    # Get the first node of the outer property node
-                    propNode = propNodeOuter.getchildren()[0]
 
-                    event_name = propNode.tag
-                    event_value = propNode.text
-
-                    if event_name == eventvar.name:
-                        timestamp = datetime.now()
-                        eventvar.sync_update(event_value, timestamp)
-                    else:
-                        otherkey = "{}/{}".format(service_type, event_name)
-                        othervar = None
-
-                        self._subscription_lock.acquire()
-                        try:
-                            if otherkey in self._subscriptions:
-                                othervar = self._subscriptions[otherkey]
-                            elif otherkey in self._variables:
-                                othervar = self._variables[otherkey]
-                        finally:
-                            self._subscription_lock.release()
-                        
-                        if othervar is not None:
-                            timestamp = datetime.now()
-                            othervar.sync_update(event_value, timestamp)
-                        else:
-                            # If we get here, we have a value for a variable that we are not subscribed
-                            # create a none subscribed entry for the variable and its value
-                            self._subscription_lock.acquire()
-                            try:
-                                event_var = UpnpEventVar(otherkey, event_name, self._subscription_lock, value=event_value)
-                                self._variables[otherkey] = event_var
-                            finally:
-                                self._subscription_lock.release()
+                service._update_event_variables(propertyNodeList)
         return
 
     def record_description(self, urlBase: str, manufacturer: str, modelName: str, docTree: typing.Any, devNode: typing.Any, namespaces: str, force_recording: bool = False):
@@ -378,41 +356,60 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
         return
 
-    def subscribe_to_event(self, service_type: str, event_name: str, timeout: typing.Optional[float]):
+    def refresh_description(self, ipaddr, factory, docNode, namespaces=None):
+        """
+        """
+        try:
+            self._ip_address = ipaddr
+
+            specVerNode = docNode.find("specVersion", namespaces=namespaces)
+            if specVerNode is not None:
+                self._locked_process_version_node(specVerNode, namespaces=namespaces)
+
+            baseURLNode = docNode.find("URLBase", namespaces=namespaces)
+            if baseURLNode is not None:
+                self._locked_process_urlbase_node(baseURLNode, namespaces=namespaces)
+
+            url_parts = urlparse(self._location)
+            self._host = url_parts.netloc
+
+            # If urlBase was not set we need to try to use the schema and host as the urlBase
+            if self._urlBase is None:
+                self._urlBase = "%s://%s" % (url_parts.scheme, self._host)
+
+            devNode = docNode.find("device", namespaces=namespaces)
+            if devNode is not None:
+                self._process_device_node(factory, devNode, namespaces=namespaces)
+
+            self._enhance_device_detail()
+
+        except Exception as xcpt:
+            err_msg = traceback.format_exc()
+            print(err_msg)
+            raise
+
+        return
+
+    def subscribe_to_events(self, service: UpnpServiceProxy, timeout: typing.Optional[float]):
 
         """
             Creates a subscription to the event name specified and returns a
             UpnpEventVar object that can be used to read the current value for
             the given event.
         """
-        event_var = None
+        sub_sid = None
+        sub_timeout = None
 
-        subscription_key = "{}/{}".format(service_type, event_name)
+        service_type = service.SERVICE_TYPE
 
         new_subscription = False
-        self._subscription_lock.acquire()
+        self._device_lock.acquire()
         try:
-            if not subscription_key in self._subscriptions:
+            if not service_type in self._subscriptions:
                 new_subscription = True
-                # Create the subscription event variable. It is created with an invalid
-                # value and marked as uninitialized because we need to get an update
-                # response in order to set its values.  We can handle the update response
-                # in a Notify thread.
-                event_var = UpnpEventVar(subscription_key, event_name, self._subscription_lock)
-
-                self._subscriptions[subscription_key] = event_var
-                self._variables[subscription_key] = event_var
-            elif subscription_key in self._variables:
-                # We could have an entry for this variable due to a first notify property broadcast,
-                # so look to to see if we have a variable and see if it is missing an SID or if its
-                # subscription has expired.  If either of these are true we should create a subscription 
-                event_var = self._variables[subscription_key]
-                if event_var.sid is None:
-                    new_subscription = True
-                elif event_var.expired:
-                    new_subscription = True
+                self._subscriptions[service_type] = True
         finally:
-            self._subscription_lock.release()
+            self._device_lock.release()
 
         if new_subscription:
             # If we created an uninitialized variable and added it to the subsciptions table
@@ -443,9 +440,6 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
                 # TIMEOUT: Second-86400
                 # Server: Linux UPnP/1.0 Sonos/62.1-82260-monaco_dev (ZPS13)
                 # Connection: close
-                sub_sid = None
-                sub_timeout = None
-
                 resp_headers = {k.upper(): v for k, v in resp.headers.items()}
 
                 nxtheader = None
@@ -465,28 +459,93 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
                     sub_timeout = None if timeout_str == "infinite" else int(timeout_str)
                 
                 if sub_sid is not None:
-                    self._subscription_lock.acquire()
+                    self._device_lock.acquire()
                     try:
-                        event_var = None
-                        if subscription_key in self._variables:
-                            # Create the subscription event variable. It is created with an invalid
-                            # value and marked as uninitialized because we need to get an update
-                            # response in order to set its values.  We can handle the update response
-                            # in a Notify thread.
-                            event_var = self._variables[subscription_key]
-
-                        event_var.update_subscription_details(sub_sid, sub_timeout)
-                        self._sid_to_subscription_key_lookup[sub_sid] = subscription_key
+                        self._sid_to_service_lookup[sub_sid] = service
                     finally:
-                        self._subscription_lock.release()
+                        self._device_lock.release()
                     
                     # Notify the coordinator which device has this subscription
                     coord.register_subscription_for_device(sub_sid, self)
+                else:
+                    self._device_lock.acquire()
+                    try:
+                        if service_type in self._subscriptions:
+                            del self._subscriptions[service_type]
+                    finally:
+                        self._device_lock.release()
 
             else:
                 resp.raise_for_status()
 
-        return event_var
+        return sub_sid, sub_timeout
+
+    def switchModes(self, mode):
+        self._mode = mode
+        return
+
+    def to_dict(self, brief=False):
+        dval = super(UpnpRootDevice, self).to_dict(brief=brief)
+        dval["IPAddress"] = self.IPAddress
+        dval["USN"] = self.USN
+        return dval
+
+    def to_json(self, brief=False):
+        json_str = super(UpnpRootDevice, self).to_json(brief=brief)
+        return json_str
+
+    def _consume_upnp_extra(self, extrainfo):
+        self._extra = extrainfo
+        return
+
+    def _create_device_description_node(self, devNode, namespaces=None):
+        dev_desc_node = UpnpDevice1Device(devNode, namespaces=namespaces)
+        return dev_desc_node
+
+    def _enhance_device_detail(self):
+        return
+
+    def _locked_populate_embedded_device_descriptions(self, factory, description):
+
+        for deviceInfo in description.deviceList:
+            manufacturer = deviceInfo.manufacturer.strip()
+            modelNumber = deviceInfo.modelNumber.strip()
+            modelDescription = deviceInfo.modelDescription.strip()
+
+            devkey = ":".join([manufacturer, modelNumber, modelDescription])
+
+            if devkey not in self._device_descriptions:
+                dev_inst = factory.create_embedded_device_instance(manufacturer, modelNumber, modelDescription)
+                self._device_descriptions[devkey] = dev_inst
+            else:
+                dev_inst = self._device_descriptions[devkey]
+
+            dev_inst.update_description(self._host, self._urlBase, deviceInfo)
+        return
+
+    def _locked_process_urlbase_node(self, urlBaseNode, namespaces=None):
+        self._urlBase = urlBaseNode.text.rstrip("/")
+        return
+
+    def _locked_process_version_node(self, verNode, namespaces=None):
+        self._specVersion = UpnpDevice1SpecVersion(verNode, namespaces=namespaces)
+        return
+
+    def _process_device_node(self, factory, devNode, namespaces=None):
+
+        description = self._create_device_description_node(devNode, namespaces=namespaces)
+
+        self._device_lock.acquire()
+        try:
+            self._locked_populate_services_descriptions(factory, description)
+
+            self._locked_populate_embedded_device_descriptions(factory, description)
+
+            self._description = description
+        finally:
+            self._device_lock.release()
+
+        return
 
     def _record_embedded_device(self, manufacturer: str, embDevNode: typing.Any, namespaces: str, force_recording: bool = False):
 
@@ -543,108 +602,6 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
                 except Exception:
                     self._logger.exception("Exception while retreiving service description.")
 
-        return
-
-    def refresh_description(self, ipaddr, factory, docNode, namespaces=None):
-        """
-        """
-        try:
-            self._ip_address = ipaddr
-
-            specVerNode = docNode.find("specVersion", namespaces=namespaces)
-            if specVerNode is not None:
-                self._process_version_node(specVerNode, namespaces=namespaces)
-
-            baseURLNode = docNode.find("URLBase", namespaces=namespaces)
-            if baseURLNode is not None:
-                self._process_urlbase_node(baseURLNode, namespaces=namespaces)
-
-            url_parts = urlparse(self._location)
-            self._host = url_parts.netloc
-
-            # If urlBase was not set we need to try to use the schema and host as the urlBase
-            if self._urlBase is None:
-                self._urlBase = "%s://%s" % (url_parts.scheme, self._host)
-
-            devNode = docNode.find("device", namespaces=namespaces)
-            if devNode is not None:
-                self._process_device_node(factory, devNode, namespaces=namespaces)
-
-            self._enhance_device_detail()
-
-        except Exception as xcpt:
-            err_msg = traceback.format_exc()
-            print(err_msg)
-            raise
-
-        return
-
-    def switchModes(self, mode):
-        self._mode = mode
-        return
-
-    def to_dict(self, brief=False):
-        dval = super(UpnpRootDevice, self).to_dict(brief=brief)
-        dval["IPAddress"] = self.IPAddress
-        dval["USN"] = self.USN
-        return dval
-
-    def to_json(self, brief=False):
-        json_str = super(UpnpRootDevice, self).to_json(brief=brief)
-        return json_str
-
-    def _consume_upnp_extra(self, extrainfo):
-        self._extra = extrainfo
-        return
-
-    def _create_device_description_node(self, devNode, namespaces=None):
-        dev_desc_node = UpnpDevice1Device(devNode, namespaces=namespaces)
-        return dev_desc_node
-
-    def _enhance_device_detail(self):
-        return
-
-    def _populate_embedded_device_descriptions(self, factory, description):
-
-        for deviceInfo in description.deviceList:
-            manufacturer = deviceInfo.manufacturer.strip()
-            modelNumber = deviceInfo.modelNumber.strip()
-            modelDescription = deviceInfo.modelDescription.strip()
-
-            devkey = ":".join([manufacturer, modelNumber, modelDescription])
-
-            if devkey not in self._device_descriptions:
-                dev_inst = factory.create_embedded_device_instance(manufacturer, modelNumber, modelDescription)
-                self._device_descriptions[devkey] = dev_inst
-            else:
-                dev_inst = self._device_descriptions[devkey]
-
-            dev_inst.update_description(self._host, self._urlBase, deviceInfo)
-        return
-
-    def _process_device_node(self, factory, devNode, namespaces=None):
-
-        description = self._create_device_description_node(devNode, namespaces=namespaces)
-
-        self._populate_services_descriptions(factory, description)
-
-        self._populate_embedded_device_descriptions(factory, description)
-
-        # Lock and then swap out the description
-        self._lock.acquire()
-        try:
-            self._description = description
-        finally:
-            self._lock.release()
-
-        return
-
-    def _process_urlbase_node(self, urlBaseNode, namespaces=None):
-        self._urlBase = urlBaseNode.text.rstrip("/")
-        return
-
-    def _process_version_node(self, verNode, namespaces=None):
-        self._specVersion = UpnpDevice1SpecVersion(verNode, namespaces=namespaces)
         return
 
     def __str__(self):

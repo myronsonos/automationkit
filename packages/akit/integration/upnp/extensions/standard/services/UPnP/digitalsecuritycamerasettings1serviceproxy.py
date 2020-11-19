@@ -15,6 +15,14 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:DigitalSecurityCameraSettings:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "AutomaticWhiteBalance": { "data_type": "boolean", "default": "1", "allowed_list": None},
+        "Brightness": { "data_type": "ui1", "default": "50", "allowed_list": None},
+        "ColorSaturation": { "data_type": "ui1", "default": "50", "allowed_list": None},
+        "DefaultRotation": { "data_type": "string", "default": None, "allowed_list": None},
+        "FixedWhiteBalance": { "data_type": "ui4", "default": "3000", "allowed_list": None},
+    }
 
 
     def action_DecreaseBrightness(self, extract_returns=True):
@@ -25,7 +33,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("DecreaseBrightness", arguments=arguments)
+        out_params = self._proxy_call_action("DecreaseBrightness", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +52,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("DecreaseColorSaturation", arguments=arguments)
+        out_params = self._proxy_call_action("DecreaseColorSaturation", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +71,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetAutomaticWhiteBalance", arguments=arguments)
+        out_params = self._proxy_call_action("GetAutomaticWhiteBalance", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -82,7 +90,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetAvailableRotations", arguments=arguments)
+        out_params = self._proxy_call_action("GetAvailableRotations", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -101,7 +109,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetBrightness", arguments=arguments)
+        out_params = self._proxy_call_action("GetBrightness", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -120,7 +128,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetColorSaturation", arguments=arguments)
+        out_params = self._proxy_call_action("GetColorSaturation", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -139,7 +147,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDefaultRotation", arguments=arguments)
+        out_params = self._proxy_call_action("GetDefaultRotation", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -158,7 +166,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFixedWhiteBalance", arguments=arguments)
+        out_params = self._proxy_call_action("GetFixedWhiteBalance", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -177,7 +185,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("IncreaseBrightness", arguments=arguments)
+        out_params = self._proxy_call_action("IncreaseBrightness", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -196,7 +204,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("IncreaseColorSaturation", arguments=arguments)
+        out_params = self._proxy_call_action("IncreaseColorSaturation", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -217,7 +225,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
             "NewAutomaticWhiteBalance": NewAutomaticWhiteBalance,
         }
 
-        out_params = self.proxy_call_action("SetAutomaticWhiteBalance", arguments=arguments)
+        out_params = self._proxy_call_action("SetAutomaticWhiteBalance", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -238,7 +246,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
             "NewBrightness": NewBrightness,
         }
 
-        out_params = self.proxy_call_action("SetBrightness", arguments=arguments)
+        out_params = self._proxy_call_action("SetBrightness", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -259,7 +267,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
             "NewColorSaturation": NewColorSaturation,
         }
 
-        out_params = self.proxy_call_action("SetColorSaturation", arguments=arguments)
+        out_params = self._proxy_call_action("SetColorSaturation", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -280,7 +288,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
             "NewRotation": NewRotation,
         }
 
-        out_params = self.proxy_call_action("SetDefaultRotation", arguments=arguments)
+        out_params = self._proxy_call_action("SetDefaultRotation", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -301,7 +309,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
             "NewFixedWhiteBalance": NewFixedWhiteBalance,
         }
 
-        out_params = self.proxy_call_action("SetFixedWhiteBalance", arguments=arguments)
+        out_params = self._proxy_call_action("SetFixedWhiteBalance", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

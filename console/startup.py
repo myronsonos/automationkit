@@ -1,6 +1,6 @@
 
 from akit.environment.console import showlog
-from akit.integration.landscaping import Landscape
+from akit.integration.landscaping.landscape import Landscape
 
 showlog()
 

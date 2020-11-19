@@ -15,6 +15,12 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Calendar:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "CalendarItem": { "data_type": "string", "default": None, "allowed_list": None},
+        "MemoInfo": { "data_type": "string", "default": None, "allowed_list": None},
+        "TriggeredItem": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_AddCalendarItems(self, Caltems, extract_returns=True):
@@ -27,7 +33,7 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Caltems": Caltems,
         }
 
-        out_params = self.proxy_call_action("AddCalendarItems", arguments=arguments)
+        out_params = self._proxy_call_action("AddCalendarItems", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -48,7 +54,7 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ItemIDs": ItemIDs,
         }
 
-        out_params = self.proxy_call_action("DeleteCalendarItems", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteCalendarItems", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -69,7 +75,7 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ItemIDs": ItemIDs,
         }
 
-        out_params = self.proxy_call_action("GetCalendarItems", arguments=arguments)
+        out_params = self._proxy_call_action("GetCalendarItems", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -90,7 +96,7 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "MemoID": MemoID,
         }
 
-        out_params = self.proxy_call_action("GetMemo", arguments=arguments)
+        out_params = self._proxy_call_action("GetMemo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -109,7 +115,7 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTelCPNameList", arguments=arguments)
+        out_params = self._proxy_call_action("GetTelCPNameList", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -128,7 +134,7 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetTriggeredItems", arguments=arguments)
+        out_params = self._proxy_call_action("GetTriggeredItems", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -149,7 +155,7 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Memo": Memo,
         }
 
-        out_params = self.proxy_call_action("PostMemo", arguments=arguments)
+        out_params = self._proxy_call_action("PostMemo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -171,7 +177,7 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Expires": Expires,
         }
 
-        out_params = self.proxy_call_action("RegisterItemDelivery", arguments=arguments)
+        out_params = self._proxy_call_action("RegisterItemDelivery", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -192,7 +198,7 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TelCPName": TelCPName,
         }
 
-        out_params = self.proxy_call_action("RegisterTelCPName", arguments=arguments)
+        out_params = self._proxy_call_action("RegisterTelCPName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -213,7 +219,7 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TelCPName": TelCPName,
         }
 
-        out_params = self.proxy_call_action("UnregisterTelCPName", arguments=arguments)
+        out_params = self._proxy_call_action("UnregisterTelCPName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -234,7 +240,7 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Caltems": Caltems,
         }
 
-        out_params = self.proxy_call_action("UpdateCalendarItems", arguments=arguments)
+        out_params = self._proxy_call_action("UpdateCalendarItems", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

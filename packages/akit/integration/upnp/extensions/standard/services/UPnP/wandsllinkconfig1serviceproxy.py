@@ -15,6 +15,8 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANDSLLinkConfig:1'
+    
+    SERVICE_EVENT_VARIABLES = {}
 
 
     def action_GetATMEncapsulation(self, extract_returns=True):
@@ -25,7 +27,7 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetATMEncapsulation", arguments=arguments)
+        out_params = self._proxy_call_action("GetATMEncapsulation", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +46,7 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetAutoConfig", arguments=arguments)
+        out_params = self._proxy_call_action("GetAutoConfig", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +65,7 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDSLLinkInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetDSLLinkInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -82,7 +84,7 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDestinationAddress", arguments=arguments)
+        out_params = self._proxy_call_action("GetDestinationAddress", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -101,7 +103,7 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFCSPreserved", arguments=arguments)
+        out_params = self._proxy_call_action("GetFCSPreserved", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -120,7 +122,7 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetModulationType", arguments=arguments)
+        out_params = self._proxy_call_action("GetModulationType", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -141,7 +143,7 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewATMEncapsulation": NewATMEncapsulation,
         }
 
-        out_params = self.proxy_call_action("SetATMEncapsulation", arguments=arguments)
+        out_params = self._proxy_call_action("SetATMEncapsulation", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -162,7 +164,7 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewLinkType": NewLinkType,
         }
 
-        out_params = self.proxy_call_action("SetDSLLinkType", arguments=arguments)
+        out_params = self._proxy_call_action("SetDSLLinkType", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -183,7 +185,7 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewDestinationAddress": NewDestinationAddress,
         }
 
-        out_params = self.proxy_call_action("SetDestinationAddress", arguments=arguments)
+        out_params = self._proxy_call_action("SetDestinationAddress", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -204,7 +206,7 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewFCSPreserved": NewFCSPreserved,
         }
 
-        out_params = self.proxy_call_action("SetFCSPreserved", arguments=arguments)
+        out_params = self._proxy_call_action("SetFCSPreserved", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

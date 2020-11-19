@@ -15,6 +15,11 @@ class WANIPv6FirewallControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANIPv6FirewallControl:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "FirewallEnabled": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "InboundPinholeAllowed": { "data_type": "boolean", "default": None, "allowed_list": None},
+    }
 
 
     def action_AddPinhole(self, RemoteHost, RemotePort, InternalClient, InternalPort, Protocol, LeaseTime, extract_returns=True):
@@ -32,7 +37,7 @@ class WANIPv6FirewallControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "LeaseTime": LeaseTime,
         }
 
-        out_params = self.proxy_call_action("AddPinhole", arguments=arguments)
+        out_params = self._proxy_call_action("AddPinhole", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -53,7 +58,7 @@ class WANIPv6FirewallControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "UniqueID": UniqueID,
         }
 
-        out_params = self.proxy_call_action("CheckPinholeWorking", arguments=arguments)
+        out_params = self._proxy_call_action("CheckPinholeWorking", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -74,7 +79,7 @@ class WANIPv6FirewallControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "UniqueID": UniqueID,
         }
 
-        out_params = self.proxy_call_action("DeletePinhole", arguments=arguments)
+        out_params = self._proxy_call_action("DeletePinhole", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -93,7 +98,7 @@ class WANIPv6FirewallControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetFirewallStatus", arguments=arguments)
+        out_params = self._proxy_call_action("GetFirewallStatus", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -118,7 +123,7 @@ class WANIPv6FirewallControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Protocol": Protocol,
         }
 
-        out_params = self.proxy_call_action("GetOutboundPinholeTimeout", arguments=arguments)
+        out_params = self._proxy_call_action("GetOutboundPinholeTimeout", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -139,7 +144,7 @@ class WANIPv6FirewallControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "UniqueID": UniqueID,
         }
 
-        out_params = self.proxy_call_action("GetPinholePackets", arguments=arguments)
+        out_params = self._proxy_call_action("GetPinholePackets", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -161,7 +166,7 @@ class WANIPv6FirewallControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewLeaseTime": NewLeaseTime,
         }
 
-        out_params = self.proxy_call_action("UpdatePinhole", arguments=arguments)
+        out_params = self._proxy_call_action("UpdatePinhole", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

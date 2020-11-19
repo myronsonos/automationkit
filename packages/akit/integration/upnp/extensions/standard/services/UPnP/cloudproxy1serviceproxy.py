@@ -15,6 +15,10 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:CloudProxy:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "CloudProxyUpdate": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_AddProxyDevice(self, DeviceId, UserAtCloud, extract_returns=True):
@@ -28,7 +32,7 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "UserAtCloud": UserAtCloud,
         }
 
-        out_params = self.proxy_call_action("AddProxyDevice", arguments=arguments)
+        out_params = self._proxy_call_action("AddProxyDevice", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -50,7 +54,7 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Port": Port,
         }
 
-        out_params = self.proxy_call_action("AddUCSAccount", arguments=arguments)
+        out_params = self._proxy_call_action("AddUCSAccount", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -71,7 +75,7 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DeviceJID": DeviceJID,
         }
 
-        out_params = self.proxy_call_action("DeleteProxyDevice", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteProxyDevice", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -92,7 +96,7 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "BareJID": BareJID,
         }
 
-        out_params = self.proxy_call_action("DeleteUCSAccount", arguments=arguments)
+        out_params = self._proxy_call_action("DeleteUCSAccount", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -111,7 +115,7 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetDeviceList", arguments=arguments)
+        out_params = self._proxy_call_action("GetDeviceList", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -130,7 +134,7 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetProxyList", arguments=arguments)
+        out_params = self._proxy_call_action("GetProxyList", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -149,7 +153,7 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetUCSList", arguments=arguments)
+        out_params = self._proxy_call_action("GetUCSList", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

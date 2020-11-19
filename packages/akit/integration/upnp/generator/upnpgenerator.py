@@ -59,6 +59,8 @@ class %(class_name)s(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = '%(service_manufacturer)s'
     SERVICE_TYPE = '%(service_type)s'
+    
+    SERVICE_EVENT_VARIABLES = {%(service_variables)s}
 
 """
 
@@ -67,7 +69,7 @@ TEMPLATE_GETTER = """
         \"""
             Gets the "%(var_name)s" variable.
         \"""
-        rval = self.proxy_get_variable_value("%(var_name)s")
+        rval = self._proxy_get_variable_value("%(var_name)s")
         return rval
 
 """
@@ -77,7 +79,7 @@ TEMPLATE_SETTER = """
         \"""
             Sets the "%(var_name)s" variable.
         \"""
-        self.proxy_set_variable_value("%(var_name)s", val)
+        self._proxy_set_variable_value("%(var_name)s", val)
         return
 
 """
@@ -90,7 +92,7 @@ TEMPLATE_ACTION = """
             :returns: %(out_params_list)s
         \"""
         arguments = %(args_dict)s
-        out_params = self.proxy_call_action("%(action_name)s", arguments=arguments)
+        out_params = self._proxy_call_action("%(action_name)s", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -117,7 +119,7 @@ def generate_upnp_service_proxy(servicesDir, serviceManufacturer, serviceType, v
     if not os.path.exists(servicesDir):
         os.makedirs(servicesDir)
 
-    ensure_directory_is_package(servicesDir, moduleTitle="Services directory module")
+    ensure_directory_is_package(servicesDir, packageTitle="Services directory module")
 
     service_type_parts = serviceType.split(":")
 
@@ -125,11 +127,14 @@ def generate_upnp_service_proxy(servicesDir, serviceManufacturer, serviceType, v
     class_name = class_name_base + "ServiceProxy"
     file_base = class_name.lower() + ".py"
 
+    service_variables_content = ""
+
     class_fill_dict = {
         "class_name": class_name,
         "class_name_base": class_name_base,
         "service_manufacturer": serviceManufacturer,
-        "service_type": serviceType
+        "service_type": serviceType,
+        "service_variables": service_variables_content
     }
 
     manufacturerDir = os.path.join(servicesDir, serviceManufacturer)
@@ -138,35 +143,54 @@ def generate_upnp_service_proxy(servicesDir, serviceManufacturer, serviceType, v
 
     dest_file_full = os.path.join(manufacturerDir, file_base)
 
+    
+    variable_names_sorted = [ k for k in variablesTable.keys() ]
+    variable_names_sorted.sort()
+
+    event_variable_lines = []
+
+    for var_name in variable_names_sorted:
+        variable_info = variablesTable[var_name]
+
+        var_name = variable_info["name"]
+        var_type = variable_info["dataType"]
+        var_send_events = variable_info["sendEvents"]
+
+        var_allowed_list = None
+        if "allowedValueList" in variable_info:
+            var_allowed_list = variable_info["allowedValueList"]
+
+        var_default_value = None
+        if "defaultValue" in variable_info:
+            var_default_value = variable_info["defaultValue"]
+
+        var_fill_dict = {
+            'var_name': var_name,
+            'var_type': var_type,
+        }
+
+        if var_send_events == 'yes':
+            default_entry = ", \"default\": None"
+            if var_default_value is not None:
+                default_entry = ", \"default\": \"%s\"" % var_default_value
+
+            allowed_list_entry = ", \"allowed_list\": None"
+            if var_allowed_list is not None:
+                allowed_list_entry = ", \"allowed_list\": \"%s\"" % var_allowed_list
+
+            evar_line = "\"%s\": { \"data_type\": \"%s\"%s%s},\n" % (var_name, var_type, default_entry, allowed_list_entry)
+            event_variable_lines.append(evar_line)
+
+    if len(event_variable_lines) > 0:
+        service_variables_content = "\n        " + "        ".join(event_variable_lines) + "    "
+        class_fill_dict["service_variables"] = service_variables_content
+
     with open(dest_file_full, 'w') as spf:
         spf.write('"""\n')
         spf.write(CONTENT_PROXY_FILE_HEADER)
         spf.write('"""\n')
         spf.write('\n')
         spf.write(TEMPLATE_CLASS_PREFIX % class_fill_dict)
-
-        variable_names_sorted = [ k for k in variablesTable.keys() ]
-        variable_names_sorted.sort()
-
-        for var_name in variable_names_sorted:
-            variable_info = variablesTable[var_name]
-
-            var_name = variable_info["name"]
-            var_type = variable_info["dataType"]
-            var_send_events = variable_info["sendEvents"]
-
-            var_allowed_list = None
-            if "allowedValueList" in variable_info:
-                var_allowed_list = variable_info["allowedValueList"]
-
-            var_default_value = None
-            if "defaultValue" in variable_info:
-                var_default_value = variable_info["defaultValue"]
-
-            var_fill_dict = {
-                'var_name': var_name,
-                'var_type': var_type,
-            }
 
             # Generate the getter
             # spf.write(TEMPLATE_GETTER % var_fill_dict)

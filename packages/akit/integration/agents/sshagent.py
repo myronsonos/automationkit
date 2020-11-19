@@ -857,7 +857,10 @@ class SshSession(SshBase):
                 while True:
                     out = channel.in_buffer.read(1028, self._read_timeout)
                     leader += out
-            except paramiko.buffered_pipe.PipeTimeout as pto:
+            except paramiko.buffered_pipe.PipeTimeout as _:
+                # We don't need to do anything if the pipe, times out.
+                # it means we are likely at the command prompt and that
+                # there is nothing to read.
                 pass
 
             self._ssh_runner = channel

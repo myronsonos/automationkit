@@ -15,6 +15,40 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:DeviceProperties:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "AirPlayEnabled": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "AvailableRoomCalibration": { "data_type": "string", "default": None, "allowed_list": None},
+        "BehindWifiExtender": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "ChannelFreq": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "ChannelMapSet": { "data_type": "string", "default": None, "allowed_list": None},
+        "ConfigMode": { "data_type": "string", "default": None, "allowed_list": None},
+        "Configuration": { "data_type": "string", "default": None, "allowed_list": None},
+        "HTBondedZoneCommitState": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "HTFreq": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "HTSatChanMapSet": { "data_type": "string", "default": None, "allowed_list": None},
+        "HasConfiguredSSID": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "HdmiCecAvailable": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "Icon": { "data_type": "string", "default": None, "allowed_list": None},
+        "Invisible": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "IsIdle": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "IsZoneBridge": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "LastChangedPlayState": { "data_type": "string", "default": None, "allowed_list": None},
+        "MicEnabled": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "MoreInfo": { "data_type": "string", "default": None, "allowed_list": None},
+        "Orientation": { "data_type": "i4", "default": None, "allowed_list": None},
+        "RoomCalibrationState": { "data_type": "i4", "default": None, "allowed_list": None},
+        "SecureRegState": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "SettingsReplicationState": { "data_type": "string", "default": None, "allowed_list": None},
+        "SupportsAudioClip": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "SupportsAudioIn": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "TVConfigurationError": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "VoiceConfigState": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "WifiEnabled": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "WirelessLeafOnly": { "data_type": "boolean", "default": None, "allowed_list": None},
+        "WirelessMode": { "data_type": "ui4", "default": None, "allowed_list": None},
+        "ZoneName": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_AddBondedZones(self, ChannelMapSet, extract_returns=True):
@@ -27,7 +61,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ChannelMapSet": ChannelMapSet,
         }
 
-        out_params = self.proxy_call_action("AddBondedZones", arguments=arguments)
+        out_params = self._proxy_call_action("AddBondedZones", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -48,7 +82,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "HTSatChanMapSet": HTSatChanMapSet,
         }
 
-        out_params = self.proxy_call_action("AddHTSatellite", arguments=arguments)
+        out_params = self._proxy_call_action("AddHTSatellite", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -69,7 +103,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ChannelMapSet": ChannelMapSet,
         }
 
-        out_params = self.proxy_call_action("CreateStereoPair", arguments=arguments)
+        out_params = self._proxy_call_action("CreateStereoPair", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -91,7 +125,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Options": Options,
         }
 
-        out_params = self.proxy_call_action("EnterConfigMode", arguments=arguments)
+        out_params = self._proxy_call_action("EnterConfigMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -112,7 +146,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Options": Options,
         }
 
-        out_params = self.proxy_call_action("ExitConfigMode", arguments=arguments)
+        out_params = self._proxy_call_action("ExitConfigMode", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -133,7 +167,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Source": Source,
         }
 
-        out_params = self.proxy_call_action("GetAutoplayLinkedZones", arguments=arguments)
+        out_params = self._proxy_call_action("GetAutoplayLinkedZones", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -154,7 +188,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Source": Source,
         }
 
-        out_params = self.proxy_call_action("GetAutoplayRoomUUID", arguments=arguments)
+        out_params = self._proxy_call_action("GetAutoplayRoomUUID", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -175,7 +209,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Source": Source,
         }
 
-        out_params = self.proxy_call_action("GetAutoplayVolume", arguments=arguments)
+        out_params = self._proxy_call_action("GetAutoplayVolume", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -194,7 +228,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetButtonLockState", arguments=arguments)
+        out_params = self._proxy_call_action("GetButtonLockState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -213,7 +247,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetButtonState", arguments=arguments)
+        out_params = self._proxy_call_action("GetButtonState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -232,7 +266,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetHouseholdID", arguments=arguments)
+        out_params = self._proxy_call_action("GetHouseholdID", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -251,7 +285,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetLEDState", arguments=arguments)
+        out_params = self._proxy_call_action("GetLEDState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -272,7 +306,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Source": Source,
         }
 
-        out_params = self.proxy_call_action("GetUseAutoplayVolume", arguments=arguments)
+        out_params = self._proxy_call_action("GetUseAutoplayVolume", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -291,7 +325,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetZoneAttributes", arguments=arguments)
+        out_params = self._proxy_call_action("GetZoneAttributes", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -310,7 +344,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetZoneInfo", arguments=arguments)
+        out_params = self._proxy_call_action("GetZoneInfo", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -332,7 +366,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "KeepGrouped": KeepGrouped,
         }
 
-        out_params = self.proxy_call_action("RemoveBondedZones", arguments=arguments)
+        out_params = self._proxy_call_action("RemoveBondedZones", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -353,7 +387,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "SatRoomUUID": SatRoomUUID,
         }
 
-        out_params = self.proxy_call_action("RemoveHTSatellite", arguments=arguments)
+        out_params = self._proxy_call_action("RemoveHTSatellite", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -374,7 +408,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "ChannelMapSet": ChannelMapSet,
         }
 
-        out_params = self.proxy_call_action("SeparateStereoPair", arguments=arguments)
+        out_params = self._proxy_call_action("SeparateStereoPair", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -396,7 +430,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Source": Source,
         }
 
-        out_params = self.proxy_call_action("SetAutoplayLinkedZones", arguments=arguments)
+        out_params = self._proxy_call_action("SetAutoplayLinkedZones", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -418,7 +452,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Source": Source,
         }
 
-        out_params = self.proxy_call_action("SetAutoplayRoomUUID", arguments=arguments)
+        out_params = self._proxy_call_action("SetAutoplayRoomUUID", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -440,7 +474,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Source": Source,
         }
 
-        out_params = self.proxy_call_action("SetAutoplayVolume", arguments=arguments)
+        out_params = self._proxy_call_action("SetAutoplayVolume", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -461,7 +495,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredButtonLockState": DesiredButtonLockState,
         }
 
-        out_params = self.proxy_call_action("SetButtonLockState", arguments=arguments)
+        out_params = self._proxy_call_action("SetButtonLockState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -482,7 +516,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredLEDState": DesiredLEDState,
         }
 
-        out_params = self.proxy_call_action("SetLEDState", arguments=arguments)
+        out_params = self._proxy_call_action("SetLEDState", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -504,7 +538,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Source": Source,
         }
 
-        out_params = self.proxy_call_action("SetUseAutoplayVolume", arguments=arguments)
+        out_params = self._proxy_call_action("SetUseAutoplayVolume", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -528,7 +562,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DesiredTargetRoomName": DesiredTargetRoomName,
         }
 
-        out_params = self.proxy_call_action("SetZoneAttributes", arguments=arguments)
+        out_params = self._proxy_call_action("SetZoneAttributes", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

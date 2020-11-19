@@ -15,6 +15,13 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:TemperatureSetpoint:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "Application": { "data_type": "string", "default": None, "allowed_list": None},
+        "CurrentSetpoint": { "data_type": "i4", "default": None, "allowed_list": None},
+        "Name": { "data_type": "string", "default": None, "allowed_list": None},
+        "SetpointAchieved": { "data_type": "boolean", "default": "0", "allowed_list": None},
+    }
 
 
     def action_GetApplication(self, extract_returns=True):
@@ -25,7 +32,7 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetApplication", arguments=arguments)
+        out_params = self._proxy_call_action("GetApplication", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -44,7 +51,7 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetCurrentSetpoint", arguments=arguments)
+        out_params = self._proxy_call_action("GetCurrentSetpoint", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -63,7 +70,7 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetName", arguments=arguments)
+        out_params = self._proxy_call_action("GetName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -82,7 +89,7 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetSetpointAchieved", arguments=arguments)
+        out_params = self._proxy_call_action("GetSetpointAchieved", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -103,7 +110,7 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewApplication": NewApplication,
         }
 
-        out_params = self.proxy_call_action("SetApplication", arguments=arguments)
+        out_params = self._proxy_call_action("SetApplication", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -124,7 +131,7 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewCurrentSetpoint": NewCurrentSetpoint,
         }
 
-        out_params = self.proxy_call_action("SetCurrentSetpoint", arguments=arguments)
+        out_params = self._proxy_call_action("SetCurrentSetpoint", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -145,7 +152,7 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "NewName": NewName,
         }
 
-        out_params = self.proxy_call_action("SetName", arguments=arguments)
+        out_params = self._proxy_call_action("SetName", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

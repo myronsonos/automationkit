@@ -15,6 +15,11 @@ class ExternalActivity1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ExternalActivity:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "Activity": { "data_type": "string", "default": None, "allowed_list": None},
+        "AvailableRegistrations": { "data_type": "boolean", "default": "1", "allowed_list": None},
+    }
 
 
     def action_Register(self, ButtonNameIn, DisplayStringIn, DurationIn, extract_returns=True):
@@ -29,7 +34,7 @@ class ExternalActivity1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "DurationIn": DurationIn,
         }
 
-        out_params = self.proxy_call_action("Register", arguments=arguments)
+        out_params = self._proxy_call_action("Register", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:

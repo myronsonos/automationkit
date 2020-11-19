@@ -15,6 +15,12 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Presence:1'
+    
+    SERVICE_EVENT_VARIABLES = {
+        "PresenceOfContactsUpdate": { "data_type": "string", "default": None, "allowed_list": None},
+        "UserPresenceInfo": { "data_type": "string", "default": None, "allowed_list": None},
+        "Watcher": { "data_type": "string", "default": None, "allowed_list": None},
+    }
 
 
     def action_AuthorizePresenceProactive(self, UserPresenceInfo, Expire, WatcherList, extract_returns=True):
@@ -29,7 +35,7 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "WatcherList": WatcherList,
         }
 
-        out_params = self.proxy_call_action("AuthorizePresenceProactive", arguments=arguments)
+        out_params = self._proxy_call_action("AuthorizePresenceProactive", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -52,7 +58,7 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "UserPresenceInfo": UserPresenceInfo,
         }
 
-        out_params = self.proxy_call_action("AuthorizePresenceReactive", arguments=arguments)
+        out_params = self._proxy_call_action("AuthorizePresenceReactive", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -73,7 +79,7 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "TargetContact": TargetContact,
         }
 
-        out_params = self.proxy_call_action("GetContactPresence", arguments=arguments)
+        out_params = self._proxy_call_action("GetContactPresence", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -92,7 +98,7 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPresence", arguments=arguments)
+        out_params = self._proxy_call_action("GetPresence", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -111,7 +117,7 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         """
         arguments = { }
 
-        out_params = self.proxy_call_action("GetPresenceOfContactsUpdate", arguments=arguments)
+        out_params = self._proxy_call_action("GetPresenceOfContactsUpdate", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -133,7 +139,7 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "Expire": Expire,
         }
 
-        out_params = self.proxy_call_action("RegisterForContactPresence", arguments=arguments)
+        out_params = self._proxy_call_action("RegisterForContactPresence", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
@@ -154,7 +160,7 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
             "UpdatedUserPresence": UpdatedUserPresence,
         }
 
-        out_params = self.proxy_call_action("UpdatePresence", arguments=arguments)
+        out_params = self._proxy_call_action("UpdatePresence", arguments=arguments)
 
         rtn_args = out_params
         if extract_returns:
