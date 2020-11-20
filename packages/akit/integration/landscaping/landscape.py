@@ -52,7 +52,7 @@ class Landscape:
     landscape_device = LandscapeDevice
     landscape_device_extension = LandscapeDeviceExtension
 
-    landscape_lock = threading.Lock()
+    landscape_lock = threading.RLock()
     landscape_initialized = threading.Event()
 
     _landscape_type = None
@@ -454,11 +454,15 @@ class Landscape:
 
         device_config_list = []
 
-        pod_info = self._landscape_info["pod"]
-        for dev_config_info in pod_info["devices"]:
-            if "skip" in dev_config_info and dev_config_info["skip"]:
-                continue
-            device_config_list.append(dev_config_info)
+        self.landscape_lock.acquire()
+        try:
+            pod_info = self._landscape_info["pod"]
+            for dev_config_info in pod_info["devices"]:
+                if "skip" in dev_config_info and dev_config_info["skip"]:
+                    continue
+                device_config_list.append(dev_config_info)
+        finally:
+            self.landscape_lock.release()
 
         return device_config_list
 

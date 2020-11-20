@@ -105,7 +105,34 @@ class UpnpProtocol(ssdp.SimpleServiceDiscoveryProtocol):
         print()
         return
 
-class MSearchScanContent:
+class MQueryContext:
+    """
+        The :class:`MQueryContext` is an object that allows for the sharing of a query parameters and query
+        results across threads that are querying multiple interfaces.  The shared context allows for the
+        scanning of multiple interfaces simultaneously.
+    """
+
+    def __init__(self, query_device):
+        self.query_device = query_device
+        self.continue_scan = True
+
+        self.query_results = {}
+        self.lock = threading.Lock()
+        return
+
+    def register_query_result(self, ifname, usn, device_info, route_info):
+
+        self.lock.acquire()
+        try:
+            device_info[MSearchKeys.ROUTES].append(route_info)
+            self.query_results[ifname] = device_info
+            self.continue_scan = False
+        finally:
+            self.lock.release()
+
+        return
+
+class MSearchScanContext:
     """
         The :class:`MSearchScanContext` is an object that allows the sharing of scan results across threads
         that are scanning mulitple interfaces.  We utilize a shared scan context so we can find the devices
@@ -213,8 +240,7 @@ def msearch_parse_response(content: bytes):
     return respinfo
 
 
-
-def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTargets.ROOTDEVICE, response_timeout=45, interval=2):
+def mquery_on_interface(query_context, ifname, ifaddress, mx=1, st=MSearchTargets.ROOTDEVICE, response_timeout=45, interval=5):
     """
         The inline msearch function provides a mechanism to do a synchronous msearch
         in order to determine if a set of available devices are available and to
@@ -223,7 +249,92 @@ def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTarget
         :param scan_context: A shared scan context that shares information between the scan threads and
                              speeds up the process of finding the expected UPNP devices across the
                              interfaces.
-        :type scan_context: :class:`MSearchScanContent`
+        :type scan_context: :class:`MSearchScanContext`
+        :param timeout: The maximum time in seconds to wait for the expected devices to report.
+        :type timeout: float
+
+        :returns:  dict -- A dictionary of the devices that were found.
+        :raises: TimeoutError, KeyboardInterrupt
+    """
+
+    query_device = query_context.query_device
+
+    route_info = {
+        MSearchRouteKeys.IFNAME: ifname,
+        MSearchRouteKeys.IP: ifaddress
+    }
+
+    multicast_address = UpnpProtocol.MULTICAST_ADDRESS
+    multicast_port = UpnpProtocol.PORT
+
+    msearch_msg = b"\r\n".join([
+        b'M-SEARCH * HTTP/1.1',
+        b'HOST: %s:%d' % (UpnpProtocol.MULTICAST_ADDRESS.encode("utf-8"), UpnpProtocol.PORT),
+        b'MAN: "ssdp:discover"',
+        b'ST: %s' % query_device.encode("utf-8"),
+        b'MX: %d' % mx,
+        b'',
+        b''
+    ])
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+
+    try:
+        # Make sure other Automation processes can also bind to the UPNP address and port
+        # so they can also get responses.
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        # Set the IP protocol level socket opition binding the socket to the interface
+        # specified by the IP address provided
+        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(ifaddress))
+        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
+        
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+
+        sock.settimeout(response_timeout)
+
+        sock.sendto(msearch_msg, (multicast_address, multicast_port))
+
+        current_time = time.time()
+        end_time = current_time + response_timeout
+        while current_time < end_time and query_context.continue_scan:
+
+            try:
+                resp, addr = sock.recvfrom(1024)
+                device_info = msearch_parse_response(resp)
+                foundst = device_info.get(MSearchKeys.ST, None)
+                if device_info is not None and foundst == st and MSearchKeys.USN in device_info:
+                    devusn = device_info[MSearchKeys.USN]
+
+                    if devusn == query_device:
+                        device_info[MSearchKeys.ROUTES] = []
+                        device_info[MSearchKeys.IP] = addr[0]
+
+                        query_context.register_query_result(ifname, devusn, device_info, route_info)
+
+            except socket.timeout:
+                pass
+
+            current_time = time.time()
+
+    except KeyboardInterrupt:
+        raise
+    finally:
+        sock.close()
+
+    return
+
+
+def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTargets.ROOTDEVICE, response_timeout=45, interval=5):
+    """
+        The inline msearch function provides a mechanism to do a synchronous msearch
+        in order to determine if a set of available devices are available and to
+        determine the interfaces that each device is listening on.
+
+        :param scan_context: A shared scan context that shares information between the scan threads and
+                             speeds up the process of finding the expected UPNP devices across the
+                             interfaces.
+        :type scan_context: :class:`MSearchScanContext`
         :param timeout: The maximum time in seconds to wait for the expected devices to report.
         :type timeout: float
 
@@ -263,7 +374,7 @@ def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTarget
         
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
 
-        sock.settimeout(interval)
+        sock.settimeout(5)
 
         sock.sendto(msearch_msg, (multicast_address, multicast_port))
 
@@ -295,13 +406,56 @@ def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTarget
 
     return
 
-
-def msearch_scan(expected_devices, interface_list=None, response_timeout=45, interval=2):
+def mquery(expected_device, interface_list, response_timeout=45, interval=2, raise_exception=False):
 
     if interface_list is None:
         interface_list = netifaces.interfaces()
 
-    scan_context = MSearchScanContent(expected_devices)
+    query_context = MQueryContext(expected_device)
+
+    search_threads = []
+
+    for ifname in interface_list:
+        ifaddress = None
+
+        address_info = netifaces.ifaddresses(ifname)
+        if address_info is not None:
+            # First look for IPv4 address information
+            if netifaces.AF_INET in address_info:
+                addr_info = address_info[netifaces.AF_INET][0]
+                ifaddress = addr_info["addr"]
+
+            # If we didn't find an ipv4 address, try using IPv6
+            # if ifaddress is None and netifaces.AF_INET6 in addr_info:
+            #    addr_info = address_info[netifaces.AF_INET6][0]
+            #    ifaddress = addr_info["addr"]
+
+            if ifaddress is not None:
+                thname = "mquery-%s" % ifname
+                thargs = (query_context, ifname, ifaddress)
+                thkwargs = { "response_timeout":response_timeout , "interval": interval}
+                sthread = threading.Thread(name=thname, target=mquery_on_interface, args=thargs, kwargs=thkwargs)
+                sthread.start()
+                search_threads.append(sthread)
+
+    # Wait for all the search threads to finish
+    while len(search_threads) > 0:
+        nxt_thread = search_threads.pop(0)
+        nxt_thread.join()
+
+    if len(query_context.query_results) == 0:
+        err_msg = "Failed to find expected UPNP device %r after a timeout of %s seconds.\n" % (expected_device, response_timeout)
+        raise AKitTimeoutError(err_msg)
+
+    return query_context.query_results
+
+
+def msearch_scan(expected_devices, interface_list=None, response_timeout=45, interval=2, raise_exception=False):
+
+    if interface_list is None:
+        interface_list = netifaces.interfaces()
+
+    scan_context = MSearchScanContext(expected_devices)
 
     search_threads = []
 
@@ -333,7 +487,7 @@ def msearch_scan(expected_devices, interface_list=None, response_timeout=45, int
         nxt_thread = search_threads.pop(0)
         nxt_thread.join()
 
-    if len(scan_context.matching_devices) != len(expected_devices):
+    if raise_exception and len(scan_context.matching_devices) != len(expected_devices):
         err_msg = "Failed to find expected UPNP devices after a timeout of %s seconds.\n" % response_timeout
 
         missing = [dkey for dkey in expected_devices]

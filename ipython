@@ -4,6 +4,6 @@ THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 export PYTHONPATH="$PYTHONPATH:$THIS_DIR/packages"
 
-source $THIS_DIR/_local/venv/bin/activate
+source $THIS_DIR/.venv/bin/activate
 
 ipython -i $THIS_DIR/console/startup.py

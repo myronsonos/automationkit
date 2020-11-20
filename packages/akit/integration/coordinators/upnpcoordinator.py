@@ -35,7 +35,7 @@ from xml.etree.ElementTree import fromstring as xml_fromstring
 from xml.etree.ElementTree import ElementTree, Element, SubElement
 from xml.etree.ElementTree import register_namespace
 
-from akit.exceptions import AKitRuntimeError, AKitCommunicationsProtocolError, AKitSemanticError, AKitTimeoutError
+from akit.exceptions import AKitConfigurationError, AKitRuntimeError, AKitCommunicationsProtocolError, AKitSemanticError, AKitTimeoutError
 
 from akit.integration import upnp as upnp_module
 from akit.integration.landscaping.landscapedevice import LandscapeDevice
@@ -49,7 +49,7 @@ from akit.integration.upnp.upnpfactory import UpnpFactory
 from akit.integration.upnp.upnpprotocol import MSearchKeys, UpnpProtocol
 from akit.integration.upnp.upnpprotocol import msearch_parse_request, notify_parse_request
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE
-from akit.integration.upnp.upnpprotocol import msearch_scan, MSearchKeys, MSearchRouteKeys
+from akit.integration.upnp.upnpprotocol import mquery, msearch_scan, MSearchKeys, MSearchRouteKeys
 from akit.integration.upnp.services.upnpeventvar import UpnpEventVar
 
 from akit.networking.interfaces import get_ipv4_address
@@ -264,7 +264,7 @@ class UpnpCoordinator:
 
         return
 
-    def startup_scan(self, lscape, upnp_hint_list, watchlist=None, exclude_interfaces=[], response_timeout=45, retry=2, force_recording=False):
+    def startup_scan(self, lscape, upnp_hint_list, watchlist=None, exclude_interfaces=[], response_timeout=20, retry=2, force_recording=False):
         """
             Starts up and initilizes the UPNP coordinator by utilizing a hint list to determine
             what network interfaces to setup UPNP monitoring on.
@@ -286,11 +286,10 @@ class UpnpCoordinator:
         for exif in exclude_interfaces:
             interface_list.remove(exif)
 
+        config_lookup = lscape._internal_get_upnp_device_config_lookup_table()
+
         found_devices = {}
         matching_devices = {}
-        missing_devices = []
-
-        config_lookup = lscape._internal_get_upnp_device_config_lookup_table()
 
         for ridx in range(0, retry):
             if ridx > 0:
@@ -302,16 +301,59 @@ class UpnpCoordinator:
             if len(matching_devices) >= hint_count:
                 break
 
+        missing_devices = []
         for expusn in upnp_hint_list:
             if expusn not in matching_devices:
                 missing_devices.append(expusn)
 
-        devmsg_lines = ["FOUND DEVICES:"]
-        for dkey, dval in found_devices.items():
-            devmsg_lines.append("    %s" % dkey)
+        # As a last resort, rescan for the missing devices directly on each interface.
+        query_devices = [mdev for mdev in missing_devices]
+        for expusn in query_devices:
+            try:
+                query_results = mquery(expusn, interface_list=interface_list, response_timeout=response_timeout)
+                if len(query_results) > 0:
+                    device_info = query_results.values()[0]
+                    found_devices[expusn] = device_info
+                    missing_devices.remove(expusn)
+            except AKitTimeoutError:
+                pass
+
+        self._log_scan_results(found_devices, matching_devices, missing_devices)
+
+        if len(missing_devices) > 0:
+            errmsg_list = [
+                "Error devices missing from configuration.",
+                "MISSING DEVICES:"
+            ]
+            for expusn in missing_devices:
+                errmsg_list.append("    %s" % expusn)
+            errmsg = os.linesep.join(errmsg_list)
+            raise AKitConfigurationError(errmsg)
+
+        for _, dval in found_devices.items():
             addr = dval[MSearchKeys.IP]
             location = dval[MSearchKeys.LOCATION]
             self._update_root_device(lscape, config_lookup, addr, location, dval, force_recording=force_recording)
+
+        if watchlist is not None and len(watchlist) > 0:
+            for dev in self.children:
+                devusn = dev.USN
+                if devusn in watchlist:
+                    self._cl_watched_devices[devusn] = dev
+
+        self._start_all_threads()
+
+        return
+
+    def _create_root_device(self, manufacturer, modelNumber, modelDescription):
+        dev = self._factory.create_root_device_instance(manufacturer, modelNumber, modelDescription)
+        return dev
+
+    def _log_scan_results(self, found_devices: dict, matching_devices:dict , missing_devices: list):
+
+        devmsg_lines = ["FOUND DEVICES:"]
+        for dkey, dval in found_devices.items():
+            devmsg_lines.append("    %s" % dkey)
         devmsg_lines.append("")
 
         devmsg_lines.append("MATCHING DEVICES:")
@@ -328,19 +370,7 @@ class UpnpCoordinator:
         devmsg = os.linesep.join(devmsg_lines)
         self._logger.info(devmsg)
 
-        if watchlist is not None and len(watchlist) > 0:
-            for dev in self.children:
-                devusn = dev.USN
-                if devusn in watchlist:
-                    self._cl_watched_devices[devusn] = dev
-
-        self._start_all_threads()
-
         return
-
-    def _create_root_device(self, manufacturer, modelNumber, modelDescription):
-        dev = self._factory.create_root_device_instance(manufacturer, modelNumber, modelDescription)
-        return dev
 
     def _normalize_name(self, name):
 
@@ -356,11 +386,11 @@ class UpnpCoordinator:
         subtype = request_info["NTS"]
 
         if subtype == "ssdp:alive":
-            self._logger.debug("PROCESSING NOTIFY - USN: %s HOST: %s SUBTYPE: %s", usn, host, subtype)
+            self._logger.info("PROCESSING NOTIFY - USN: %s HOST: %s SUBTYPE: %s", usn, host, subtype)
         elif subtype == "ssdp:byebye":
-            self._logger.debug("PROCESSING NOTIFY - USN: %s HOST: %s SUBTYPE: %s", usn, host, subtype)
+            self._logger.info("PROCESSING NOTIFY - USN: %s HOST: %s SUBTYPE: %s", usn, host, subtype)
         else:
-            self._logger.debug("PROCESSING NOTIFY - USN: %s HOST: %s SUBTYPE: %s", usn, host, subtype)
+            self._logger.info("PROCESSING NOTIFY - USN: %s HOST: %s SUBTYPE: %s", usn, host, subtype)
 
         return
 
@@ -753,14 +783,19 @@ if __name__ == "__main__":
         isbval = devProps.lookup_event_variable("IsZoneBridge")
         print (isbval)
 
-
     LEDSTATES = ["Off", "On"]
 
-    index = 0
+    small_counter = 0
+    large_counter = 0
     while True:
         time.sleep(2)
-        if index == 0:
+        if small_counter == 0:
             print("tick")
         else:
             print("tock")
-        index = (index + 1) % 2
+
+        if large_counter == 0:
+            print("Refreshing upnp device status.")
+
+        small_counter = (small_counter + 1) % 2
+        large_counter = (large_counter + 1) % 30
