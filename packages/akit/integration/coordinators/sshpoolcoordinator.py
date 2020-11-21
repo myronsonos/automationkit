@@ -99,7 +99,7 @@ class SshPoolCoordinator:
                     basedevice = lscape._internal_lookup_device_by_keyid(usn)
                     basedevice.attach_extension("ssh", agent)
                 else:
-                    basedevice = LandscapeDevice("network/ssh", sshdev_config)
+                    basedevice = LandscapeDevice(host, "network/ssh", sshdev_config)
                     basedevice.attach_extension("ssh", agent)
 
                 basedevice_ref = weakref.ref(basedevice)
