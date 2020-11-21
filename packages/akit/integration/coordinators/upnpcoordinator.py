@@ -142,6 +142,11 @@ class UpnpCoordinator:
             self._queue_available = threading.Semaphore(0)
             self._queue_work = []
 
+            self._match_table = {
+                "modelName": UpnpRootDevice._matches_model_name,
+                "modelNumber": UpnpRootDevice._matches_model_number
+            }
+
         return
 
     @property
@@ -696,7 +701,8 @@ class UpnpCoordinator:
 
                                 coord_ref = weakref.ref(self)
 
-                                basedevice = LandscapeDevice("network/upnp", deviceinfo)
+                                basedevice = LandscapeDevice(usn, "network/upnp", deviceinfo)
+                                basedevice.update_match_table(self._match_table)
 
                                 basedevice_ref = weakref.ref(basedevice)
                                 
@@ -756,6 +762,8 @@ if __name__ == "__main__":
 
     lscape = Landscape()
     lscape.first_contact()
+
+    s17 = lscape.lookup_device_by_modelNumber("S17")
 
     #muse_coord = lscape.muse_coord
     #firstMuseAgent = muse_coord.device_agents[0]

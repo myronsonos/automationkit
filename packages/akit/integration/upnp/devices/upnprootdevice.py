@@ -231,6 +231,14 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
         if desc is not None:
             mname = desc.modelName
         return mname
+    
+    @property
+    def modelNumber(self):
+        mnumber = None
+        desc = self.description
+        if desc is not None:
+            mnumber = desc.modelNumber
+        return mnumber
 
     @property
     def routes(self):
@@ -530,6 +538,22 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
     def _locked_process_version_node(self, verNode, namespaces=None):
         self._specVersion = UpnpDevice1SpecVersion(verNode, namespaces=namespaces)
         return
+
+    def _matches_model_name(self, modelName):
+
+        matches = False
+        if self.upnp.modelName == modelName:
+            matches = True
+
+        return matches
+
+    def _matches_model_number(self, modelNumber):
+
+        matches = False
+        if self.upnp.modelNumber == modelNumber:
+            matches = True
+
+        return matches
 
     def _process_device_node(self, factory, devNode, namespaces=None):
 

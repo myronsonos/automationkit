@@ -76,7 +76,8 @@ class Landscape:
         
     def __init__(self):
         """
-            Initializes the Singleton initializer class
+            Creates an instance or reference to the :class:`Landscape` singleton object.  On the first call to this
+            constructor the :class:`Landscape` object is initialized and the landscape configuration is loaded.
         """
 
         thisType = type(self)
@@ -88,6 +89,7 @@ class Landscape:
                 thisType._initialized = True
 
                 self._landscape_info = None
+
                 self._environment_info = None
                 self._environment_label = None
                 self._environment_muse = None
@@ -104,6 +106,8 @@ class Landscape:
 
                 self._all_devices = {}
 
+                self._device_pool = {}
+
                 self._initialize()
         finally:
             self.landscape_lock.release()
@@ -112,21 +116,33 @@ class Landscape:
 
     @property
     def environment(self):
+        """
+            Returns the environment section of the landscape configuration.
+        """
         self.landscape_initialized.wait()
         return self._environment_info
 
     @property
     def environment_label(self):
+        """
+            Returns the environment.label section of the landscape configuration.
+        """
         self.landscape_initialized.wait()
         return self._environment_label
 
     @property
     def environment_muse(self):
+        """
+            Returns the environment.muse section of the landscape configuration or None.
+        """
         self.landscape_initialized.wait()
         return self._environment_muse
 
     @property
     def name(self):
+        """
+            Returns the name associated with the landscape.
+        """
         self.landscape_initialized.wait()
         lname = None
         if "name" in self.landscape_info:
@@ -135,36 +151,57 @@ class Landscape:
 
     @property
     def has_muse_devices(self):
+        """
+            Returns a boolean indicating if the landscape contains muse devices.
+        """
         self.landscape_initialized.wait()
         return self._has_muse_devices
 
     @property
     def has_ssh_devices(self):
+        """
+            Returns a boolean indicating if the landscape contains ssh devices.
+        """
         self.landscape_initialized.wait()
         return self._has_ssh_devices
 
     @property
     def has_upnp_devices(self):
+        """
+            Returns a boolean indicating if the landscape contains upnp devices.
+        """
         self.landscape_initialized.wait()
         return self._has_upnp_devices
 
     @property
     def landscape_info(self):
+        """
+            Returns the root landscape configuration dictionary.
+        """
         self.landscape_initialized.wait()
         return self._landscape_info
 
     @property
     def muse_coord(self):
+        """
+            Returns a the :class:`MuseCoordinator` that is used to manage muse devices.
+        """
         self.landscape_initialized.wait()
         return self._muse_coord
 
     @property
     def ssh_coord(self):
+        """
+            Returns a the :class:`SshPoolCoordinator` that is used to manage ssh devices.
+        """
         self.landscape_initialized.wait()
         return self._ssh_coord
 
     @property
     def upnp_coord(self):
+        """
+            Returns a the :class:`UpnpCoordinator` that is used to manage upnp devices.
+        """
         self.landscape_initialized.wait()
         return self._upnp_coord
 
@@ -177,7 +214,92 @@ class Landscape:
         db_info = self.landscape_info["databases"]
         return db_info
 
-    def diagnostic(self, diaglabel, diags):
+    def checkin_device(self, device: LandscapeDevice):
+        """
+            Returns a landscape device to the the available device pool.
+        """
+        keyid = device.keyid
+
+        self.landscape_lock.acquire()
+        try:
+            self._device_pool[keyid] = device
+        finally:
+            self.landscape_lock.release()
+
+        return
+
+    def checkout_a_device_by_modelName(self, modelName: str):
+        """
+            Checks out a single device from the available pool using the modelName match
+            criteria provided.
+        """
+
+        device = None
+
+        device_list = self.checkout_devices_by_match("modelName", modelName, count=1)
+        if len(device_list) > 0:
+            device = device_list[0]
+
+        return device
+
+    def checkout_a_device_by_modelNumber(self, modelNumber: str):
+        """
+            Checks out a single device from the available pool using the modelNumber match
+            criteria provided.
+        """
+        device = None
+
+        device_list = self.checkout_devices_by_match("modelNumber", modelNumber, count=1)
+        if len(device_list) > 0:
+            device = device_list[0]
+
+        return device
+
+    def checkout_devices_by_match(self, match_type: str, *match_params, count=None):
+        """
+            Checks out the devices that are found to correspond with the match criteria provided.  If the
+            'count' parameter is passed, then the number of devices that are checked out is limited to
+            count matching devices.
+        """
+        self.landscape_initialized.wait()
+
+        device_list = None
+
+        self.landscape_lock.acquire()
+        try:
+            device_list = self.list_available_devices_by_match(match_type, *match_params, count=count)
+
+            for device in device_list:
+                self._locked_checkout_device(device)
+        finally:
+            self.landscape_lock.release()
+
+        return device_list
+
+    def checkout_devices_by_modelName(self, modelName:str , count=None):
+        """
+            Checks out the devices that are found to correspond with the modelName match criteria provided.
+            If the 'count' parameter is passed, the the number of devices that are checked out is limited to
+            count matching devices.
+        """
+
+        device_list = self.checkout_devices_by_match("modelName", modelName, count=count)
+
+        return device_list
+
+
+    def checkout_devices_by_modelNumber(self, modelNumber: str, count=None):
+        """
+            Checks out the devices that are found to correspond with the modelNumber match criteria provided.
+            If the 'count' parameter is passed, the the number of devices that are checked out is limited to
+            count matching devices.
+        """
+
+        device_list = self.checkout_devices_by_match("modelNumber", modelNumber, count=count)
+
+        return device_list
+
+    def diagnostic(self, diaglabel: str, diags: dict):
         """
             Can be called in order to perform a diagnostic capture across the test landscape.
 
@@ -240,9 +362,43 @@ class Landscape:
 
         return error_lists
 
-    def get_device_configs(self):
+    def get_available_devices(self):
+        """
+            Returns the list of devices from the landscape device pool.  This will
+            skip any device that has a "skip": true member.
+        """
+        self.landscape_initialized.wait()
+
+        device_list = None
+
+        self.landscape_lock.acquire()
+        try:
+            device_list = [dev for dev in self._device_pool.values()]
+        finally:
+            self.landscape_lock.release()
+
+        return device_list
+
+    def get_devices(self):
         """
             Returns the list of devices from the landscape.  This will
+            skip any device that has a "skip": true member.
+        """
+        self.landscape_initialized.wait()
+
+        device_list = None
+
+        self.landscape_lock.acquire()
+        try:
+            device_list = [dev for dev in self._all_devices.values()]
+        finally:
+            self.landscape_lock.release()
+
+        return device_list
+
+    def get_device_configs(self):
+        """
+            Returns the list of device configurations from the landscape.  This will
             skip any device that has a "skip": true member.
         """
         self.landscape_initialized.wait()
@@ -308,6 +464,91 @@ class Landscape:
         upnp_device_table = self._internal_get_upnp_device_config_lookup_table()
 
         return upnp_device_table
+
+    def list_available_devices_by_match(self, match_type, *match_params, count=None):
+        """
+            Creates and returns a list of devices from the available devices pool that are found
+            to correspond to the match criteria provided.  If a 'count' parameter is passed
+            then the number of devices returned is limited to count devices.
+
+            .. note:: This API does not perform a checkout of the devices returns so the
+                      caller should not consider themselves to the the owner of the devices.
+        """
+        matching_devices = []
+        device_list = self.get_available_devices()
+
+        for dev in device_list:
+            if dev.match_using_params(match_type, *match_params):
+                matching_devices.append(dev)
+                if count is not None and len(matching_devices) >= count:
+                    break
+
+        return matching_devices
+
+    def list_devices_by_match(self, match_type, *match_params, count=None):
+        """
+            Creates and returns a list of devices that are found to correspond to the match
+            criteria provided.  If a 'count' parameter is passed then the number of devices
+            returned is limited to count devices.
+        """
+        matching_devices = []
+        device_list = self.get_devices()
+
+        for dev in device_list:
+            if dev.match_using_params(match_type, *match_params):
+                matching_devices.append(dev)
+                if count is not None and len(matching_devices) >= count:
+                    break
+
+        return matching_devices
+
+    def list_devices_by_modelName(self, modelName, count=None):
+        """
+            Creates and returns a list of devices that are found to correspond to the modelName
+            match criteria provided.  If a 'count' parameter is passed then the number of devices
+            returned is limited to count devices.
+        """
+
+        matching_devices = self.list_devices_by_match("modelName", modelName, count=count)
+
+        return matching_devices
+
+    def list_devices_by_modelNumber(self, modelNumber, count=None):
+        """
+            Creates and returns a list of devices that are found to correspond to the modelNumber
+            match criteria provided.  If a 'count' parameter is passed then the number of devices
+            returned is limited to count devices.
+        """
+
+        matching_devices = self.list_devices_by_match("modelNumber", modelNumber, count=count)
+
+        return matching_devices
+
+    def lookup_device_by_modelName(self, modelName):
+        """
+            Looks up a single device that is found to correspond to the modelName match criteria
+            provided.
+        """
+        device = None
+
+        matching_devices = self.list_devices_by_match("modelName", modelName, count=1)
+        if len(matching_devices) > 0:
+            device = matching_devices[0]
+
+        return device
+
+    def lookup_device_by_modelNumber(self, modelNumber):
+        """
+            Looks up a single device that is found to correspond to the modelNumber match criteria
+            provided.
+        """
+        device = None
+
+        matching_devices = self.list_devices_by_match("modelNumber", modelNumber, count=1)
+        if len(matching_devices) > 0:
+            device = matching_devices[0]
+
+        return device
 
     def register_integration_point(self, role, mixin):
         """
@@ -445,8 +686,12 @@ class Landscape:
     def _internal_get_device_configs(self):
         """
             Returns the list of devices from the landscape.  This will
-            skip any device that has a "skip": true member.  This should not be called
-            until after the _landscape_info variable has been set.
+            skip any device that has a "skip": true member.
+            
+            .. note:: The _internal_ methods do not guard against calls prior to
+            landscape initialization so they should only be called with care.  This
+            should not be called until after the _landscape_info variable has been
+            loaded and contains the configuration data from the landscape.yaml file.
         """
 
         if self._landscape_info is None:
@@ -469,6 +714,11 @@ class Landscape:
     def _internal_get_upnp_device_configs(self, ssh_only=False):
         """
             Returns a list of UPNP device information dictionaries.
+
+            .. note:: The _internal_ methods do not guard against calls prior to
+            landscape initialization so they should only be called with care.  This
+            should not be called until after the _landscape_info variable has been
+            loaded and contains the configuration data from the landscape.yaml file.
         """
 
         upnp_device_config_list = []
@@ -489,6 +739,11 @@ class Landscape:
     def _internal_get_upnp_device_config_lookup_table(self):
         """
             Returns a USN lookup table for upnp devices.
+
+            .. note:: The _internal_ methods do not guard against calls prior to
+            landscape initialization so they should only be called with care.  This
+            should not be called until after the _landscape_info variable has been
+            loaded and contains the configuration data from the landscape.yaml file.
         """
 
         upnp_device_config_list = self._internal_get_upnp_device_configs()
@@ -500,15 +755,62 @@ class Landscape:
 
         return upnp_device_config_table
 
-    def _internal_lookup_device(self, keyid):
-        device = None
-        if keyid in self._all_devices:
-            device = self._all_devices[keyid]
+    def _internal_lookup_device_by_keyid(self, keyid):
+        """
+            Looks up a device by keyid.
+
+            .. note:: The _internal_ methods do not guard against calls prior to
+            landscape initialization so they should only be called with care.  This
+            should not be called until after the _landscape_info variable has been
+            loaded and contains the configuration data from the landscape.yaml file.
+        """
+
+        self.landscape_lock.acquire()
+        try:
+            device = None
+            if keyid in self._all_devices:
+                device = self._all_devices[keyid]
+        finally:
+            self.landscape_lock.release()
+
         return device
 
     def _internal_register_device(self, keyid, device):
-        self._all_devices[keyid] = device
+        """
+            Registeres a device and stores it by keyid.
+
+            .. note:: The _internal_ methods do not guard against calls prior to
+            landscape initialization so they should only be called with care.  This
+            should not be called until after the _landscape_info variable has been
+            loaded and contains the configuration data from the landscape.yaml file.
+        """
+
+        self.landscape_lock.acquire()
+        try:
+            # Add the device to all devices, all devices does not change
+            # based on check-out or check-in activity
+            self._all_devices[keyid] = device
+
+            # Add the device to the device pool, the device pool is used
+            # for tracking device availability for check-out
+            self._device_pool[keyid] = device
+        finally:
+            self.landscape_lock.release()
+
         return
+
+    def _locked_checkout_device(self, device):
+
+        device = None
+
+        keyid = device.keyid
+        if keyid not in self._device_pool:
+            raise AKitSemanticError("A device is being checked out, that is not in the device pool.")
+
+        device = self._device_pool[keyid]
+        del self._device_pool
+
+        return device
 
 def is_subclass_of_landscape(cand_type):
     """

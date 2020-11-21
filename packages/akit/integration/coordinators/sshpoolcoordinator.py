@@ -96,7 +96,7 @@ class SshPoolCoordinator:
 
                 basedevice = None
                 if usn is not None:
-                    basedevice = lscape._internal_lookup_device(usn)
+                    basedevice = lscape._internal_lookup_device_by_keyid(usn)
                     basedevice.attach_extension("ssh", agent)
                 else:
                     basedevice = LandscapeDevice("network/ssh", sshdev_config)

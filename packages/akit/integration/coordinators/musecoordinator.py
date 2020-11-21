@@ -118,10 +118,10 @@ class MuseCoordinator:
 
                 basedevice = None
                 if usn is not None:
-                    basedevice = lscape._internal_lookup_device(usn)
+                    basedevice = lscape._internal_lookup_device_by_keyid(usn)
                     basedevice.attach_extension("muse", agent)
                 else:
-                    basedevice = LandscapeDevice("network/muse", musedev_config)
+                    basedevice = LandscapeDevice(host, "network/muse", musedev_config)
                     basedevice.attach_extension("muse", agent)
 
                 basedevice_ref = weakref.ref(basedevice)
