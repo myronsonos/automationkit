@@ -16,3 +16,5 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 USER_AGENT = "AutomationKit/1.0 Automation Kit Test Framework"
+
+LINESEP = "\r\n"

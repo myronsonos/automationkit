@@ -69,7 +69,7 @@ class LandscapeDevice:
         return self._is_watched
 
     @property
-    def keyid(self)
+    def keyid(self):
         return self._keyid
 
     @property
