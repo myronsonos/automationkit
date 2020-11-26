@@ -22,6 +22,8 @@ import threading
 import traceback
 import yaml
 
+from typing import Optional
+
 import pprint
 
 from akit.compat import import_by_name
@@ -115,7 +117,7 @@ class Landscape:
         return
 
     @property
-    def environment(self):
+    def environment(self) -> dict:
         """
             Returns the environment section of the landscape configuration.
         """
@@ -123,7 +125,7 @@ class Landscape:
         return self._environment_info
 
     @property
-    def environment_label(self):
+    def environment_label(self) -> str:
         """
             Returns the environment.label section of the landscape configuration.
         """
@@ -131,7 +133,7 @@ class Landscape:
         return self._environment_label
 
     @property
-    def environment_muse(self):
+    def environment_muse(self) -> dict:
         """
             Returns the environment.muse section of the landscape configuration or None.
         """
@@ -139,7 +141,7 @@ class Landscape:
         return self._environment_muse
 
     @property
-    def name(self):
+    def name(self) -> str:
         """
             Returns the name associated with the landscape.
         """
@@ -150,7 +152,7 @@ class Landscape:
         return lname
 
     @property
-    def has_muse_devices(self):
+    def has_muse_devices(self) -> bool:
         """
             Returns a boolean indicating if the landscape contains muse devices.
         """
@@ -158,7 +160,7 @@ class Landscape:
         return self._has_muse_devices
 
     @property
-    def has_ssh_devices(self):
+    def has_ssh_devices(self) -> bool:
         """
             Returns a boolean indicating if the landscape contains ssh devices.
         """
@@ -166,7 +168,7 @@ class Landscape:
         return self._has_ssh_devices
 
     @property
-    def has_upnp_devices(self):
+    def has_upnp_devices(self) -> bool:
         """
             Returns a boolean indicating if the landscape contains upnp devices.
         """
@@ -206,7 +208,7 @@ class Landscape:
         return self._upnp_coord
 
     @property
-    def databases(self):
+    def databases(self) -> dict:
         """
             Returns the database configuration information from the landscape file.
         """
@@ -228,7 +230,7 @@ class Landscape:
 
         return
 
-    def checkout_a_device_by_modelName(self, modelName: str):
+    def checkout_a_device_by_modelName(self, modelName: str) -> Optional[LandscapeDevice]:
         """
             Checks out a single device from the available pool using the modelName match
             criteria provided.
@@ -242,7 +244,7 @@ class Landscape:
 
         return device
 
-    def checkout_a_device_by_modelNumber(self, modelNumber: str):
+    def checkout_a_device_by_modelNumber(self, modelNumber: str) -> Optional[LandscapeDevice]:
         """
             Checks out a single device from the available pool using the modelNumber match
             criteria provided.
@@ -255,7 +257,7 @@ class Landscape:
 
         return device
 
-    def checkout_devices_by_match(self, match_type: str, *match_params, count=None):
+    def checkout_devices_by_match(self, match_type: str, *match_params, count=None) -> [LandscapeDevice]:
         """
             Checks out the devices that are found to correspond with the match criteria provided.  If the
             'count' parameter is passed, then the number of devices that are checked out is limited to
@@ -276,7 +278,7 @@ class Landscape:
 
         return device_list
 
-    def checkout_devices_by_modelName(self, modelName:str , count=None):
+    def checkout_devices_by_modelName(self, modelName:str , count=None) -> [LandscapeDevice]:
         """
             Checks out the devices that are found to correspond with the modelName match criteria provided.
             If the 'count' parameter is passed, the the number of devices that are checked out is limited to
@@ -288,7 +290,7 @@ class Landscape:
         return device_list
 
 
-    def checkout_devices_by_modelNumber(self, modelNumber: str, count=None):
+    def checkout_devices_by_modelNumber(self, modelNumber: str, count=None) -> [LandscapeDevice]:
         """
             Checks out the devices that are found to correspond with the modelNumber match criteria provided.
             If the 'count' parameter is passed, the the number of devices that are checked out is limited to
@@ -311,7 +313,7 @@ class Landscape:
         self.landscape_initialized.wait()
         return
     
-    def first_contact(self):
+    def first_contact(self) -> [str]:
         """
             This method should be called as early as possible in order to ensure the entities in the
             automation landscape exist and the authentication credentials provided for these entities
@@ -362,7 +364,7 @@ class Landscape:
 
         return error_lists
 
-    def get_available_devices(self):
+    def get_available_devices(self) -> [LandscapeDevice]:
         """
             Returns the list of devices from the landscape device pool.  This will
             skip any device that has a "skip": true member.
@@ -379,7 +381,7 @@ class Landscape:
 
         return device_list
 
-    def get_devices(self):
+    def get_devices(self) -> [LandscapeDevice]:
         """
             Returns the list of devices from the landscape.  This will
             skip any device that has a "skip": true member.
@@ -396,7 +398,7 @@ class Landscape:
 
         return device_list
 
-    def get_device_configs(self):
+    def get_device_configs(self) -> [dict]:
         """
             Returns the list of device configurations from the landscape.  This will
             skip any device that has a "skip": true member.
@@ -407,7 +409,7 @@ class Landscape:
 
         return device_config_list
 
-    def get_muse_device_configs(self, exclude_upnp=False):
+    def get_muse_device_configs(self, exclude_upnp=False) -> [dict]:
         """
             Returns a list of devices that support Sonos muse protocol.
         """
@@ -426,7 +428,7 @@ class Landscape:
 
         return muse_device_config_list
 
-    def get_ssh_device_configs(self, exclude_upnp=False):
+    def get_ssh_device_configs(self, exclude_upnp=False) -> [dict]:
         """
             Returns a list of devices that support ssh.
         """
@@ -445,7 +447,7 @@ class Landscape:
 
         return ssh_device_config_list
 
-    def get_upnp_device_configs(self, ssh_only=False):
+    def get_upnp_device_configs(self, ssh_only=False) -> [dict]:
         """
             Returns a list of UPNP device information dictionaries.
         """
@@ -455,7 +457,7 @@ class Landscape:
 
         return upnp_device_config_list
 
-    def get_upnp_device_config_lookup_table(self):
+    def get_upnp_device_config_lookup_table(self) -> dict:
         """
             Returns a USN lookup table for upnp devices.
         """
@@ -465,7 +467,7 @@ class Landscape:
 
         return upnp_device_table
 
-    def list_available_devices_by_match(self, match_type, *match_params, count=None):
+    def list_available_devices_by_match(self, match_type, *match_params, count=None) -> [LandscapeDevice]:
         """
             Creates and returns a list of devices from the available devices pool that are found
             to correspond to the match criteria provided.  If a 'count' parameter is passed
@@ -485,7 +487,7 @@ class Landscape:
 
         return matching_devices
 
-    def list_devices_by_match(self, match_type, *match_params, count=None):
+    def list_devices_by_match(self, match_type, *match_params, count=None) -> [LandscapeDevice]:
         """
             Creates and returns a list of devices that are found to correspond to the match
             criteria provided.  If a 'count' parameter is passed then the number of devices
@@ -502,7 +504,7 @@ class Landscape:
 
         return matching_devices
 
-    def list_devices_by_modelName(self, modelName, count=None):
+    def list_devices_by_modelName(self, modelName, count=None) -> [LandscapeDevice]:
         """
             Creates and returns a list of devices that are found to correspond to the modelName
             match criteria provided.  If a 'count' parameter is passed then the number of devices
@@ -513,7 +515,7 @@ class Landscape:
 
         return matching_devices
 
-    def list_devices_by_modelNumber(self, modelNumber, count=None):
+    def list_devices_by_modelNumber(self, modelNumber, count=None) -> [LandscapeDevice]:
         """
             Creates and returns a list of devices that are found to correspond to the modelNumber
             match criteria provided.  If a 'count' parameter is passed then the number of devices
@@ -524,7 +526,7 @@ class Landscape:
 
         return matching_devices
 
-    def lookup_device_by_modelName(self, modelName):
+    def lookup_device_by_modelName(self, modelName) -> Optional[LandscapeDevice]:
         """
             Looks up a single device that is found to correspond to the modelName match criteria
             provided.
@@ -537,7 +539,7 @@ class Landscape:
 
         return device
 
-    def lookup_device_by_modelNumber(self, modelNumber):
+    def lookup_device_by_modelNumber(self, modelNumber) -> Optional[LandscapeDevice]:
         """
             Looks up a single device that is found to correspond to the modelNumber match criteria
             provided.
@@ -683,7 +685,7 @@ class Landscape:
 
         return
     
-    def _internal_get_device_configs(self):
+    def _internal_get_device_configs(self) -> [dict]:
         """
             Returns the list of devices from the landscape.  This will
             skip any device that has a "skip": true member.
@@ -711,7 +713,7 @@ class Landscape:
 
         return device_config_list
 
-    def _internal_get_upnp_device_configs(self, ssh_only=False):
+    def _internal_get_upnp_device_configs(self, ssh_only=False) -> [dict]:
         """
             Returns a list of UPNP device information dictionaries.
 
@@ -736,7 +738,7 @@ class Landscape:
 
         return upnp_device_config_list
 
-    def _internal_get_upnp_device_config_lookup_table(self):
+    def _internal_get_upnp_device_config_lookup_table(self) -> dict:
         """
             Returns a USN lookup table for upnp devices.
 
@@ -755,7 +757,7 @@ class Landscape:
 
         return upnp_device_config_table
 
-    def _internal_lookup_device_by_keyid(self, keyid):
+    def _internal_lookup_device_by_keyid(self, keyid) -> Optional[LandscapeDevice]:
         """
             Looks up a device by keyid.
 
@@ -799,7 +801,7 @@ class Landscape:
 
         return
 
-    def _locked_checkout_device(self, device):
+    def _locked_checkout_device(self, device) -> Optional[LandscapeDevice]:
 
         device = None
 
