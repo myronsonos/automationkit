@@ -32,7 +32,7 @@ jobs:
 
       - name: Setup Python $${{ matrix.python-version }}
         uses: actions/setup-python@v2
-        with: python-version: $${{ matrix.python-version }}
+        with: python-version: '3.x'
   
       - name: Print Python Version
         run: python -c "import sys; print(sys.version)"
