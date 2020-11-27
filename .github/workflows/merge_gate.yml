@@ -41,8 +41,6 @@ jobs:
       - name: Install Base Dependencies
         run: |
           python -m ensurepip
-          python -m pip install --upgrade distribute
-          python -m pip list
           python -m pip install virtualenv
 
       - name: PIP - Create, Activate and Setup the Virtual Environment
