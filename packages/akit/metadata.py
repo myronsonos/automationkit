@@ -7,6 +7,8 @@
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
 
+# pylint: disable=too-few-public-methods
+
 __author__ = "Myron Walker"
 __copyright__ = "Copyright 2020, Myron W Walker"
 __credits__ = []
@@ -21,6 +23,7 @@ class Category:
         The 'Category' decorator allows test engineers to associate categories with individual test
         cases or collections of tests.
     """
+
     def __init__(self, *categories):
         if len(categories) == 0:
             raise ValueError("The 'Category' decorator requires at least one category arguement.")
@@ -41,6 +44,7 @@ class Keywords:
         The 'Keywords' decorator allows test engineers to associate keywords with individual test
         cases or collections of tests.
     """
+
     def __init__(self, *keywords):
         if len(keywords) == 0:
             raise ValueError("The 'Keyword' decorator requires at least one keyword arguement.")
@@ -55,5 +59,3 @@ class Keywords:
         else:
             obj_to_decorate._metadata_["keywords"] = self._keywords
         return obj_to_decorate
-
-

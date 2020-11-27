@@ -50,14 +50,14 @@ def format_time_with_fractional(tsecs: float) -> str:
     dtstr = "%s.%03d" % (time.strftime(FORMAT_DATETIME, time.gmtime(sec_comp)), frac_comp)
     return dtstr
 
-def parse_datetime(dtstr: str, format: str=FORMAT_DATETIME) -> datetime:
+def parse_datetime(dtstr: str, datetime_format: str=FORMAT_DATETIME) -> datetime:
     """
         Parses a date time from string and includes the microseconds component.
 
         :param dtstr: The date in the form of a date time string.
         :type dtstr: str
-        :param format: The format string to when parsing the datetime string.
-        :type format: str
+        :param datetime_format: The format string to when parsing the datetime string.
+        :type datetime_format: str
 
         :returns: The datetime from the parsed string.
         :rtype: :class:`datetime.datetime`
@@ -68,6 +68,6 @@ def parse_datetime(dtstr: str, format: str=FORMAT_DATETIME) -> datetime:
         dtstr, msecstr = dtstr.split(".")
         microsecs = int(msecstr)
 
-    dtobj = datetime(*time.strptime(dtstr, format)[:6], microsecs)
+    dtobj = datetime(*time.strptime(dtstr, datetime_format)[:6], microsecs)
 
     return dtobj

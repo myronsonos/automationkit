@@ -17,6 +17,7 @@ __license__ = "MIT"
 
 import inspect
 import os
+import traceback
 
 from akit.xinspect import get_caller_function_name
 from akit.xformatting import split_and_indent_lines
@@ -88,6 +89,8 @@ class AKitError(Exception):
 
     def _collect_stack_frames(self):
 
+        # pylint: disable=too-many-locals
+
         last_items = None
         tb_code = None
         tb_lineno = None
@@ -109,7 +112,7 @@ class AKitError(Exception):
                     argval = co_locals[argname]
                     code_args.append("%s=%r" % (argname, argval))
 
-                last_items[-2] = "%s(%s)" % (co_name, ", ".join(code_args))
+                last_items[-2] = "%s(%s)" % (co_name, ", ".join(code_args)) # pylint: disable=unsupported-assignment-operation
 
             last_items = items
 

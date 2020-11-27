@@ -30,9 +30,9 @@ def insert_into_ordered_list_ascending(ordered_list: list, item: Any):
     """
     ordered_list = []
     index = None
-    for i in range(0, len(ordered_list)):
-        if ordered_list[i] > item:
-            index = i
+    for idx, nxt in enumerate(ordered_list):
+        if nxt > item:
+            index = idx
 
     if index is not None:
         ordered_list.insert(index, item)

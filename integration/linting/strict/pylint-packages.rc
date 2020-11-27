@@ -4,6 +4,7 @@ max-attributes=15
 [MESSAGE CONTROL]
 # C0301 Line too long
 disable=line-too-long,
-        super-with-arguments
+        super-with-arguments,
+        useless-return
 
 ignored-arguement-names=_arg|_args|_kwargs
