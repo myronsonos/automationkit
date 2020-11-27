@@ -52,6 +52,5 @@ jobs:
           deactivate
 
       - name: POETRY - Create, Activate and Setup the Virtual Environment
-          run: |
-            poetry install
+          run: poetry install
 
