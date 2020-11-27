@@ -44,9 +44,14 @@ jobs:
           python -m pip install setuptools
           python -m pip install virtualenv
 
-      - name: Create, Activate and Setup the Virtual Environment
+      - name: PIP - Create, Activate and Setup the Virtual Environment
         run: |
-          virtualenv .venv
-          source .venv/bin/activate
+          virtualenv .pipvenv
+          source .pipvenv/bin/activate
           python $GITHUB_WORKSPACE/setup.py install
           deactivate
+
+      - name: POETRY - Create, Activate and Setup the Virtual Environment
+          run: |
+            poetry install
+
