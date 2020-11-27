@@ -72,7 +72,7 @@ def open_apod_postgresql_database(host='localhost', port=5432, username=None, pa
     return engine
 
 if __name__ == "__main__":
-    from akit.integration.landscaping import Landscape
+    from akit.integration.landscaping.landscape import Landscape
     landscape = Landscape()
 
     dbinfo = landscape.get_databases()

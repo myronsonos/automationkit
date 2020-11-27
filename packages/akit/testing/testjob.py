@@ -21,7 +21,7 @@ import uuid
 
 from akit.environment.context import ContextUser
 
-from akit.integration.landscaping import Landscape
+from akit.integration.landscaping.landscape import Landscape
 from akit.recorders import JsonResultRecorder
 from akit.results import ResultContainer, ResultType
 from akit.testing.testsequencer import TestSequencer

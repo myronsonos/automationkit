@@ -17,7 +17,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import sys
-import importlib
+import importlib 
 
 is_python3 = sys.version_info[0] == 3
 is_python_pre_3_5 = (is_python3 and sys.version_info[1] < 5)
@@ -50,7 +50,7 @@ def import_file(name, loc):
 
             mod = imp.load_source(name, loc)
         else:
-            import importlib.util
+            #import importlib.util
 
             while True:
                 # First try to import the module by name only

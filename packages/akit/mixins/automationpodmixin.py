@@ -15,7 +15,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from akit.integration.landscaping import Landscape
+from akit.integration.landscaping.landscape import Landscape
 from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 from akit.integration.upnp.upnpprotocol import inline_msearch
 

@@ -102,7 +102,7 @@ class IntegrationMixIn(ContextUser):
 
             :raises :class:`akit.exceptions.AKitMissingConfigError`, :class:`akit.exceptions.AKitInvalidConfigError`:
         """
-        from akit.integration.landscaping import Landscape
+        from akit.integration.landscaping.landscape import Landscape
 
         cls.logger = getAutomatonKitLogger()
         cls.landscape = Landscape()
