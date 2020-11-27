@@ -267,39 +267,3 @@ class AKitNotOverloadedError(AKitSemanticError):
     """
         This error is raised when a method that must be overloaded has not been overridden.
     """
-
-
-if __name__ == "__main__":
-
-    import traceback
-
-    def testfuncA(a):
-        raise AKitError("Blah")
-        return
-
-    def testfuncB(b, c, d="d"):
-        try:
-            testfuncA("*a")
-        except AKitError as xcpt:
-            xcpt.add_context("I am and testfuncB and i see this.")
-            raise
-        return
-
-    def testfuncC(e, f, g="g"):
-        try:
-            testfuncB("*b", "*c", d="*d")
-        except AKitError as xcpt:
-            xcpt.add_context("I am and testfuncC and i see that.")
-            raise
-        return
-
-    try:
-        testfuncC("*e", "*f", g="*g")
-    except AKitError as xcpt:
-        print()
-        errmsg = xcpt.format_exc()
-        print(errmsg)
-        print()
-        print(traceback.format_exc())
-        print()
-
