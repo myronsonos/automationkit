@@ -32,7 +32,7 @@ from akit.environment.variables import LOG_LEVEL_NAMES
 logging.addLevelName(100, "QUIET")
 
 # Start Logging to Standard Out.  We need to make sure it is initialized to something as early as possible,
-# but we may not have a file to write to yet until logging_initialize is called by a proper entry point 
+# but we may not have a file to write to yet until logging_initialize is called by a proper entry point
 logging.basicConfig(level=logging.NOTSET)
 
 LOGGER_NAME = "AKIT"

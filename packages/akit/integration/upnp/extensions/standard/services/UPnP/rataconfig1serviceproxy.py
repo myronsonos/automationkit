@@ -15,7 +15,7 @@ class RATAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RATAConfig:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "CredentialsList": { "data_type": "string", "default": None, "allowed_list": None},
     }

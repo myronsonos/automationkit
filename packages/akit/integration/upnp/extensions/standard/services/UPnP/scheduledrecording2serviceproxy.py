@@ -15,7 +15,7 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ScheduledRecording:2'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "LastChange": { "data_type": "string", "default": None, "allowed_list": None},
     }

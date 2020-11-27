@@ -60,7 +60,7 @@ class ScopeMonitor:
 
     def __new__(cls, **kwargs):
         """
-            Constructs new instances of the :class:`ScopeMonitor` object. The 
+            Constructs new instances of the :class:`ScopeMonitor` object. The
             :class:`ScopeMonitor` object is a singleton so following instantiations
             of the object will reference the existing singleton
         """
@@ -280,7 +280,7 @@ class MonitoredScope:
                 errlines = [
                     "MonitoredScope({}): Timeout waiting for thread to exit monitored scope.".format(self._label),
                     "MESSAGE: {}".format(self._message),
-                    
+
                 ]
 
                 if  self._diag_func:

@@ -55,7 +55,7 @@ def create_apod_postgresql_database(host='localhost', port=5432, username=None, 
     return
 
 def open_apod_postgresql_database(host='localhost', port=5432, username=None, password=None):
-    
+
     create_apod_postgresql_database(host=host, port=port, username=username, password=password)
 
     connstr = 'postgresql://'
@@ -64,7 +64,7 @@ def open_apod_postgresql_database(host='localhost', port=5432, username=None, pa
 
     if password is not None:
         connstr += ":%s" % password
-    
+
     connstr += "%s@:%d/apod" % (host, port)
 
     engine = create_engine(connstr, echo=True)

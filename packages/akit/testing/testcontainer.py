@@ -61,7 +61,7 @@ class TestContainer:
         Users can define an entire hierarchy of `TestContainer` object that are used to pass on
         inherited or shared functionality to a derived container, however the primary means of passing
         on functionality should not necessarily be through the inheritance of a container.
-        
+
         The passing on of functionality should take place through the appropriate parent or mixin
         type.  For example functionality that is used to interact with an external resource might
         come in through the inclusion of an :class:`akit.mixins.integration.IntegrationMixIn`
@@ -131,7 +131,7 @@ class TestContainer:
                     except Exception as cu_xcpt:
                         etype, einst, etb = sys.exc_info()
                         self._handle_cleanup_error(etype, einst, etb)
-            
+
         finally:
             self._result.finalize()
             logger.info("    %s: TestCase %s" % (self._result.result_code.name, testname))

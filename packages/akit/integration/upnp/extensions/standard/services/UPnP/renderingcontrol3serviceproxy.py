@@ -15,7 +15,7 @@ class RenderingControl3ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RenderingControl:3'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "AllowedDefaultTransformSettings": { "data_type": "string", "default": None, "allowed_list": None},
         "DefaultTransformSettings": { "data_type": "string", "default": None, "allowed_list": None},

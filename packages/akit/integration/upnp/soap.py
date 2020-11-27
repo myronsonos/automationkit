@@ -218,7 +218,7 @@ class SoapProcessor:
                 resp_dict[arg.tag] = arg.text
 
         return resp_dict
-    
+
     def parse_response_error_for_upnp(self, action_name, content, status_code, extra=None, encoding=None, envelope_attrib=None, typed=None):
 
         register_namespace('', None)

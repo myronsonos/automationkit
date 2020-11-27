@@ -91,7 +91,7 @@ def primitive_list_directory(ssh_client: paramiko.SSHClient, directory: str):
                            to the remote server.
         :type ssh_client: :class:`paramiko.SSHClient`
         :param directory: The remote directory to get a list catalog for.
-        :type directory: str 
+        :type directory: str
     """
     entries = None
 
@@ -121,9 +121,9 @@ def primitive_list_tree(ssh_client: paramiko.SSHClient, treeroot: str, max_depth
         :param treeroot: The remote root directory to get a directory tree catalog for.
         :type treeroot: str
         :param max_depth: The maximum descent depth to go to when building the tree catalog.
-        :type max_depth: int 
+        :type max_depth: int
     """
-    
+
     level_items = primitive_list_directory(ssh_client, treeroot)
 
     if max_depth > 1:
@@ -475,7 +475,7 @@ class SshBase:
                  aspects=DEFAULT_ASPECTS):
 
         self._host = host
-        
+
         self._username = username
         self._password = password
         self._keyfile = keyfile
@@ -719,7 +719,7 @@ class SshBase:
 
                 # Setup a monitored scope for the call to the remote device in case of timeout failure
                 with MonitoredScope("RUNCMD-RUN_UNTIL_SUCCESS", monmsg, timeout=inactivity_timeout + monitor_delay) as _:
-                    status, stdout, stderr = self._ssh_execute_command(ssh_runner, command, pty_params=pty_params, 
+                    status, stdout, stderr = self._ssh_execute_command(ssh_runner, command, pty_params=pty_params,
                         inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
 
                 self._log_command_result(command, status, stdout, stderr, exp_status, logging_pattern)
@@ -934,7 +934,7 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
             :type extid: str
             :param location: The location reference where this device can be found via the coordinator.
             :type location: str
-            :param 
+            :param
         """
         LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
         return
@@ -1012,7 +1012,7 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
             if ssh_client is None:
                 ssh_client = self._create_client()
                 cleanup_client = True
-            
+
             self._pull_file(ssh_client, remotepath, localpath)
 
         finally:
@@ -1029,7 +1029,7 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
             if ssh_client is None:
                 ssh_client = self._create_client()
                 cleanup_client = True
-            
+
             self._push_file(ssh_client, localpath, remotepath)
 
         finally:

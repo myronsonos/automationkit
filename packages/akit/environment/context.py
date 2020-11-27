@@ -69,9 +69,9 @@ class ContextCursor:
             path = "/%s" %  "/".join(path_parts)
         else:
             path_parts = validate_path_name(path.rstrip("/"))
-        
+
         self._insert(self._storeref, path, path_parts, obj)
-    
+
         return
 
     def lookup(self, path: str) -> typing.Any:
@@ -97,7 +97,7 @@ class ContextCursor:
         found_node = self._lookup(self._storeref, path, path_parts)
 
         return found_node
-    
+
     def remove(self, path: str) -> typing.Any:
         """
             Remove an object at the specified path
@@ -120,7 +120,7 @@ class ContextCursor:
 
         found_node = self._remove(self._storeref, path, path_parts)
 
-        return found_node 
+        return found_node
 
     def _insert(self, dref: dict, path: str, path_parts: [str], obj: typing.Any):
 
@@ -198,7 +198,7 @@ class ContextCursor:
 
     def __repr__(self) -> str:
         return repr(self._storeref)
-    
+
     def __str__(self) -> str:
         return str(self._storeref)
 
@@ -232,9 +232,9 @@ class Context:
             path = "/%s" %  "/".join(path_parts)
         else:
             path_parts = validate_path_name(path.rstrip("/"))
-        
+
         self._insert(self._store, path, path_parts, obj)
-    
+
         return
 
     def lookup(self, path: str) -> typing.Any:

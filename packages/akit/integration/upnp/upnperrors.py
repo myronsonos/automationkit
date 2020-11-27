@@ -78,4 +78,4 @@ UPNP_ERROR_TEST_LOOKUP = {
 # 606-6124 Reserved These ErrorCodes are reserved for UPnP DeviceSecurity.
 # 613-699 TBD Common action errors. Defined by UPnP Forum Technical Committee.
 # 700-799 TBD Action-specific errors defined by UPnP Forum working committee.
-# 800-899 TBD Action-specific errors for non-standard actions. Defined by UPnP vendor. 
+# 800-899 TBD Action-specific errors for non-standard actions. Defined by UPnP vendor.

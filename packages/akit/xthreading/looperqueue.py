@@ -88,7 +88,7 @@ class LooperQueue:
             Remove the next work packet from the :class:`LooperQueue` work queue.
         """
         packet= None
-        
+
         self._queue_available.acquire()
         self._queue_lock.acquire()
         try:

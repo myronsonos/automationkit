@@ -15,7 +15,7 @@ class InputConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:InputConfig:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "DeviceInputCapability": { "data_type": "string", "default": None, "allowed_list": None},
         "RequiredInputType": { "data_type": "string", "default": None, "allowed_list": None},

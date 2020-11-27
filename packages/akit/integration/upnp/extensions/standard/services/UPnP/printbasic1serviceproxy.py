@@ -15,7 +15,7 @@ class PrintBasic1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:PrintBasic:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "JobEndState": { "data_type": "string", "default": None, "allowed_list": None},
         "JobIdList": { "data_type": "string", "default": None, "allowed_list": None},

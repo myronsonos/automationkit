@@ -46,7 +46,7 @@ class UpnpDevice:
     """
         The UPNP Root device is the base device for the hierarchy that is
         associated with a unique network devices location.  The :class:`RootDevice`
-        and its subdevices are linked by thier location url. 
+        and its subdevices are linked by thier location url.
 
         http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf
     """
@@ -60,7 +60,7 @@ class UpnpDevice:
             Creates a root device object.
         """
         super(UpnpDevice, self).__init__()
-        
+
         self._description = None
         self._host = None
         self._urlBase = None
@@ -294,4 +294,4 @@ class UpnpDevice:
 
         return variablesTable, typesTable, eventsTable
 
-    
+

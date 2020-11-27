@@ -15,7 +15,7 @@ class WANIPv6FirewallControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANIPv6FirewallControl:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "FirewallEnabled": { "data_type": "boolean", "default": None, "allowed_list": None},
         "InboundPinholeAllowed": { "data_type": "boolean", "default": None, "allowed_list": None},

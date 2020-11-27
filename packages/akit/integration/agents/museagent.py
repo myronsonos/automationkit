@@ -44,7 +44,7 @@ class MuseAgent(LandscapeDeviceExtension):
         self._verify = verify
 
         self._basic_auth = self._generate_basic_auth()
-        
+
         #if self._bearer_token is None:
         #    self._bearer_token = self.auth_get_bearer_token()
         return
@@ -100,7 +100,7 @@ class MuseAgent(LandscapeDeviceExtension):
             :type extid: str
             :param location: The location reference where this device can be found via the coordinator.
             :type location: str
-            :param 
+            :param
         """
         LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
         return
@@ -214,7 +214,7 @@ class MuseAgent(LandscapeDeviceExtension):
         port_fill = ""
         if port is not None:
             port_fill = ":%d" % port
-            
+
 
         requrl = "{}://{}{}{}".format(scheme, host, port_fill, leafurl)
 
@@ -232,7 +232,7 @@ class MuseAgent(LandscapeDeviceExtension):
         prereq = req.prepare()
 
         session = requests.Session()
-        
+
         resp_obj = None
         resp = session.send(prereq, timeout=timeout, verify=self._verify)
         if resp.status_code in exp_status:

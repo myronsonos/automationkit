@@ -27,7 +27,7 @@ class UpnpEmbeddedDevice(UpnpDevice):
     """
         The UPNP Embedded device is the base device for the hierarchy that is
         associated with a unique network devices location.  The :class:`UpnpEmbeddedDevice`
-        and its subdevices are linked by thier location url. 
+        and its subdevices are linked by thier location url.
 
         http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf
     """

@@ -32,7 +32,7 @@ class TestJob(ContextUser):
         flow of execution of test packs.  It allows for the sequencing of the execution of test
         packs so as to optimize the time test runs spend performing setup and tearnown tasks.  This
         allows for the optimization of infrastructure resources.
-        
+
         * Single Instance
         * Setup Test Landscape
         * Jobs have an expected number of tests based
@@ -163,10 +163,10 @@ class TestJob(ContextUser):
                 # indicator of any parameter or configuration issues.
                 #
                 # This is the final step of validating all the input information to the run and
-                # we are able to perform this step in the context of the integration code and 
+                # we are able to perform this step in the context of the integration code and
                 # outside of the execution of any test code
                 self._logger.section("Attaching to Environment")
-                tseq.attach_to_environment() 
+                tseq.attach_to_environment()
 
                 # STEP 6: All the mixins have had a chance to analyze the configuration
                 # information and provide us with a clear indication if there are any configuration

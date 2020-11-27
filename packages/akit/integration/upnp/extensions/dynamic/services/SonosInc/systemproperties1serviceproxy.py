@@ -15,7 +15,7 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:SystemProperties:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "CustomerID": { "data_type": "string", "default": None, "allowed_list": None},
         "ThirdPartyHash": { "data_type": "string", "default": None, "allowed_list": None},

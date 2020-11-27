@@ -15,7 +15,7 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:DigitalSecurityCameraStillImage:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "DefaultCompressionLevel": { "data_type": "string", "default": None, "allowed_list": None},
         "DefaultEncoding": { "data_type": "string", "default": None, "allowed_list": None},

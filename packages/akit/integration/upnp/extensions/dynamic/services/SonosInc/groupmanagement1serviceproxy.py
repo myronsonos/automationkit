@@ -15,7 +15,7 @@ class GroupManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:GroupManagement:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "GroupCoordinatorIsLocal": { "data_type": "boolean", "default": None, "allowed_list": None},
         "LocalGroupUUID": { "data_type": "string", "default": None, "allowed_list": None},

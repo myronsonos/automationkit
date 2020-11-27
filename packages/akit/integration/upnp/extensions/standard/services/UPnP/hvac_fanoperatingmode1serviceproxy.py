@@ -15,7 +15,7 @@ class HVAC_FanOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:HVAC_FanOperatingMode:1'
-    
+
     SERVICE_EVENT_VARIABLES = {}
 
 

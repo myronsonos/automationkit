@@ -30,16 +30,16 @@ class TestPack(ScopeMixIn):
               |  TestPack  |
         -------------------------
         |  Scope A  |  Scope B  |
-        -------------------------     
-        |         Scope C       |     
-        -------------------------     
+        -------------------------
+        |         Scope C       |
+        -------------------------
 
         Pack:
             * Single instance
             * Collect or Group tests
             * Associates scopes of execution with the tests
             * Allows for the customization of the Setup and TearDown of scopes
-        
+
         Scopes:
             * Collect Resources utilized in a Scope of Execution for a group of tests
             * Setup and TearDown of scope
@@ -47,7 +47,7 @@ class TestPack(ScopeMixIn):
 
     name = ""           # TestPack Friendly Name
     description = ""    # TestPack Description
-    
+
     # Includes and excludes can be added to a TestPack in order to help the test framework reduce
     # the amount of resources that need to be expended in order to scan for the tests that are linked
     # to a TestPack
@@ -63,14 +63,14 @@ class TestPack(ScopeMixIn):
             internal state that can be used to determine which tests are applicable to the given test
             landscape.
         """
-        return 
+        return
 
     def expectations(self):
         """
             Method that can be implemented by derived classes or updated dynamically to reflect the
             expected torun and skipped test counts for a given testlandscape.  The test framework will call the 'acclimate'
             method prior to calling this method in order to let the 'TestPack' analyze the testlandscape
-            and determine which tests are applicable to the test 
+            and determine which tests are applicable to the test
 
             (torun, skipped)
         """

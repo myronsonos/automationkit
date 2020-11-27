@@ -75,7 +75,7 @@ class Landscape:
                 cls._instance = super(Landscape, cls._landscape_type).__new__(cls._landscape_type)
             # Put any initialization here.
         return cls._instance
-        
+
     def __init__(self):
         """
             Creates an instance or reference to the :class:`Landscape` singleton object.  On the first call to this
@@ -86,7 +86,7 @@ class Landscape:
 
         self.landscape_lock.acquire()
         try:
-            
+
             if not thisType._initialized:
                 thisType._initialized = True
 
@@ -312,7 +312,7 @@ class Landscape:
         """
         self.landscape_initialized.wait()
         return
-    
+
     def first_contact(self) -> [str]:
         """
             This method should be called as early as possible in order to ensure the entities in the
@@ -596,12 +596,12 @@ class Landscape:
 
         if "environment" not in self._landscape_info:
             err_msg = "The landscape file must have an 'environment' decription. (%s)" % landscape_file
-            raise AKitConfigurationError(err_msg) 
+            raise AKitConfigurationError(err_msg)
 
         self._environment_info = self._landscape_info["environment"]
         if "label" not in self._environment_info:
             err_msg = "The landscape 'environment' decription must have a 'label' member (development, production, test). (%s)" % landscape_file
-            raise AKitConfigurationError(err_msg) 
+            raise AKitConfigurationError(err_msg)
 
         self._environment_label = self._environment_info["label"]
 
@@ -649,7 +649,7 @@ class Landscape:
                     "DEVICE INFO:"
                 ]
                 errmsg_lines.extend(split_and_indent_lines(pprint.pformat(dev_config_info, indent=4), 1))
-                
+
                 errmsg = os.linesep.join(errmsg_lines)
                 self._logger.error(errmsg)
 
@@ -684,12 +684,12 @@ class Landscape:
             self._muse_coord.attach_to_devices(lscape, envlabel, muse_authhost, muse_ctlhost, muse_version, muse_device_list, upnp_coord=self._upnp_coord)
 
         return
-    
+
     def _internal_get_device_configs(self) -> [dict]:
         """
             Returns the list of devices from the landscape.  This will
             skip any device that has a "skip": true member.
-            
+
             .. note:: The _internal_ methods do not guard against calls prior to
             landscape initialization so they should only be called with care.  This
             should not be called until after the _landscape_info variable has been

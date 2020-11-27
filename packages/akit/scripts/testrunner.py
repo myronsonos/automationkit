@@ -82,7 +82,7 @@ def testrunner_main():
             raise argparse.ArgumentError("--job", errmsg)
 
         from akit.paths import get_path_for_testresults
-        
+
         from akit.testing.testjob import DefaultTestJob
         from akit.testing.testsequencer import TestSequencer
         from akit.recorders import JsonResultRecorder
@@ -97,7 +97,7 @@ def testrunner_main():
                 raise argparse.ArgumentError("--job", errmsg)
 
             job_package, job_class = job_parts
-            
+
             try:
                 job_mod = import_by_name(job_package)
             except ImportError as ierr:

@@ -15,7 +15,7 @@ class CallManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:CallManagement:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "CallBackAvailability": { "data_type": "string", "default": None, "allowed_list": None},
         "CallInfo": { "data_type": "string", "default": None, "allowed_list": None},

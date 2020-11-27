@@ -97,7 +97,7 @@ class UpnpProtocol(ssdp.SimpleServiceDiscoveryProtocol):
 
     def request_notify(self, request, addr):
         print(request, addr)
-        print() 
+        print()
         return
 
     def request_other(self, request, addr):
@@ -288,7 +288,7 @@ def mquery_on_interface(query_context, ifname, ifaddress, mx=1, st=MSearchTarget
         # specified by the IP address provided
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(ifaddress))
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
-        
+
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
 
         sock.settimeout(response_timeout)
@@ -371,7 +371,7 @@ def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTarget
         # specified by the IP address provided
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(ifaddress))
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
-        
+
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
 
         sock.settimeout(5)
@@ -550,7 +550,7 @@ def notify_parse_request(content):
             header_content = content
 
         resplines = header_content.splitlines(False)
-        
+
         # Pop the NOTIFY header
         resplines.pop(0).strip()
 

@@ -15,7 +15,7 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Dimming:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "IsRamping": { "data_type": "boolean", "default": "0", "allowed_list": None},
         "LoadLevelStatus": { "data_type": "ui1", "default": "0", "allowed_list": None},

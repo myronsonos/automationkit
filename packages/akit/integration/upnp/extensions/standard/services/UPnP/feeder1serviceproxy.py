@@ -15,7 +15,7 @@ class Feeder1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Feeder:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "MorePages": { "data_type": "boolean", "default": "0", "allowed_list": None},
     }

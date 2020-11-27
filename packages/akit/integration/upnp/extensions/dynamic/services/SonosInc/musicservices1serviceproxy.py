@@ -15,7 +15,7 @@ class MusicServices1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:MusicServices:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "ServiceListVersion": { "data_type": "string", "default": None, "allowed_list": None},
     }

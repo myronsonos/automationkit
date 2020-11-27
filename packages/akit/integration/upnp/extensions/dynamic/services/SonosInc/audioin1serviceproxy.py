@@ -15,7 +15,7 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:AudioIn:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "AudioInputName": { "data_type": "string", "default": None, "allowed_list": None},
         "Icon": { "data_type": "string", "default": None, "allowed_list": None},

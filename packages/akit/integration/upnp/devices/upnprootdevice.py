@@ -121,7 +121,7 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
     """
         The UPNP Root device is the base device for the hierarchy that is
         associated with a unique network devices location.  The :class:`UpnpRootDevice`
-        and its subdevices are linked by thier location url. 
+        and its subdevices are linked by thier location url.
 
         http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf
     """
@@ -223,7 +223,7 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
     @property
     def mode(self):
         return self._mode
-    
+
     @property
     def modelName(self):
         mname = None
@@ -231,7 +231,7 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
         if desc is not None:
             mname = desc.modelName
         return mname
-    
+
     @property
     def modelNumber(self):
         mnumber = None
@@ -284,7 +284,7 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
             :type extid: str
             :param location: The location reference where this device can be found via the coordinator.
             :type location: str
-            :param 
+            :param
         """
         LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
 
@@ -343,7 +343,7 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
         root_dev_dir = os.path.join(DIR_UPNP_GENERATOR_DYNAMIC_ROOTDEVICES, manufacturerNormalized)
         if not os.path.exists(root_dev_dir):
             os.makedirs(root_dev_dir)
-        
+
         root_dev_def_file = os.path.join(root_dev_dir, modelName + ".xml")
         if force_recording or not os.path.exists(root_dev_def_file):
             docNode = docTree.getroot()
@@ -465,14 +465,14 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
                 if mobj is not None:
                     timeout_str = mobj.groups()[0]
                     sub_timeout = None if timeout_str == "infinite" else int(timeout_str)
-                
+
                 if sub_sid is not None:
                     self._device_lock.acquire()
                     try:
                         self._sid_to_service_lookup[sub_sid] = service
                     finally:
                         self._device_lock.release()
-                    
+
                     # Notify the coordinator which device has this subscription
                     coord.register_subscription_for_device(sub_sid, self)
                 else:

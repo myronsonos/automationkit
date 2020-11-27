@@ -15,7 +15,7 @@ class Scan1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Scan:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "DestinationID": { "data_type": "ui4", "default": None, "allowed_list": None},
         "FailureCode": { "data_type": "string", "default": "No Error", "allowed_list": "['No Error', 'Jammed', 'Timeout Reached', 'ErredTimeout Reached', 'Destination Not Reachable']"},

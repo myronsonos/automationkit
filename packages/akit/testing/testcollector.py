@@ -61,7 +61,7 @@ def find_included_tests(root, package, module, testclass, testname):
         fullpathpfx = pkgpathpfx + "/" + module
         for dirpath, dirnames, filenames in os.walk(root):
             dirleaf = dirpath[len(root):].lstrip(os.sep)
-            
+
             # If we are in the testroot, then dirleaf will be len 0
             if len(dirleaf) > 0:
                 if dirleaf.startswith(fullpathpfx) or fnmatch.fnmatch(dirleaf, fullpathpfx):
@@ -187,7 +187,7 @@ class TestCollector:
         import_errors = []
 
         # Go through the files and import them, then go through the classes and find the TestPack and
-        # TestContainer objects that match the specified 
+        # TestContainer objects that match the specified
         rootlen = len(self._root)
         for ifile in included_files:
             try:
@@ -304,7 +304,7 @@ class TestCollector:
             # Preset the level to 0 and weight to 1
             level = 0
             weight = 1
-            
+
             found_at_level = [nxt_tpack_val]
             while True:
                 search_scopes = found_at_level
@@ -395,7 +395,7 @@ class TestCollector:
                         errmsg = traceback.format_exc()
                         print(errmsg)
                         import_errors.append((modname, ifile, errmsg))
-        
+
         self._import_errors.extend(import_errors)
 
         for modname, ifile, errmsg in import_errors:

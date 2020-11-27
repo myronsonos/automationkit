@@ -15,7 +15,7 @@ class ExternalActivity1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ExternalActivity:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "Activity": { "data_type": "string", "default": None, "allowed_list": None},
         "AvailableRegistrations": { "data_type": "boolean", "default": "1", "allowed_list": None},

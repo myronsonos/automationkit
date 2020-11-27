@@ -15,7 +15,7 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:AddressBook:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "IncomingRequest": { "data_type": "string", "default": None, "allowed_list": None},
     }

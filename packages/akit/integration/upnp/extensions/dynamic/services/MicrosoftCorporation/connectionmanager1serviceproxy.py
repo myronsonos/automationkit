@@ -15,7 +15,7 @@ class ConnectionManager1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'MicrosoftCorporation'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ConnectionManager:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "CurrentConnectionIDs": { "data_type": "string", "default": None, "allowed_list": None},
         "SinkProtocolInfo": { "data_type": "string", "default": None, "allowed_list": None},

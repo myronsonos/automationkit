@@ -22,13 +22,13 @@ import weakref
 
 from akit.environment.context import ContextUser
 
-class ScopeMixIn(ContextUser):   
+class ScopeMixIn(ContextUser):
     """
         The :class:`ScopeMixIn` object is the base object class that is used for scope declaration. :class:`ScopeMixIn`
         derived objects are used to create a hierarchy of scopes that are representative of the scopes of execution
         that are represented by the runtime environment.  These scopes of execution are used to establish the runtime
         contexts that task and test instantiations can be run inside of.  The scopes of a runtime environment are
-        typically hierarchical in nature starting with the root object of a tree and build more complexed 
+        typically hierarchical in nature starting with the root object of a tree and build more complexed
         environments as they the hierarchy is ascended.
 
         The code of the :class:`ScopeMixIn` is divided into class level code and instance level code.  The hierarchy
@@ -99,7 +99,7 @@ class ScopeMixIn(ContextUser):
         return
 
 
-class IteratorScopeMixIn(ContextUser):   
+class IteratorScopeMixIn(ContextUser):
     """
         The :class:`IteratorScopeMixIn` object is the base object class that is used for interator scope declaration.
         :class:`IteratorScopeMixIn` derived objects are used to insert a state iteration context into a test scope.
@@ -113,7 +113,7 @@ class IteratorScopeMixIn(ContextUser):
             iteration scope to setup the iteration state for the iteration scope.
         """
         return
-    
+
     @classmethod
     def iteration_advance(cls, iterctx):
         """

@@ -15,7 +15,7 @@ class QPlay1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-tencent-com:service:QPlay:1'
-    
+
     SERVICE_EVENT_VARIABLES = {}
 
 

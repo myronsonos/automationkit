@@ -69,7 +69,7 @@ class UpnpCoordinator:
 
     def __new__(cls, **kwargs):
         """
-            Constructs new instances of the :class:`UpnpCoordinator` object. The 
+            Constructs new instances of the :class:`UpnpCoordinator` object. The
             :class:`UpnpCoordinator` object is a singleton so following instantiations
             of the object will reference the existing singleton
         """
@@ -111,7 +111,7 @@ class UpnpCoordinator:
             # Callback threads are created on a per interface basis so we use a list
             # to manage them.
             self._cl_callback_threads = []
-            
+
             # We don't want our threads that are answering requests or filtering traffic
             # to do extensive amounts of work, so we have a pool of worker threads that
             # that work is dispatched to for incoming requests and information processing.
@@ -299,7 +299,7 @@ class UpnpCoordinator:
         for ridx in range(0, retry):
             if ridx > 0:
                 self._logger.info("MSEARCH: Not all devices found, retrying (count=%d)..." % ridx)
-            iter_found_devices, iter_matching_devices = msearch_scan(upnp_hint_list, 
+            iter_found_devices, iter_matching_devices = msearch_scan(upnp_hint_list,
                 interface_list=interface_list, response_timeout=response_timeout)
             found_devices.update(iter_found_devices)
             matching_devices.update(iter_matching_devices)
@@ -423,7 +423,7 @@ class UpnpCoordinator:
         return
 
     def _process_request_for_msearch(self, addr, request):
-        
+
         reqinfo = msearch_parse_request(request)
         self._logger.debug("RESPONDING TO MSEARCH")
 
@@ -463,7 +463,7 @@ class UpnpCoordinator:
             # Spin-up the worker thread first so they will be ready to handle work
             for wkrid in range(0, self._worker_count):
                 sgate.clear()
-                wthread = threading.Thread(name="UpnpCoordinator - Worker(%d)" % wkrid, target=self._thread_entry_worker, 
+                wthread = threading.Thread(name="UpnpCoordinator - Worker(%d)" % wkrid, target=self._thread_entry_worker,
                                                    daemon=True, args=(sgate,))
                 self._cl_worker_threads.append(wthread)
 
@@ -478,7 +478,7 @@ class UpnpCoordinator:
 
             # Spin-up the Monitor thread so it can monitor notification traffic
             sgate.clear()
-            self._monitor_thread = threading.Thread(name="UpnpCoordinator - Monitor", target=self._thread_entry_monitor, 
+            self._monitor_thread = threading.Thread(name="UpnpCoordinator - Monitor", target=self._thread_entry_monitor,
                                                    daemon=True, args=(sgate,))
             self._monitor_thread.start()
             sgate.wait()
@@ -489,7 +489,7 @@ class UpnpCoordinator:
             for ifaceidx in range(0, ifacecount):
                 ifname = ifacelist[ifaceidx]
                 sgate.clear()
-                cbthread = threading.Thread(name="UpnpCoordinator - Callback(%s)" % ifname, target=self._thread_entry_callback, 
+                cbthread = threading.Thread(name="UpnpCoordinator - Callback(%s)" % ifname, target=self._thread_entry_callback,
                                                     daemon=True, args=(sgate, ifname))
                 self._cl_callback_threads.append(cbthread)
 
@@ -651,7 +651,7 @@ class UpnpCoordinator:
 
         finally:
             self._shutdown_gate.release()
-        
+
         return
 
     def _update_root_device(self, lscape, config_lookup, ip_addr: str, location: str, deviceinfo: dict, force_recording: bool = False):
@@ -669,7 +669,7 @@ class UpnpCoordinator:
                     configinfo = config_lookup[usn]
 
                 docTree = device_description_load(location)
-    
+
                 try:
                     # {urn:schemas-upnp-org:device-1-0}root
                     namespaces = {"": UPNP_DEVICE1_NAMESPACE}
@@ -705,7 +705,7 @@ class UpnpCoordinator:
                                 basedevice.update_match_table(self._match_table)
 
                                 basedevice_ref = weakref.ref(basedevice)
-                                
+
                                 dev_extension.initialize(coord_ref, basedevice_ref, usn, location, configinfo, deviceinfo)
 
                                 # Refresh the description

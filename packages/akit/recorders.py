@@ -95,7 +95,7 @@ class JsonResultRecorder:
         self.update_summary()
         self._rout = open(self._result_filename, 'w')
         return self
-    
+
     def __exit__(self, ex_type, ex_inst, ex_tb):
         self.finalize()
         self.update_summary()

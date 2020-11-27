@@ -15,7 +15,7 @@ class AVTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:AVTransport:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "LastChange": { "data_type": "string", "default": None, "allowed_list": None},
     }

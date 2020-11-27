@@ -15,7 +15,7 @@ class RadiusClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RadiusClient:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "NumberOfAuthenticationServerEntries": { "data_type": "ui2", "default": None, "allowed_list": None},
     }

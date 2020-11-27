@@ -15,7 +15,7 @@ class Layer3Forwarding1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:Layer3Forwarding:1'
-    
+
     SERVICE_EVENT_VARIABLES = {}
 
 

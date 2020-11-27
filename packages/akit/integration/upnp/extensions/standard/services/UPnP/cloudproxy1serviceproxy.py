@@ -15,7 +15,7 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:CloudProxy:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "CloudProxyUpdate": { "data_type": "string", "default": None, "allowed_list": None},
     }

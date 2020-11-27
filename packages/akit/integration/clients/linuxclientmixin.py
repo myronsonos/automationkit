@@ -75,7 +75,7 @@ class LinuxClientMixIn(IntegrationMixIn):
             :param diag_folder: The output folder path where the diagnostic information should be written.
             :type diag_folder: str
         """
-        
+
         return
 
     @classmethod
@@ -86,5 +86,5 @@ class LinuxClientMixIn(IntegrationMixIn):
 
             :raises :class:`akit.exceptins.AKitInitialConnectivityError`:
         """
-        
+
         return

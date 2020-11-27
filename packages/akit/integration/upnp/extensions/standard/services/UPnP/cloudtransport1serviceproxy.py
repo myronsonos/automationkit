@@ -15,7 +15,7 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:CloudTransport:1'
-    
+
     SERVICE_EVENT_VARIABLES = {}
 
 

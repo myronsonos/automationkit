@@ -140,7 +140,7 @@ class ResultNode:
     def mark_passed(self):
         self._result_code = ResultCode.PASSED
         return
-    
+
     def mark_skip(self, reason):
         self._result_code = ResultCode.SKIPPED
         return

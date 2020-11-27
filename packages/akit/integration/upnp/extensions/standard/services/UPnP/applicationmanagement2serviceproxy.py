@@ -15,7 +15,7 @@ class ApplicationManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ApplicationManagement:2'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "RunningAppList": { "data_type": "string", "default": None, "allowed_list": None},
         "TransitioningApps": { "data_type": "string", "default": None, "allowed_list": None},

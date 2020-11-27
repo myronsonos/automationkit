@@ -15,7 +15,7 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'NETGEARInc'
     SERVICE_TYPE = 'urn:schemas-wifialliance-org:service:WFAWLANConfig:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "APStatus": { "data_type": "ui1", "default": None, "allowed_list": None},
         "STAStatus": { "data_type": "ui1", "default": None, "allowed_list": None},

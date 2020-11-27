@@ -52,11 +52,11 @@ class TestSequencer(ContextUser):
             :type jobtitle: str
             :param root: The path to the root folder that is the base of the tests.
             :type root: str
-            :param includes: List of expressions used to determine which tests to include. 
+            :param includes: List of expressions used to determine which tests to include.
                              (scope):(package).(package)@(module)#(testname)
             :type includes: list
-            :param excludes: List of expressions used to determine which tests to exclued from the included tests. 
-            :type excludes: list. 
+            :param excludes: List of expressions used to determine which tests to exclued from the included tests.
+            :type excludes: list.
 
         """
         self._jobtitle = jobtitle
@@ -160,12 +160,12 @@ class TestSequencer(ContextUser):
         recorder.record(root_container)
 
         for tpack in sequencer():
-            self._traverse_testpack(tpack, recorder, parent_inst=runid) 
+            self._traverse_testpack(tpack, recorder, parent_inst=runid)
 
         return exit_code
 
     def parse_extended_args(self, base_parser):
-        
+
         return
 
     def publish_integrations(self):

@@ -15,7 +15,7 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WLANConfiguration:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "TotalAssociations": { "data_type": "ui2", "default": None, "allowed_list": None},
     }

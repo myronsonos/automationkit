@@ -103,7 +103,7 @@ class DnsRecord(DnsEntry):
     def _compute_time_marker(self, percent: int) -> float:
         marker = self.updated + (percent * self.ttl * 10)
         return marker
-    
+
     def __eq__(self, other: Any) -> bool:
         """
             Abstract method

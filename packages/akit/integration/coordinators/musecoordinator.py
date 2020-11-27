@@ -37,7 +37,7 @@ class MuseCoordinator:
 
     def __new__(cls, **kwargs):
         """
-            Constructs new instances of the :class:`MuseCoordinator` object. The 
+            Constructs new instances of the :class:`MuseCoordinator` object. The
             :class:`MuseCoordinator` object is a singleton so following instantiations
             of the object will reference the existing singleton
         """
@@ -62,7 +62,7 @@ class MuseCoordinator:
             self._usn_to_ip_lookup = {}
             self._ip_to_host_lookup = {}
 
-            
+
         return
 
     @property

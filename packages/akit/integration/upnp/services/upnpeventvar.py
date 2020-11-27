@@ -63,7 +63,7 @@ class UpnpEventVar:
                           variables that we are not subscribed to.
             :type value: various (str, int, etc)
 
-        
+
 
             :param timestamp: The timestamp of the creation of this variable.  If a timestamp is passed then a value
                               needs to also be passed.
@@ -152,7 +152,7 @@ class UpnpEventVar:
             Handles a byebye notification and sets the modified property to
             None to indicate that this UpnpEventVar is stale and will not receive
             any further updates.
-            
+
             NOTE: After the byebye has been received, the values of the variable
             can still be used but should be with the understanding that they are
             stale and should be used with caution.

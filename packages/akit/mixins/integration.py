@@ -85,7 +85,7 @@ class IntegrationMixIn(ContextUser):
             utilized for bringing up its integration state.
         """
         return
-    
+
     @classmethod
     def declare_options(cls):
         """
@@ -116,13 +116,13 @@ class IntegrationMixIn(ContextUser):
 
             :raises :class:`akit.exceptions.AKitResourceError`:
         """
-        
+
         return
 
     @classmethod
     def diagnostic(cls, diag_level, diag_folder):
         """
-            The API is called by the :class:`akit.sequencer.Sequencer` object when the automation sequencer is 
+            The API is called by the :class:`akit.sequencer.Sequencer` object when the automation sequencer is
             building out a diagnostic package at a diagnostic point in the automation sequence.  Example diagnostic
             points are:
 

@@ -15,7 +15,7 @@ class DeviceProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:DeviceProperties:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "AirPlayEnabled": { "data_type": "boolean", "default": None, "allowed_list": None},
         "AvailableRoomCalibration": { "data_type": "string", "default": None, "allowed_list": None},

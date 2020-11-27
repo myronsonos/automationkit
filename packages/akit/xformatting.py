@@ -47,7 +47,7 @@ def indent_lines(msg: str, level: int, indent: int=4) -> str:
     for nxtline in msglines:
         indented.write(pfx)
         indented.write(nxtline)
-    
+
     return indented.getvalue()
 
 def split_and_indent_lines(msg: str, level: int, indent: int=4) -> List[str]:

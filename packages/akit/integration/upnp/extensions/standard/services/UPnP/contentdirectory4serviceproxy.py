@@ -15,7 +15,7 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ContentDirectory:4'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "ContainerUpdateIDs": { "data_type": "string", "default": None, "allowed_list": None},
         "DeviceMode": { "data_type": "string", "default": None, "allowed_list": None},

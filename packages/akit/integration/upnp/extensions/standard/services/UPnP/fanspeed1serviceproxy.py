@@ -15,7 +15,7 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:FanSpeed:1'
-    
+
     SERVICE_EVENT_VARIABLES = {}
 
 

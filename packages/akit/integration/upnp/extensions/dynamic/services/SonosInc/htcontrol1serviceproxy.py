@@ -15,7 +15,7 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:HTControl:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "IRRepeaterState": { "data_type": "string", "default": None, "allowed_list": "['On', 'Off', 'Disabled']"},
         "TOSLinkConnected": { "data_type": "boolean", "default": None, "allowed_list": None},

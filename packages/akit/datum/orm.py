@@ -137,4 +137,3 @@ class WorkQueue(AutomationPod, SerializableMode):
 
     result_id = Column('result_id', String(64), nullable=False)
     user_id = Column('user_id', BigInteger, nullable=False)
-    

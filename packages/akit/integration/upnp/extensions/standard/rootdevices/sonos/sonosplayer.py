@@ -74,7 +74,7 @@ class SonosPlayer(SonosDevice):
         svctype = 'urn:schemas-upnp-org:service:AlarmClock:1'
         svc = self.lookup_service(self.MANUFACTURER, svctype)
         return svc
-    
+
     def serviceDeviceProperties(self):
         svctype = 'urn:schemas-upnp-org:service:DeviceProperties:1'
         svc = self.lookup_service(self.MANUFACTURER, svctype)

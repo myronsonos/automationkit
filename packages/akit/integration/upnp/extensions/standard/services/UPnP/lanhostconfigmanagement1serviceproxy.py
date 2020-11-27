@@ -15,7 +15,7 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:LANHostConfigManagement:1'
-    
+
     SERVICE_EVENT_VARIABLES = {}
 
 

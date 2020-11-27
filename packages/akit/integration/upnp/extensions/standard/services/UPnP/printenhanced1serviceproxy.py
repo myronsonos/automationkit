@@ -15,7 +15,7 @@ class PrintEnhanced1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:PrintEnhanced:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "ContentCompleteList": { "data_type": "string", "default": None, "allowed_list": None},
         "JobAbortState": { "data_type": "string", "default": None, "allowed_list": None},

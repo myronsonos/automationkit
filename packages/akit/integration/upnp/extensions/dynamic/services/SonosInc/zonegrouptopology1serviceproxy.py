@@ -15,7 +15,7 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:ZoneGroupTopology:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "AlarmRunSequence": { "data_type": "string", "default": None, "allowed_list": None},
         "AreasUpdateID": { "data_type": "string", "default": None, "allowed_list": None},

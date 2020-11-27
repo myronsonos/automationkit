@@ -28,13 +28,13 @@ def import_by_name(modulename):
     """
 
     mod = importlib.import_module(modulename)
-    
+
     return mod
 
 def import_file(name, loc):
     """
         Import module from a file. Used to load models from a directory.
-        
+
         :param unicode name: Name of module to load.
         :param (unicode / Path) loc: Path to the file.
 
@@ -59,7 +59,7 @@ def import_file(name, loc):
                     break
                 except Exception as xcpt:
                     pass
-            
+
                 spec = importlib.util.spec_from_file_location(name, str(loc))
                 mod = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(mod)

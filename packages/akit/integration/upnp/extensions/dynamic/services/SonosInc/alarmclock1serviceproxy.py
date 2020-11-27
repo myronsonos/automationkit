@@ -15,7 +15,7 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'SonosInc'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:AlarmClock:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "AlarmListVersion": { "data_type": "string", "default": None, "allowed_list": None},
         "DailyIndexRefreshTime": { "data_type": "string", "default": None, "allowed_list": None},

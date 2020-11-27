@@ -15,7 +15,7 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'MicrosoftCorporation'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:RenderingControl:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "LastChange": { "data_type": "string", "default": None, "allowed_list": None},
     }

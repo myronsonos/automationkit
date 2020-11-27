@@ -54,7 +54,7 @@ class VARIABLES:
     AKIT_JOBTYPE = "unknown"
     if "AKIT_JOBTYPE" in environ:
         AKIT_JOBTYPE = environ["AKIT_JOBTYPE"]
-    
+
     AKIT_LANDSCAPE_MODULE = None
     if "AKIT_LANDSCAPE_MODULE" in environ:
         AKIT_LANDSCAPE_MODULE = environ["AKIT_LANDSCAPE_MODULE"]

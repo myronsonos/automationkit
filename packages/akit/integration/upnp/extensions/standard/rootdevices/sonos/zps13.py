@@ -29,4 +29,3 @@ class SonosDeviceZpS13(SonosPlayer, LoadableExtension):
     MODEL_NUMBER = "S13"
     MODEL_DESCRIPTION = "Sonos One"
 
-    

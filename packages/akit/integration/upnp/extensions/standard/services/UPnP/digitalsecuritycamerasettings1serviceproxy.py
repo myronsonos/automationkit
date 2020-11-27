@@ -15,7 +15,7 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:DigitalSecurityCameraSettings:1'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "AutomaticWhiteBalance": { "data_type": "boolean", "default": "1", "allowed_list": None},
         "Brightness": { "data_type": "ui1", "default": "50", "allowed_list": None},

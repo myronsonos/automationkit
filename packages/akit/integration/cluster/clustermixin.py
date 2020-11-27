@@ -52,13 +52,13 @@ class ClusterMixIn(IntegrationMixIn):
 
             :raises :class:`akit.exceptions.AKitResourceError`:
         """
-        
+
         return
 
     @classmethod
     def diagnostic(cls, diag_level, diag_folder):
         """
-            The API is called by the :class:`akit.sequencer.Sequencer` object when the automation sequencer is 
+            The API is called by the :class:`akit.sequencer.Sequencer` object when the automation sequencer is
             building out a diagnostic package at a diagnostic point in the automation sequence.  Example diagnostic
             points are:
 
@@ -73,7 +73,7 @@ class ClusterMixIn(IntegrationMixIn):
             :param diag_folder: The output folder path where the diagnostic information should be written.
             :type diag_folder: str
         """
-        
+
         return
 
     @classmethod
@@ -84,5 +84,5 @@ class ClusterMixIn(IntegrationMixIn):
 
             :raises :class:`akit.exceptins.AKitInitialConnectivityError`:
         """
-        
+
         return

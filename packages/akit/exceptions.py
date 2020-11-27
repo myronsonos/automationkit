@@ -65,13 +65,13 @@ class AKitError(Exception):
             stack_frames = self._collect_stack_frames()
             stack_frames_len = len(stack_frames)
             for co_filename, co_lineno, co_name, co_code, co_context in stack_frames:
-                
+
                 exmsg_lines.extend([
                     '  File "%s", line %d, in %s' % (co_filename, co_lineno, co_name),
                     "    %s" % co_code
                 ])
                 if co_name in self._context:
-                    cxtinfo = self._context[co_name] 
+                    cxtinfo = self._context[co_name]
                     exmsg_lines.append('    %s:' % cxtinfo["label"])
                     exmsg_lines.extend(split_and_indent_lines(cxtinfo["content"], 2, indent=3))
                 elif co_context is not None and len(co_context) > 0 and stack_frames_len > 1:
@@ -154,7 +154,7 @@ class AKitSemanticError(AKitError):
     """
         The base error object for errors that indicate that there is an issue with
         a piece of automation code and with the way the Automation Kit code is being
-        utilized.  
+        utilized.
     """
 
 # ==================================================================================
@@ -255,17 +255,17 @@ class AKitTimeoutError(AKitRuntimeError):
 
 class AKitAbstractMethodError(AKitSemanticError):
     """
-        This error is raised when an abstract method has been called. 
+        This error is raised when an abstract method has been called.
     """
 
 class AKitNotImplementedError(AKitSemanticError):
     """
-        This error is raised when a method is called that has not yet been implemented. 
+        This error is raised when a method is called that has not yet been implemented.
     """
 
 class AKitNotOverloadedError(AKitSemanticError):
     """
-        This error is raised when a method that must be overloaded has not been overridden. 
+        This error is raised when a method that must be overloaded has not been overridden.
     """
 
 

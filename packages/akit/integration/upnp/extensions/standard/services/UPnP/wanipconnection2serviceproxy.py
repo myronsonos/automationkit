@@ -15,7 +15,7 @@ class WANIPConnection2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANIPConnection:2'
-    
+
     SERVICE_EVENT_VARIABLES = {}
 
 

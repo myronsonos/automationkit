@@ -18,12 +18,12 @@ class DnsEntry:
 
     def as_dns_string(self, hdr: str, other: Optional[Union[bytes, str]]) -> str:
         ostr = "%s[%s,%s" % (hdr, self.etype.name, self.eclass.name)
-        
+
         if self.unique:
             ostr += "-unique,"
         else:
             ostr += ","
-        
+
         ostr += self.name
 
         if other is not None:

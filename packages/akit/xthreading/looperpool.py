@@ -93,7 +93,7 @@ class LooperPool:
         # Set running to False to disallow the queueing of new work
         self._running = False
 
-        
+
 
         return
 

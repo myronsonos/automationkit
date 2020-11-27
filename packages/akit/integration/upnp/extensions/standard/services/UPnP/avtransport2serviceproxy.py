@@ -15,7 +15,7 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = 'UPnP'
     SERVICE_TYPE = 'urn:schemas-upnp-org:service:AVTransport:2'
-    
+
     SERVICE_EVENT_VARIABLES = {
         "DRMState": { "data_type": "string", "default": "UNKNOWN", "allowed_list": "['OK']"},
         "LastChange": { "data_type": "string", "default": None, "allowed_list": None},

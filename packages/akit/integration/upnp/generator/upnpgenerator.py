@@ -59,7 +59,7 @@ class %(class_name)s(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_MANUFACTURER = '%(service_manufacturer)s'
     SERVICE_TYPE = '%(service_type)s'
-    
+
     SERVICE_EVENT_VARIABLES = {%(service_variables)s}
 
 """
@@ -143,7 +143,7 @@ def generate_upnp_service_proxy(servicesDir, serviceManufacturer, serviceType, v
 
     dest_file_full = os.path.join(manufacturerDir, file_base)
 
-    
+
     variable_names_sorted = [ k for k in variablesTable.keys() ]
     variable_names_sorted.sort()
 
@@ -276,8 +276,8 @@ def process_action_list(svcActionListNode, namespaces=None):
                 else:
                     raise ValueError("Invalid argument direction %s" % arg_direction)
 
-        action_info = { 
-            "name": action_name, 
+        action_info = {
+            "name": action_name,
             "args_in": args_in_table,
             "args_in_keys": args_in_keys,
             "args_out": args_out_table,
