@@ -17,13 +17,10 @@ __license__ = "MIT"
 
 import os
 import netifaces
-import requests
 import socket
-import struct
 import threading
 import time
 import traceback
-import typing
 import weakref
 
 from io import BytesIO
@@ -751,8 +748,7 @@ class UpnpCoordinator:
 
 if __name__ == "__main__":
 
-    import paramiko
-    import akit.environment.activate
+    import akit.environment.activate # pylint: disable=unused-import
 
     from akit.xlogging.foundations import logging_initialize
     logging_initialize()

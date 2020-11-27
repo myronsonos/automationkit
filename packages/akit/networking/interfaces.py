@@ -15,10 +15,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-import fcntl
-import netifaces
 import socket
-import struct
 
 import netifaces
 

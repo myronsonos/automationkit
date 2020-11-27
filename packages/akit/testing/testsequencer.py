@@ -16,15 +16,11 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-import fnmatch
-import inspect
 import logging
 import json
-import os
-import sys
 import uuid
 
-import akit.environment.activate
+import akit.environment.activate # pylint: disable=unused-import
 from akit.environment.context import ContextUser
 
 from akit.mixins.scope import ScopeMixIn

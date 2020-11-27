@@ -4,7 +4,6 @@ import http
 import os
 import requests
 import socket
-import uuid
 import weakref
 
 from html.parser import HTMLParser

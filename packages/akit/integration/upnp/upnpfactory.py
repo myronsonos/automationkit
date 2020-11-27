@@ -16,8 +16,6 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-import os
-
 from akit.exceptions import AKitSemanticError
 from akit.extensible import generate_extension_key
 

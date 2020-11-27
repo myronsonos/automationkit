@@ -16,6 +16,8 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Callable, List, Optional, Sequence, Union
+
 import os
 import re
 import socket
@@ -23,8 +25,6 @@ import stat
 import threading
 import time
 import weakref
-
-from typing import Callable, List, Optional, Sequence, Union
 
 from akit.aspects import Aspects, LoggingPattern, RunPattern, DEFAULT_ASPECTS
 from akit.exceptions import AKitInvalidConfigError, AKitNotOverloadedError, AKitTimeoutError

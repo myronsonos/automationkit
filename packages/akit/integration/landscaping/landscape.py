@@ -16,13 +16,12 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Optional
+
 import inspect
 import os
 import threading
 import traceback
-import yaml
-
-from typing import Optional
 
 import pprint
 

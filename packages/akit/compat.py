@@ -16,13 +16,17 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Union
+
 import sys
-import importlib 
+import importlib
+
+from types import ModuleType
 
 is_python3 = sys.version_info[0] == 3
 is_python_pre_3_5 = (is_python3 and sys.version_info[1] < 5)
 
-def import_by_name(modulename):
+def import_by_name(modulename: str) -> ModuleType:
     """
         Imports a module by name.
     """
@@ -31,7 +35,7 @@ def import_by_name(modulename):
 
     return mod
 
-def import_file(name, loc):
+def import_file(name: str, loc: str) -> ModuleType:
     """
         Import module from a file. Used to load models from a directory.
 
@@ -46,32 +50,50 @@ def import_file(name, loc):
 
     if mod is None:
         if is_python_pre_3_5:
-            import imp
+            import imp # pylint: disable=import-outside-toplevel
 
             mod = imp.load_source(name, loc)
         else:
-            #import importlib.util
 
             while True:
                 # First try to import the module by name only
                 try:
                     mod = importlib.import_module(name)
                     break
-                except Exception as xcpt:
+                except ImportError:
                     pass
 
                 spec = importlib.util.spec_from_file_location(name, str(loc))
                 mod = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(mod)
+                break
 
     return mod
 
-def bytes_cast(val):
+def bytes_cast(val: Union[str, bytes]) -> bytes:
+    """
+        Ensures that the 'val' parameter is a bytes object.
+
+        :param val: A str or bytes value that needs to be converted to bytes.
+        :param val: str or bytes
+
+        :returns: The input value converted to a bytes
+        :rtype: bytes
+    """
     if isinstance(val, str):
         val = val.encode('utf-8')
     return val
 
-def str_cast(val):
+def str_cast(val: Union[str, bytes]) -> str:
+    """
+        Ensures that the 'val' parameter is a str object.
+
+        :param val: A str or bytes value that needs to be converted to str.
+        :param val: str or bytes
+
+        :returns: The input value converted to a str
+        :rtype: str
+    """
     if isinstance(val, bytes):
         val = val.decode('utf-8')
     return val

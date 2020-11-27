@@ -3,7 +3,7 @@
 
 import traceback
 
-import akit.environment.activate
+import akit.environment.activate # pylint: disable=unused-import
 
 from akit.exceptions import AKitOutOfScopeError
 from akit.metadata import Keywords

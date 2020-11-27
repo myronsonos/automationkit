@@ -21,8 +21,6 @@ import enum
 import json
 import os
 import time
-import traceback
-import uuid
 
 from akit.xtime import format_time_with_fractional
 

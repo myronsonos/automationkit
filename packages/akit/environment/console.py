@@ -25,7 +25,7 @@ from logging.handlers import RotatingFileHandler
 os.environ["AKIT_CONSOLE_LOG_LEVEL"] = "QUIET"
 os.environ["AKIT_JOBTYPE"] = "console"
 
-import akit.environment.activate
+import akit.environment.activate # pylint: disable=unused-import
 
 from akit.xlogging.foundations import logging_initialize, LoggingDefaults
 

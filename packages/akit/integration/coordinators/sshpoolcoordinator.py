@@ -16,7 +16,6 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import socket
-import time
 import weakref
 
 from akit.paths import get_expanded_path

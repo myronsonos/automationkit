@@ -20,13 +20,11 @@ __license__ = "MIT"
 
 
 import argparse
-import logging
 import os
 import sys
-import uuid
 
 # Force the default configuration to load if it is not already loaded
-import akit.environment.activate
+import akit.environment.activate # pylint: disable=unused-import
 
 from akit.environment.context import Context
 from akit.environment.variables import LOG_LEVEL_NAMES

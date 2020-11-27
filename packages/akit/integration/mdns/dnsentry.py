@@ -1,8 +1,7 @@
 
-from enum import IntEnum
 from typing import Any, Optional, Union, cast
 
-from akit.integration.mdns.dnsconst import DnsEntryClass, DnsEntryType
+from akit.integration.mdns.dnsconst import DnsEntryClass
 
 class DnsEntry:
     """

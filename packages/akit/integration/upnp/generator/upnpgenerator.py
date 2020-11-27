@@ -1,5 +1,4 @@
 
-import netifaces
 import os
 import sys
 

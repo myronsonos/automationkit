@@ -16,9 +16,6 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-import requests
-import traceback
-
 from akit.exceptions import AKitSemanticError
 from akit.integration.upnp.protocols.msearch import MSearchKeys
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice

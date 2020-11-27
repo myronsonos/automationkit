@@ -20,7 +20,6 @@ __license__ = "MIT"
 import fnmatch
 import inspect
 import os
-import sys
 import traceback
 
 from akit.compat import import_file

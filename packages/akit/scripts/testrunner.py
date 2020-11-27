@@ -17,17 +17,13 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import argparse
-import logging
 import os
-import uuid
 
 # We need to load the context first because it will load configuration
 from akit.compat import import_by_name
 from akit.environment.context import Context
 from akit.environment.variables import LOG_LEVEL_NAMES, extend_path
 from akit.environment.options import ENVIRONMENT_OPTIONS
-
-import akit.integration.landscaping
 
 def testrunner_main():
     parser = argparse.ArgumentParser()
@@ -62,7 +58,7 @@ def testrunner_main():
 
         # We perform activation a little later in the testrunner.py file so we can
         # handle exceptions in the context of testrunner_main function
-        import akit.environment.activate
+        import akit.environment.activate # pylint: disable=unused-import
         from akit.xlogging.foundations import logging_initialize, getAutomatonKitLogger
 
         # Initialize logging

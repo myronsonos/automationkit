@@ -17,7 +17,6 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import socket
-import ssl
 import weakref
 
 from http.server import HTTPServer, BaseHTTPRequestHandler

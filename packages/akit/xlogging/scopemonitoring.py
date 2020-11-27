@@ -23,7 +23,6 @@ __license__ = "MIT"
 import os
 import threading
 import time
-import traceback
 import uuid
 
 from akit.xcollections import insert_into_ordered_list_ascending

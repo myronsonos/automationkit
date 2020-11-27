@@ -15,20 +15,35 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import List
+
 import inspect
 import os
 
 from akit.compat import import_by_name
 from akit.paths import get_directory_for_code_container
 
-class LoadableExtension:
+class LoadableExtension: # pylint: disable=too-few-public-methods
     """
         Marks a class as an extension for collection purposes so we can distinguish
         extension classes from base classes
     """
-    pass
 
-def collect_extensions_under_code_container(container, ext_base_type):
+def collect_extensions_under_code_container(container, ext_base_type) -> List[type]:
+    """
+        Scans the code `container` provide and all descendant containers for classes
+        that inherit from the type passed as `ext_base_type`
+
+        :param container: A python package or module to scan for extension types.
+        :type container: ModuleType
+        :param ext_base_type: A python class type that serves as a base class to identify other
+                              types that are a type of extension.
+        :type ext_base_type: Type
+
+        :returns: A list of types found that inherit from `ext_base_type`
+        :rtype: List[Type]
+    """
+    # pylint: disable=too-many-locals
 
     ext_collection = []
 
@@ -67,6 +82,16 @@ def collect_extensions_under_code_container(container, ext_base_type):
 
     return ext_collection
 
-def generate_extension_key(*parts):
+def generate_extension_key(*parts) -> str:
+    """
+        Generates a unique key that identifies an extension type based on where
+        it was found in a hiearchy of code containers.
+
+        :params parts: List of names of the path to the extension type
+        :type parts: List[str]
+
+        :returns: A unique path based identifier for a type.
+        :rtype: str
+    """
     extkey = "/".join(parts)
     return extkey

@@ -15,8 +15,11 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-import os
+# pylint: disable=global-statement
+
 from typing import List, Optional
+
+import os
 
 from akit.environment.context import Context
 from akit.exceptions import AKitRuntimeError
@@ -25,7 +28,7 @@ DIR_TESTRESULTS = None
 
 TRANSLATE_TABLE_NORMALIZE_FOR_PATH = str.maketrans(",.:;", "    ")
 
-def collect_python_modules(searchdir: str) -> List[str]:
+def collect_python_modules(search_dir: str) -> List[str]:
     """
         Walks a directory tree of python modules and collects the names
         of all of the python module files or .py files.  This method allows
@@ -37,7 +40,7 @@ def collect_python_modules(searchdir: str) -> List[str]:
     """
     pyfiles = []
 
-    for root, _, files in os.walk(searchdir, topdown=True):
+    for root, _, files in os.walk(search_dir, topdown=True):
         for fname in files:
             fbase, fext = os.path.splitext(fname)
             if fext == '.py' and fbase != "__init__":
@@ -46,22 +49,22 @@ def collect_python_modules(searchdir: str) -> List[str]:
 
     return pyfiles
 
-def ensure_directory_is_package(packageDir: str, packageTitle: Optional[str] = None):
+def ensure_directory_is_package(package_dir: str, package_title: Optional[str] = None):
     """
         Ensures that a directory is represented to python as a package by checking to see if the
         directory has an __init__.py file and if not it adds one.
 
-        :param packageDir: The direcotry to represent as a package.
-        :type packageDir: str
-        :param packageTitle: Optional title to be written into the documentation string in the package file.
-        :type packageTitle: str
+        :param package_dir: The direcotry to represent as a package.
+        :type package_dir: str
+        :param package_title: Optional title to be written into the documentation string in the package file.
+        :type package_title: str
     """
-    serviceDirInit = os.path.join(packageDir, "__init__.py")
-    if not os.path.exists(serviceDirInit):
-        with open(serviceDirInit, 'w') as initf:
+    package_dir_init = os.path.join(package_dir, "__init__.py")
+    if not os.path.exists(package_dir_init):
+        with open(package_dir_init, 'w') as initf:
             initf.write('"""\n')
-            if packageTitle is not None:
-                initf.write('   %s\n' % packageTitle)
+            if package_title is not None:
+                initf.write('   %s\n' % package_title)
             initf.write('"""\n')
     return
 
@@ -120,6 +123,7 @@ def get_path_for_testresults() -> str:
         Returns a the timestamped path where test results and artifacts are deposited to
     """
     global DIR_TESTRESULTS
+
     if DIR_TESTRESULTS is None:
         ctx = Context()
         env = ctx.lookup("/environment")
@@ -136,6 +140,16 @@ def get_path_for_testresults() -> str:
 
     return DIR_TESTRESULTS
 
-def normalize_name_for_path(name):
+def normalize_name_for_path(name) -> str:
+    """
+        Normalizes a path string by replacing ",.:;" with space and then removing
+        white space.
+
+        :param name: A name as a str which is to be normalized to allow it to be used in a path.
+        :type name: str
+
+        :returns: The normalized string which can be used in a path.
+        :rtype: str
+    """
     norm_name = name.translate(TRANSLATE_TABLE_NORMALIZE_FOR_PATH).replace(" ", "")
     return norm_name
