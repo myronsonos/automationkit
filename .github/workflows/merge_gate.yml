@@ -41,8 +41,6 @@ jobs:
       - name: Install Base Dependencies
         run: |
           python -m ensurepip
-          python -m pip install --upgrade pip setuptools
-          python -m pip install --upgrade distribute==0.6.49
           python -m pip list
           python -m pip install virtualenv
 
@@ -50,7 +48,7 @@ jobs:
         run: |
           virtualenv .pipvenv
           source .pipvenv/bin/activate
-          python $GITHUB_WORKSPACE/setup.py install
+          python3 $GITHUB_WORKSPACE/setup.py install
           deactivate
 
       - name: POETRY - Create, Activate and Setup the Virtual Environment
