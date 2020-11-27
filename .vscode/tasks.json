@@ -26,21 +26,6 @@
             "problemMatcher": []
         },
         {
-            "label": "Build - Pylint Packages",
-            "type": "shell",
-            "options": {
-                "cwd": "${env:HOME}/akit/results/pylint"
-            },
-            "command": "${workspaceFolder}/.venv/bin/pylint",
-            "args": [
-                "--rcfile=${workspaceFolder}/integration/linting/pylint-packages.rc",
-                "${workspaceFolder}/packages/akit",
-                ">",
-                "${env:HOME}/akit/results/pylint/linting-errors.txt"
-            ],
-            "problemMatcher": []
-        },
-        {
             "label": "Environment - Reset",
             "type": "shell",
             "command": "${workspaceFolder}/deployment/setup-environment reset",
@@ -53,16 +38,37 @@
             "problemMatcher": []
         },
         {
-            "label": "Test Result Server",
+            "label": "Scan - Pylint Packages (Merge)",
             "type": "shell",
             "options": {
-                "cwd": "${env:HOME}/akit/results"
+                "cwd": "${env:HOME}/akit/results/pylint"
             },
-            "command": "${workspaceFolder}/.venv/bin/python -m http.server 8000",
+            "command": "${workspaceFolder}/.venv/bin/pylint",
+            "args": [
+                "--rcfile=${workspaceFolder}/integration/linting/merge/pylint-packages.rc",
+                "${workspaceFolder}/packages/akit",
+                ">",
+                "${env:HOME}/akit/results/pylint/merge-linting-errors.txt"
+            ],
             "problemMatcher": []
         },
         {
-            "label": "Documentation Server",
+            "label": "Scan - Pylint Packages (Strict)",
+            "type": "shell",
+            "options": {
+                "cwd": "${env:HOME}/akit/results/pylint"
+            },
+            "command": "${workspaceFolder}/.venv/bin/pylint",
+            "args": [
+                "--rcfile=${workspaceFolder}/integration/linting/strict/pylint-packages.rc",
+                "${workspaceFolder}/packages/akit",
+                ">",
+                "${env:HOME}/akit/results/pylint/strict-linting-errors.txt"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Web Service - Documentation",
             "type": "shell",
             "options": {
                 "cwd": "${workspaceFolder}/docs/dirhtml"
@@ -73,6 +79,15 @@
                 "http.server",
                 "8001"
             ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Web Service - Test Result",
+            "type": "shell",
+            "options": {
+                "cwd": "${env:HOME}/akit/results"
+            },
+            "command": "${workspaceFolder}/.venv/bin/python -m http.server 8000",
             "problemMatcher": []
         }
     ]

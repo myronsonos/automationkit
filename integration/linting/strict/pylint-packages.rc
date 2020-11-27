@@ -1,3 +1,6 @@
+[DESIGN]
+max-attributes=15
+
 [MESSAGE CONTROL]
 # C0301 Line too long
 disable=line-too-long,
