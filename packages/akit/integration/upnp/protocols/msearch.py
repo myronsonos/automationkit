@@ -58,7 +58,7 @@ class MSearchProtocol(ssdp.SimpleServiceDiscoveryProtocol):
             self.request_other(ssdp.SSDPRequest.parse(data), addr)
 
     def response_received(self, response, addr):
-        print(request, addr)
+        print(response, addr)
         print()
         return
 

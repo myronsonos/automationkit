@@ -18,7 +18,6 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import asyncio
-import netifaces
 import os
 import re
 import selectors
@@ -26,11 +25,12 @@ import socket
 import threading
 import time
 
+from asyncio import Protocol
+
+import netifaces
 import ssdp
 
 from akit.exceptions import AKitTimeoutError
-
-from asyncio import Protocol
 
 REGEX_NOTIFY_HEADER = re.compile("NOTIFY[ ]+[*/]+[ ]+HTTP/1")
 

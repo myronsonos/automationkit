@@ -1,4 +1,6 @@
 [MESSAGE CONTROL]
 # C0301 Line too long
-disable=C0103, R1725
+disable=line-too-long,
+        super-with-arguments
+
 ignored-arguement-names=_arg|_args|_kwargs
