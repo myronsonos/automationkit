@@ -154,7 +154,7 @@ if [ ! -f $INITIALIZED_FILE ]; then
             pip install psycopg2
             pip install requests
             pip install SQLAlchemy
-            pip install sqlalchemy_utils
+            pip install Sql-Alchemy-Utils
             pip install ssdp
             pip install pyyaml
 
