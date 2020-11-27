@@ -40,10 +40,9 @@ jobs:
 
       - name: Install Base Dependencies
         run: |
-          python -m ensurepip --upgrade
-          python -m pip install --upgrade setuptools
-          python -m pip install --upgrade distribute
-          python -m pip install --upgrade virtualenv
+          python -m ensurepip
+          python -m pip install setuptools
+          python -m pip install virtualenv
 
       - name: Create and Activate the Virtual Environment
         run: |
