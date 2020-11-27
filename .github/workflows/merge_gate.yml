@@ -42,7 +42,7 @@ jobs:
         run: |
           python -m ensurepip
           python -m pip install --upgrade pip setuptools
-          python -m pip install --upgrade distribute
+          python -m pip install --upgrade distribute==0.6.49
           python -m pip list
           python -m pip install virtualenv
 
