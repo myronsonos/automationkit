@@ -44,19 +44,9 @@ jobs:
           python -m pip install setuptools
           python -m pip install virtualenv
 
-      - name: Create and Activate the Virtual Environment
+      - name: Create, Activate and Setup the Virtual Environment
         run: |
           virtualenv .venv
           source .venv/bin/activate
-
-      - name: Run the pip setup installer
-        run: python $GITHUB_WORKSPACE/setup.py install
-
-      - name: Exit the Virtual Environment
-        run: deactivate
-
-      # Runs a set of commands using the runners shell
-      #- name: Run the AutomationKit internal test suite
-      #  run: |
-      #    echo Add other actions to build,
-      #    echo test, and deploy your project.
+          python $GITHUB_WORKSPACE/setup.py install
+          deactivate
