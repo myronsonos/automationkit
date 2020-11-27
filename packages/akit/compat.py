@@ -33,7 +33,7 @@ def import_by_name(modulename):
 
 def import_file(name, loc):
     """
-        Import module from a file. Used to load models from a directory. 
+        Import module from a file. Used to load models from a directory.
         
         :param unicode name: Name of module to load.
         :param (unicode / Path) loc: Path to the file.

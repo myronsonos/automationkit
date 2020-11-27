@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_namespace_packages
 
-DEPENDENCIES = [ "coverage", "ipython", "netifaces", "paramiko", "psycopg2", "requests", "SQLAlchemy==1.3.20", "SQLAlchemy-Utils", "ssdp", "pyyaml", "dlipower", ]
+DEPENDENCIES = [ "coverage", "ipython", "netifaces", "paramiko", "psycopg2", "pylint", "requests", "SQLAlchemy==1.3.20", "SQLAlchemy-Utils", "ssdp", "pyyaml", "dlipower", ]
 
 DEPENDENCY_LINKS = []
 

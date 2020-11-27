@@ -4,6 +4,43 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Clean - Trailing Whitespace (Packages)",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/packages"
+            },
+            "command": "find",
+            "args": [
+                ".",
+                "-type",
+                "f",
+                "-name",
+                "*.py",
+                "-exec",
+                "sed",
+                "--in-place",
+                "'s/[[:space::]]\\{1,\\)$//'",
+                "{}",
+                "\\+"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Build - Pylint Packages",
+            "type": "shell",
+            "options": {
+                "cwd": "${env:HOME}/akit/results/pylint"
+            },
+            "command": "${workspaceFolder}/.venv/bin/pylint",
+            "args": [
+                "--rcfile=${workspaceFolder}/integration/linting/pylint-packages.rc",
+                "${workspaceFolder}/packages/akit",
+                ">",
+                "${env:HOME}/akit/results/pylint/linting-errors.txt"
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "Environment - Reset",
             "type": "shell",
             "command": "${workspaceFolder}/deployment/setup-environment reset",
@@ -21,7 +58,7 @@
             "options": {
                 "cwd": "${env:HOME}/akit/results"
             },
-            "command": "${workspaceFolder}/_local/venv/bin/python -m http.server 8000",
+            "command": "${workspaceFolder}/.venv/bin/python -m http.server 8000",
             "problemMatcher": []
         },
         {
@@ -30,7 +67,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/docs/dirhtml"
             },
-            "command": "${workspaceFolder}/_local/venv/bin/python",
+            "command": "${workspaceFolder}/.venv/bin/python",
             "args": [
                 "-m",
                 "http.server",
