@@ -5,6 +5,9 @@ max-attributes=15
 # C0301 Line too long
 disable=line-too-long,
         super-with-arguments,
-        useless-return
+        useless-return,
+        too-many-arguments,
+        too-many-instance-attributes,
+        too-many-locals
 
 ignored-arguement-names=_arg|_args|_kwargs

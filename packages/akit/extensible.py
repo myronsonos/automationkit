@@ -43,8 +43,6 @@ def collect_extensions_under_code_container(container, ext_base_type) -> List[ty
         :returns: A list of types found that inherit from `ext_base_type`
         :rtype: List[Type]
     """
-    # pylint: disable=too-many-locals
-
     ext_collection = []
 
     # This is declare here so it can be used as a closure

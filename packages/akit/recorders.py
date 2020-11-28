@@ -16,12 +16,13 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Optional
+
 import collections
 import datetime
 import json
 import os
 import shutil
-import typing
 
 from datetime import datetime
 
@@ -32,24 +33,15 @@ from akit.testing.utilities import catalog_tree
 
 class JsonResultRecorder:
     """
-        {
-            "title": "Automation Test Run",
-            "id": "b606a644-bd62-49f5-afda-9f48e865dd49",
-            "start": "",
-            "stop": "",
-            "result": "PASSED",
-            "detail": {
-                "passed": 0,
-                "errors": 0,
-                "failed": 0,
-                "skipped": 0,
-                "total": 0
-            }
-        }
+        The :class:`JsonResultRecorder` object records test results in JSON format.
     """
     def __init__(self, title: str, runid: str, start: datetime, summary_filename: str,
-                 result_filename: str, branch: typing.Optional[str] = None, build: typing.Optional[str] = None,
-                flavor: typing.Optional[str] = None):
+                 result_filename: str, branch: Optional[str] = None, build: Optional[str] = None,
+                flavor: Optional[str] = None):
+        """
+            Initializes the :class:`JsonResultRecorder` object for recording test results for
+            a test run.
+        """
         self._title = title
         self._runid = runid
         self._start = start
@@ -88,16 +80,38 @@ class JsonResultRecorder:
         return
 
     def __enter__(self):
+        """
+            Starts up the recording process of test results.
+        """
         self.update_summary()
         self._rout = open(self._result_filename, 'w')
         return self
 
-    def __exit__(self, ex_type, ex_inst, ex_tb):
+    def __exit__(self, ex_type, ex_inst, ex_tb) -> bool:
+        """
+            Starts up the recording process of test results.
+
+            :param ex_type: The type associated with the exception being raised.
+            :type ex_type: type
+            :param ex_inst: The exception instance of the exception being raised.
+            :type ex_inst: Exception
+            :param ex_tb: The traceback associated with the exception being raised.
+            :type ex_tb: traceback
+
+            :returns: Returns true if an exception was handled and should be suppressed.
+            :rtype: bool
+        """
         self.finalize()
         self.update_summary()
         return
 
-    def record(self, result):
+    def record(self, result: ResultType):
+        """
+            Records an entry for the result object that is passed.
+
+            :param result: A result object to be recorded.
+            :type result: ResultType
+        """
         if result.result_type == ResultType.TEST:
             self._total_count += 1
 
@@ -114,18 +128,24 @@ class JsonResultRecorder:
                 self._unknown_count += 1
 
         json_str = result.to_json()
+
         self._rout.write("\30\n")
         self._rout.write(json_str)
         return
 
     def update_summary(self):
-
+        """
+            Writes out an update to the test run summary file.
+        """
         with open(self._summary_filename, 'w') as sout:
             json.dump(self._summary, sout, indent=4)
 
         return
 
     def finalize(self):
+        """
+            Finalizes the test results counters and status of the test run.
+        """
         stop = datetime.now()
         self._summary["stop"] = str(stop)
 

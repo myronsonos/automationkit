@@ -89,8 +89,6 @@ class AKitError(Exception):
 
     def _collect_stack_frames(self):
 
-        # pylint: disable=too-many-locals
-
         last_items = None
         tb_code = None
         tb_lineno = None
