@@ -30,10 +30,6 @@ from akit.templates import TEMPLATE_TESTSUMMARY
 from akit.testing.utilities import catalog_tree
 
 
-
-class TextRecorder:
-    pass
-
 class JsonResultRecorder:
     """
         {
