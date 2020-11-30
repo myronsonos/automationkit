@@ -3,12 +3,13 @@
 
 # You can set these variables from the command line.
 SPHINXOPTS    = -E
-SPHINXBUILD   = ../_local/venv/bin/sphinx-build
-SPHINXAPIDOC   = ../_local/venv/bin/sphinx-apidoc
+SPHINXBUILD   = ../.venv/bin/sphinx-build
+SPHINXAPIDOC   = ../.venv/bin/sphinx-apidoc
 SOURCEDIR     = source
-BUILDDIR      = ../docs/
+BUILDDIR      = ./_build/
 APIDOCDIR     = "$(SOURCEDIR)/_apidoc"
 PACKAGESDIR   = ../packages/akit
+PUBLISHDIR = ../docs
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -25,4 +26,5 @@ apidoc-full:
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O) -d "$(SOURCEDIR)/_doctrees"
+	@cp -a "$(BUILDDIR)/html/." "$(PUBLISHDIR)/"

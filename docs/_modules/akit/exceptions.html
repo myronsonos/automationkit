@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>akit.exceptions &#8212; Automation Kit 1.0.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for akit.exceptions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: exceptions</span>
+<span class="sd">    :platform: Darwin, Linux, Unix, Windows</span>
+<span class="sd">    :synopsis: Module containing the exceptions that are raised by the code in the Automation Kit</span>
+
+<span class="sd">.. moduleauthor:: Myron Walker &lt;myron.walker@gmail.com&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Myron Walker&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2020, Myron W Walker&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.0.0&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Myron Walker&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;myron.walker@gmail.com&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Development&quot;</span> <span class="c1"># Prototype, Development or Production</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+<span class="kn">from</span> <span class="nn">akit.xinspect</span> <span class="kn">import</span> <span class="n">get_caller_function_name</span>
+<span class="kn">from</span> <span class="nn">akit.xformatting</span> <span class="kn">import</span> <span class="n">split_and_indent_lines</span>
+
+<div class="viewcode-block" id="AKitError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitError">[docs]</a><span class="k">class</span> <span class="nc">AKitError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The base error object for Automation Kit errors.  The :class:`AKitError` serves as aa base</span>
+<span class="sd">        type and also provides some additional functionality for adding context to errors and</span>
+<span class="sd">        formatting exception output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AKitError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_context</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="AKitError.add_context"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitError.add_context">[docs]</a>    <span class="k">def</span> <span class="nf">add_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;CONTEXT&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Adds context to an exception and associates it with the function context</span>
+<span class="sd">            on the stack.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">caller_name</span> <span class="o">=</span> <span class="n">get_caller_function_name</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">[</span><span class="n">caller_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="AKitError.format_exc"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitError.format_exc">[docs]</a>    <span class="k">def</span> <span class="nf">format_exc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Format the exception along with any added context.</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">etypename</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">eargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span>
+
+
+        <span class="n">exmsg_lines</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">etypename</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">eargs</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)),</span>
+            <span class="s2">&quot;TRACEBACK (most recent call last):&quot;</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">stack_frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collect_stack_frames</span><span class="p">()</span>
+            <span class="n">stack_frames_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stack_frames</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">co_filename</span><span class="p">,</span> <span class="n">co_lineno</span><span class="p">,</span> <span class="n">co_name</span><span class="p">,</span> <span class="n">co_code</span><span class="p">,</span> <span class="n">co_context</span> <span class="ow">in</span> <span class="n">stack_frames</span><span class="p">:</span>
+
+                <span class="n">exmsg_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                    <span class="s1">&#39;  File &quot;</span><span class="si">%s</span><span class="s1">&quot;, line </span><span class="si">%d</span><span class="s1">, in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">co_filename</span><span class="p">,</span> <span class="n">co_lineno</span><span class="p">,</span> <span class="n">co_name</span><span class="p">),</span>
+                    <span class="s2">&quot;    </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">co_code</span>
+                <span class="p">])</span>
+                <span class="k">if</span> <span class="n">co_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">:</span>
+                    <span class="n">cxtinfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">[</span><span class="n">co_name</span><span class="p">]</span>
+                    <span class="n">exmsg_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    </span><span class="si">%s</span><span class="s1">:&#39;</span> <span class="o">%</span> <span class="n">cxtinfo</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">])</span>
+                    <span class="n">exmsg_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">split_and_indent_lines</span><span class="p">(</span><span class="n">cxtinfo</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">co_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">co_context</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">stack_frames_len</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">exmsg_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    CONTEXT:&#39;</span><span class="p">)</span>
+                    <span class="n">firstline</span> <span class="o">=</span> <span class="n">co_context</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">lstrip_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">firstline</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">firstline</span><span class="o">.</span><span class="n">lstrip</span><span class="p">())</span>
+                    <span class="n">co_context</span> <span class="o">=</span> <span class="p">[</span><span class="n">cline</span><span class="p">[</span><span class="n">lstrip_len</span><span class="p">:]</span> <span class="k">for</span> <span class="n">cline</span> <span class="ow">in</span> <span class="n">co_context</span><span class="p">]</span>
+                    <span class="n">co_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;      </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">cline</span> <span class="k">for</span> <span class="n">cline</span> <span class="ow">in</span> <span class="n">co_context</span><span class="p">]</span>
+                    <span class="n">exmsg_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">co_context</span><span class="p">)</span>
+                <span class="n">exmsg_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="n">exmsg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">exmsg_lines</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">exmsg</span></div>
+
+    <span class="k">def</span> <span class="nf">_collect_stack_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">last_items</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">tb_code</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">tb_lineno</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">traceback_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">tb_frame</span><span class="p">,</span> <span class="n">tb_lineno</span> <span class="ow">in</span> <span class="n">traceback</span><span class="o">.</span><span class="n">walk_tb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">):</span>
+            <span class="n">tb_code</span> <span class="o">=</span> <span class="n">tb_frame</span><span class="o">.</span><span class="n">f_code</span>
+            <span class="n">co_filename</span> <span class="o">=</span> <span class="n">tb_code</span><span class="o">.</span><span class="n">co_filename</span>
+            <span class="n">co_name</span> <span class="o">=</span> <span class="n">tb_code</span><span class="o">.</span><span class="n">co_name</span>
+            <span class="n">co_arg_names</span> <span class="o">=</span> <span class="n">tb_code</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">[:</span><span class="n">tb_code</span><span class="o">.</span><span class="n">co_argcount</span><span class="p">]</span>
+            <span class="n">co_argcount</span> <span class="o">=</span> <span class="n">tb_code</span><span class="o">.</span><span class="n">co_argcount</span>
+            <span class="n">co_locals</span> <span class="o">=</span> <span class="n">tb_frame</span><span class="o">.</span><span class="n">f_locals</span>
+
+            <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">co_filename</span><span class="p">,</span> <span class="n">tb_lineno</span><span class="p">,</span> <span class="n">co_name</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">last_items</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">code_args</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">argidx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">co_argcount</span><span class="p">):</span>
+                    <span class="n">argname</span> <span class="o">=</span> <span class="n">co_arg_names</span><span class="p">[</span><span class="n">argidx</span><span class="p">]</span>
+                    <span class="n">argval</span> <span class="o">=</span> <span class="n">co_locals</span><span class="p">[</span><span class="n">argname</span><span class="p">]</span>
+                    <span class="n">code_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">=</span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">argname</span><span class="p">,</span> <span class="n">argval</span><span class="p">))</span>
+
+                <span class="n">last_items</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">co_name</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">code_args</span><span class="p">))</span> <span class="c1"># pylint: disable=unsupported-assignment-operation</span>
+
+            <span class="n">last_items</span> <span class="o">=</span> <span class="n">items</span>
+
+            <span class="n">traceback_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+            <span class="n">last_items</span> <span class="o">=</span> <span class="n">items</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">co_filename</span><span class="p">)</span> <span class="ow">and</span> <span class="n">co_filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
+            <span class="n">context_lines</span><span class="p">,</span> <span class="n">context_startline</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsourcelines</span><span class="p">(</span><span class="n">tb_code</span><span class="p">)</span>
+            <span class="n">context_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">cline</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">cline</span> <span class="ow">in</span> <span class="n">context_lines</span><span class="p">]</span>
+            <span class="n">clindex</span> <span class="o">=</span> <span class="p">(</span><span class="n">tb_lineno</span> <span class="o">-</span> <span class="n">context_startline</span><span class="p">)</span>
+            <span class="n">last_items</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">context_lines</span><span class="p">[</span><span class="n">clindex</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">last_items</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">context_lines</span>
+
+        <span class="k">return</span> <span class="n">traceback_list</span></div>
+
+
+
+<span class="c1"># ==================================================================================</span>
+<span class="c1">#                            BASE ERROR CLASSIFICATIONS</span>
+<span class="c1"># ==================================================================================</span>
+
+<div class="viewcode-block" id="AKitConfigurationError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitConfigurationError">[docs]</a><span class="k">class</span> <span class="nc">AKitConfigurationError</span><span class="p">(</span><span class="n">AKitError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The base error object for errors that indicate that there is an issue related</span>
+<span class="sd">        to improper configuration.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitLandscapeError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitLandscapeError">[docs]</a><span class="k">class</span> <span class="nc">AKitLandscapeError</span><span class="p">(</span><span class="n">AKitError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The base error object for errors that indicate that there is an issue related</span>
+<span class="sd">        to the interaction usage or consumption of an environmental resources.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitRuntimeError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitRuntimeError">[docs]</a><span class="k">class</span> <span class="nc">AKitRuntimeError</span><span class="p">(</span><span class="n">AKitError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The base error object for errors that indicate that an error was produced during</span>
+<span class="sd">        the execution of task or test code and the error was not able to be classified</span>
+<span class="sd">        as Configuration, Landscape, or Semantic related.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitSemanticError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitSemanticError">[docs]</a><span class="k">class</span> <span class="nc">AKitSemanticError</span><span class="p">(</span><span class="n">AKitError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The base error object for errors that indicate that there is an issue with</span>
+<span class="sd">        a piece of automation code and with the way the Automation Kit code is being</span>
+<span class="sd">        utilized.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<span class="c1"># ==================================================================================</span>
+<span class="c1">#                         CONFIGURATION RELATED ERRORS</span>
+<span class="c1"># ==================================================================================</span>
+
+<div class="viewcode-block" id="AKitInvalidConfigError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitInvalidConfigError">[docs]</a><span class="k">class</span> <span class="nc">AKitInvalidConfigError</span><span class="p">(</span><span class="n">AKitConfigurationError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when an IntegrationMixIn object has been passed invalid configuration parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitMissingConfigError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitMissingConfigError">[docs]</a><span class="k">class</span> <span class="nc">AKitMissingConfigError</span><span class="p">(</span><span class="n">AKitConfigurationError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when an IntegrationMixIn object is missing required configuration parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<span class="c1"># ==================================================================================</span>
+<span class="c1">#                           LANDSCAPE RELATED ERRORS</span>
+<span class="c1"># ==================================================================================</span>
+<div class="viewcode-block" id="AKitInitialConnectivityError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitInitialConnectivityError">[docs]</a><span class="k">class</span> <span class="nc">AKitInitialConnectivityError</span><span class="p">(</span><span class="n">AKitLandscapeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when an IntegrationMixIn object is unable to establish an initial level of</span>
+<span class="sd">        connectivity with a connected resource.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitMissingResourceError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitMissingResourceError">[docs]</a><span class="k">class</span> <span class="nc">AKitMissingResourceError</span><span class="p">(</span><span class="n">AKitLandscapeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when an device or resources was declared in the landscape.yaml file</span>
+<span class="sd">        but was not able to be found during device or resource discovery.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitResourceError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitResourceError">[docs]</a><span class="k">class</span> <span class="nc">AKitResourceError</span><span class="p">(</span><span class="n">AKitLandscapeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when an IntegrationMixIn object was unable to obtain a required resource.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<span class="c1"># ==================================================================================</span>
+<span class="c1">#                           RUNTIME RELATED ERRORS</span>
+<span class="c1"># ==================================================================================</span>
+
+<div class="viewcode-block" id="AKitCommunicationsProtocolError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitCommunicationsProtocolError">[docs]</a><span class="k">class</span> <span class="nc">AKitCommunicationsProtocolError</span><span class="p">(</span><span class="n">AKitRuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is the base error for exceptions that are related to communciations protocols</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitHTTPRequestError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitHTTPRequestError">[docs]</a><span class="k">class</span> <span class="nc">AKitHTTPRequestError</span><span class="p">(</span><span class="n">AKitCommunicationsProtocolError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is the base error for HTTP requests based errors.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitOutOfScopeError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitOutOfScopeError">[docs]</a><span class="k">class</span> <span class="nc">AKitOutOfScopeError</span><span class="p">(</span><span class="n">AKitRuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when a method is called on a ScopeMixIn that is not in scope.  A test can have,</span>
+<span class="sd">        multiple ScopeMixIn(s) and can run in multiple scopes but the test must be instantiated and run in</span>
+<span class="sd">        each scope individually.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitRequestStopError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitRequestStopError">[docs]</a><span class="k">class</span> <span class="nc">AKitRequestStopError</span><span class="p">(</span><span class="n">AKitRuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when a test indicates it wants to stop an automation run.  The `TestSequencer`</span>
+<span class="sd">        may or may not stop the automation run as a result of a test or scope raising this error.  The</span>
+<span class="sd">        `TestSequencer` looks at the current runtime context which was set by the commandline arguements</span>
+<span class="sd">        and will stop the test run if the runtime context indicates that stopping is allowed.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitScopeEntryError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitScopeEntryError">[docs]</a><span class="k">class</span> <span class="nc">AKitScopeEntryError</span><span class="p">(</span><span class="n">AKitRuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when a ScopeMixIn was unable to complete the entry of a scope.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitSkipError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitSkipError">[docs]</a><span class="k">class</span> <span class="nc">AKitSkipError</span><span class="p">(</span><span class="n">AKitRuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when a test indicates it wants to be skipped while being run</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitLooperError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitLooperError">[docs]</a><span class="k">class</span> <span class="nc">AKitLooperError</span><span class="p">(</span><span class="n">AKitRuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when an error occurs with the use of the :class:`LooperPool` or</span>
+<span class="sd">        :class:`Looper` objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitLooperQueueShutdownError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitLooperQueueShutdownError">[docs]</a><span class="k">class</span> <span class="nc">AKitLooperQueueShutdownError</span><span class="p">(</span><span class="n">AKitRuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when work is being queued on a :class:`LooperQueue` thaat has</span>
+<span class="sd">        been shutdown and when a worker thread is attempting to wait for work on an empty</span>
+<span class="sd">        queue.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitTimeoutError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitTimeoutError">[docs]</a><span class="k">class</span> <span class="nc">AKitTimeoutError</span><span class="p">(</span><span class="n">AKitRuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when a timeout occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<span class="c1"># ==================================================================================</span>
+<span class="c1">#                           SEMANTIC RELATED ERRORS</span>
+<span class="c1"># ==================================================================================</span>
+
+<div class="viewcode-block" id="AKitAbstractMethodError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitAbstractMethodError">[docs]</a><span class="k">class</span> <span class="nc">AKitAbstractMethodError</span><span class="p">(</span><span class="n">AKitSemanticError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when an abstract method has been called.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitNotImplementedError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitNotImplementedError">[docs]</a><span class="k">class</span> <span class="nc">AKitNotImplementedError</span><span class="p">(</span><span class="n">AKitSemanticError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when a method is called that has not yet been implemented.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AKitNotOverloadedError"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.exceptions.AKitNotOverloadedError">[docs]</a><span class="k">class</span> <span class="nc">AKitNotOverloadedError</span><span class="p">(</span><span class="n">AKitSemanticError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This error is raised when a method that must be overloaded has not been overridden.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Automation Kit</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_apidoc/modules.html">akit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Myron W. Walker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
