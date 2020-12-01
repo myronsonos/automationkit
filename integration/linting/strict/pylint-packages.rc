@@ -3,14 +3,19 @@ max-attributes=15
 
 [MESSAGE CONTROL]
 # C0301 Line too long
-disable=line-too-long,
+disable=duplicate-code,
+        global-statement,
+        invalid-name,
+        line-too-long,
         super-with-arguments,
         useless-return,
         too-few-public-methods,
         too-many-arguments,
+        too-many-branches,
         too-many-instance-attributes,
         too-many-lines,
         too-many-locals,
+        too-many-nested-blocks,
         too-many-public-methods,
         unnecessary-comprehension
 

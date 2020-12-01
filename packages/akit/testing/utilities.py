@@ -38,7 +38,6 @@ def find_testmodule_fullname(module, root_path=None) -> str:
         Finds the root directory that is associated with a given test module and
         then uses the leaf path to a module to develop a full module name.
     """
-    mod_name = module.__name__
 
     if root_path is None:
         root_path = find_testmodule_root(module)
@@ -64,5 +63,3 @@ def catalog_tree(rootdir: str):
             json.dump(catalog, cf, indent=4)
 
     return
-
-

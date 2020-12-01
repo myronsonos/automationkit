@@ -72,7 +72,7 @@ class AutomationPodMixIn(IntegrationMixIn):
         return
 
     @classmethod
-    def attach_to_environment(cls):
+    def attach_to_environment(cls, landscape):
         """
             This API is called so that the IntegrationMixIn can process configuration information.  The :class:`IntegrationMixIn`
             will verify that it has a valid environment and configuration to run in.
@@ -129,5 +129,4 @@ class AutomationPodMixIn(IntegrationMixIn):
 
             :raises :class:`akit.exceptins.AKitInitialConnectivityError`:
         """
-
         return

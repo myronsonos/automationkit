@@ -446,4 +446,3 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
     root_logger.info(format_log_section_header("Logging Initiaized"))
 
     return
-

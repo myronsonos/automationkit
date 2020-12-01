@@ -18,22 +18,21 @@ __license__ = "MIT"
 
 import os
 import re
-import requests
 import threading
 import traceback
 import typing
 import weakref
 
-from datetime import datetime
-
 from urllib.parse import urlparse
-
-from requests.compat import urljoin
 
 from xml.etree.ElementTree import tostring as xml_tostring
 from xml.etree.ElementTree import fromstring as xml_fromstring
-from xml.etree.ElementTree import ElementTree, Element, SubElement
+from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import register_namespace
+
+import requests
+
+from requests.compat import urljoin
 
 from akit.exceptions import AKitCommunicationsProtocolError
 from akit.extensible import generate_extension_key
@@ -49,12 +48,8 @@ from akit.integration.upnp.soap import NS_UPNP_EVENT
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_EMBEDDEDDEVICES
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_ROOTDEVICES
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_SERVICES
-from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_EMBEDDEDDEVICES
-from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_ROOTDEVICES
-from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_STANDARD_SERVICES
 
 from akit.integration.upnp.services.upnpserviceproxy import UpnpServiceProxy
-from akit.integration.upnp.services.upnpeventvar import UpnpEventVar
 
 from akit.integration import upnp as upnp_module
 

@@ -17,20 +17,40 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 class TestRef:
     """
+        The :class:`TestRef` objects are used to refer to a reference to a test.  We use :class:`TestRef` instances
+        to reference the tests that are going to be run so we can control the lifespan of test case instances
+        and control our memory consumption during test runs with large collections of test cases.
+
+        The :class:`TestRef` object allows us to delay the creation of test runtime instance data and state until it is
+        necessary to instantiate it and allows us to cleanup the runtime instance and state as soon as it is no longer
+        being used.
     """
 
-    def __init__(self, testcls, testmeth):
-        self.testcls = testcls
+    def __init__(self, testcontainer, testmeth):
+        """
+            Initializes the test reference object.
+
+            :param testcontainer: The class of the test object that is being created.
+            :type testcontainer: TestContainer
+            :param testmeth: The method on the test container
+        """
+        self.testcontainer = testcontainer
         self.testmeth = testmeth
         return
 
     @property
     def test_name(self) -> str:
-        tc = self.testcls
+        """
+            The fully qualified name of the test that is referenced.
+        """
+        tc = self.testcontainer
         test_name = "%s@%s#%s" % (tc.__module__, tc.__name__, self.testmeth.__name__)
         return test_name
 
     def create_instance(self, recorder):
-        testinst = self.testcls(self.testmeth, recorder)
+        """
+            Method used to create and initialize an instance of the :class:`TestContainer` object and method that
+            is referred to by this :class:`TestRef` object.
+        """
+        testinst = self.testcontainer(self.testmeth, recorder)
         return testinst
-

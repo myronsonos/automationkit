@@ -81,14 +81,14 @@ class TestSequencer(ContextUser):
     def testpacks(self):
         return self._testpacks
 
-    def attach_to_environment(self):
+    def attach_to_environment(self, landscape):
         """
             Goes through all the integrations and provides them with an opportunity to
             attach to the test environment.
         """
 
         for integ, _ in self._integrations:
-            integ.attach_to_environment()
+            integ.attach_to_environment(landscape)
 
         return
 
@@ -247,5 +247,3 @@ class TestSequencer(ContextUser):
                     else:
                         logger.error("ERROR: Every scope should have a 'refcount' class variable.")
         return
-
-

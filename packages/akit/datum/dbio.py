@@ -48,7 +48,7 @@ def create_apod_postgresql_database(host='localhost', port=5432, username=None, 
     if not database_exists(username, password, "apod"):
         database_create(username, password, "apod")
 
-    engine = create_engine('postgresql://%s:%s@localhost:5432/apod' % (username, password), echo=True)
+    engine = create_engine('postgresql://%s:%s@%s:%d/apod' % (username, password, host, port), echo=True)
 
     AutomationPod.metadata.create_all(engine, checkfirst=True)
 
@@ -70,12 +70,3 @@ def open_apod_postgresql_database(host='localhost', port=5432, username=None, pa
     engine = create_engine(connstr, echo=True)
 
     return engine
-
-if __name__ == "__main__":
-    from akit.integration.landscaping.landscape import Landscape
-    landscape = Landscape()
-
-    dbinfo = landscape.get_databases()
-
-    apoddb_info = dbinfo["apod"]
-    open_apod_postgresql_database(**apoddb_info)

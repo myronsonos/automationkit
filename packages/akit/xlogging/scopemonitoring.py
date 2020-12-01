@@ -57,7 +57,7 @@ class ScopeMonitor:
     instance = None
     initialized = False
 
-    def __new__(cls, **kwargs):
+    def __new__(cls, *_args, **_kwargs):
         """
             Constructs new instances of the :class:`ScopeMonitor` object. The
             :class:`ScopeMonitor` object is a singleton so following instantiations
@@ -292,3 +292,4 @@ class MonitoredScope:
                 logger.error(errmsg)
 
         return
+

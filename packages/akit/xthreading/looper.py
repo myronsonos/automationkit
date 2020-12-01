@@ -18,7 +18,7 @@ __license__ = "MIT"
 
 from typing import Optional
 
-from threading import Event, RLock, Semaphore, Thread
+from threading import Event, Thread
 
 from akit.exceptions import AKitNotOverloadedError, AKitLooperError
 
@@ -73,7 +73,7 @@ class Looper:
         self._exit_gate.wait(timeout=timeout)
         return
 
-    def loop(self, packet) -> bool:
+    def loop(self, packet) -> bool: # pylint: disable=no-self-user
         """
             Method that is overloaded by derived classes in order to implement a work loop.
         """

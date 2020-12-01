@@ -23,7 +23,6 @@ from akit.environment.context import ContextUser
 
 from akit.integration.landscaping.landscape import Landscape
 from akit.recorders import JsonResultRecorder
-from akit.results import ResultContainer, ResultType
 from akit.testing.testsequencer import TestSequencer
 
 class TestJob(ContextUser):
@@ -49,7 +48,7 @@ class TestJob(ContextUser):
 
     _instance = None
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *_args, **_kwargs):
         """
             Creates an instance of a TestJob and then returns that instance of the TestJob for all subsequent
             calls to create test Job instances.
@@ -154,7 +153,7 @@ class TestJob(ContextUser):
                     tseq.parse_extended_args(self._parser)
 
                 # Initiate contact with the TestLandscape
-                landscape = Landscape()
+                landscape = Landscape() # pylint: disable=unused-variable
 
                 # STEP 5: Now that we have collected all the mixins and have a preview of
                 # the complexity of the automation run encoded into the mixin types collected.
@@ -166,7 +165,7 @@ class TestJob(ContextUser):
                 # we are able to perform this step in the context of the integration code and
                 # outside of the execution of any test code
                 self._logger.section("Attaching to Environment")
-                tseq.attach_to_environment()
+                tseq.attach_to_environment(landscape)
 
                 # STEP 6: All the mixins have had a chance to analyze the configuration
                 # information and provide us with a clear indication if there are any configuration
@@ -241,7 +240,7 @@ class TestJob(ContextUser):
         return result_code
 
 
-    def finalize(self):
+    def finalize(self): # pylint: disable=no-self-use
         """
             Called at the end of a test job in order to flush the results of the test run, copy
             the report template to the output directory.
@@ -280,9 +279,8 @@ class TestJob(ContextUser):
 
 
 class DefaultTestJob(TestJob):
+    """
+        The :class:`DefautTestJob` is utilized as a job container when a job was not specified.
+    """
     name = "Test Job"
     description = "Unspecified test job."
-
-    def __init__(self, logger, testroot, includes=None, excludes=None, test_module=None):
-        super().__init__(logger, testroot, includes=includes, excludes=excludes, test_module=test_module)
-        return

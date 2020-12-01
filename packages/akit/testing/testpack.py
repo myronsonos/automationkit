@@ -56,7 +56,7 @@ class TestPack(ScopeMixIn):
     context = None # The scopes associated with a testpack, scopes
     test_references = None
 
-    def acclimate(self, testlandscape):
+    def acclimate(self, testlandscape): # pylint: disable=no-self-use, unused-argument
         """
             API called by the test framework in order to acclimate the :class:`TestPack` to the :class:`TestLandscape`.
             When this method is called on a :class:`TestPack` it can analyze the testlandscape and configure
@@ -65,7 +65,7 @@ class TestPack(ScopeMixIn):
         """
         return
 
-    def expectations(self):
+    def expectations(self): # pylint: disable=no-self-use
         """
             Method that can be implemented by derived classes or updated dynamically to reflect the
             expected torun and skipped test counts for a given testlandscape.  The test framework will call the 'acclimate'
@@ -80,7 +80,7 @@ class TestPack(ScopeMixIn):
         """
         """
 
-        rev_mro = list(self.__mro__)
+        rev_mro = list(TestPack.mro())
         rev_mro.reverse()
 
         for nxt_cls in rev_mro:
@@ -89,7 +89,7 @@ class TestPack(ScopeMixIn):
                 if not hasattr(nxt_cls, "scope_enter_count"):
                     nxt_cls.scope_enter_count = 1
                 else:
-                    nxt_cls.scope_enter_count += 1
+                    nxt_cls.scope_enter_count += 1 # pylint: disable=no-member
 
         return
 
@@ -97,15 +97,15 @@ class TestPack(ScopeMixIn):
         """
         """
 
-        norm_mro = list(self.__mro__)
+        norm_mro = list(TestPack.mro())
 
         for nxt_cls in norm_mro:
             if is_scope_mixin(nxt_cls):
                 nxt_cls.scope_exit()
-                if hasattr(nxt_cls, "refcount"):
-                    nxt_cls.refcount -= 1
+                if hasattr(nxt_cls, "scope_enter_count"):
+                    nxt_cls.scope_enter_count -= 1 # pylint: disable=no-member
                 else:
-                    logger.error("ERROR: Every scope should have a 'refcount' class variable.")
+                    logger.error("ERROR: Every scope should have a 'scope_enter_count' class variable.")
 
         return
 

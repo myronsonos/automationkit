@@ -19,7 +19,7 @@ __license__ = "MIT"
 
 import inspect
 
-from akit.exceptions import AKitInvalidConfigError, AKitMissingConfigError, AKitResourceError, AKitInitialConnectivityError
+from akit.exceptions import AKitInvalidConfigError, AKitMissingConfigError, AKitResourceError, AKitSemanticError, AKitInitialConnectivityError
 
 from akit.environment.context import ContextUser
 
@@ -36,7 +36,7 @@ class IntegrationMixIn(ContextUser):
     landscape = None
     pathname = None
 
-    def __init__(self, *args, role=None, **kwargs):
+    def __init__(self, *args, role=None, **kwargs): # pylint: disable=unused-argument
         """
             The default contructor for an :class:`IntegrationMixIn`.
         """
@@ -72,7 +72,7 @@ class IntegrationMixIn(ContextUser):
         """
         return self._role
 
-    def on_mode_changed(self, prev_mode, new_mode):
+    def on_mode_changed(self, prev_mode, new_mode): # pylint: disable=unused-argument
         """
             Implemented by derived classes in order to perform the changeover of modes.
         """
@@ -95,17 +95,15 @@ class IntegrationMixIn(ContextUser):
         return
 
     @classmethod
-    def attach_to_environment(cls):
+    def attach_to_environment(cls, landscape):
         """
             This API is called so that the IntegrationMixIn can process configuration information.  The :class:`IntegrationMixIn`
             will verify that it has a valid environment and configuration to run in.
 
             :raises :class:`akit.exceptions.AKitMissingConfigError`, :class:`akit.exceptions.AKitInvalidConfigError`:
         """
-        from akit.integration.landscaping.landscape import Landscape
-
+        cls.landscape = landscape
         cls.logger = getAutomatonKitLogger()
-        cls.landscape = Landscape()
         return
 
     @classmethod

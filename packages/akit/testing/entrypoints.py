@@ -30,10 +30,8 @@ from akit.environment.context import Context
 from akit.environment.variables import LOG_LEVEL_NAMES
 
 from akit.paths import get_path_for_testresults
-from akit.recorders import JsonResultRecorder
 from akit.testing.utilities import find_testmodule_root, find_testmodule_fullname
 from akit.testing.testjob import DefaultTestJob
-from akit.testing.testsequencer import TestSequencer
 from akit.xlogging.foundations import logging_initialize, getAutomatonKitLogger
 
 logger = getAutomatonKitLogger()
@@ -61,7 +59,6 @@ def generic_test_entrypoint():
 
     ctx = Context()
     env = ctx.lookup("/environment")
-    conf = ctx.lookup("/environment/configuration")
 
     # Set the jobtype
     env["jobtype"] = "testrun"
@@ -70,10 +67,6 @@ def generic_test_entrypoint():
     if not os.path.exists(test_results_dir):
         os.makedirs(test_results_dir)
     env["output_directory"] = test_results_dir
-
-    testresult_filename = os.path.join(test_results_dir, "testrun_results.jsos")
-    summary_filename = os.path.join(test_results_dir, "testrun_summary.json")
-    import_errors_filename = os.path.join(test_results_dir, "import_errors.jsos")
 
     test_root = find_testmodule_root(test_module)
     module_fullname = find_testmodule_fullname(test_module)
@@ -94,6 +87,6 @@ def generic_test_entrypoint():
     with DefaultTestJob(ctx, logger, test_root, includes=includes, excludes=excludes, test_module=test_module) as tjob:
         result_code = tjob.sequence()
 
-    exit(result_code)
+    sys.exit(result_code)
 
     return

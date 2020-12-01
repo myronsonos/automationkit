@@ -646,7 +646,7 @@ class UpnpCoordinator:
     def _update_root_device(self, lscape, config_lookup, ip_addr: str, location: str, deviceinfo: dict, force_recording: bool = False):
         """
         """
-        
+
         if MSearchKeys.USN in deviceinfo:
             try:
                 usn = deviceinfo[MSearchKeys.USN]
@@ -743,7 +743,7 @@ if __name__ == "__main__":
     from akit.xlogging.foundations import logging_initialize
     logging_initialize()
 
-    from akit.integration.landscaping.landscape import Landscape
+    from akit.integration.landscaping.landscape import Landscape # pylint: disable=cyclic-import
 
 
     lscape = Landscape()

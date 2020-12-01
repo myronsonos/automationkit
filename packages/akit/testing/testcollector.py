@@ -24,15 +24,14 @@ import traceback
 
 from akit.compat import import_file
 
-from akit.mixins.integration import IntegrationMixIn, is_integration_mixin
-from akit.mixins.scope import ScopeMixIn, is_scope_mixin
+from akit.mixins.integration import is_integration_mixin
+from akit.mixins.scope import is_scope_mixin
 
 from akit.paths import collect_python_modules
 
 from akit.testing.testcontainer import TestContainer, inherits_from_testcontainer
 from akit.testing.testpack import TestPack, DefaultTestPack, is_testpack, testpack_compare
 from akit.testing.testref import TestRef
-from akit.testing.utilities import find_testmodule_root, find_testmodule_fullname
 
 from akit.xlogging.foundations import getAutomatonKitLogger
 
@@ -154,7 +153,7 @@ class TestCollector:
 
         integrations = {}
         for _, ref in self._references.items():
-            for bcls in ref.testcls.__bases__:
+            for bcls in ref.testcontainer.__bases__:
                 if is_integration_mixin(bcls):
                     mikey = bcls.__module__ + "." + bcls.__name__
                     if mikey in integrations:
@@ -258,7 +257,7 @@ class TestCollector:
             # Go through all the parent objects and add the current test ref to each of the scope
             # classes found in the main class
             ref_testpacks = []
-            for bcls in ref.testcls.__bases__:
+            for bcls in ref.testcontainer.__bases__:
                 if is_testpack(bcls):
                     ref_testpacks.append(bcls)
 

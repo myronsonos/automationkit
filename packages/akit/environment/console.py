@@ -25,7 +25,7 @@ from logging.handlers import RotatingFileHandler
 os.environ["AKIT_CONSOLE_LOG_LEVEL"] = "QUIET"
 os.environ["AKIT_JOBTYPE"] = "console"
 
-import akit.environment.activate # pylint: disable=unused-import
+import akit.environment.activate # pylint: disable=unused-import, wrong-import-position
 
 from akit.xlogging.foundations import logging_initialize, LoggingDefaults
 
@@ -33,9 +33,9 @@ LoggingDefaults.DefaultFileLoggingHandler = RotatingFileHandler
 logging_initialize()
 
 def showlog():
-    import subprocess
+    import subprocess # pylint disable=import-outside-toplevel
 
-    from akit.environment.context import context
+    from akit.environment.context import context # pylint disable=import-outside-toplevel
     targetlog = context.lookup("/environment/logfile_debug")
 
     terminal_exec = "gnome-terminal"
@@ -49,6 +49,3 @@ def showlog():
     subprocess.call(proc_args)
 
     return
-
-if __name__ == "__main__":
-    showlog()

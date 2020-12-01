@@ -18,7 +18,7 @@ __license__ = "MIT"
 import enum
 import json
 
-from sqlalchemy import BigInteger, Column, DateTime, Enum, Float, Integer, String, Text, VARCHAR, ForeignKey
+from sqlalchemy import BigInteger, Column, DateTime, Enum, Float, String, Text, VARCHAR, ForeignKey
 from sqlalchemy import inspect
 from sqlalchemy.types import JSON
 
@@ -27,9 +27,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils.types.uuid import UUIDType
 
 
-class SerializableMode:
+class SerializableModel:
+    """
+        Mixin style class that adds serialization to data model objects.
+    """
 
-    def to_dict(self, query_instance=None):
+    def to_dict(self):
         dval = {}
 
         model = type(self)
@@ -41,14 +44,14 @@ class SerializableMode:
         return dval
 
 
-    def to_json(self, query_instance=None, indent=4):
-        model_dict = self.to_dict(query_instance=query_instance)
+    def to_json(self, indent=4):
+        model_dict = self.to_dict()
         json_str = json.dumps(model_dict, indent=indent)
         return json_str
 
 AutomationBase = declarative_base()
 
-class AutomationJob(AutomationBase):
+class AutomationJob(AutomationBase, SerializableModel):
     __tablename__ = 'automation_job'
 
     id = Column('job_id', BigInteger, primary_key=True)
@@ -65,14 +68,14 @@ class AutomationJob(AutomationBase):
     lscape_id = Column('lscape_id', BigInteger, ForeignKey("landscape.lscape_id"), nullable=True)
     lsscan_id = Column('lsscan_id', BigInteger, ForeignKey("landscape_scan.lsscan_id"), nullable=True)
 
-class Landscape(AutomationBase):
+class Landscape(AutomationBase, SerializableModel):
     __tablename__ = 'landscape'
 
     id = Column('lsdesc_id', BigInteger, primary_key=True)
     name =  Column('lsdesc_name', VARCHAR(1024), nullable=False)
     detail = Column('lsdesc_detail', JSON, nullable=False)
 
-class LandscapeScan(AutomationBase):
+class LandscapeScan(AutomationBase, SerializableModel):
     __tablename__ = 'landscape_scan'
 
     id = Column('lsscan_id', BigInteger, primary_key=True)
@@ -81,7 +84,7 @@ class LandscapeScan(AutomationBase):
 
     lscape_id = Column('lscape_id', BigInteger, ForeignKey("landscape.lscape_id"))
 
-class Task(AutomationBase):
+class Task(AutomationBase, SerializableModel):
     __tablename__ = 'task'
 
     id = Column('task_id', BigInteger, primary_key=True)
@@ -98,7 +101,7 @@ class Task(AutomationBase):
 
     run_id = Column('job_id', BigInteger, ForeignKey("automation_job.job_id"))
 
-class TaskContainer(AutomationBase):
+class TaskContainer(AutomationBase, SerializableModel):
     __tablename__ = 'task_container'
 
     id = Column('tcont_id', BigInteger, primary_key=True)
@@ -112,12 +115,11 @@ class TaskContainer(AutomationBase):
 
 AutomationPod = declarative_base()
 
-import enum
 class WorkQueueJobType(enum.Enum):
     Local = 1
     Global = 2
 
-class WorkQueue(AutomationPod, SerializableMode):
+class WorkQueue(AutomationPod, SerializableModel):
     __tablename__ = 'work_queue'
 
     id = Column('wkq_id', BigInteger, primary_key=True, autoincrement=True)

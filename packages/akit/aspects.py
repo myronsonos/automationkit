@@ -16,11 +16,17 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 class RunPattern:
+    """
+        A run pattern to use when running commands.
+    """
     SINGLE_RUN = 0
     RUN_UNTIL_SUCCESS = 1
     RUN_WHILE_SUCCESS = 2
 
 class LoggingPattern:
+    """
+        A logging pattern to use when logging commands.
+    """
     ALL_RESULTS = 0
     FAILURE_ONLY = 1
     SUCCESS_ONLY = 2

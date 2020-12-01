@@ -44,6 +44,8 @@ def detect_private_key_type(filename):
         :returns: A string for the keytype
         :rtype: str
     """
+    # pylint: disable=invalid-name,no-else-break
+
     with open(filename, 'r') as kf:
         lines = kf.readlines()
 

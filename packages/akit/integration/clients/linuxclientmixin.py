@@ -38,7 +38,7 @@ class LinuxClientMixIn(IntegrationMixIn):
         return
 
     @classmethod
-    def attach_to_environment(cls):
+    def attach_to_environment(cls, landscape):
         """
             This API is called so that this subclass of the IntegrationMixIn can process configuration information.
             The :class:`IntegrationMixIn` will verify that it has a valid environment and configuration to run in.
