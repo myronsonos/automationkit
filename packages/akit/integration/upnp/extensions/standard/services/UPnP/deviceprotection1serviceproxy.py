@@ -18,7 +18,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_AddIdentityList(self, IdentityList, extract_returns=True):
         """
             Calls the AddIdentityList action.
@@ -38,7 +37,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_AddRolesForIdentity(self, Identity, RoleList, extract_returns=True):
         """
@@ -61,7 +59,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetACLData(self, extract_returns=True):
         """
             Calls the GetACLData action.
@@ -80,7 +77,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetAssignedRoles(self, extract_returns=True):
         """
             Calls the GetAssignedRoles action.
@@ -98,7 +94,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetRolesForAction(self, DeviceUDN, ServiceId, ActionName, extract_returns=True):
         """
@@ -122,7 +117,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSupportedProtocols(self, extract_returns=True):
         """
             Calls the GetSupportedProtocols action.
@@ -140,7 +134,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetUserLoginChallenge(self, ProtocolType, Name, extract_returns=True):
         """
@@ -163,7 +156,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_RemoveIdentity(self, Identity, extract_returns=True):
         """
             Calls the RemoveIdentity action.
@@ -183,7 +175,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_RemoveRolesForIdentity(self, Identity, RoleList, extract_returns=True):
         """
@@ -206,7 +197,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SendSetupMessage(self, ProtocolType, InMessage, extract_returns=True):
         """
             Calls the SendSetupMessage action.
@@ -227,7 +217,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetUserLoginPassword(self, ProtocolType, Name, Stored, Salt, extract_returns=True):
         """
@@ -252,7 +241,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_UserLogin(self, ProtocolType, Challenge, Authenticator, extract_returns=True):
         """
             Calls the UserLogin action.
@@ -275,7 +263,6 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_UserLogout(self, extract_returns=True):
         """
             Calls the UserLogout action.
@@ -293,4 +280,3 @@ class DeviceProtection1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

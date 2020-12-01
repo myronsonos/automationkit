@@ -23,7 +23,6 @@ import uuid
 import akit.environment.activate # pylint: disable=unused-import
 from akit.environment.context import ContextUser
 
-from akit.mixins.scope import ScopeMixIn
 from akit.mixins.scope import is_scope_mixin
 from akit.results import ResultContainer, ResultType
 from akit.testing.testcollector import TestCollector

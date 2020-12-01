@@ -22,7 +22,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
         "DefaultResolution": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_GetAvailableCompressionLevels(self, extract_returns=True):
         """
             Calls the GetAvailableCompressionLevels action.
@@ -40,7 +39,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetAvailableEncodings(self, extract_returns=True):
         """
@@ -60,7 +58,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
 
         return rtn_args
 
-
     def action_GetAvailableResolutions(self, extract_returns=True):
         """
             Calls the GetAvailableResolutions action.
@@ -78,7 +75,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDefaultCompressionLevel(self, extract_returns=True):
         """
@@ -98,7 +94,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
 
         return rtn_args
 
-
     def action_GetDefaultEncoding(self, extract_returns=True):
         """
             Calls the GetDefaultEncoding action.
@@ -116,7 +111,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDefaultImagePresentationURL(self, extract_returns=True):
         """
@@ -136,7 +130,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
 
         return rtn_args
 
-
     def action_GetDefaultImageURL(self, extract_returns=True):
         """
             Calls the GetDefaultImageURL action.
@@ -155,7 +148,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
 
         return rtn_args
 
-
     def action_GetDefaultResolution(self, extract_returns=True):
         """
             Calls the GetDefaultResolution action.
@@ -173,7 +165,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetImagePresentationURL(self, ReqEncoding, ReqCompression, ReqResolution, extract_returns=True):
         """
@@ -197,7 +188,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
 
         return rtn_args
 
-
     def action_GetImageURL(self, ReqEncoding, ReqCompression, ReqResolution, extract_returns=True):
         """
             Calls the GetImageURL action.
@@ -220,7 +210,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
 
         return rtn_args
 
-
     def action_SetDefaultCompressionLevel(self, ReqCompressionLevel, extract_returns=True):
         """
             Calls the SetDefaultCompressionLevel action.
@@ -240,7 +229,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetDefaultEncoding(self, ReqEncoding, extract_returns=True):
         """
@@ -262,7 +250,6 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
 
         return rtn_args
 
-
     def action_SetDefaultResolution(self, ReqResolution, extract_returns=True):
         """
             Calls the SetDefaultResolution action.
@@ -282,4 +269,3 @@ class DigitalSecurityCameraStillImage1ServiceProxy(UpnpServiceProxy, LoadableExt
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

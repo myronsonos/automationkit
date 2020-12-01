@@ -20,7 +20,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "TotalAssociations": { "data_type": "ui2", "default": None, "allowed_list": None},
     }
 
-
     def action_FactoryDefaultReset(self, extract_returns=True):
         """
             Calls the FactoryDefaultReset action.
@@ -38,7 +37,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Get11iBeaconSecurityProperties(self, extract_returns=True):
         """
@@ -58,7 +56,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetAuthenticationServiceMode(self, extract_returns=True):
         """
             Calls the GetAuthenticationServiceMode action.
@@ -76,7 +73,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetAutoRateFallBackMode(self, extract_returns=True):
         """
@@ -96,7 +92,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetBSSID(self, extract_returns=True):
         """
             Calls the GetBSSID action.
@@ -114,7 +109,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetBasicBeaconSecurityProperties(self, extract_returns=True):
         """
@@ -134,7 +128,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetBeaconAdvertisement(self, extract_returns=True):
         """
             Calls the GetBeaconAdvertisement action.
@@ -152,7 +145,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetBeaconType(self, extract_returns=True):
         """
@@ -172,7 +164,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetByteStatistics(self, extract_returns=True):
         """
             Calls the GetByteStatistics action.
@@ -190,7 +181,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetChannelInfo(self, extract_returns=True):
         """
@@ -210,7 +200,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetChannelsInUse(self, extract_returns=True):
         """
             Calls the GetChannelsInUse action.
@@ -228,7 +217,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDataTransmissionRateInfo(self, extract_returns=True):
         """
@@ -248,7 +236,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDefaultWEPKeyIndex(self, extract_returns=True):
         """
             Calls the GetDefaultWEPKeyIndex action.
@@ -266,7 +253,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDeviceOperationMode(self, extract_returns=True):
         """
@@ -286,7 +272,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetFailureStatusInfo(self, extract_returns=True):
         """
             Calls the GetFailureStatusInfo action.
@@ -304,7 +289,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetGenericAssociatedDeviceInfo(self, NewAssociatedDeviceIndex, extract_returns=True):
         """
@@ -326,7 +310,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetInsecureOutOfBandAccessMode(self, extract_returns=True):
         """
             Calls the GetInsecureOutOfBandAccessMode action.
@@ -344,7 +327,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetLocationDescription(self, extract_returns=True):
         """
@@ -364,7 +346,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetPacketStatistics(self, extract_returns=True):
         """
             Calls the GetPacketStatistics action.
@@ -382,7 +363,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetPreSharedKey(self, NewPreSharedKeyIndex, extract_returns=True):
         """
@@ -404,7 +384,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetRadioMode(self, extract_returns=True):
         """
             Calls the GetRadioMode action.
@@ -422,7 +401,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetRegulatoryDomain(self, extract_returns=True):
         """
@@ -442,7 +420,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSSID(self, extract_returns=True):
         """
             Calls the GetSSID action.
@@ -461,7 +438,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSecurityKeys(self, extract_returns=True):
         """
             Calls the GetSecurityKeys action.
@@ -479,7 +455,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSpecificAssociatedDeviceInfo(self, NewAssociatedDeviceMACAddress, extract_returns=True):
         """
@@ -501,7 +476,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTotalAssociations(self, extract_returns=True):
         """
             Calls the GetTotalAssociations action.
@@ -519,7 +493,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetWPABeaconSecurityProperties(self, extract_returns=True):
         """
@@ -539,7 +512,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ResetAuthentication(self, extract_returns=True):
         """
             Calls the ResetAuthentication action.
@@ -557,7 +529,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Set11iBeaconSecurityProperties(self, NewIEEE11iEncryptionModes, NewIEEE11iAuthenticationMode, extract_returns=True):
         """
@@ -580,7 +551,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetAuthenticationServiceMode(self, NewAuthenticationServiceMode, extract_returns=True):
         """
             Calls the SetAuthenticationServiceMode action.
@@ -601,7 +571,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetAutoRateFallBackMode(self, NewAutoRateFallBackEnabled, extract_returns=True):
         """
             Calls the SetAutoRateFallBackMode action.
@@ -621,7 +590,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetBasicBeaconSecurityProperties(self, NewBasicEncryptionModes, NewBasicAuthenticationMode, extract_returns=True):
         """
@@ -644,7 +612,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetBeaconAdvertisement(self, NewBeaconAdvertisementEnabled, extract_returns=True):
         """
             Calls the SetBeaconAdvertisement action.
@@ -664,7 +631,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetBeaconType(self, NewBeaconType, extract_returns=True):
         """
@@ -686,7 +652,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetChannel(self, NewChannel, extract_returns=True):
         """
             Calls the SetChannel action.
@@ -706,7 +671,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetDataTransmissionRates(self, NewBasicDataTransmissionRates, NewOperationalDataTransmissionRates, extract_returns=True):
         """
@@ -729,7 +693,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetDefaultWEPKeyIndex(self, NewDefaultWEPKeyIndex, extract_returns=True):
         """
             Calls the SetDefaultWEPKeyIndex action.
@@ -749,7 +712,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetDeviceOperationMode(self, NewDeviceOperationMode, NewSSID, NewBSSID, NewChannel, NewBasicDataTransmissionRates, NewOperationalDataTransmissionRates, NewDistanceFromRoot, extract_returns=True):
         """
@@ -777,7 +739,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetInsecureOutOfBandAccessMode(self, NewInsecureOutOfBandAccessEnabled, extract_returns=True):
         """
             Calls the SetInsecureOutOfBandAccessMode action.
@@ -798,7 +759,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetLocationDescription(self, NewLocationDescription, extract_returns=True):
         """
             Calls the SetLocationDescription action.
@@ -818,7 +778,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetPreSharedKey(self, NewPreSharedKeyIndex, NewPreSharedKey, NewPSKPassphrase, extract_returns=True):
         """
@@ -842,7 +801,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetRadioMode(self, NewRadioEnabled, extract_returns=True):
         """
             Calls the SetRadioMode action.
@@ -862,7 +820,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetRegulatoryDomain(self, NewRegulatoryDomain, extract_returns=True):
         """
@@ -884,7 +841,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetSSID(self, NewSSID, extract_returns=True):
         """
             Calls the SetSSID action.
@@ -904,7 +860,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetSecurityKeys(self, NewWEPKey0, NewWEPKey1, NewWEPKey2, NewWEPKey3, NewPreSharedKey, NewKeyPassphrase, extract_returns=True):
         """
@@ -931,7 +886,6 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetWPABeaconSecurityProperties(self, NewWPAEncryptionModes, NewWPAAuthenticationMode, extract_returns=True):
         """
             Calls the SetWPABeaconSecurityProperties action.
@@ -952,4 +906,3 @@ class WLANConfiguration1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

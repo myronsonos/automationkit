@@ -18,7 +18,6 @@ class WANEthernetLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_GetEthernetLinkStatus(self, extract_returns=True):
         """
             Calls the GetEthernetLinkStatus action.
@@ -36,4 +35,3 @@ class WANEthernetLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

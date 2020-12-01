@@ -18,7 +18,6 @@ class InboundConnectionConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_GetDynamicDNSSupportedProtocols(self, extract_returns=True):
         """
             Calls the GetDynamicDNSSupportedProtocols action.
@@ -37,7 +36,6 @@ class InboundConnectionConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetNetworkTopologyInfo(self, extract_returns=True):
         """
             Calls the GetNetworkTopologyInfo action.
@@ -55,7 +53,6 @@ class InboundConnectionConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetDynamicDNSConfigInfo(self, NewDynamicDNSConfigInfo, extract_returns=True):
         """
@@ -77,7 +74,6 @@ class InboundConnectionConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetSTUNServerAddress(self, NewSTUNServerAddress, extract_returns=True):
         """
             Calls the SetSTUNServerAddress action.
@@ -97,4 +93,3 @@ class InboundConnectionConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

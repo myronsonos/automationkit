@@ -18,7 +18,6 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_ConnectMethod(self, Host, MethodLine, extract_returns=True):
         """
             Calls the ConnectMethod action.
@@ -39,7 +38,6 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_HTTPReadBody(self, Identifier, Size, CRLFFlag, extract_returns=True):
         """
@@ -63,7 +61,6 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_HTTPReadHeaders(self, Identifier, CRLFFlag, extract_returns=True):
         """
             Calls the HTTPReadHeaders action.
@@ -84,7 +81,6 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_HTTPWriteBody(self, Identifier, Body, Size, extract_returns=True):
         """
@@ -108,7 +104,6 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_HTTPWriteHeaders(self, Identifier, Headers, extract_returns=True):
         """
             Calls the HTTPWriteHeaders action.
@@ -129,4 +124,3 @@ class CloudTransport1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

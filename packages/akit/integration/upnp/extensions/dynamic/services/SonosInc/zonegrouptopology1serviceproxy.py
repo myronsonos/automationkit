@@ -30,7 +30,6 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "ZonePlayerUUIDsInGroup": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_BeginSoftwareUpdate(self, UpdateURL, Flags, ExtraOptions, extract_returns=True):
         """
             Calls the BeginSoftwareUpdate action.
@@ -52,7 +51,6 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_CheckForUpdate(self, UpdateType, CachedOnly, Version, extract_returns=True):
         """
@@ -76,7 +74,6 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetZoneGroupAttributes(self, extract_returns=True):
         """
             Calls the GetZoneGroupAttributes action.
@@ -95,7 +92,6 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetZoneGroupState(self, extract_returns=True):
         """
             Calls the GetZoneGroupState action.
@@ -113,7 +109,6 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_RegisterMobileDevice(self, MobileDeviceName, MobileDeviceUDN, MobileIPAndPort, extract_returns=True):
         """
@@ -137,7 +132,6 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ReportAlarmStartedRunning(self, extract_returns=True):
         """
             Calls the ReportAlarmStartedRunning action.
@@ -155,7 +149,6 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ReportUnresponsiveDevice(self, DeviceUUID, DesiredAction, extract_returns=True):
         """
@@ -178,7 +171,6 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SubmitDiagnostics(self, IncludeControllers, Type, extract_returns=True):
         """
             Calls the SubmitDiagnostics action.
@@ -199,4 +191,3 @@ class ZoneGroupTopology1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

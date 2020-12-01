@@ -26,7 +26,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "TimeZone": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_CreateAlarm(self, StartLocalTime, Duration, Recurrence, Enabled, RoomUUID, ProgramURI, ProgramMetaData, PlayMode, Volume, IncludeLinkedZones, extract_returns=True):
         """
             Calls the CreateAlarm action.
@@ -56,7 +55,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DestroyAlarm(self, ID, extract_returns=True):
         """
             Calls the DestroyAlarm action.
@@ -77,7 +75,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDailyIndexRefreshTime(self, extract_returns=True):
         """
             Calls the GetDailyIndexRefreshTime action.
@@ -96,7 +93,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetFormat(self, extract_returns=True):
         """
             Calls the GetFormat action.
@@ -114,7 +110,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetHouseholdTimeAtStamp(self, TimeStamp, extract_returns=True):
         """
@@ -136,7 +131,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTimeNow(self, extract_returns=True):
         """
             Calls the GetTimeNow action.
@@ -154,7 +148,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetTimeServer(self, extract_returns=True):
         """
@@ -174,7 +167,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTimeZone(self, extract_returns=True):
         """
             Calls the GetTimeZone action.
@@ -193,7 +185,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTimeZoneAndRule(self, extract_returns=True):
         """
             Calls the GetTimeZoneAndRule action.
@@ -211,7 +202,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetTimeZoneRule(self, Index, extract_returns=True):
         """
@@ -233,7 +223,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ListAlarms(self, extract_returns=True):
         """
             Calls the ListAlarms action.
@@ -251,7 +240,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetDailyIndexRefreshTime(self, DesiredDailyIndexRefreshTime, extract_returns=True):
         """
@@ -272,7 +260,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetFormat(self, DesiredTimeFormat, DesiredDateFormat, extract_returns=True):
         """
@@ -295,7 +282,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetTimeNow(self, DesiredTime, TimeZoneForDesiredTime, extract_returns=True):
         """
             Calls the SetTimeNow action.
@@ -317,7 +303,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetTimeServer(self, DesiredTimeServer, extract_returns=True):
         """
             Calls the SetTimeServer action.
@@ -337,7 +322,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetTimeZone(self, Index, AutoAdjustDst, extract_returns=True):
         """
@@ -359,7 +343,6 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_UpdateAlarm(self, ID, StartLocalTime, Duration, Recurrence, Enabled, RoomUUID, ProgramURI, ProgramMetaData, PlayMode, Volume, IncludeLinkedZones, extract_returns=True):
         """
@@ -390,4 +373,3 @@ class AlarmClock1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

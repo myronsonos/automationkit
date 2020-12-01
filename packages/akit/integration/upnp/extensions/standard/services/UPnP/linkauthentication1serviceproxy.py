@@ -21,7 +21,6 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "LastError": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_AddEntry(self, NewIdentifier, NewSecret, NewSecretType, NewAuthType, NewAuthState, NewCredentialState, NewDescription, NewMACAddress, NewCredentialDuration, NewLinkedIdentifier, extract_returns=True):
         """
             Calls the AddEntry action.
@@ -51,7 +50,6 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DeleteEntry(self, NewIdentifier, extract_returns=True):
         """
             Calls the DeleteEntry action.
@@ -72,7 +70,6 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_FactoryDefaultReset(self, extract_returns=True):
         """
             Calls the FactoryDefaultReset action.
@@ -90,7 +87,6 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetGenericEntry(self, NewIndex, extract_returns=True):
         """
@@ -112,7 +108,6 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetNumberOfEntries(self, extract_returns=True):
         """
             Calls the GetNumberOfEntries action.
@@ -130,7 +125,6 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSpecificEntry(self, NewIdentifierKey, extract_returns=True):
         """
@@ -152,7 +146,6 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ResetAuthentication(self, extract_returns=True):
         """
             Calls the ResetAuthentication action.
@@ -170,7 +163,6 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_UpdateEntry(self, NewIdentifier, NewSecret, NewSecretType, NewAuthType, NewAuthState, NewCredentialState, NewDescription, NewMACAddress, NewCredentialDuration, NewLinkedIdentifier, extract_returns=True):
         """
@@ -200,4 +192,3 @@ class LinkAuthentication1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

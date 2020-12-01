@@ -20,7 +20,6 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "CloudProxyUpdate": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_AddProxyDevice(self, DeviceId, UserAtCloud, extract_returns=True):
         """
             Calls the AddProxyDevice action.
@@ -41,7 +40,6 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_AddUCSAccount(self, UserAtCloud, Port, extract_returns=True):
         """
@@ -64,7 +62,6 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DeleteProxyDevice(self, DeviceJID, extract_returns=True):
         """
             Calls the DeleteProxyDevice action.
@@ -84,7 +81,6 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_DeleteUCSAccount(self, BareJID, extract_returns=True):
         """
@@ -106,7 +102,6 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDeviceList(self, extract_returns=True):
         """
             Calls the GetDeviceList action.
@@ -124,7 +119,6 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetProxyList(self, extract_returns=True):
         """
@@ -144,7 +138,6 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetUCSList(self, extract_returns=True):
         """
             Calls the GetUCSList action.
@@ -162,4 +155,3 @@ class CloudProxy1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

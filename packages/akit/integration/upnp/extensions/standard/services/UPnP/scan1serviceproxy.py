@@ -24,7 +24,6 @@ class Scan1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "State": { "data_type": "string", "default": "Idle", "allowed_list": "['Idle', 'Reserved', 'NotReady', 'Pending', 'Scanning', 'Finishing', 'Erred']"},
     }
 
-
     def action_GetConfiguration(self, extract_returns=True):
         """
             Calls the GetConfiguration action.
@@ -42,7 +41,6 @@ class Scan1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSideInformation(self, extract_returns=True):
         """
@@ -62,7 +60,6 @@ class Scan1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetState(self, extract_returns=True):
         """
             Calls the GetState action.
@@ -80,7 +77,6 @@ class Scan1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_StartScan(self, RegistrationIDIn, UseFeederIn, SideCountIn, JobNameIn, ResolutionIn, ImageXOffsetIn, ImageYOffsetIn, ImageWidthIn, ImageHeightIn, ImageFormatIn, CompressionFactorIn, ImageTypeIn, ColorTypeIn, BitDepthIn, ColorSpaceIn, BaseNameIn, AppendSideNumberIn, TimeoutIn, extract_returns=True):
         """
@@ -118,4 +114,3 @@ class Scan1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

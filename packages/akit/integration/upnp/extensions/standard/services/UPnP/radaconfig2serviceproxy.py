@@ -20,7 +20,6 @@ class RADAConfig2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "SystemInfoUpdateID": { "data_type": "ui4", "default": None, "allowed_list": None},
     }
 
-
     def action_CreateVirtualDevice(self, VirtualDeviceDescr, extract_returns=True):
         """
             Calls the CreateVirtualDevice action.
@@ -40,7 +39,6 @@ class RADAConfig2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_DestroyVirtualDevice(self, VirtualDeviceID, extract_returns=True):
         """
@@ -62,7 +60,6 @@ class RADAConfig2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_EditFilter(self, Filter, extract_returns=True):
         """
             Calls the EditFilter action.
@@ -82,7 +79,6 @@ class RADAConfig2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSystemInfo(self, ID, extract_returns=True):
         """
@@ -104,7 +100,6 @@ class RADAConfig2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetVirtualDevices(self, extract_returns=True):
         """
             Calls the GetVirtualDevices action.
@@ -122,4 +117,3 @@ class RADAConfig2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

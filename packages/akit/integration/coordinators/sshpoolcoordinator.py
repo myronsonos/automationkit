@@ -174,4 +174,3 @@ class SshPoolCoordinator:
                 results.append((host, ipaddr, None, None, None, xcpt))
 
         return results
-

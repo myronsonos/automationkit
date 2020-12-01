@@ -22,7 +22,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "WLANEvent": { "data_type": "bin.base64", "default": None, "allowed_list": None},
     }
 
-
     def action_DelAPSettings(self, NewAPSettings, extract_returns=True):
         """
             Calls the DelAPSettings action.
@@ -42,7 +41,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_DelSTASettings(self, NewSTASettings, extract_returns=True):
         """
@@ -64,7 +62,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetAPSettings(self, NewMessage, extract_returns=True):
         """
             Calls the GetAPSettings action.
@@ -85,7 +82,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDeviceInfo(self, extract_returns=True):
         """
             Calls the GetDeviceInfo action.
@@ -103,7 +99,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSTASettings(self, NewMessage, extract_returns=True):
         """
@@ -125,7 +120,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_PutMessage(self, NewInMessage, extract_returns=True):
         """
             Calls the PutMessage action.
@@ -145,7 +139,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_PutWLANResponse(self, NewMessage, NewWLANEventType, NewWLANEventMAC, extract_returns=True):
         """
@@ -169,7 +162,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_RebootAP(self, NewAPSettings, extract_returns=True):
         """
             Calls the RebootAP action.
@@ -189,7 +181,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_RebootSTA(self, NewSTASettings, extract_returns=True):
         """
@@ -211,7 +202,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ResetAP(self, NewMessage, extract_returns=True):
         """
             Calls the ResetAP action.
@@ -231,7 +221,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ResetSTA(self, NewMessage, extract_returns=True):
         """
@@ -253,7 +242,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetAPSettings(self, NewAPSettings, extract_returns=True):
         """
             Calls the SetAPSettings action.
@@ -274,7 +262,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetSTASettings(self, extract_returns=True):
         """
             Calls the SetSTASettings action.
@@ -292,7 +279,6 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetSelectedRegistrar(self, NewMessage, extract_returns=True):
         """
@@ -313,4 +299,3 @@ class WFAWLANConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

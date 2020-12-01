@@ -18,7 +18,6 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_GetActiveConnection(self, NewActiveConnectionIndex, extract_returns=True):
         """
             Calls the GetActiveConnection action.
@@ -39,7 +38,6 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
 
         return rtn_args
 
-
     def action_GetCommonLinkProperties(self, extract_returns=True):
         """
             Calls the GetCommonLinkProperties action.
@@ -57,7 +55,6 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetEnabledForInternet(self, extract_returns=True):
         """
@@ -77,7 +74,6 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
 
         return rtn_args
 
-
     def action_GetMaximumActiveConnections(self, extract_returns=True):
         """
             Calls the GetMaximumActiveConnections action.
@@ -95,7 +91,6 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetTotalBytesReceived(self, extract_returns=True):
         """
@@ -115,7 +110,6 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
 
         return rtn_args
 
-
     def action_GetTotalBytesSent(self, extract_returns=True):
         """
             Calls the GetTotalBytesSent action.
@@ -133,7 +127,6 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetTotalPacketsReceived(self, extract_returns=True):
         """
@@ -153,7 +146,6 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
 
         return rtn_args
 
-
     def action_GetTotalPacketsSent(self, extract_returns=True):
         """
             Calls the GetTotalPacketsSent action.
@@ -172,7 +164,6 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
 
         return rtn_args
 
-
     def action_GetWANAccessProvider(self, extract_returns=True):
         """
             Calls the GetWANAccessProvider action.
@@ -190,7 +181,6 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetEnabledForInternet(self, NewEnabledForInternet, extract_returns=True):
         """
@@ -211,4 +201,3 @@ class WANCommonInterfaceConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension)
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

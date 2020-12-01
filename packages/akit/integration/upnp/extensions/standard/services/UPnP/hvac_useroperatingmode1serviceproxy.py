@@ -18,7 +18,6 @@ class HVAC_UserOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_GetModeStatus(self, extract_returns=True):
         """
             Calls the GetModeStatus action.
@@ -36,7 +35,6 @@ class HVAC_UserOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetModeTarget(self, extract_returns=True):
         """
@@ -56,7 +54,6 @@ class HVAC_UserOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetName(self, extract_returns=True):
         """
             Calls the GetName action.
@@ -74,7 +71,6 @@ class HVAC_UserOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetModeTarget(self, NewModeTarget, extract_returns=True):
         """
@@ -96,7 +92,6 @@ class HVAC_UserOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetName(self, NewName, extract_returns=True):
         """
             Calls the SetName action.
@@ -116,4 +111,3 @@ class HVAC_UserOperatingMode1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

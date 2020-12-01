@@ -20,7 +20,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "LastChange": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_GetBlueVideoBlackLevel(self, InstanceID, extract_returns=True):
         """
             Calls the GetBlueVideoBlackLevel action.
@@ -40,7 +39,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetBlueVideoGain(self, InstanceID, extract_returns=True):
         """
@@ -62,7 +60,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetBrightness(self, InstanceID, extract_returns=True):
         """
             Calls the GetBrightness action.
@@ -82,7 +79,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetColorTemperature(self, InstanceID, extract_returns=True):
         """
@@ -104,7 +100,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetContrast(self, InstanceID, extract_returns=True):
         """
             Calls the GetContrast action.
@@ -124,7 +119,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetGreenVideoBlackLevel(self, InstanceID, extract_returns=True):
         """
@@ -146,7 +140,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetGreenVideoGain(self, InstanceID, extract_returns=True):
         """
             Calls the GetGreenVideoGain action.
@@ -167,7 +160,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetHorizontalKeystone(self, InstanceID, extract_returns=True):
         """
             Calls the GetHorizontalKeystone action.
@@ -187,7 +179,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetLoudness(self, InstanceID, Channel, extract_returns=True):
         """
@@ -210,7 +201,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetMute(self, InstanceID, Channel, extract_returns=True):
         """
             Calls the GetMute action.
@@ -232,7 +222,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetRedVideoBlackLevel(self, InstanceID, extract_returns=True):
         """
             Calls the GetRedVideoBlackLevel action.
@@ -252,7 +241,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetRedVideoGain(self, InstanceID, extract_returns=True):
         """
@@ -274,7 +262,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSharpness(self, InstanceID, extract_returns=True):
         """
             Calls the GetSharpness action.
@@ -294,7 +281,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetStateVariables(self, InstanceID, StateVariableList, extract_returns=True):
         """
@@ -317,7 +303,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetVerticalKeystone(self, InstanceID, extract_returns=True):
         """
             Calls the GetVerticalKeystone action.
@@ -337,7 +322,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetVolume(self, InstanceID, Channel, extract_returns=True):
         """
@@ -360,7 +344,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetVolumeDB(self, InstanceID, Channel, extract_returns=True):
         """
             Calls the GetVolumeDB action.
@@ -381,7 +364,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetVolumeDBRange(self, InstanceID, Channel, extract_returns=True):
         """
@@ -404,7 +386,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ListPresets(self, InstanceID, extract_returns=True):
         """
             Calls the ListPresets action.
@@ -424,7 +405,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SelectPreset(self, InstanceID, PresetName, extract_returns=True):
         """
@@ -447,7 +427,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetBlueVideoBlackLevel(self, InstanceID, DesiredBlueVideoBlackLevel, extract_returns=True):
         """
             Calls the SetBlueVideoBlackLevel action.
@@ -468,7 +447,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetBlueVideoGain(self, InstanceID, DesiredBlueVideoGain, extract_returns=True):
         """
@@ -491,7 +469,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetBrightness(self, InstanceID, DesiredBrightness, extract_returns=True):
         """
             Calls the SetBrightness action.
@@ -512,7 +489,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetColorTemperature(self, InstanceID, DesiredColorTemperature, extract_returns=True):
         """
@@ -535,7 +511,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetContrast(self, InstanceID, DesiredContrast, extract_returns=True):
         """
             Calls the SetContrast action.
@@ -556,7 +531,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetGreenVideoBlackLevel(self, InstanceID, DesiredGreenVideoBlackLevel, extract_returns=True):
         """
@@ -579,7 +553,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetGreenVideoGain(self, InstanceID, DesiredGreenVideoGain, extract_returns=True):
         """
             Calls the SetGreenVideoGain action.
@@ -601,7 +574,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetHorizontalKeystone(self, InstanceID, DesiredHorizontalKeystone, extract_returns=True):
         """
             Calls the SetHorizontalKeystone action.
@@ -622,7 +594,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetLoudness(self, InstanceID, Channel, DesiredLoudness, extract_returns=True):
         """
@@ -646,7 +617,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetMute(self, InstanceID, Channel, DesiredMute, extract_returns=True):
         """
             Calls the SetMute action.
@@ -669,7 +639,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetRedVideoBlackLevel(self, InstanceID, DesiredRedVideoBlackLevel, extract_returns=True):
         """
             Calls the SetRedVideoBlackLevel action.
@@ -690,7 +659,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetRedVideoGain(self, InstanceID, DesiredRedVideoGain, extract_returns=True):
         """
@@ -713,7 +681,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetSharpness(self, InstanceID, DesiredSharpness, extract_returns=True):
         """
             Calls the SetSharpness action.
@@ -734,7 +701,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetStateVariables(self, InstanceID, RenderingControlUDN, ServiceType, ServiceId, StateVariableValuePairs, extract_returns=True):
         """
@@ -760,7 +726,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetVerticalKeystone(self, InstanceID, DesiredVerticalKeystone, extract_returns=True):
         """
             Calls the SetVerticalKeystone action.
@@ -781,7 +746,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetVolume(self, InstanceID, Channel, DesiredVolume, extract_returns=True):
         """
@@ -805,7 +769,6 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetVolumeDB(self, InstanceID, Channel, DesiredVolume, extract_returns=True):
         """
             Calls the SetVolumeDB action.
@@ -827,4 +790,3 @@ class RenderingControl2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

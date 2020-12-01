@@ -21,7 +21,6 @@ class InputConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "RequiredInputType": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_GetInputCapability(self, extract_returns=True):
         """
             Calls the GetInputCapability action.
@@ -40,7 +39,6 @@ class InputConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetInputConnectionList(self, extract_returns=True):
         """
             Calls the GetInputConnectionList action.
@@ -58,7 +56,6 @@ class InputConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetInputSession(self, SelectedCapability, ReceiverInfo, PeerDeviceInfo, extract_returns=True):
         """
@@ -82,7 +79,6 @@ class InputConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetMonopolizedSender(self, OwnerDeviceInfo, OwnedSessionID, extract_returns=True):
         """
             Calls the SetMonopolizedSender action.
@@ -104,7 +100,6 @@ class InputConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetMultiInputMode(self, NewMultiInputMode, extract_returns=True):
         """
             Calls the SetMultiInputMode action.
@@ -124,7 +119,6 @@ class InputConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_StartInputSession(self, SessionID, extract_returns=True):
         """
@@ -146,7 +140,6 @@ class InputConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StopInputsession(self, SessionID, extract_returns=True):
         """
             Calls the StopInputsession action.
@@ -167,7 +160,6 @@ class InputConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SwitchInputSession(self, SessionID, extract_returns=True):
         """
             Calls the SwitchInputSession action.
@@ -187,4 +179,3 @@ class InputConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

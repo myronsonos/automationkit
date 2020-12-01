@@ -57,7 +57,7 @@ def find_included_tests(root, package, module, testclass, testname):
     else:
         pkgpathpfx = package.replace(".", "/")
         fullpathpfx = pkgpathpfx + "/" + module
-        for dirpath, dirnames, filenames in os.walk(root):
+        for dirpath, _, filenames in os.walk(root):
             dirleaf = dirpath[len(root):].lstrip(os.sep)
 
             # If we are in the testroot, then dirleaf will be len 0

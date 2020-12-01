@@ -20,7 +20,6 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "LastChange": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_GetMute(self, InstanceID, Channel, extract_returns=True):
         """
             Calls the GetMute action.
@@ -41,7 +40,6 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetVolume(self, InstanceID, Channel, extract_returns=True):
         """
@@ -64,7 +62,6 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ListPresets(self, InstanceID, extract_returns=True):
         """
             Calls the ListPresets action.
@@ -84,7 +81,6 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SelectPreset(self, InstanceID, PresetName, extract_returns=True):
         """
@@ -106,7 +102,6 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetMute(self, InstanceID, Channel, DesiredMute, extract_returns=True):
         """
@@ -130,7 +125,6 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetVolume(self, InstanceID, Channel, DesiredVolume, extract_returns=True):
         """
             Calls the SetVolume action.
@@ -152,4 +146,3 @@ class RenderingControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

@@ -36,10 +36,9 @@ from akit.integration.upnp.devices.upnprootdevice import device_description_load
 from akit.integration.upnp.devices.upnprootdevice import device_description_find_components
 
 from akit.integration.upnp.upnpfactory import UpnpFactory
-from akit.integration.upnp.upnpprotocol import MSearchKeys, UpnpProtocol
-from akit.integration.upnp.upnpprotocol import msearch_parse_request, notify_parse_request
+from akit.integration.upnp.upnpprotocol import mquery, msearch_parse_request, msearch_scan, notify_parse_request
+from akit.integration.upnp.upnpprotocol import MSearchKeys, MSearchRouteKeys, UpnpProtocol
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE
-from akit.integration.upnp.upnpprotocol import mquery, msearch_scan, MSearchKeys, MSearchRouteKeys
 
 from akit.networking.interfaces import get_ipv4_address
 
@@ -346,12 +345,12 @@ class UpnpCoordinator:
     def _log_scan_results(self, found_devices: dict, matching_devices:dict , missing_devices: list):
 
         devmsg_lines = ["FOUND DEVICES:"]
-        for dkey, dval in found_devices.items():
+        for dkey, _ in found_devices.items():
             devmsg_lines.append("    %s" % dkey)
         devmsg_lines.append("")
 
         devmsg_lines.append("MATCHING DEVICES:")
-        for dkey, dval in matching_devices.items():
+        for dkey, _ in matching_devices.items():
             devmsg_lines.append("    %s" % dkey)
         devmsg_lines.append("")
 
@@ -376,7 +375,6 @@ class UpnpCoordinator:
     def _process_device_notification(self, usn, request_info):
 
         host = request_info["HOST"]
-        target = request_info["NT"]
         subtype = request_info["NTS"]
 
         if subtype == "ssdp:alive":
@@ -413,14 +411,14 @@ class UpnpCoordinator:
 
     def _process_request_for_msearch(self, addr, request):
 
-        reqinfo = msearch_parse_request(request)
+        #reqinfo = msearch_parse_request(request)
         self._logger.debug("RESPONDING TO MSEARCH")
 
         return
 
     def _process_request_for_notify(self, addr, request):
 
-        req_headers, req_body = notify_parse_request(request)
+        req_headers, _ = notify_parse_request(request)
 
         usn = req_headers["USN"]
 
@@ -494,7 +492,7 @@ class UpnpCoordinator:
         except:
             self._running = False
 
-            for i in range(0, self._worker_count + ifacecount + 1):
+            for _ in range(0, self._worker_count + ifacecount + 1):
                 self._shutdown_gate.release()
 
             raise
@@ -783,12 +781,12 @@ if __name__ == "__main__":
     LARGE_COUNTER = 0
     while True:
         time.sleep(2)
-        if small_counter == 0:
+        if SMALL_COUNTER == 0:
             print("tick")
         else:
             print("tock")
 
-        if large_counter == 0:
+        if LARGE_COUNTER == 0:
             print("Refreshing upnp device status.")
 
         SMALL_COUNTER = (SMALL_COUNTER + 1) % 2

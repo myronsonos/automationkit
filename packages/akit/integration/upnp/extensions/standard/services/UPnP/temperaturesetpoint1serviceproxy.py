@@ -23,7 +23,6 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "SetpointAchieved": { "data_type": "boolean", "default": "0", "allowed_list": None},
     }
 
-
     def action_GetApplication(self, extract_returns=True):
         """
             Calls the GetApplication action.
@@ -41,7 +40,6 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetCurrentSetpoint(self, extract_returns=True):
         """
@@ -61,7 +59,6 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetName(self, extract_returns=True):
         """
             Calls the GetName action.
@@ -80,7 +77,6 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSetpointAchieved(self, extract_returns=True):
         """
             Calls the GetSetpointAchieved action.
@@ -98,7 +94,6 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetApplication(self, NewApplication, extract_returns=True):
         """
@@ -120,7 +115,6 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetCurrentSetpoint(self, NewCurrentSetpoint, extract_returns=True):
         """
             Calls the SetCurrentSetpoint action.
@@ -141,7 +135,6 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetName(self, NewName, extract_returns=True):
         """
             Calls the SetName action.
@@ -161,4 +154,3 @@ class TemperatureSetpoint1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

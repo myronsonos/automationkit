@@ -18,7 +18,6 @@ class QPlay1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_QPlayAuth(self, Seed, extract_returns=True):
         """
             Calls the QPlayAuth action.
@@ -38,4 +37,3 @@ class QPlay1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

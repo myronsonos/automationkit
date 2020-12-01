@@ -20,7 +20,6 @@ class Layer3Forwarding1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "DefaultConnectionService": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_GetDefaultConnectionService(self, extract_returns=True):
         """
             Calls the GetDefaultConnectionService action.
@@ -38,7 +37,6 @@ class Layer3Forwarding1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetDefaultConnectionService(self, NewDefaultConnectionService, extract_returns=True):
         """
@@ -59,4 +57,3 @@ class Layer3Forwarding1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

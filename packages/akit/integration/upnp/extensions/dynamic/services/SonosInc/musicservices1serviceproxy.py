@@ -20,7 +20,6 @@ class MusicServices1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "ServiceListVersion": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_GetSessionId(self, ServiceId, Username, extract_returns=True):
         """
             Calls the GetSessionId action.
@@ -42,7 +41,6 @@ class MusicServices1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ListAvailableServices(self, extract_returns=True):
         """
             Calls the ListAvailableServices action.
@@ -61,7 +59,6 @@ class MusicServices1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_UpdateAvailableServices(self, extract_returns=True):
         """
             Calls the UpdateAvailableServices action.
@@ -79,4 +76,3 @@ class MusicServices1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

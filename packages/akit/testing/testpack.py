@@ -119,10 +119,10 @@ class DefaultTestPack(TestPack):
     pathname = ""
 
 def is_testpack(cls) -> bool:
-    is_testpack = False
+    istp = False
     if inspect.isclass(cls) and cls is not TestPack and issubclass(cls, TestPack):
-        is_testpack = True
-    return is_testpack
+        istp = True
+    return istp
 
 def testpack_compare(tpack):
     return tpack.weight

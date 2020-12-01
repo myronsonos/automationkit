@@ -18,7 +18,6 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_GetATMEncapsulation(self, extract_returns=True):
         """
             Calls the GetATMEncapsulation action.
@@ -36,7 +35,6 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetAutoConfig(self, extract_returns=True):
         """
@@ -56,7 +54,6 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDSLLinkInfo(self, extract_returns=True):
         """
             Calls the GetDSLLinkInfo action.
@@ -74,7 +71,6 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDestinationAddress(self, extract_returns=True):
         """
@@ -94,7 +90,6 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetFCSPreserved(self, extract_returns=True):
         """
             Calls the GetFCSPreserved action.
@@ -113,7 +108,6 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetModulationType(self, extract_returns=True):
         """
             Calls the GetModulationType action.
@@ -131,7 +125,6 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetATMEncapsulation(self, NewATMEncapsulation, extract_returns=True):
         """
@@ -153,7 +146,6 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetDSLLinkType(self, NewLinkType, extract_returns=True):
         """
             Calls the SetDSLLinkType action.
@@ -173,7 +165,6 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetDestinationAddress(self, NewDestinationAddress, extract_returns=True):
         """
@@ -195,7 +186,6 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetFCSPreserved(self, NewFCSPreserved, extract_returns=True):
         """
             Calls the SetFCSPreserved action.
@@ -215,4 +205,3 @@ class WANDSLLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

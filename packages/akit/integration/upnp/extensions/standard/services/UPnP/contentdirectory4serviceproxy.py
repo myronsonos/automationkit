@@ -25,7 +25,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "TransformStatus": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_Browse(self, ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, extract_returns=True):
         """
             Calls the Browse action.
@@ -51,7 +50,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_CancelDeviceMode(self, DeviceModeID, extract_returns=True):
         """
             Calls the CancelDeviceMode action.
@@ -72,7 +70,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_CancelTransformTask(self, TransformTaskID, extract_returns=True):
         """
             Calls the CancelTransformTask action.
@@ -92,7 +89,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_CreateObject(self, ContainerID, Elements, extract_returns=True):
         """
@@ -115,7 +111,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_CreateReference(self, ContainerID, ObjectID, extract_returns=True):
         """
             Calls the CreateReference action.
@@ -137,7 +132,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DeleteResource(self, ResourceURI, extract_returns=True):
         """
             Calls the DeleteResource action.
@@ -158,7 +152,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DestroyObject(self, ObjectID, extract_returns=True):
         """
             Calls the DestroyObject action.
@@ -178,7 +171,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_EvaluateTransforms(self, TransformResourceDesc, TransformSettings, extract_returns=True):
         """
@@ -201,7 +193,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ExportResource(self, SourceURI, DestinationURI, extract_returns=True):
         """
             Calls the ExportResource action.
@@ -223,7 +214,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ExtendDeviceMode(self, DeviceModeID, DeviceModeRequest, extract_returns=True):
         """
             Calls the ExtendDeviceMode action.
@@ -244,7 +234,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_FreeFormQuery(self, ContainerID, CDSView, QueryRequest, extract_returns=True):
         """
@@ -268,7 +257,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetAllAvailableTransforms(self, extract_returns=True):
         """
             Calls the GetAllAvailableTransforms action.
@@ -286,7 +274,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetAllowedTransforms(self, TransformResourceObjectDesc, extract_returns=True):
         """
@@ -308,7 +295,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetCurrentTransformStatusList(self, extract_returns=True):
         """
             Calls the GetCurrentTransformStatusList action.
@@ -326,7 +312,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDeviceMode(self, extract_returns=True):
         """
@@ -346,7 +331,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDeviceModeStatus(self, extract_returns=True):
         """
             Calls the GetDeviceModeStatus action.
@@ -364,7 +348,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetFeatureList(self, extract_returns=True):
         """
@@ -384,7 +367,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetFreeFormQueryCapabilities(self, extract_returns=True):
         """
             Calls the GetFreeFormQueryCapabilities action.
@@ -402,7 +384,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetPermissionsInfo(self, extract_returns=True):
         """
@@ -422,7 +403,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSearchCapabilities(self, extract_returns=True):
         """
             Calls the GetSearchCapabilities action.
@@ -440,7 +420,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetServiceResetToken(self, extract_returns=True):
         """
@@ -460,7 +439,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSortCapabilities(self, extract_returns=True):
         """
             Calls the GetSortCapabilities action.
@@ -478,7 +456,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSortExtensionCapabilities(self, extract_returns=True):
         """
@@ -498,7 +475,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSystemUpdateID(self, extract_returns=True):
         """
             Calls the GetSystemUpdateID action.
@@ -516,7 +492,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetTransferProgress(self, TransferID, extract_returns=True):
         """
@@ -537,7 +512,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetTransformTaskResult(self, TransformTaskID, TransformTaskResultFilter, extract_returns=True):
         """
@@ -560,7 +534,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTransforms(self, TransformTaskID, extract_returns=True):
         """
             Calls the GetTransforms action.
@@ -580,7 +553,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ImportResource(self, SourceURI, DestinationURI, extract_returns=True):
         """
@@ -603,7 +575,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_MoveObject(self, ObjectID, NewParentID, extract_returns=True):
         """
             Calls the MoveObject action.
@@ -625,7 +596,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_PauseTransformTask(self, TransformTaskID, extract_returns=True):
         """
             Calls the PauseTransformTask action.
@@ -645,7 +615,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_RequestDeviceMode(self, CPID, DeviceModeRequest, extract_returns=True):
         """
@@ -668,7 +637,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ResumeTransformTask(self, TransformTaskID, extract_returns=True):
         """
             Calls the ResumeTransformTask action.
@@ -689,7 +657,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_RollbackTransformTask(self, TransformTaskID, extract_returns=True):
         """
             Calls the RollbackTransformTask action.
@@ -709,7 +676,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Search(self, ContainerID, SearchCriteria, Filter, StartingIndex, RequestedCount, SortCriteria, extract_returns=True):
         """
@@ -736,7 +702,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StartTransformTask(self, TransformResourceDesc, TransformSettings, TransformOverwrite, TransformRollback, extract_returns=True):
         """
             Calls the StartTransformTask action.
@@ -760,7 +725,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StopTransferResource(self, TransferID, extract_returns=True):
         """
             Calls the StopTransferResource action.
@@ -780,7 +744,6 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_UpdateObject(self, ObjectID, CurrentTagValue, NewTagValue, extract_returns=True):
         """
@@ -803,4 +766,3 @@ class ContentDirectory4ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

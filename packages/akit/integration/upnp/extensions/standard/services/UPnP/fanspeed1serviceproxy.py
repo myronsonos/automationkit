@@ -18,7 +18,6 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_GetFanDirection(self, extract_returns=True):
         """
             Calls the GetFanDirection action.
@@ -36,7 +35,6 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetFanDirectionTarget(self, extract_returns=True):
         """
@@ -56,7 +54,6 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetFanSpeed(self, extract_returns=True):
         """
             Calls the GetFanSpeed action.
@@ -75,7 +72,6 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetFanSpeedTarget(self, extract_returns=True):
         """
             Calls the GetFanSpeedTarget action.
@@ -93,7 +89,6 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetFanDirection(self, NewDirectionTarget, extract_returns=True):
         """
@@ -115,7 +110,6 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetFanSpeed(self, NewFanSpeedTarget, extract_returns=True):
         """
             Calls the SetFanSpeed action.
@@ -135,4 +129,3 @@ class FanSpeed1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

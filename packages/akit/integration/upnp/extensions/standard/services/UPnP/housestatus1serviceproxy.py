@@ -22,7 +22,6 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "OccupancyState": { "data_type": "string", "default": "Occupied", "allowed_list": "['Occupied', 'Unoccupied', 'Indeterminate']"},
     }
 
-
     def action_GetActivityLevel(self, extract_returns=True):
         """
             Calls the GetActivityLevel action.
@@ -40,7 +39,6 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDormancyLevel(self, extract_returns=True):
         """
@@ -60,7 +58,6 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetOccupancyState(self, extract_returns=True):
         """
             Calls the GetOccupancyState action.
@@ -78,7 +75,6 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetActivityLevel(self, NewActivityLevel, extract_returns=True):
         """
@@ -100,7 +96,6 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetDormancyLevel(self, NewDormancyLevel, extract_returns=True):
         """
             Calls the SetDormancyLevel action.
@@ -121,7 +116,6 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetOccupancyState(self, NewOccupancyState, extract_returns=True):
         """
             Calls the SetOccupancyState action.
@@ -141,4 +135,3 @@ class HouseStatus1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

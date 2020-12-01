@@ -22,7 +22,6 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "TriggeredItem": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_AddCalendarItems(self, Caltems, extract_returns=True):
         """
             Calls the AddCalendarItems action.
@@ -42,7 +41,6 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_DeleteCalendarItems(self, ItemIDs, extract_returns=True):
         """
@@ -64,7 +62,6 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetCalendarItems(self, ItemIDs, extract_returns=True):
         """
             Calls the GetCalendarItems action.
@@ -84,7 +81,6 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetMemo(self, MemoID, extract_returns=True):
         """
@@ -106,7 +102,6 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTelCPNameList(self, extract_returns=True):
         """
             Calls the GetTelCPNameList action.
@@ -125,7 +120,6 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTriggeredItems(self, extract_returns=True):
         """
             Calls the GetTriggeredItems action.
@@ -143,7 +137,6 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_PostMemo(self, Memo, extract_returns=True):
         """
@@ -164,7 +157,6 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_RegisterItemDelivery(self, ItemDeliveryMethod, Expires, extract_returns=True):
         """
@@ -187,7 +179,6 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_RegisterTelCPName(self, TelCPName, extract_returns=True):
         """
             Calls the RegisterTelCPName action.
@@ -207,7 +198,6 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_UnregisterTelCPName(self, TelCPName, extract_returns=True):
         """
@@ -229,7 +219,6 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_UpdateCalendarItems(self, Caltems, extract_returns=True):
         """
             Calls the UpdateCalendarItems action.
@@ -249,4 +238,3 @@ class Calendar1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

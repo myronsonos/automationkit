@@ -18,7 +18,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_BaselineReset(self, extract_returns=True):
         """
             Calls the BaselineReset action.
@@ -36,7 +35,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_CancelTest(self, TestID, extract_returns=True):
         """
@@ -58,7 +56,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetActiveTestIDs(self, extract_returns=True):
         """
             Calls the GetActiveTestIDs action.
@@ -77,7 +74,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDeviceStatus(self, extract_returns=True):
         """
             Calls the GetDeviceStatus action.
@@ -95,7 +91,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetInterfaceResetResult(self, TestID, extract_returns=True):
         """
@@ -117,7 +112,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetLogInfo(self, LogURI, extract_returns=True):
         """
             Calls the GetLogInfo action.
@@ -138,7 +132,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetLogURIs(self, extract_returns=True):
         """
             Calls the GetLogURIs action.
@@ -156,7 +149,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetNSLookupResult(self, TestID, extract_returns=True):
         """
@@ -178,7 +170,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetPingResult(self, TestID, extract_returns=True):
         """
             Calls the GetPingResult action.
@@ -198,7 +189,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSelfTestResult(self, TestID, extract_returns=True):
         """
@@ -220,7 +210,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSequenceMode(self, extract_returns=True):
         """
             Calls the GetSequenceMode action.
@@ -238,7 +227,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetTestInfo(self, TestID, extract_returns=True):
         """
@@ -260,7 +248,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTracerouteResult(self, TestID, extract_returns=True):
         """
             Calls the GetTracerouteResult action.
@@ -281,7 +268,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_InterfaceReset(self, Interfaces, extract_returns=True):
         """
             Calls the InterfaceReset action.
@@ -301,7 +287,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_NSLookup(self, HostName, DNSServer, NumberOfRepetitions, Timeout, extract_returns=True):
         """
@@ -325,7 +310,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Ping(self, Host, NumberOfRepetitions, Timeout, DataBlockSize, DSCP, extract_returns=True):
         """
@@ -351,7 +335,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_Reboot(self, extract_returns=True):
         """
             Calls the Reboot action.
@@ -370,7 +353,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SelfTest(self, extract_returns=True):
         """
             Calls the SelfTest action.
@@ -388,7 +370,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetLogInfo(self, LogURI, Enabled, LogLevel, extract_returns=True):
         """
@@ -412,7 +393,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetSequenceMode(self, NewSequenceMode, extract_returns=True):
         """
             Calls the SetSequenceMode action.
@@ -432,7 +412,6 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Traceroute(self, Host, Timeout, DataBlockSize, MaxHopCount, DSCP, extract_returns=True):
         """
@@ -457,4 +436,3 @@ class BasicManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

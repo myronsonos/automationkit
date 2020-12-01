@@ -18,7 +18,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_DeleteDNSServer(self, NewDNSServers, extract_returns=True):
         """
             Calls the DeleteDNSServer action.
@@ -38,7 +37,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_DeleteIPRouter(self, NewIPRouters, extract_returns=True):
         """
@@ -60,7 +58,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DeleteReservedAddress(self, NewReservedAddresses, extract_returns=True):
         """
             Calls the DeleteReservedAddress action.
@@ -81,7 +78,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetAddressRange(self, extract_returns=True):
         """
             Calls the GetAddressRange action.
@@ -99,7 +95,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDHCPRelay(self, extract_returns=True):
         """
@@ -119,7 +114,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDHCPServerConfigurable(self, extract_returns=True):
         """
             Calls the GetDHCPServerConfigurable action.
@@ -137,7 +131,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDNSServers(self, extract_returns=True):
         """
@@ -157,7 +150,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDomainName(self, extract_returns=True):
         """
             Calls the GetDomainName action.
@@ -175,7 +167,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetIPRoutersList(self, extract_returns=True):
         """
@@ -195,7 +186,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetReservedAddresses(self, extract_returns=True):
         """
             Calls the GetReservedAddresses action.
@@ -214,7 +204,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSubnetMask(self, extract_returns=True):
         """
             Calls the GetSubnetMask action.
@@ -232,7 +221,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetAddressRange(self, NewMinAddress, NewMaxAddress, extract_returns=True):
         """
@@ -255,7 +243,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetDHCPRelay(self, NewDHCPRelay, extract_returns=True):
         """
             Calls the SetDHCPRelay action.
@@ -275,7 +262,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetDHCPServerConfigurable(self, NewDHCPServerConfigurable, extract_returns=True):
         """
@@ -297,7 +283,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetDNSServer(self, NewDNSServers, extract_returns=True):
         """
             Calls the SetDNSServer action.
@@ -317,7 +302,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetDomainName(self, NewDomainName, extract_returns=True):
         """
@@ -339,7 +323,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetIPRouter(self, NewIPRouters, extract_returns=True):
         """
             Calls the SetIPRouter action.
@@ -359,7 +342,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetReservedAddress(self, NewReservedAddresses, extract_returns=True):
         """
@@ -381,7 +363,6 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetSubnetMask(self, NewSubnetMask, extract_returns=True):
         """
             Calls the SetSubnetMask action.
@@ -401,4 +382,3 @@ class LANHostConfigManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

@@ -24,7 +24,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
         "FixedWhiteBalance": { "data_type": "ui4", "default": "3000", "allowed_list": None},
     }
 
-
     def action_DecreaseBrightness(self, extract_returns=True):
         """
             Calls the DecreaseBrightness action.
@@ -42,7 +41,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_DecreaseColorSaturation(self, extract_returns=True):
         """
@@ -62,7 +60,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
 
         return rtn_args
 
-
     def action_GetAutomaticWhiteBalance(self, extract_returns=True):
         """
             Calls the GetAutomaticWhiteBalance action.
@@ -80,7 +77,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetAvailableRotations(self, extract_returns=True):
         """
@@ -100,7 +96,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
 
         return rtn_args
 
-
     def action_GetBrightness(self, extract_returns=True):
         """
             Calls the GetBrightness action.
@@ -118,7 +113,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetColorSaturation(self, extract_returns=True):
         """
@@ -138,7 +132,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
 
         return rtn_args
 
-
     def action_GetDefaultRotation(self, extract_returns=True):
         """
             Calls the GetDefaultRotation action.
@@ -156,7 +149,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetFixedWhiteBalance(self, extract_returns=True):
         """
@@ -176,7 +168,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
 
         return rtn_args
 
-
     def action_IncreaseBrightness(self, extract_returns=True):
         """
             Calls the IncreaseBrightness action.
@@ -195,7 +186,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
 
         return rtn_args
 
-
     def action_IncreaseColorSaturation(self, extract_returns=True):
         """
             Calls the IncreaseColorSaturation action.
@@ -213,7 +203,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetAutomaticWhiteBalance(self, NewAutomaticWhiteBalance, extract_returns=True):
         """
@@ -235,7 +224,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
 
         return rtn_args
 
-
     def action_SetBrightness(self, NewBrightness, extract_returns=True):
         """
             Calls the SetBrightness action.
@@ -255,7 +243,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetColorSaturation(self, NewColorSaturation, extract_returns=True):
         """
@@ -277,7 +264,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
 
         return rtn_args
 
-
     def action_SetDefaultRotation(self, NewRotation, extract_returns=True):
         """
             Calls the SetDefaultRotation action.
@@ -298,7 +284,6 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
 
         return rtn_args
 
-
     def action_SetFixedWhiteBalance(self, NewFixedWhiteBalance, extract_returns=True):
         """
             Calls the SetFixedWhiteBalance action.
@@ -318,4 +303,3 @@ class DigitalSecurityCameraSettings1ServiceProxy(UpnpServiceProxy, LoadableExten
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

@@ -20,7 +20,6 @@ class RATAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "CredentialsList": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_AddProfile(self, NewProfileConfigInfo, extract_returns=True):
         """
             Calls the AddProfile action.
@@ -41,7 +40,6 @@ class RATAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DeleteProfile(self, ProfileID, extract_returns=True):
         """
             Calls the DeleteProfile action.
@@ -61,7 +59,6 @@ class RATAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_EditProfile(self, ProfileID, UpdatedProfileConfigInfo, extract_returns=True):
         """
@@ -84,7 +81,6 @@ class RATAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetCredentialsList(self, extract_returns=True):
         """
             Calls the GetCredentialsList action.
@@ -102,7 +98,6 @@ class RATAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetProfileConfigInfo(self, ProfileID, extract_returns=True):
         """
@@ -124,7 +119,6 @@ class RATAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetProfileList(self, extract_returns=True):
         """
             Calls the GetProfileList action.
@@ -142,7 +136,6 @@ class RATAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSupportedCredentialDelivery(self, extract_returns=True):
         """
@@ -162,7 +155,6 @@ class RATAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTransportAgentCapabilities(self, extract_returns=True):
         """
             Calls the GetTransportAgentCapabilities action.
@@ -180,4 +172,3 @@ class RATAConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

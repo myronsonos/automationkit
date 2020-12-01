@@ -18,7 +18,6 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_AddUIListing(self, InputUIList, extract_returns=True):
         """
             Calls the AddUIListing action.
@@ -38,7 +37,6 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Connect(self, RequestedConnections, extract_returns=True):
         """
@@ -60,7 +58,6 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_Disconnect(self, RequestedDisconnects, extract_returns=True):
         """
             Calls the Disconnect action.
@@ -80,7 +77,6 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_DisplayMessage(self, MessageType, Message, extract_returns=True):
         """
@@ -103,7 +99,6 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetCurrentConnections(self, extract_returns=True):
         """
             Calls the GetCurrentConnections action.
@@ -121,7 +116,6 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDeviceProfile(self, extract_returns=True):
         """
@@ -141,7 +135,6 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetUIListing(self, extract_returns=True):
         """
             Calls the GetUIListing action.
@@ -159,7 +152,6 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ProcessInput(self, InputDataType, InputData, extract_returns=True):
         """
@@ -182,7 +174,6 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_RemoveUIListing(self, RemoveUIList, extract_returns=True):
         """
             Calls the RemoveUIListing action.
@@ -202,4 +193,3 @@ class RemoteUIClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

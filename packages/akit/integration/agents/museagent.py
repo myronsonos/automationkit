@@ -2,11 +2,12 @@
 import base64
 import http
 import os
-import requests
 import socket
 import weakref
 
 from html.parser import HTMLParser
+
+import requests
 
 from akit.aspects import RunPattern, DEFAULT_ASPECTS
 from akit.exceptions import AKitHTTPRequestError

@@ -21,7 +21,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "SessionUpdates": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_AcceptSession(self, SessionID, extract_returns=True):
         """
             Calls the AcceptSession action.
@@ -41,7 +40,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_CancelFileTransfer(self, SessionID, extract_returns=True):
         """
@@ -63,7 +61,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_CloseSession(self, SessionID, extract_returns=True):
         """
             Calls the CloseSession action.
@@ -83,7 +80,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_CreateSession(self, SessionClass, SessionRecipients, Subject, SupportedContentType, extract_returns=True):
         """
@@ -108,7 +104,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DeleteMessage(self, MessageID, extract_returns=True):
         """
             Calls the DeleteMessage action.
@@ -128,7 +123,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetFileTransferSession(self, SessionID, extract_returns=True):
         """
@@ -150,7 +144,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetMessagingCapabilities(self, extract_returns=True):
         """
             Calls the GetMessagingCapabilities action.
@@ -168,7 +161,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetNewMessages(self, extract_returns=True):
         """
@@ -188,7 +180,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSessionUpdates(self, extract_returns=True):
         """
             Calls the GetSessionUpdates action.
@@ -206,7 +197,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSessions(self, SessionID, SessionClass, SessionStatus, extract_returns=True):
         """
@@ -230,7 +220,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTelephonyIdentity(self, extract_returns=True):
         """
             Calls the GetTelephonyIdentity action.
@@ -248,7 +237,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_JoinSession(self, SessionID, extract_returns=True):
         """
@@ -270,7 +258,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_LeaveSession(self, SessionID, extract_returns=True):
         """
             Calls the LeaveSession action.
@@ -290,7 +277,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ModifySession(self, SessionID, SessionRecipientsToAdd, SessionRecipientsToRemove, Subject, SupportedContentType, SessionClass, extract_returns=True):
         """
@@ -317,7 +303,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ReadMessage(self, MessageID, extract_returns=True):
         """
             Calls the ReadMessage action.
@@ -337,7 +322,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SearchMessages(self, MessageClass, MessageFolder, MessageStatus, SessionID, extract_returns=True):
         """
@@ -362,7 +346,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SendMessage(self, MessageToSend, extract_returns=True):
         """
             Calls the SendMessage action.
@@ -383,7 +366,6 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StartFileTransfer(self, FileInfoList, extract_returns=True):
         """
             Calls the StartFileTransfer action.
@@ -403,4 +385,3 @@ class Messaging1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

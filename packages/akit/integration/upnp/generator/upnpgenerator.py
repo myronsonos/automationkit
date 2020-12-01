@@ -60,7 +60,6 @@ class %(class_name)s(UpnpServiceProxy, LoadableExtension):
     SERVICE_TYPE = '%(service_type)s'
 
     SERVICE_EVENT_VARIABLES = {%(service_variables)s}
-
 """
 
 TEMPLATE_GETTER = """
@@ -70,7 +69,6 @@ TEMPLATE_GETTER = """
         \"""
         rval = self._proxy_get_variable_value("%(var_name)s")
         return rval
-
 """
 
 TEMPLATE_SETTER = """
@@ -80,7 +78,6 @@ TEMPLATE_SETTER = """
         \"""
         self._proxy_set_variable_value("%(var_name)s", val)
         return
-
 """
 
 TEMPLATE_ACTION = """
@@ -100,7 +97,6 @@ TEMPLATE_ACTION = """
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 """
 
 def node_lower_strip_text(txt):
@@ -118,7 +114,7 @@ def generate_upnp_service_proxy(servicesDir, serviceManufacturer, serviceType, v
     if not os.path.exists(servicesDir):
         os.makedirs(servicesDir)
 
-    ensure_directory_is_package(servicesDir, packageTitle="Services directory module")
+    ensure_directory_is_package(servicesDir, package_title="Services directory module")
 
     service_type_parts = serviceType.split(":")
 
@@ -163,11 +159,6 @@ def generate_upnp_service_proxy(servicesDir, serviceManufacturer, serviceType, v
         if "defaultValue" in variable_info:
             var_default_value = variable_info["defaultValue"]
 
-        var_fill_dict = {
-            'var_name': var_name,
-            'var_type': var_type,
-        }
-
         if var_send_events == 'yes':
             default_entry = ", \"default\": None"
             if var_default_value is not None:
@@ -208,7 +199,6 @@ def generate_upnp_service_proxy(servicesDir, serviceManufacturer, serviceType, v
             out_params_list = '"result"'
 
             args_dict = "{ }\n"
-            args_in_table = action_info["args_in"]
             args_in_keys = action_info["args_in_keys"]
             if len(args_in_keys) > 0:
                 in_params_list = ", ".join(args_in_keys)
@@ -221,7 +211,6 @@ def generate_upnp_service_proxy(servicesDir, serviceManufacturer, serviceType, v
             if len(in_params_list) > 0:
                 in_params_comma = ", "
 
-            args_out_table = action_info["args_out"]
             args_out_keys = [ '"%s"' % ok for ok in action_info["args_out_keys"] ]
             if len(args_out_keys) > 0:
                 out_params_list = ", ".join(args_out_keys)

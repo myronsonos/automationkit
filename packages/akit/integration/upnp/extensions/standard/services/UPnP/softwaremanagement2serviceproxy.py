@@ -18,7 +18,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_GetACLData(self, extract_returns=True):
         """
             Calls the GetACLData action.
@@ -36,7 +35,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetActiveEUIDs(self, extract_returns=True):
         """
@@ -56,7 +54,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDUIDs(self, extract_returns=True):
         """
             Calls the GetDUIDs action.
@@ -74,7 +71,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDUInfo(self, DUID, extract_returns=True):
         """
@@ -96,7 +92,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetEUIDs(self, extract_returns=True):
         """
             Calls the GetEUIDs action.
@@ -114,7 +109,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetEUInfo(self, EUID, extract_returns=True):
         """
@@ -136,7 +130,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetErrorEUIDs(self, extract_returns=True):
         """
             Calls the GetErrorEUIDs action.
@@ -155,7 +148,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetOperationIDs(self, extract_returns=True):
         """
             Calls the GetOperationIDs action.
@@ -173,7 +165,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetOperationInfo(self, OperationID, extract_returns=True):
         """
@@ -195,7 +186,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetRunningEUIDs(self, extract_returns=True):
         """
             Calls the GetRunningEUIDs action.
@@ -213,7 +203,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Install(self, DUURI, DUType, HandleDependencies, extract_returns=True):
         """
@@ -237,7 +226,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_Start(self, EUID, HandleDependencies, extract_returns=True):
         """
             Calls the Start action.
@@ -258,7 +246,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Stop(self, EUID, HandleDependencies, extract_returns=True):
         """
@@ -281,7 +268,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_Uninstall(self, DUID, HandleDependencies, extract_returns=True):
         """
             Calls the Uninstall action.
@@ -302,7 +288,6 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Update(self, DUID, NewDUURI, HandleDependencies, extract_returns=True):
         """
@@ -325,4 +310,3 @@ class SoftwareManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

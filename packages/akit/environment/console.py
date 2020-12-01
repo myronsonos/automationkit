@@ -25,17 +25,21 @@ from logging.handlers import RotatingFileHandler
 os.environ["AKIT_CONSOLE_LOG_LEVEL"] = "QUIET"
 os.environ["AKIT_JOBTYPE"] = "console"
 
-import akit.environment.activate # pylint: disable=unused-import, wrong-import-position
+import akit.environment.activate # pylint: disable=unused-import,wrong-import-position
 
-from akit.xlogging.foundations import logging_initialize, LoggingDefaults
+from akit.xlogging.foundations import logging_initialize, LoggingDefaults # pylint: disable=wrong-import-position
 
 LoggingDefaults.DefaultFileLoggingHandler = RotatingFileHandler
 logging_initialize()
 
 def showlog():
-    import subprocess # pylint disable=import-outside-toplevel
+    """
+        Opens up another terminal and shows the output of the console log in the terminal.  This way we don't
+        need to clutter the interactive terminal with logging based output.
+    """
+    import subprocess # pylint: disable=import-outside-toplevel
 
-    from akit.environment.context import context # pylint disable=import-outside-toplevel
+    from akit.environment.context import context # pylint: disable=import-outside-toplevel
     targetlog = context.lookup("/environment/logfile_debug")
 
     terminal_exec = "gnome-terminal"

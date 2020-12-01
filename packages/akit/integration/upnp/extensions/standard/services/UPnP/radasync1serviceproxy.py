@@ -18,7 +18,6 @@ class RADASync1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_AddRemoteDevices(self, DeviceList, ID, extract_returns=True):
         """
             Calls the AddRemoteDevices action.
@@ -40,7 +39,6 @@ class RADASync1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_HeartbeatUpdate(self, ID, extract_returns=True):
         """
             Calls the HeartbeatUpdate action.
@@ -60,7 +58,6 @@ class RADASync1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_RemoveRemoteDevices(self, DeviceList, ID, extract_returns=True):
         """
@@ -83,7 +80,6 @@ class RADASync1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetDDDLocation(self, DDDLocation, ID, extract_returns=True):
         """
             Calls the SetDDDLocation action.
@@ -104,4 +100,3 @@ class RADASync1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

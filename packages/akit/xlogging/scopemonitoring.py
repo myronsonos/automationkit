@@ -33,82 +33,6 @@ DEFAULT_MONITORED_SCOPE_TIMEOUT = 600
 
 logger = getAutomatonKitLogger()
 
-class ScopeMonitor:
-    """
-        The :class:`ScopeMonitor` object is utilized to provide monitoring of threads that are entering
-        sections of code that might have a tendency to block and cause disruptions in automation processes.
-
-        The :class:`ScopeMonitor` takes pre-dictive work packets for logging from threads entering critical
-        sections of code monitored by :class:`MonitoredScope` instances used in a 'with' statement.
-
-        ..code-block:: python
-
-            with MonitoredScope("RunCommand", "Running command on cluster node (%s)" % nodeip) as mscope:
-                cluster.run_cmd(1, "echo blah")
-
-        The use of a :class:`MonitoredScope` remove the necessity to log prior to entering a critical
-        section of code but allows log entrys to be pre-emptively handed off to the :class:`ScopeMonitor`
-        thread for contingent processing should a the thread fail to return from the critical section of
-        code in a timely manner.
-    """
-
-    SCOPE_MONITOR_INTERVAL = 5
-
-    instance = None
-    initialized = False
-
-    def __new__(cls, *_args, **_kwargs):
-        """
-            Constructs new instances of the :class:`ScopeMonitor` object. The
-            :class:`ScopeMonitor` object is a singleton so following instantiations
-            of the object will reference the existing singleton
-        """
-
-        if cls.instance is None:
-            cls.instance = super(ScopeMonitor, cls).__new__(cls)
-        return cls.instance
-
-    def __init__(self):
-        thisType = type(self)
-        if not thisType.initialized:
-            thisType.initialized = True
-
-            self._monitors = []
-            self._monitors_lock = threading.RLock()
-
-            self._timer = threading.Timer(self.SCOPE_MONITOR_INTERVAL, self._monitor_tick, kwargs={ "name": "ScopeMonitorTimer", "daemon": True })
-        return
-
-    def register_monitor(self, monitor):
-
-        self._monitors_lock.acquire()
-        try:
-            insert_into_ordered_list_ascending(self._monitors, monitor)
-        finally:
-            self._monitors_lock.release()
-
-        return
-
-    def _monitor_tick(self, sgate):
-
-        self._monitors_lock.acquire()
-        try:
-            if len(self._monitors) > 0:
-                while True:
-                    firstMonitor = self._monitors[0]
-                    if firstMonitor.expired:
-                        firstMonitor.trigger_notification()
-                        del self._monitors[0]
-                    else:
-                        break
-        finally:
-            self._monitors_lock.release()
-
-        return
-
-
-global_scope_monitor = None
-
 class MonitoredScope:
     """
         The :class:`MonitoredScope` object is utilized in order to provide monitoring on threads
@@ -293,3 +217,84 @@ class MonitoredScope:
 
         return
 
+class ScopeMonitor:
+    """
+        The :class:`ScopeMonitor` object is utilized to provide monitoring of threads that are entering
+        sections of code that might have a tendency to block and cause disruptions in automation processes.
+
+        The :class:`ScopeMonitor` takes pre-dictive work packets for logging from threads entering critical
+        sections of code monitored by :class:`MonitoredScope` instances used in a 'with' statement.
+
+        ..code-block:: python
+
+            with MonitoredScope("RunCommand", "Running command on cluster node (%s)" % nodeip) as mscope:
+                cluster.run_cmd(1, "echo blah")
+
+        The use of a :class:`MonitoredScope` remove the necessity to log prior to entering a critical
+        section of code but allows log entrys to be pre-emptively handed off to the :class:`ScopeMonitor`
+        thread for contingent processing should a the thread fail to return from the critical section of
+        code in a timely manner.
+    """
+
+    SCOPE_MONITOR_INTERVAL = 5
+
+    instance = None
+    initialized = False
+
+    def __new__(cls, *_args, **_kwargs):
+        """
+            Constructs new instances of the :class:`ScopeMonitor` object. The
+            :class:`ScopeMonitor` object is a singleton so following instantiations
+            of the object will reference the existing singleton
+        """
+
+        if cls.instance is None:
+            cls.instance = super(ScopeMonitor, cls).__new__(cls)
+        return cls.instance
+
+    def __init__(self):
+        thisType = type(self)
+        if not thisType.initialized:
+            thisType.initialized = True
+
+            self._monitors = []
+            self._monitors_lock = threading.RLock()
+
+            self._timer = threading.Timer(self.SCOPE_MONITOR_INTERVAL, self._monitor_tick, kwargs={ "name": "ScopeMonitorTimer", "daemon": True })
+        return
+
+    def register_monitor(self, monitor: MonitoredScope):
+        """
+            Register a monitor context with the :class:`ScopeMonitor` singleton.
+
+            :param monitor: The monitor context to add to the the list of monitored scopes.
+            :type monitor: :class:`MonitoredScope`
+        """
+
+        self._monitors_lock.acquire()
+        try:
+            insert_into_ordered_list_ascending(self._monitors, monitor)
+        finally:
+            self._monitors_lock.release()
+
+        return
+
+    def _monitor_tick(self, sgate):
+
+        self._monitors_lock.acquire()
+        try:
+            if len(self._monitors) > 0:
+                while True:
+                    firstMonitor = self._monitors[0]
+                    if firstMonitor.expired:
+                        firstMonitor.trigger_notification()
+                        del self._monitors[0]
+                    else:
+                        break
+        finally:
+            self._monitors_lock.release()
+
+        return
+
+
+global_scope_monitor = None

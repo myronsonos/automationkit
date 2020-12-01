@@ -23,7 +23,6 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "SourceProtocolInfo": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_ConnectionComplete(self, ConnectionID, extract_returns=True):
         """
             Calls the ConnectionComplete action.
@@ -44,7 +43,6 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetCurrentConnectionIDs(self, extract_returns=True):
         """
             Calls the GetCurrentConnectionIDs action.
@@ -62,7 +60,6 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetCurrentConnectionInfo(self, ConnectionID, extract_returns=True):
         """
@@ -84,7 +81,6 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetFeatureList(self, extract_returns=True):
         """
             Calls the GetFeatureList action.
@@ -103,7 +99,6 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetProtocolInfo(self, extract_returns=True):
         """
             Calls the GetProtocolInfo action.
@@ -121,7 +116,6 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetRendererItemInfo(self, ItemInfoFilter, ItemMetadataList, extract_returns=True):
         """
@@ -143,7 +137,6 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_PrepareForConnection(self, RemoteProtocolInfo, PeerConnectionManager, PeerConnectionID, Direction, extract_returns=True):
         """
@@ -167,4 +160,3 @@ class ConnectionManager3ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

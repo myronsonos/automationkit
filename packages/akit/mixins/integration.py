@@ -19,8 +19,6 @@ __license__ = "MIT"
 
 import inspect
 
-from akit.exceptions import AKitInvalidConfigError, AKitMissingConfigError, AKitResourceError, AKitSemanticError, AKitInitialConnectivityError
-
 from akit.environment.context import ContextUser
 
 from akit.xlogging.foundations import getAutomatonKitLogger
@@ -40,6 +38,8 @@ class IntegrationMixIn(ContextUser):
         """
             The default contructor for an :class:`IntegrationMixIn`.
         """
+        super(IntegrationMixIn, self).__init__()
+
         self._role = role
 
         if self.pathname is None:
@@ -72,7 +72,7 @@ class IntegrationMixIn(ContextUser):
         """
         return self._role
 
-    def on_mode_changed(self, prev_mode, new_mode): # pylint: disable=unused-argument
+    def on_mode_changed(self, prev_mode, new_mode): # pylint: disable=no-self-use,unused-argument
         """
             Implemented by derived classes in order to perform the changeover of modes.
         """
@@ -118,7 +118,7 @@ class IntegrationMixIn(ContextUser):
         return
 
     @classmethod
-    def diagnostic(cls, diag_level, diag_folder):
+    def diagnostic(cls, diag_level, diag_folder): # pylint: disable=unused-argument
         """
             The API is called by the :class:`akit.sequencer.Sequencer` object when the automation sequencer is
             building out a diagnostic package at a diagnostic point in the automation sequence.  Example diagnostic
@@ -148,6 +148,10 @@ class IntegrationMixIn(ContextUser):
         return
 
 def is_integration_mixin(cls):
+    """
+        Helper function that is used to determine if a type is an :class:`IntegrationMixIn` subclass, but not
+        the :class:`IntegrationMixIn` type itself.
+    """
     is_integmi = False
     if inspect.isclass(cls) and cls is not IntegrationMixIn and issubclass(cls, IntegrationMixIn):
         is_integmi = True

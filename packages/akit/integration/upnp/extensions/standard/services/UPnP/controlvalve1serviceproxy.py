@@ -18,7 +18,6 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_GetMinMax(self, extract_returns=True):
         """
             Calls the GetMinMax action.
@@ -36,7 +35,6 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetMode(self, extract_returns=True):
         """
@@ -56,7 +54,6 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetPosition(self, extract_returns=True):
         """
             Calls the GetPosition action.
@@ -75,7 +72,6 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetPositionTarget(self, extract_returns=True):
         """
             Calls the GetPositionTarget action.
@@ -93,7 +89,6 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetMinMax(self, NewMinPosition, NewMaxPosition, extract_returns=True):
         """
@@ -116,7 +111,6 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetMode(self, NewControlMode, extract_returns=True):
         """
             Calls the SetMode action.
@@ -137,7 +131,6 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetPosition(self, NewPositionTarget, extract_returns=True):
         """
             Calls the SetPosition action.
@@ -157,4 +150,3 @@ class ControlValve1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

@@ -18,7 +18,6 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_GetBPIEncryptionEnabled(self, extract_returns=True):
         """
             Calls the GetBPIEncryptionEnabled action.
@@ -36,7 +35,6 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetCableLinkConfigInfo(self, extract_returns=True):
         """
@@ -56,7 +54,6 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetConfigFile(self, extract_returns=True):
         """
             Calls the GetConfigFile action.
@@ -74,7 +71,6 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDownstreamFrequency(self, extract_returns=True):
         """
@@ -94,7 +90,6 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDownstreamModulation(self, extract_returns=True):
         """
             Calls the GetDownstreamModulation action.
@@ -112,7 +107,6 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetTFTPServer(self, extract_returns=True):
         """
@@ -132,7 +126,6 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetUpstreamChannelID(self, extract_returns=True):
         """
             Calls the GetUpstreamChannelID action.
@@ -150,7 +143,6 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetUpstreamFrequency(self, extract_returns=True):
         """
@@ -170,7 +162,6 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetUpstreamModulation(self, extract_returns=True):
         """
             Calls the GetUpstreamModulation action.
@@ -189,7 +180,6 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetUpstreamPowerLevel(self, extract_returns=True):
         """
             Calls the GetUpstreamPowerLevel action.
@@ -207,4 +197,3 @@ class WANCableLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

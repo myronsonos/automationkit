@@ -115,7 +115,7 @@ class IteratorScopeMixIn(ContextUser):
         return
 
     @classmethod
-    def iteration_advance(cls, iterctx):
+    def iteration_advance(cls, iterctx): # pylint: disable=unused-argument
         """
             The 'iteration_advance' API is overridden by derived iterator scope mixins and is called by the
             sequencer after the scope exits.  This class level hook method is used by the sequencer to advance
@@ -127,12 +127,20 @@ class IteratorScopeMixIn(ContextUser):
         return
 
 def is_scope_mixin(cls) -> bool:
+    """
+        Helper function that is used to determine if a type is an :class:`ScopeMixIn` subclass, but not
+        the ScopeMixIn type itself.
+    """
     is_scopemi = False
     if inspect.isclass(cls) and cls is not ScopeMixIn and issubclass(cls, ScopeMixIn):
         is_scopemi = True
     return is_scopemi
 
 def is_iteration_scope_mixin(cls) -> bool:
+    """
+        Helper function that is used to determine if a type is an :class:`IteratorScopeMixIn` subclass, but not
+        the :class:`IteratorScopeMixIn` type itself.
+    """
     is_iterscopemi = False
     if inspect.isclass(cls) and cls is not ScopeMixIn and issubclass(cls, ScopeMixIn) and \
         hasattr(cls, "iteration_initialize") and hasattr(cls, "iteration_advance"):
@@ -140,5 +148,12 @@ def is_iteration_scope_mixin(cls) -> bool:
     return is_iterscopemi
 
 def scope_finalize(context, pathname):
+    """
+        Callback method used to finalize scope object and ensure they are unpublished from the
+        global context.
+
+        :param context: A reference to the context object.
+        :param pathname: A string lookup path to the object in the context.
+    """
     context.remove(pathname)
     return

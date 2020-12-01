@@ -21,7 +21,6 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "TOSLinkConnected": { "data_type": "boolean", "default": None, "allowed_list": None},
     }
 
-
     def action_CommitLearnedIRCodes(self, Name, extract_returns=True):
         """
             Calls the CommitLearnedIRCodes action.
@@ -42,7 +41,6 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetIRRepeaterState(self, extract_returns=True):
         """
             Calls the GetIRRepeaterState action.
@@ -61,7 +59,6 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetLEDFeedbackState(self, extract_returns=True):
         """
             Calls the GetLEDFeedbackState action.
@@ -79,7 +76,6 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_IdentifyIRRemote(self, Timeout, extract_returns=True):
         """
@@ -101,7 +97,6 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_IsRemoteConfigured(self, extract_returns=True):
         """
             Calls the IsRemoteConfigured action.
@@ -119,7 +114,6 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_LearnIRCode(self, IRCode, Timeout, extract_returns=True):
         """
@@ -142,7 +136,6 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetIRRepeaterState(self, DesiredIRRepeaterState, extract_returns=True):
         """
             Calls the SetIRRepeaterState action.
@@ -163,7 +156,6 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetLEDFeedbackState(self, LEDFeedbackState, extract_returns=True):
         """
             Calls the SetLEDFeedbackState action.
@@ -183,4 +175,3 @@ class HTControl1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

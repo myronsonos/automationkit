@@ -18,7 +18,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_CreateInstance(self, MultiInstanceName, ChildrenInitialization, extract_returns=True):
         """
             Calls the CreateInstance action.
@@ -40,7 +39,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DeleteInstance(self, InstanceIdentifier, extract_returns=True):
         """
             Calls the DeleteInstance action.
@@ -61,7 +59,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetAttributeValuesUpdate(self, extract_returns=True):
         """
             Calls the GetAttributeValuesUpdate action.
@@ -79,7 +76,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetAttributes(self, Parameters, extract_returns=True):
         """
@@ -101,7 +97,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetConfigurationUpdate(self, extract_returns=True):
         """
             Calls the GetConfigurationUpdate action.
@@ -119,7 +114,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetCurrentConfigurationVersion(self, extract_returns=True):
         """
@@ -139,7 +133,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetInconsistentStatus(self, extract_returns=True):
         """
             Calls the GetInconsistentStatus action.
@@ -157,7 +150,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetInstances(self, StartingNode, SearchDepth, extract_returns=True):
         """
@@ -180,7 +172,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSelectedValues(self, StartingNode, Filter, extract_returns=True):
         """
             Calls the GetSelectedValues action.
@@ -202,7 +193,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSupportedDataModels(self, extract_returns=True):
         """
             Calls the GetSupportedDataModels action.
@@ -221,7 +211,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSupportedDataModelsUpdate(self, extract_returns=True):
         """
             Calls the GetSupportedDataModelsUpdate action.
@@ -239,7 +228,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSupportedParameters(self, StartingNode, SearchDepth, extract_returns=True):
         """
@@ -262,7 +250,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSupportedParametersUpdate(self, extract_returns=True):
         """
             Calls the GetSupportedParametersUpdate action.
@@ -280,7 +267,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetValues(self, Parameters, extract_returns=True):
         """
@@ -302,7 +288,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetAttributes(self, NodeAttributeValueList, extract_returns=True):
         """
             Calls the SetAttributes action.
@@ -323,7 +308,6 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetValues(self, ParameterValueList, extract_returns=True):
         """
             Calls the SetValues action.
@@ -343,4 +327,3 @@ class ConfigurationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

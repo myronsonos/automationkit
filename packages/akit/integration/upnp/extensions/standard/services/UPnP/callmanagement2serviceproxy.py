@@ -25,7 +25,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "VoiceMailInfo": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_AcceptCall(self, TelCPName, SecretKey, TargetCallID, MediaCapabilityInfo, CallMode, extract_returns=True):
         """
             Calls the AcceptCall action.
@@ -50,7 +49,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_AcceptModifyCall(self, TelCPName, SecretKey, TargetCallID, MediaCapabilityInfo, extract_returns=True):
         """
             Calls the AcceptModifyCall action.
@@ -74,7 +72,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_AcceptParallelCall(self, ParallelCalleeID, extract_returns=True):
         """
             Calls the AcceptParallelCall action.
@@ -94,7 +91,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ChangeCallMode(self, TelCPName, SecretKey, CallID, CallMode, extract_returns=True):
         """
@@ -119,7 +115,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ChangeMonopolizer(self, CurrentMonopolizer, SecretKey, TargetCallID, NewMonopolizer, extract_returns=True):
         """
             Calls the ChangeMonopolizer action.
@@ -143,7 +138,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ChangeTelCPName(self, CurrentTelCPName, CurrentSecretKey, NewTelCPName, extract_returns=True):
         """
             Calls the ChangeTelCPName action.
@@ -166,7 +160,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ClearCallBack(self, CallBackID, extract_returns=True):
         """
             Calls the ClearCallBack action.
@@ -187,7 +180,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ClearCallLogs(self, extract_returns=True):
         """
             Calls the ClearCallLogs action.
@@ -205,7 +197,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_DeleteVoiceMail(self, TelCPName, SecretKey, VoiceMailID, extract_returns=True):
         """
@@ -229,7 +220,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_EnhancedInitiateCall(self, CalleeID, CallType, extract_returns=True):
         """
             Calls the EnhancedInitiateCall action.
@@ -251,7 +241,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetCallBackInfo(self, extract_returns=True):
         """
             Calls the GetCallBackInfo action.
@@ -269,7 +258,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetCallInfo(self, TelCPName, SecretKey, TargetCallID, extract_returns=True):
         """
@@ -293,7 +281,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetCallLogs(self, extract_returns=True):
         """
             Calls the GetCallLogs action.
@@ -311,7 +298,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetMediaCapabilities(self, TCMediaCapabilityInfo, extract_returns=True):
         """
@@ -333,7 +319,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetPushInfo(self, PushInfoList, extract_returns=True):
         """
             Calls the GetPushInfo action.
@@ -354,7 +339,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTelCPNameList(self, extract_returns=True):
         """
             Calls the GetTelCPNameList action.
@@ -373,7 +357,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTelephonyIdentity(self, extract_returns=True):
         """
             Calls the GetTelephonyIdentity action.
@@ -391,7 +374,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetVoiceMail(self, TelCPName, SecretKey, VoiceMailID, extract_returns=True):
         """
@@ -414,7 +396,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_IgnoreCall(self, TelCPName, SecretKey, CallID, IgnoreReason, extract_returns=True):
         """
@@ -439,7 +420,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_InitiateCall(self, CalleeID, extract_returns=True):
         """
             Calls the InitiateCall action.
@@ -460,7 +440,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_InitiateParallelCall(self, ParallelCallerID, extract_returns=True):
         """
             Calls the InitiateParallelCall action.
@@ -480,7 +459,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ModifyCall(self, TelCPName, SecretKey, TargetCallID, MediaCapabilityInfo, extract_returns=True):
         """
@@ -505,7 +483,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_RegisterCallBack(self, CalleeID, extract_returns=True):
         """
             Calls the RegisterCallBack action.
@@ -525,7 +502,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_RegisterTelCPName(self, TelCPName, CurrentSecretKey, extract_returns=True):
         """
@@ -547,7 +523,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_RejectCall(self, TelCPName, SecretKey, TargetCallID, RejectReason, extract_returns=True):
         """
@@ -571,7 +546,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_StartCall(self, TelCPName, SecretKey, CalleeID, CallPriority, MediaCapabilityInfo, CallMode, extract_returns=True):
         """
@@ -598,7 +572,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StartMediaTransfer(self, TelCPName, SecretKey, TargetCallID, TCList, MediaCapabilityInfo, extract_returns=True):
         """
             Calls the StartMediaTransfer action.
@@ -623,7 +596,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StopCall(self, TelCPName, SecretKey, CallID, extract_returns=True):
         """
             Calls the StopCall action.
@@ -646,7 +618,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_UnregisterTelCPName(self, TelCPName, SecretKey, extract_returns=True):
         """
             Calls the UnregisterTelCPName action.
@@ -668,7 +639,6 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_WaitingForCall(self, CallerID, MaxWaitingTime, extract_returns=True):
         """
             Calls the WaitingForCall action.
@@ -689,4 +659,3 @@ class CallManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

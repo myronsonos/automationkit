@@ -20,7 +20,6 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "IncomingRequest": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_Accept(self, RequestID, extract_returns=True):
         """
             Calls the Accept action.
@@ -40,7 +39,6 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_FetchcontactInfo(self, Targetcontacts, ShareInfo, extract_returns=True):
         """
@@ -63,7 +61,6 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ImportContacts(self, NetworkAddressBookID, extract_returns=True):
         """
             Calls the ImportContacts action.
@@ -83,7 +80,6 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Reject(self, RequestID, extract_returns=True):
         """
@@ -105,7 +101,6 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_RetrieveIncomingRequests(self, extract_returns=True):
         """
             Calls the RetrieveIncomingRequests action.
@@ -123,7 +118,6 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ShareContacts(self, SharedContacts, SharedInfo, TargetContacts, extract_returns=True):
         """
@@ -147,7 +141,6 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SharePCC(self, TargetContacts, ShareInfo, extract_returns=True):
         """
             Calls the SharePCC action.
@@ -168,4 +161,3 @@ class AddressBook1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

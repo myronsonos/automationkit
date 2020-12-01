@@ -20,7 +20,6 @@ class RadiusClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "NumberOfAuthenticationServerEntries": { "data_type": "ui2", "default": None, "allowed_list": None},
     }
 
-
     def action_AddAuthenticationServerEntry(self, NewAuthenticationServerIPAddress, NewAuthenticationServerPortNumber, NewAuthenticationServerSharedSecret, extract_returns=True):
         """
             Calls the AddAuthenticationServerEntry action.
@@ -43,7 +42,6 @@ class RadiusClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DeleteAuthenticationServerEntry(self, NewAuthenticationServerIPAddress, NewAuthenticationServerPortNumber, extract_returns=True):
         """
             Calls the DeleteAuthenticationServerEntry action.
@@ -65,7 +63,6 @@ class RadiusClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_FactoryDefaultReset(self, extract_returns=True):
         """
             Calls the FactoryDefaultReset action.
@@ -83,7 +80,6 @@ class RadiusClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetGenericAuthenticationServerEntry(self, NewAuthenticationServerIndex, extract_returns=True):
         """
@@ -104,7 +100,6 @@ class RadiusClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSpecificAuthenticationServerEntry(self, NewAuthenticationServerIPAddress, NewAuthenticationServerPortNumber, extract_returns=True):
         """
@@ -127,7 +122,6 @@ class RadiusClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ResetAuthentication(self, extract_returns=True):
         """
             Calls the ResetAuthentication action.
@@ -145,4 +139,3 @@ class RadiusClient1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

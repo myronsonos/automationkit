@@ -24,7 +24,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "VoiceUpdateID": { "data_type": "ui4", "default": None, "allowed_list": None},
     }
 
-
     def action_AddAccountX(self, AccountType, AccountID, AccountPassword, extract_returns=True):
         """
             Calls the AddAccountX action.
@@ -46,7 +45,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_AddOAuthAccountX(self, AccountType, AccountToken, AccountKey, OAuthDeviceID, AuthorizationCode, RedirectURI, UserIdHashCode, AccountTier, extract_returns=True):
         """
@@ -75,7 +73,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DoPostUpdateTasks(self, extract_returns=True):
         """
             Calls the DoPostUpdateTasks action.
@@ -93,7 +90,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_EditAccountMd(self, AccountType, AccountID, NewAccountMd, extract_returns=True):
         """
@@ -117,7 +113,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_EditAccountPasswordX(self, AccountType, AccountID, NewAccountPassword, extract_returns=True):
         """
             Calls the EditAccountPasswordX action.
@@ -140,7 +135,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_EnableRDM(self, RDMValue, extract_returns=True):
         """
             Calls the EnableRDM action.
@@ -161,7 +155,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetRDM(self, extract_returns=True):
         """
             Calls the GetRDM action.
@@ -179,7 +172,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetString(self, VariableName, extract_returns=True):
         """
@@ -201,7 +193,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetWebCode(self, AccountType, extract_returns=True):
         """
             Calls the GetWebCode action.
@@ -221,7 +212,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ProvisionCredentialedTrialAccountX(self, AccountType, AccountID, AccountPassword, extract_returns=True):
         """
@@ -244,7 +234,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_RefreshAccountCredentialsX(self, AccountType, AccountUID, AccountToken, AccountKey, extract_returns=True):
         """
@@ -269,7 +258,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_Remove(self, VariableName, extract_returns=True):
         """
             Calls the Remove action.
@@ -289,7 +277,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_RemoveAccount(self, AccountType, AccountID, extract_returns=True):
         """
@@ -311,7 +298,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ReplaceAccountX(self, AccountUDN, NewAccountID, NewAccountPassword, AccountToken, AccountKey, OAuthDeviceID, extract_returns=True):
         """
@@ -338,7 +324,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ResetThirdPartyCredentials(self, extract_returns=True):
         """
             Calls the ResetThirdPartyCredentials action.
@@ -356,7 +341,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetAccountNicknameX(self, AccountUDN, AccountNickname, extract_returns=True):
         """
@@ -379,7 +363,6 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetString(self, VariableName, StringValue, extract_returns=True):
         """
             Calls the SetString action.
@@ -400,4 +383,3 @@ class SystemProperties1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

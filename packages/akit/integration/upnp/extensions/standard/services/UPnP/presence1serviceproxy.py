@@ -22,7 +22,6 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "Watcher": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_AuthorizePresenceProactive(self, UserPresenceInfo, Expire, WatcherList, extract_returns=True):
         """
             Calls the AuthorizePresenceProactive action.
@@ -44,7 +43,6 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_AuthorizePresenceReactive(self, Contact, Expire, UserPresenceInfo, extract_returns=True):
         """
@@ -68,7 +66,6 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetContactPresence(self, TargetContact, extract_returns=True):
         """
             Calls the GetContactPresence action.
@@ -89,7 +86,6 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetPresence(self, extract_returns=True):
         """
             Calls the GetPresence action.
@@ -108,7 +104,6 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetPresenceOfContactsUpdate(self, extract_returns=True):
         """
             Calls the GetPresenceOfContactsUpdate action.
@@ -126,7 +121,6 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_RegisterForContactPresence(self, Contact, Expire, extract_returns=True):
         """
@@ -149,7 +143,6 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_UpdatePresence(self, UpdatedUserPresence, extract_returns=True):
         """
             Calls the UpdatePresence action.
@@ -169,4 +162,3 @@ class Presence1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

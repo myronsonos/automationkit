@@ -127,4 +127,3 @@ loglevels["logfile"] = logfile_level
 # Step 5 - Import the logging module so we get an initial configuration that
 # points to standard out
 import akit.xlogging.foundations # pylint: disable=unused-import
-

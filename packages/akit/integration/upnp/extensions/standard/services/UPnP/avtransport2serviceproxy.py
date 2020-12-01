@@ -21,7 +21,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "LastChange": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_GetCurrentTransportActions(self, InstanceID, extract_returns=True):
         """
             Calls the GetCurrentTransportActions action.
@@ -41,7 +40,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDRMState(self, InstanceID, extract_returns=True):
         """
@@ -63,7 +61,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDeviceCapabilities(self, InstanceID, extract_returns=True):
         """
             Calls the GetDeviceCapabilities action.
@@ -83,7 +80,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetMediaInfo(self, InstanceID, extract_returns=True):
         """
@@ -105,7 +101,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetMediaInfo_Ext(self, InstanceID, extract_returns=True):
         """
             Calls the GetMediaInfo_Ext action.
@@ -126,7 +121,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetPositionInfo(self, InstanceID, extract_returns=True):
         """
             Calls the GetPositionInfo action.
@@ -146,7 +140,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetStateVariables(self, InstanceID, StateVariableList, extract_returns=True):
         """
@@ -169,7 +162,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTransportInfo(self, InstanceID, extract_returns=True):
         """
             Calls the GetTransportInfo action.
@@ -189,7 +181,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetTransportSettings(self, InstanceID, extract_returns=True):
         """
@@ -211,7 +202,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_Next(self, InstanceID, extract_returns=True):
         """
             Calls the Next action.
@@ -232,7 +222,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_Pause(self, InstanceID, extract_returns=True):
         """
             Calls the Pause action.
@@ -252,7 +241,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Play(self, InstanceID, Speed, extract_returns=True):
         """
@@ -275,7 +263,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_Previous(self, InstanceID, extract_returns=True):
         """
             Calls the Previous action.
@@ -296,7 +283,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_Record(self, InstanceID, extract_returns=True):
         """
             Calls the Record action.
@@ -316,7 +302,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Seek(self, InstanceID, Unit, Target, extract_returns=True):
         """
@@ -340,7 +325,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetAVTransportURI(self, InstanceID, CurrentURI, CurrentURIMetaData, extract_returns=True):
         """
             Calls the SetAVTransportURI action.
@@ -362,7 +346,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetNextAVTransportURI(self, InstanceID, NextURI, NextURIMetaData, extract_returns=True):
         """
@@ -386,7 +369,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetPlayMode(self, InstanceID, NewPlayMode, extract_returns=True):
         """
             Calls the SetPlayMode action.
@@ -408,7 +390,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetRecordQualityMode(self, InstanceID, NewRecordQualityMode, extract_returns=True):
         """
             Calls the SetRecordQualityMode action.
@@ -429,7 +410,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetStateVariables(self, InstanceID, AVTransportUDN, ServiceType, ServiceId, StateVariableValuePairs, extract_returns=True):
         """
@@ -455,7 +435,6 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_Stop(self, InstanceID, extract_returns=True):
         """
             Calls the Stop action.
@@ -475,4 +454,3 @@ class AVTransport2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

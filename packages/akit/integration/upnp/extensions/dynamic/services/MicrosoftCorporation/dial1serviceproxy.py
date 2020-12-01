@@ -17,4 +17,3 @@ class dial1ServiceProxy(UpnpServiceProxy, LoadableExtension):
     SERVICE_TYPE = 'urn:dial-multiscreen-org:service:dial:1'
 
     SERVICE_EVENT_VARIABLES = {}
-

@@ -20,7 +20,6 @@ class MediaManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "MediaSessionInfo": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_GetMediaCapabilities(self, TSMediaCapabilityInfo, extract_returns=True):
         """
             Calls the GetMediaCapabilities action.
@@ -41,7 +40,6 @@ class MediaManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetMediaSessionInfo(self, TargetMediaSessionID, extract_returns=True):
         """
             Calls the GetMediaSessionInfo action.
@@ -61,7 +59,6 @@ class MediaManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ModifyMediaSession(self, TargetMediaSessionID, NewMediaCapabilityInfo, extract_returns=True):
         """
@@ -84,7 +81,6 @@ class MediaManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StartMediaSession(self, TSMediaCapabilityInfo, extract_returns=True):
         """
             Calls the StartMediaSession action.
@@ -105,7 +101,6 @@ class MediaManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StopMediaSession(self, TargetMediaSessionID, extract_returns=True):
         """
             Calls the StopMediaSession action.
@@ -125,4 +120,3 @@ class MediaManagement2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

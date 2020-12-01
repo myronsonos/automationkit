@@ -18,14 +18,20 @@ __license__ = "MIT"
 
 import argparse
 import os
+import sys
 
 # We need to load the context first because it will load configuration
 from akit.compat import import_by_name
 from akit.environment.context import Context
-from akit.environment.variables import LOG_LEVEL_NAMES, extend_path
+from akit.environment.variables import extend_path
 from akit.environment.options import ENVIRONMENT_OPTIONS
 
 def testrunner_main():
+    """
+        The main entry point function for the testrunner.py script.
+    """
+    # pylint: disable=unused-import,import-outside-toplevel
+
     parser = argparse.ArgumentParser()
 
     for opt_args, opt_kwargs in ENVIRONMENT_OPTIONS:
@@ -41,7 +47,6 @@ def testrunner_main():
     try:
         ctx = Context()
         env = ctx.lookup("/environment")
-        conf = ctx.lookup("/environment/configuration")
 
         # Set the jobtype
         env["jobtype"] = "testrun"
@@ -58,7 +63,7 @@ def testrunner_main():
 
         # We perform activation a little later in the testrunner.py file so we can
         # handle exceptions in the context of testrunner_main function
-        import akit.environment.activate # pylint: disable=unused-import
+        import akit.environment.activate
         from akit.xlogging.foundations import logging_initialize, getAutomatonKitLogger
 
         # Initialize logging
@@ -77,11 +82,7 @@ def testrunner_main():
             errmsg = "The --job arguement cannot be used with the --includes or --excludes flags."
             raise argparse.ArgumentError("--job", errmsg)
 
-        from akit.paths import get_path_for_testresults
-
         from akit.testing.testjob import DefaultTestJob
-        from akit.testing.testsequencer import TestSequencer
-        from akit.recorders import JsonResultRecorder
 
         # At this point in the code, we either lookup an existing test job or we create a test job
         # from the includes, excludes or test_module
@@ -96,7 +97,7 @@ def testrunner_main():
 
             try:
                 job_mod = import_by_name(job_package)
-            except ImportError as ierr:
+            except ImportError:
                 errmsg = "Failure while importing job package %r"  % job_package
                 raise argparse.ArgumentError("--job", errmsg)
 
@@ -110,7 +111,7 @@ def testrunner_main():
         with TestJobType(logger, test_root, includes=includes, excludes=excludes) as tjob:
             result_code = tjob.execute()
 
-        exit(result_code)
+        sys.exit(result_code)
 
     finally:
         pass

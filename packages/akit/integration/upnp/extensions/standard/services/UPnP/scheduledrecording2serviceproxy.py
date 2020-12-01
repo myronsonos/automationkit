@@ -20,7 +20,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "LastChange": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_BrowseRecordSchedules(self, Filter, StartingIndex, RequestedCount, SortCriteria, extract_returns=True):
         """
             Calls the BrowseRecordSchedules action.
@@ -43,7 +42,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_BrowseRecordTasks(self, RecordScheduleID, Filter, StartingIndex, RequestedCount, SortCriteria, extract_returns=True):
         """
@@ -69,7 +67,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_CreateRecordSchedule(self, Elements, extract_returns=True):
         """
             Calls the CreateRecordSchedule action.
@@ -89,7 +86,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_DeleteRecordSchedule(self, RecordScheduleID, extract_returns=True):
         """
@@ -111,7 +107,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DeleteRecordTask(self, RecordTaskID, extract_returns=True):
         """
             Calls the DeleteRecordTask action.
@@ -131,7 +126,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_DisableRecordSchedule(self, RecordScheduleID, extract_returns=True):
         """
@@ -153,7 +147,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DisableRecordTask(self, RecordTaskID, extract_returns=True):
         """
             Calls the DisableRecordTask action.
@@ -173,7 +166,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_EnableRecordSchedule(self, RecordScheduleID, extract_returns=True):
         """
@@ -195,7 +187,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_EnableRecordTask(self, RecordTaskID, extract_returns=True):
         """
             Calls the EnableRecordTask action.
@@ -215,7 +206,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetAllowedValues(self, DataTypeID, Filter, extract_returns=True):
         """
@@ -238,7 +228,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetPropertyList(self, DataTypeID, extract_returns=True):
         """
             Calls the GetPropertyList action.
@@ -258,7 +247,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetRecordSchedule(self, RecordScheduleID, Filter, extract_returns=True):
         """
@@ -281,7 +269,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetRecordScheduleConflicts(self, RecordScheduleID, extract_returns=True):
         """
             Calls the GetRecordScheduleConflicts action.
@@ -301,7 +288,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetRecordTask(self, RecordTaskID, Filter, extract_returns=True):
         """
@@ -324,7 +310,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetRecordTaskConflicts(self, RecordTaskID, extract_returns=True):
         """
             Calls the GetRecordTaskConflicts action.
@@ -345,7 +330,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSortCapabilities(self, extract_returns=True):
         """
             Calls the GetSortCapabilities action.
@@ -364,7 +348,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetStateUpdateID(self, extract_returns=True):
         """
             Calls the GetStateUpdateID action.
@@ -382,7 +365,6 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ResetRecordTask(self, RecordTaskID, extract_returns=True):
         """
@@ -403,4 +385,3 @@ class ScheduledRecording2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

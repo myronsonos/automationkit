@@ -22,7 +22,6 @@ class TemperatureSensor1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "Name": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_GetApplication(self, extract_returns=True):
         """
             Calls the GetApplication action.
@@ -40,7 +39,6 @@ class TemperatureSensor1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetCurrentTemperature(self, extract_returns=True):
         """
@@ -60,7 +58,6 @@ class TemperatureSensor1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetName(self, extract_returns=True):
         """
             Calls the GetName action.
@@ -78,7 +75,6 @@ class TemperatureSensor1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetApplication(self, NewApplication, extract_returns=True):
         """
@@ -100,7 +96,6 @@ class TemperatureSensor1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetName(self, NewName, extract_returns=True):
         """
             Calls the SetName action.
@@ -120,4 +115,3 @@ class TemperatureSensor1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

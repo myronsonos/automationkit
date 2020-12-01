@@ -19,15 +19,15 @@ __license__ = "MIT"
 import threading
 import weakref
 
-import requests
-
-from requests.compat import urljoin
-
 from xml.etree.ElementTree import fromstring as xml_fromstring
 from xml.etree.ElementTree import tostring as xml_tostring
 from xml.etree.ElementTree import register_namespace
 from xml.etree.ElementTree import dump as dump_node
 from xml.etree.ElementTree import ElementTree
+
+import requests
+
+from requests.compat import urljoin
 
 from akit.exceptions import AKitNotOverloadedError, AKitCommunicationsProtocolError
 from akit.extensible import generate_extension_key

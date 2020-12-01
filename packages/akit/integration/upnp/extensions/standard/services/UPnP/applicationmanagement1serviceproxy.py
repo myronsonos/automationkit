@@ -20,7 +20,6 @@ class ApplicationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "RunningAppList": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_GetAppConnectionInfo(self, AppIDs, extract_returns=True):
         """
             Calls the GetAppConnectionInfo action.
@@ -40,7 +39,6 @@ class ApplicationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetAppIDList(self, Target, TargetFields, extract_returns=True):
         """
@@ -63,7 +61,6 @@ class ApplicationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetAppInfoByIDs(self, AppIDs, extract_returns=True):
         """
             Calls the GetAppInfoByIDs action.
@@ -84,7 +81,6 @@ class ApplicationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetRunningAppList(self, extract_returns=True):
         """
             Calls the GetRunningAppList action.
@@ -102,7 +98,6 @@ class ApplicationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetRunningStatus(self, AppIDs, extract_returns=True):
         """
@@ -124,7 +119,6 @@ class ApplicationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSupportedTargetFields(self, extract_returns=True):
         """
             Calls the GetSupportedTargetFields action.
@@ -142,7 +136,6 @@ class ApplicationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_StartAppByID(self, AppID, StartParameters, extract_returns=True):
         """
@@ -164,7 +157,6 @@ class ApplicationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_StartAppByURI(self, StartURI, AppInfo, StartParameters, extract_returns=True):
         """
@@ -188,7 +180,6 @@ class ApplicationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StopApp(self, AppIDs, extract_returns=True):
         """
             Calls the StopApp action.
@@ -208,4 +199,3 @@ class ApplicationManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

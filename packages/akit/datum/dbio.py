@@ -23,12 +23,18 @@ from sqlalchemy import create_engine
 from akit.datum.orm import AutomationPod
 
 def database_exists(username, password, dbname):
+    """
+        Checks to see if the specified database exists.
+    """
     engine = create_engine('postgresql://%s:%s@localhost:5432/postgres' % (username, password), echo=True)
     result = engine.execute("SELECT 1 AS result FROM pg_database WHERE datname='%s'" % dbname)
     return result.rowcount > 0
 
 
 def database_create(username, password, dbname):
+    """
+        Creates the specified database.
+    """
     engine = create_engine('postgresql://%s:%s@localhost:5432/postgres' % (username, password), echo=True)
 
     conn = engine.connect()
@@ -44,7 +50,9 @@ def database_create(username, password, dbname):
     return
 
 def create_apod_postgresql_database(host='localhost', port=5432, username=None, password=None):
-
+    """
+        Creates the 'apod' postgresql database.
+    """
     if not database_exists(username, password, "apod"):
         database_create(username, password, "apod")
 
@@ -55,7 +63,9 @@ def create_apod_postgresql_database(host='localhost', port=5432, username=None, 
     return
 
 def open_apod_postgresql_database(host='localhost', port=5432, username=None, password=None):
-
+    """
+        Opens the 'apod' postgresql database.
+    """
     create_apod_postgresql_database(host=host, port=port, username=username, password=password)
 
     connstr = 'postgresql://'

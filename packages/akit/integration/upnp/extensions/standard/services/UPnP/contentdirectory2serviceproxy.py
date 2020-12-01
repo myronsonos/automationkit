@@ -22,7 +22,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "TransferIDs": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_Browse(self, ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, extract_returns=True):
         """
             Calls the Browse action.
@@ -48,7 +47,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_CreateObject(self, ContainerID, Elements, extract_returns=True):
         """
             Calls the CreateObject action.
@@ -69,7 +67,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_CreateReference(self, ContainerID, ObjectID, extract_returns=True):
         """
@@ -92,7 +89,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DeleteResource(self, ResourceURI, extract_returns=True):
         """
             Calls the DeleteResource action.
@@ -113,7 +109,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_DestroyObject(self, ObjectID, extract_returns=True):
         """
             Calls the DestroyObject action.
@@ -133,7 +128,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ExportResource(self, SourceURI, DestinationURI, extract_returns=True):
         """
@@ -156,7 +150,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetFeatureList(self, extract_returns=True):
         """
             Calls the GetFeatureList action.
@@ -174,7 +167,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSearchCapabilities(self, extract_returns=True):
         """
@@ -194,7 +186,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSortCapabilities(self, extract_returns=True):
         """
             Calls the GetSortCapabilities action.
@@ -212,7 +203,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetSortExtensionCapabilities(self, extract_returns=True):
         """
@@ -232,7 +222,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetSystemUpdateID(self, extract_returns=True):
         """
             Calls the GetSystemUpdateID action.
@@ -250,7 +239,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetTransferProgress(self, TransferID, extract_returns=True):
         """
@@ -271,7 +259,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ImportResource(self, SourceURI, DestinationURI, extract_returns=True):
         """
@@ -294,7 +281,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_MoveObject(self, ObjectID, NewParentID, extract_returns=True):
         """
             Calls the MoveObject action.
@@ -315,7 +301,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_Search(self, ContainerID, SearchCriteria, Filter, StartingIndex, RequestedCount, SortCriteria, extract_returns=True):
         """
@@ -342,7 +327,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StopTransferResource(self, TransferID, extract_returns=True):
         """
             Calls the StopTransferResource action.
@@ -362,7 +346,6 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_UpdateObject(self, ObjectID, CurrentTagValue, NewTagValue, extract_returns=True):
         """
@@ -385,4 +368,3 @@ class ContentDirectory2ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

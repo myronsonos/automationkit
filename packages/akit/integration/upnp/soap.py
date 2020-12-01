@@ -270,4 +270,3 @@ class SoapProcessor:
             raise SOAPProtocolError("Unable to process xml response:\n%s" % content)
 
         return errorCode, errorDescription
-

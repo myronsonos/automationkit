@@ -21,7 +21,6 @@ import os
 import typing
 
 from collections import ChainMap
-from datetime import datetime
 
 from akit.environment.variables import VARIABLES
 from akit.environment.configuration import RUNTIME_CONFIGURATION
@@ -30,6 +29,9 @@ from akit.environment.configuration import RUNTIME_CONFIGURATION
 REGEX_PATH_VALIDATOR = re.compile("/{1}([a-zA-Z0-9_]+)")
 
 def validate_path_name(path: str) -> [str]:
+    """
+        Validates a context pathname.
+    """
     parts = None
     mobj = REGEX_PATH_VALIDATOR.findall(path)
     if mobj is not None:
@@ -64,7 +66,7 @@ class ContextCursor:
 
             :raises: :class:`ValueError`
         """
-        if isinstance(path, list) or isinstance(path, tuple):
+        if isinstance(path, (tuple, list)):
             path_parts = path
             path = "/%s" %  "/".join(path_parts)
         else:
@@ -88,7 +90,7 @@ class ContextCursor:
         """
         found_node = None
 
-        if isinstance(path, list) or isinstance(path, tuple):
+        if isinstance(path, (tuple, list)):
             path_parts = path
             path = "/%s" %  "/".join(path_parts)
         else:
@@ -112,7 +114,7 @@ class ContextCursor:
         """
         found_node = None
 
-        if isinstance(path, list) or isinstance(path, tuple):
+        if isinstance(path, (tuple, list)):
             path_parts = path
             path = "/%s" %  "/".join(path_parts)
         else:
@@ -147,12 +149,12 @@ class ContextCursor:
             if leaf_name in dref:
                 found_node = dref[leaf_name]
                 if len(path_parts) > 1:
-                    if isinstance(found_node, dict) or isinstance(found_node, ChainMap):
+                    if isinstance(found_node, (dict, ChainMap)):
                         found_node = self._lookup(found_node, path, path_parts[1:])
                     else:
                         LookupError("Context lookup failure for path=%s" % path)
                 else:
-                    if isinstance(found_node, dict) or isinstance(found_node, ChainMap):
+                    if isinstance(found_node, (dict, ChainMap)):
                         found_node = ContextCursor(found_node)
             else:
                 raise LookupError("Context lookup failure for path=%s" % path)
@@ -170,12 +172,11 @@ class ContextCursor:
             if leaf_name in dref:
                 found_node = dref[leaf_name]
                 if len(path_parts) > 1:
-                    if isinstance(found_node, dict) or isinstance(found_node, ChainMap):
+                    if isinstance(found_node, (dict, ChainMap)):
                         found_node = self._remove(found_node, path, path_parts[1:])
                     else:
                         LookupError("Context remove failure for path=%s" % path)
                 else:
-                    found_node = found_node
                     del dref[leaf_name]
             else:
                 raise LookupError("Context remove failure for path=%s" % path)
@@ -227,7 +228,7 @@ class Context:
 
             :raises: :class:`ValueError`
         """
-        if isinstance(path, list) or isinstance(path, tuple):
+        if isinstance(path, (list, tuple)):
             path_parts = path
             path = "/%s" %  "/".join(path_parts)
         else:
@@ -251,7 +252,7 @@ class Context:
         """
         found_node = None
 
-        if isinstance(path, list) or isinstance(path, tuple):
+        if isinstance(path, (list, tuple)):
             path_parts = path
             path = "/%s" %  "/".join(path_parts)
         else:
@@ -275,7 +276,7 @@ class Context:
         """
         found_node = None
 
-        if isinstance(path, list) or isinstance(path, tuple):
+        if isinstance(path, (list, tuple)):
             path_parts = path
             path = "/%s" %  "/".join(path_parts)
         else:
@@ -310,12 +311,12 @@ class Context:
             if leaf_name in dref:
                 found_node = dref[leaf_name]
                 if len(path_parts) > 1:
-                    if isinstance(found_node, dict) or isinstance(found_node, ChainMap):
+                    if isinstance(found_node, (dict, ChainMap)):
                         found_node = self._lookup(found_node, path, path_parts[1:])
                     else:
                         LookupError("Context lookup failure for path=%s" % path)
                 else:
-                    if isinstance(found_node, dict) or isinstance(found_node, ChainMap):
+                    if isinstance(found_node, (dict, ChainMap)):
                         found_node = ContextCursor(found_node)
             else:
                 raise LookupError("Context lookup failure for path=%s" % path)
@@ -333,12 +334,11 @@ class Context:
             if leaf_name in dref:
                 found_node = dref[leaf_name]
                 if len(path_parts) > 1:
-                    if isinstance(found_node, dict) or isinstance(found_node, ChainMap):
+                    if isinstance(found_node, (dict, ChainMap)):
                         found_node = self._remove(found_node, path, path_parts[1:])
                     else:
                         LookupError("Context remove failure for path=%s" % path)
                 else:
-                    found_node = found_node
                     del dref[leaf_name]
             else:
                 raise LookupError("Context remove failure for path=%s" % path)
@@ -372,4 +372,7 @@ context = Context()
 context.insert("/environment", default_environment)
 
 class ContextUser:
+    """
+        Serves as a base class for all classes that need a reference to the singleton context object.
+    """
     context: Context = Context()

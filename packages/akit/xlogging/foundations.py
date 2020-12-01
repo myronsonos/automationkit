@@ -27,7 +27,6 @@ import sys
 import traceback
 
 from akit.environment.context import Context
-from akit.environment.variables import LOG_LEVEL_NAMES
 
 logging.addLevelName(100, "QUIET")
 

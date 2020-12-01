@@ -24,7 +24,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
         "TargetFrameRate": { "data_type": "ui4", "default": "1500", "allowed_list": None},
     }
 
-
     def action_GetAvailableCompressionLevels(self, extract_returns=True):
         """
             Calls the GetAvailableCompressionLevels action.
@@ -42,7 +41,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetAvailableEncodings(self, extract_returns=True):
         """
@@ -62,7 +60,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
 
         return rtn_args
 
-
     def action_GetAvailableResolutions(self, extract_returns=True):
         """
             Calls the GetAvailableResolutions action.
@@ -80,7 +77,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDefaultCompressionLevel(self, extract_returns=True):
         """
@@ -100,7 +96,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
 
         return rtn_args
 
-
     def action_GetDefaultEncoding(self, extract_returns=True):
         """
             Calls the GetDefaultEncoding action.
@@ -118,7 +113,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDefaultResolution(self, extract_returns=True):
         """
@@ -138,7 +132,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
 
         return rtn_args
 
-
     def action_GetDefaultVideoPresentationURL(self, extract_returns=True):
         """
             Calls the GetDefaultVideoPresentationURL action.
@@ -156,7 +149,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDefaultVideoURL(self, extract_returns=True):
         """
@@ -176,7 +168,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
 
         return rtn_args
 
-
     def action_GetMaxBandwidth(self, extract_returns=True):
         """
             Calls the GetMaxBandwidth action.
@@ -195,7 +186,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
 
         return rtn_args
 
-
     def action_GetTargetFrameRate(self, extract_returns=True):
         """
             Calls the GetTargetFrameRate action.
@@ -213,7 +203,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetVideoPresentationURL(self, ReqEncoding, ReqCompression, ReqResolution, extract_returns=True):
         """
@@ -237,7 +226,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
 
         return rtn_args
 
-
     def action_GetVideoURL(self, ReqEncoding, ReqCompression, ReqResolution, extract_returns=True):
         """
             Calls the GetVideoURL action.
@@ -260,7 +248,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
 
         return rtn_args
 
-
     def action_SetDefaultCompressionLevel(self, ReqCompressionLevel, extract_returns=True):
         """
             Calls the SetDefaultCompressionLevel action.
@@ -280,7 +267,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetDefaultEncoding(self, ReqEncoding, extract_returns=True):
         """
@@ -302,7 +288,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
 
         return rtn_args
 
-
     def action_SetDefaultResolution(self, ReqResolution, extract_returns=True):
         """
             Calls the SetDefaultResolution action.
@@ -322,7 +307,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetMaxBandwidth(self, ReqMaxBandwidth, extract_returns=True):
         """
@@ -344,7 +328,6 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
 
         return rtn_args
 
-
     def action_SetTargetFrameRate(self, ReqTargetFrameRate, extract_returns=True):
         """
             Calls the SetTargetFrameRate action.
@@ -364,4 +347,3 @@ class DigitalSecurityCameraMotionImage1ServiceProxy(UpnpServiceProxy, LoadableEx
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

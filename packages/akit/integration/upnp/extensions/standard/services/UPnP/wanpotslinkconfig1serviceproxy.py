@@ -18,7 +18,6 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_GetCallRetryInfo(self, extract_returns=True):
         """
             Calls the GetCallRetryInfo action.
@@ -36,7 +35,6 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDataCompression(self, extract_returns=True):
         """
@@ -56,7 +54,6 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetDataModulationSupported(self, extract_returns=True):
         """
             Calls the GetDataModulationSupported action.
@@ -74,7 +71,6 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetDataProtocol(self, extract_returns=True):
         """
@@ -94,7 +90,6 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetFclass(self, extract_returns=True):
         """
             Calls the GetFclass action.
@@ -112,7 +107,6 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetISPInfo(self, extract_returns=True):
         """
@@ -132,7 +126,6 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetPlusVTRCommandSupported(self, extract_returns=True):
         """
             Calls the GetPlusVTRCommandSupported action.
@@ -150,7 +143,6 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetCallRetryInfo(self, NewNumberOfRetries, NewDelayBetweenRetries, extract_returns=True):
         """
@@ -173,7 +165,6 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetISPInfo(self, NewISPPhoneNumber, NewISPInfo, NewLinkType, extract_returns=True):
         """
             Calls the SetISPInfo action.
@@ -195,4 +186,3 @@ class WANPOTSLinkConfig1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

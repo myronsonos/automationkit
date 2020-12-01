@@ -24,7 +24,6 @@ class GroupManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "VolumeAVTransportURI": { "data_type": "string", "default": None, "allowed_list": None},
     }
 
-
     def action_AddMember(self, MemberID, BootSeq, extract_returns=True):
         """
             Calls the AddMember action.
@@ -46,7 +45,6 @@ class GroupManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_RemoveMember(self, MemberID, extract_returns=True):
         """
             Calls the RemoveMember action.
@@ -66,7 +64,6 @@ class GroupManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_ReportTrackBufferingResult(self, MemberID, ResultCode, extract_returns=True):
         """
@@ -89,7 +86,6 @@ class GroupManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetSourceAreaIds(self, DesiredSourceAreaIds, extract_returns=True):
         """
             Calls the SetSourceAreaIds action.
@@ -109,4 +105,3 @@ class GroupManagement1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

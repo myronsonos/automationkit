@@ -21,7 +21,6 @@ class ExternalActivity1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "AvailableRegistrations": { "data_type": "boolean", "default": "1", "allowed_list": None},
     }
 
-
     def action_Register(self, ButtonNameIn, DisplayStringIn, DurationIn, extract_returns=True):
         """
             Calls the Register action.
@@ -43,4 +42,3 @@ class ExternalActivity1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

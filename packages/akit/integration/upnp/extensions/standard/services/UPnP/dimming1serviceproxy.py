@@ -24,7 +24,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "StepDelta": { "data_type": "ui1", "default": "Manufacturer defined default value", "allowed_list": None},
     }
 
-
     def action_GetIsRamping(self, extract_returns=True):
         """
             Calls the GetIsRamping action.
@@ -42,7 +41,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetLoadLevelStatus(self, extract_returns=True):
         """
@@ -62,7 +60,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetLoadLevelTarget(self, extract_returns=True):
         """
             Calls the GetLoadLevelTarget action.
@@ -80,7 +77,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetOnEffectParameters(self, extract_returns=True):
         """
@@ -100,7 +96,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetRampPaused(self, extract_returns=True):
         """
             Calls the GetRampPaused action.
@@ -118,7 +113,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetRampRate(self, extract_returns=True):
         """
@@ -138,7 +132,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetRampTime(self, extract_returns=True):
         """
             Calls the GetRampTime action.
@@ -156,7 +149,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_GetStepDelta(self, extract_returns=True):
         """
@@ -176,7 +168,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_PauseRamp(self, extract_returns=True):
         """
             Calls the PauseRamp action.
@@ -195,7 +186,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_ResumeRamp(self, extract_returns=True):
         """
             Calls the ResumeRamp action.
@@ -213,7 +203,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetLoadLevelTarget(self, newLoadlevelTarget, extract_returns=True):
         """
@@ -235,7 +224,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetOnEffect(self, newOnEffect, extract_returns=True):
         """
             Calls the SetOnEffect action.
@@ -255,7 +243,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetOnEffectLevel(self, newOnEffectLevel, extract_returns=True):
         """
@@ -277,7 +264,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetRampRate(self, newRampRate, extract_returns=True):
         """
             Calls the SetRampRate action.
@@ -297,7 +283,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetStepDelta(self, newStepDelta, extract_returns=True):
         """
@@ -319,7 +304,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StartRampDown(self, extract_returns=True):
         """
             Calls the StartRampDown action.
@@ -337,7 +321,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_StartRampToLevel(self, newLoadLevelTarget, newRampTime, extract_returns=True):
         """
@@ -360,7 +343,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StartRampUp(self, extract_returns=True):
         """
             Calls the StartRampUp action.
@@ -378,7 +360,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_StepDown(self, extract_returns=True):
         """
@@ -398,7 +379,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StepUp(self, extract_returns=True):
         """
             Calls the StepUp action.
@@ -417,7 +397,6 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StopRamp(self, extract_returns=True):
         """
             Calls the StopRamp action.
@@ -435,4 +414,3 @@ class Dimming1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

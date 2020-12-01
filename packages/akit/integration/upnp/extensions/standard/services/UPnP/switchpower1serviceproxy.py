@@ -18,7 +18,6 @@ class SwitchPower1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
     SERVICE_EVENT_VARIABLES = {}
 
-
     def action_GetStatus(self, extract_returns=True):
         """
             Calls the GetStatus action.
@@ -37,7 +36,6 @@ class SwitchPower1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetTarget(self, extract_returns=True):
         """
             Calls the GetTarget action.
@@ -55,7 +53,6 @@ class SwitchPower1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetTarget(self, newTargetValue, extract_returns=True):
         """
@@ -76,4 +73,3 @@ class SwitchPower1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

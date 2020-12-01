@@ -25,7 +25,6 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
         "RightLineInLevel": { "data_type": "i4", "default": None, "allowed_list": None},
     }
 
-
     def action_GetAudioInputAttributes(self, extract_returns=True):
         """
             Calls the GetAudioInputAttributes action.
@@ -44,7 +43,6 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_GetLineInLevel(self, extract_returns=True):
         """
             Calls the GetLineInLevel action.
@@ -62,7 +60,6 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SelectAudio(self, ObjectID, extract_returns=True):
         """
@@ -83,7 +80,6 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-
 
     def action_SetAudioInputAttributes(self, DesiredName, DesiredIcon, extract_returns=True):
         """
@@ -106,7 +102,6 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_SetLineInLevel(self, DesiredLeftLineInLevel, DesiredRightLineInLevel, extract_returns=True):
         """
             Calls the SetLineInLevel action.
@@ -128,7 +123,6 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StartTransmissionToGroup(self, CoordinatorID, extract_returns=True):
         """
             Calls the StartTransmissionToGroup action.
@@ -149,7 +143,6 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
 
         return rtn_args
 
-
     def action_StopTransmissionToGroup(self, CoordinatorID, extract_returns=True):
         """
             Calls the StopTransmissionToGroup action.
@@ -169,4 +162,3 @@ class AudioIn1ServiceProxy(UpnpServiceProxy, LoadableExtension):
                 rtn_args = rtn_args[0]
 
         return rtn_args
-

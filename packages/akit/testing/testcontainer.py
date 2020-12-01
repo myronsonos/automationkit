@@ -24,9 +24,8 @@ import traceback
 import uuid
 
 from akit.metadata import Category
-from akit.mixins.scope import is_scope_mixin
-from akit.exceptions import AKitOutOfScopeError, AKitRequestStopError, AKitSkipError
-from akit.results import ResultCode, ResultType, ResultNode
+from akit.exceptions import AKitSkipError
+from akit.results import ResultType, ResultNode
 from akit.xlogging.foundations import getAutomatonKitLogger
 
 logger = getAutomatonKitLogger()

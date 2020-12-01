@@ -19,11 +19,9 @@ __license__ = "MIT"
 
 import json
 
-from xml.etree.ElementTree import fromstring as xml_fromstring
 from xml.etree.ElementTree import tostring as xml_tostring
 from xml.etree.ElementTree import register_namespace
 from xml.etree.ElementTree import dump as dump_node
-from xml.etree.ElementTree import ElementTree
 
 UPNP_DEVICE1_NAMESPACE = "urn:schemas-upnp-org:device-1-0"
 UPNP_DEVICE1_TAG_PREFIX = "{urn:schemas-upnp-org:device-1-0}"
