@@ -656,7 +656,7 @@ class Landscape:
         lscape = self
 
         if len(upnp_device_list) > 0:
-            from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
+            from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator # pylint: disable=import-outside-toplevel
 
             self._has_upnp_devices = True
             upnp_hint_list = self._internal_get_upnp_device_config_lookup_table()
@@ -664,7 +664,7 @@ class Landscape:
             self._upnp_coord.startup_scan(lscape, upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=["lo"])
 
         if len(ssh_device_list) > 0:
-            from akit.integration.coordinators.sshpoolcoordinator import SshPoolCoordinator
+            from akit.integration.coordinators.sshpoolcoordinator import SshPoolCoordinator # pylint: disable=import-outside-toplevel
 
             self._has_ssh_devices = True
             self._ssh_coord = SshPoolCoordinator()
@@ -676,7 +676,7 @@ class Landscape:
             muse_ctlhost = self._environment_muse["ctlhost"]
             muse_version = self._environment_muse["version"]
 
-            from akit.integration.coordinators.musecoordinator import MuseCoordinator
+            from akit.integration.coordinators.musecoordinator import MuseCoordinator # pylint: disable=import-outside-toplevel
 
             self._has_muse_devices = True
             self._muse_coord = MuseCoordinator()
@@ -837,8 +837,8 @@ def load_and_set_landscape_type(lscape_module):
     return
 
 if VARIABLES.AKIT_LANDSCAPE_MODULE is not None:
-    lscape_module = import_by_name(VARIABLES.AKIT_LANDSCAPE_MODULE)
-    load_and_set_landscape_type(lscape_module)
+    lscape_module_override = import_by_name(VARIABLES.AKIT_LANDSCAPE_MODULE)
+    load_and_set_landscape_type(lscape_module_override )
     check_landscape = Landscape()
     pass
 

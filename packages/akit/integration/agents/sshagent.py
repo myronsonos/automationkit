@@ -165,7 +165,7 @@ def primitive_list_tree_recurse(ssh_client: paramiko.SSHClient, rootdir: str, re
 
     return children_info
 
-def primitive_parse_directory_listing(dir:str, content: str):
+def primitive_parse_directory_listing(listing_dir:str, content: str):
     """
         {
             "name": "blah",
@@ -206,7 +206,7 @@ def primitive_parse_directory_listing(dir:str, content: str):
             elif perms_tc == 'b':
                 etype = "block"
             else:
-                raise Exception("Unknown directory listing entry type. dir=%s tc=%s" % (dir, perms_tc))
+                raise Exception("Unknown directory listing entry type. dir=%s tc=%s" % (listing_dir, perms_tc))
 
             dentry = {
                 "name": name,
@@ -447,7 +447,8 @@ def ssh_execute_command_in_channel(ssh_channel: paramiko.Channel, command: str, 
         # End while True
 
     if not status_check:
-        _, status_stdout, status_stderr = ssh_execute_command_in_channel(ssh_channel, "echo $?", read_timeout=read_timeout, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval, chunk_size=chunk_size, status_check=True)
+        _, status_stdout, _ = ssh_execute_command_in_channel(ssh_channel, "echo $?", read_timeout=read_timeout, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval, chunk_size=chunk_size, status_check=True)
+        status = int(status_stdout)
 
     stdout = stdout_buffer.decode()
     del stdout_buffer
@@ -701,13 +702,13 @@ class SshBase:
         # Run the command using the SINGLE_RUN pattern, we run it once and then return the result
         if aspects.run_pattern == RunPattern.SINGLE_RUN:
 
-                # Setup a monitored scope for the call to the remote device in case of timeout failure
-                with MonitoredScope("RUNCMD-SINGLE_RUN", monmsg, timeout=inactivity_timeout + monitor_delay) as _:
+            # Setup a monitored scope for the call to the remote device in case of timeout failure
+            with MonitoredScope("RUNCMD-SINGLE_RUN", monmsg, timeout=inactivity_timeout + monitor_delay) as _:
 
-                    status, stdout, stderr = self._ssh_execute_command(ssh_runner, command, pty_params=pty_params,
-                        inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
+                status, stdout, stderr = self._ssh_execute_command(ssh_runner, command, pty_params=pty_params,
+                    inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
 
-                self._log_command_result(command, status, stdout, stderr, exp_status, logging_pattern)
+            self._log_command_result(command, status, stdout, stderr, exp_status, logging_pattern)
 
         # RUN_UNTIL_SUCCESS, run the command until we get a successful expected result or a completion timeout has occured
         elif aspects.run_pattern == RunPattern.RUN_UNTIL_SUCCESS:
@@ -1038,4 +1039,3 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
                 del ssh_client
 
         return
-

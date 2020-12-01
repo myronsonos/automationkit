@@ -23,6 +23,7 @@ class TaskBase:
     def __init__(self, *args, **kwargs):
         self._args = args
         self._kwargs = kwargs
+        self._scope = None
         return
 
     @classmethod
@@ -40,4 +41,3 @@ class TaskBase:
     def exit(self):
         self._scope.exit()
         return
-

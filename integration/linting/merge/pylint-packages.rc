@@ -6,8 +6,15 @@ max-attributes=15
 disable=line-too-long,
         super-with-arguments,
         useless-return,
+        too-few-public-methods,
         too-many-arguments,
         too-many-instance-attributes,
-        too-many-locals
+        too-many-lines,
+        too-many-locals,
+        too-many-public-methods,
+        unnecessary-comprehension
+
+extension-pkg-whitelist=netifaces
 
 ignored-arguement-names=_arg|_args|_kwargs
+

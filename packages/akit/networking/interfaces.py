@@ -19,16 +19,30 @@ import socket
 
 import netifaces
 
-from akit.compat import bytes_cast
-
-
 def encode_address(address: str) -> bytes:
+    """
+        Encodes the address string to bytes
+
+        :param address: The IP address to encode.
+        :type address: str
+
+        :returns: A packed string suitable for use with low-level network functions.
+        :rtype: bytes
+    """
     is_ipv6 = ':' in address
     address_family = socket.AF_INET6 if is_ipv6 else socket.AF_INET
     return socket.inet_pton(address_family, address)
 
 def get_ipv4_address(ifname: str) -> str:
+    """
+        Get the first IPv4 address associated with the specified interface name.
 
+        :param ifname: The interface name to lookup the IP address for.
+        :type ifname: str
+
+        :returns: The IPv4 address associated with the specified interface name or None
+        :rtype: str or None
+    """
     addr = None
 
     address_info = netifaces.ifaddresses(ifname)
@@ -116,7 +130,7 @@ def get_correspondance_ip_address(ref_ip: str, ref_port: int, addr_family=socket
         sock.settimeout(10)
         sock.connect((ref_ip, ref_port))
         corr_ip, _ = sock.getsockname()
-    except Exception as xcpt:
+    except Exception: # pylint: disable=broad-except
         # If an exception occurs, just return None
         pass
     finally:

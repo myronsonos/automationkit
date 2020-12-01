@@ -224,4 +224,3 @@ exec = ExecLink()
 if __name__ == "__main__":
 
     exec().cont().expect(result=0).local().run_command("echo blah")
-

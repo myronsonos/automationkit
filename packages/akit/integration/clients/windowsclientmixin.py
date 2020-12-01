@@ -28,6 +28,8 @@ class WindowsClientMixIn(IntegrationMixIn):
         """
             The default contructor for an :class:`WindowsClientMixIn`.
         """
+        super(WindowsClientMixIn, self).__init__(*args, role=role, **kwargs)
+
         if self.pathbase is None:
             raise ValueError("The 'pathbase' class member variable must be set to a unique name for each integration class type.")
 

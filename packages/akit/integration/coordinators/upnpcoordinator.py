@@ -16,7 +16,6 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 import os
-import netifaces
 import socket
 import threading
 import time
@@ -25,14 +24,9 @@ import weakref
 
 from io import BytesIO
 
-from urllib.parse import urlparse
+import netifaces
 
-from xml.etree.ElementTree import tostring as xml_tostring
-from xml.etree.ElementTree import fromstring as xml_fromstring
-from xml.etree.ElementTree import ElementTree, Element, SubElement
-from xml.etree.ElementTree import register_namespace
-
-from akit.exceptions import AKitConfigurationError, AKitRuntimeError, AKitCommunicationsProtocolError, AKitSemanticError, AKitTimeoutError
+from akit.exceptions import AKitConfigurationError, AKitRuntimeError, AKitTimeoutError
 
 from akit.integration import upnp as upnp_module
 from akit.integration.landscaping.landscapedevice import LandscapeDevice
@@ -41,13 +35,11 @@ from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 from akit.integration.upnp.devices.upnprootdevice import device_description_load
 from akit.integration.upnp.devices.upnprootdevice import device_description_find_components
 
-from akit.integration.upnp.upnperrors import UpnpError
 from akit.integration.upnp.upnpfactory import UpnpFactory
 from akit.integration.upnp.upnpprotocol import MSearchKeys, UpnpProtocol
 from akit.integration.upnp.upnpprotocol import msearch_parse_request, notify_parse_request
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE
 from akit.integration.upnp.upnpprotocol import mquery, msearch_scan, MSearchKeys, MSearchRouteKeys
-from akit.integration.upnp.services.upnpeventvar import UpnpEventVar
 
 from akit.networking.interfaces import get_ipv4_address
 
@@ -654,12 +646,10 @@ class UpnpCoordinator:
     def _update_root_device(self, lscape, config_lookup, ip_addr: str, location: str, deviceinfo: dict, force_recording: bool = False):
         """
         """
-        rootdev = None
-
+        
         if MSearchKeys.USN in deviceinfo:
             try:
                 usn = deviceinfo[MSearchKeys.USN]
-                devuuid = usn.split("::")[0]
 
                 configinfo = None
                 if usn in config_lookup:
@@ -789,8 +779,8 @@ if __name__ == "__main__":
 
     LEDSTATES = ["Off", "On"]
 
-    small_counter = 0
-    large_counter = 0
+    SMALL_COUNTER = 0
+    LARGE_COUNTER = 0
     while True:
         time.sleep(2)
         if small_counter == 0:
@@ -801,5 +791,5 @@ if __name__ == "__main__":
         if large_counter == 0:
             print("Refreshing upnp device status.")
 
-        small_counter = (small_counter + 1) % 2
-        large_counter = (large_counter + 1) % 30
+        SMALL_COUNTER = (SMALL_COUNTER + 1) % 2
+        LARGE_COUNTER = (LARGE_COUNTER + 1) % 30
