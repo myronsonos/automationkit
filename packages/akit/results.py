@@ -37,7 +37,7 @@ class ResultCode(enum.IntEnum):
 
 class ResultType(enum.IntEnum):
     """
-        Enumeration that identifies the type of result object.
+        Enumeration to mark the type of result.
     """
     JOB = 0
     PACKAGE = 1
@@ -51,9 +51,10 @@ class ResultType(enum.IntEnum):
 
 class ResultNode:
     """
-        The :class:`ResultNode` object represents the information associated with a node in a tree of results.
-        The :class:`ResultNode` object stores information about a node that has detailed results information
-        associated with a task, test or step.
+        The :class:`ResultNode` object marks a result node that contains results from a task, test or step in a result tree.  The
+        result trees only store results that contain result data not associated with the hierarchy of the results.  The result tree
+        does not contain results that can be computed by analyzing the relationship of the nodes in the tree.  The nodes that are
+        computed are :class:`ResultContainer` instances and do not contain instance result data.
     """
     def __init__(self, result_inst, result_name, result_type, result_code=ResultCode.UNSET, parent_inst=None):
         """
@@ -244,8 +245,9 @@ class ResultNode:
 
 class ResultContainer:
     """
-        The :class:`ResultContainer` is a object that contains the information that represents the
-        relationship between a result container and the result nodes in a result tree.
+        The :class:`ResultContainer` instances are container nodes that are used to link result nodes in the
+        result tree.  The :class:`ResultContainer` nodes do not contain result data but link data so the data can
+        be computed on demand.
     """
     def __init__(self, result_inst, result_name, result_type, parent_inst=None):
         """
