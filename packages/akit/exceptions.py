@@ -227,10 +227,19 @@ class AKitScopeEntryError(AKitRuntimeError):
         This error is raised when a ScopeMixIn was unable to complete the entry of a scope.
     """
 
+class AKitSetupError(AKitRuntimeError):
+    """
+        An error occured during the setup of a Task, Test, Step or Process
+    """
+
 class AKitSkipError(AKitRuntimeError):
     """
         This error is raised when a test indicates it wants to be skipped while being run
     """
+    def __init__(self, *args, reason=None, **kwargs):
+        super(AKitSkipError, self).__init__(*args, **kwargs)
+        self.reason = reason
+        return
 
 class AKitLooperError(AKitRuntimeError):
     """

@@ -33,6 +33,10 @@ class SerializableModel:
     """
 
     def to_dict(self):
+        """
+            Iterates the formal data attributes of a model and outputs a dictionary
+            with the data based on the model.
+        """
         dval = {}
 
         model = type(self)
@@ -45,30 +49,42 @@ class SerializableModel:
 
 
     def to_json(self, indent=4):
+        """
+            Iterates the formal data attributes of a model and creates a dictionary
+            with the data based on the model, then converts the dictionary to a
+            JSON string.
+        """
         model_dict = self.to_dict()
         json_str = json.dumps(model_dict, indent=indent)
         return json_str
 
 AutomationBase = declarative_base()
 
-class AutomationJob(AutomationBase, SerializableModel):
-    __tablename__ = 'automation_job'
+class TestJob(AutomationBase, SerializableModel):
+    """
+        A data model for a TestJob run.
+    """
 
-    id = Column('job_id', BigInteger, primary_key=True)
-    title =  Column('job_title', VARCHAR(1024), nullable=False)
-    description = Column('job_description', Text, nullable=False)
-    instance = Column('job_instance', UUIDType, nullable=False)
-    branch =  Column('job_branch', VARCHAR(1024), nullable=True)
-    build =  Column('job_build', VARCHAR(1024), nullable=True)
-    flavor =  Column('job_flavor', VARCHAR(1024), nullable=True)
-    start = Column('job_start', DateTime, nullable=False)
-    stop = Column('job_stop', DateTime, nullable=True)
-    detail = Column('job_detail', JSON, nullable=True)
+    __tablename__ = 'test_job'
+
+    id = Column('tj_id', BigInteger, primary_key=True)
+    title =  Column('tj_title', VARCHAR(1024), nullable=False)
+    description = Column('tj_description', Text, nullable=False)
+    instance = Column('tj_instance', UUIDType, nullable=False)
+    branch =  Column('tj_branch', VARCHAR(1024), nullable=True)
+    build =  Column('tj_build', VARCHAR(1024), nullable=True)
+    flavor =  Column('tj_flavor', VARCHAR(1024), nullable=True)
+    start = Column('tj_start', DateTime, nullable=False)
+    stop = Column('tj_stop', DateTime, nullable=True)
+    detail = Column('tj_detail', JSON, nullable=True)
 
     lscape_id = Column('lscape_id', BigInteger, ForeignKey("landscape.lscape_id"), nullable=True)
     lsscan_id = Column('lsscan_id', BigInteger, ForeignKey("landscape_scan.lsscan_id"), nullable=True)
 
 class Landscape(AutomationBase, SerializableModel):
+    """
+        A data model that describes a test landscape.
+    """
     __tablename__ = 'landscape'
 
     id = Column('lsdesc_id', BigInteger, primary_key=True)
@@ -76,6 +92,9 @@ class Landscape(AutomationBase, SerializableModel):
     detail = Column('lsdesc_detail', JSON, nullable=False)
 
 class LandscapeScan(AutomationBase, SerializableModel):
+    """
+        A data model that describes the results of a test landscape scan.
+    """
     __tablename__ = 'landscape_scan'
 
     id = Column('lsscan_id', BigInteger, primary_key=True)
@@ -84,42 +103,58 @@ class LandscapeScan(AutomationBase, SerializableModel):
 
     lscape_id = Column('lscape_id', BigInteger, ForeignKey("landscape.lscape_id"))
 
-class Task(AutomationBase, SerializableModel):
-    __tablename__ = 'task'
+class TestResult(AutomationBase, SerializableModel):
+    """
+        A data model for a TestResult node that is part of a test result tree.
+    """
+    __tablename__ = 'test_result'
 
-    id = Column('task_id', BigInteger, primary_key=True)
-    name =  Column('task_name', VARCHAR(1024), nullable=False)
-    extname = Column('task_extname', VARCHAR(1024), nullable=True)
-    parameters = Column('task_parameters', Text, nullable=True)
-    instance = Column('task_instance', UUIDType, nullable=False)
-    parent = Column('task_parent', UUIDType, nullable=True)
-    rtype = Column('task_rtype', String(50), nullable=False)
-    result = Column('task_result', String(50), nullable=False)
-    start = Column('task_start', DateTime, nullable=False)
-    stop = Column('task_stop', DateTime, nullable=True)
-    detail = Column('task_detail', JSON, nullable=True)
+    id = Column('tstr_id', BigInteger, primary_key=True)
+    name =  Column('tstr_name', VARCHAR(1024), nullable=False)
+    extname = Column('tstr_extname', VARCHAR(1024), nullable=True)
+    parameters = Column('tstr_parameters', Text, nullable=True)
+    instance = Column('tstr_instance', UUIDType, nullable=False)
+    parent = Column('tstr_parent', UUIDType, nullable=True)
+    rtype = Column('tstr_rtype', String(50), nullable=False)
+    result = Column('tstr_result', String(50), nullable=False)
+    start = Column('tstr_start', DateTime, nullable=False)
+    stop = Column('tstr_stop', DateTime, nullable=True)
+    detail = Column('tstr_detail', JSON, nullable=True)
 
-    run_id = Column('job_id', BigInteger, ForeignKey("automation_job.job_id"))
+    testjob_id = Column('tj_id', BigInteger, ForeignKey("test_job.tj_id"))
 
-class TaskContainer(AutomationBase, SerializableModel):
-    __tablename__ = 'task_container'
+class TestResultContainer(AutomationBase, SerializableModel):
+    """
+        A data model for a TestResultContainer node that is part of a test result tree.  The
+        TestResultContainer node serves as a parent and container for individual result based
+        nodes.
+    """
+    __tablename__ = 'test_result_container'
 
-    id = Column('tcont_id', BigInteger, primary_key=True)
-    name =  Column('tcont_name', VARCHAR(1024), nullable=False)
-    instance = Column('tcont_instance', UUIDType, nullable=False)
-    parent = Column('tcont_parent', UUIDType, nullable=True)
-    rtype = Column('tcont_rtype', String(50), nullable=False)
+    id = Column('tstrcont_id', BigInteger, primary_key=True)
+    name =  Column('tstrcont_name', VARCHAR(1024), nullable=False)
+    instance = Column('tstrcont_instance', UUIDType, nullable=False)
+    parent = Column('tstrcont_parent', UUIDType, nullable=True)
+    rtype = Column('tstrcont_rtype', String(50), nullable=False)
 
-    run_id = Column('job_id', BigInteger, ForeignKey("automation_job.job_id"))
+    testjob_id = Column('tj_id', BigInteger, ForeignKey("test_job.tj_id"))
 
 
 AutomationPod = declarative_base()
 
 class WorkQueueJobType(enum.Enum):
+    """
+        An enumeration that indicates the JobType of a WorkQueue item.  This indicates if a
+        work item is a global work item available for execution on any qualified work site or
+        if it is a local work item which is meant to execute locally.
+    """
     Local = 1
     Global = 2
 
 class WorkQueue(AutomationPod, SerializableModel):
+    """
+        A data model for a WorkQueue and the work items that are port of a work queue.
+    """
     __tablename__ = 'work_queue'
 
     id = Column('wkq_id', BigInteger, primary_key=True, autoincrement=True)

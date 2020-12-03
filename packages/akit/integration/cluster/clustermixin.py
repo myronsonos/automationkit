@@ -24,10 +24,12 @@ class ClusterMixIn(IntegrationMixIn):
 
     pathbase = "cluster"
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, role=None, **kwargs):
         """
             The default contructor for an :class:`IntegrationMixIn`.
         """
+        super(ClusterMixIn, self).__init__(*args, role=role, **kwargs)
+
         if self.pathbase is None:
             raise ValueError("The 'pathbase' class member variable must be set to a unique name for each integration class type.")
 

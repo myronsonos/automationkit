@@ -260,7 +260,7 @@ class ScopeMonitor:
             self._monitors = []
             self._monitors_lock = threading.RLock()
 
-            self._timer = threading.Timer(self.SCOPE_MONITOR_INTERVAL, self._monitor_tick, kwargs={ "name": "ScopeMonitorTimer", "daemon": True })
+            self._timer = threading.Timer(self.SCOPE_MONITOR_INTERVAL, self._monitor_tick)
         return
 
     def register_monitor(self, monitor: MonitoredScope):
@@ -279,7 +279,7 @@ class ScopeMonitor:
 
         return
 
-    def _monitor_tick(self, sgate):
+    def _monitor_tick(self):
 
         self._monitors_lock.acquire()
         try:

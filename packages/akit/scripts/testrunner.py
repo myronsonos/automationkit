@@ -20,9 +20,11 @@ import argparse
 import os
 import sys
 
-# We need to load the context first because it will load configuration
-from akit.compat import import_by_name
+# IMPORTANT: We need to load the context first because it will trigger the loading
+# of the default user configuration
 from akit.environment.context import Context
+
+from akit.compat import import_by_name
 from akit.environment.variables import extend_path
 from akit.environment.options import ENVIRONMENT_OPTIONS
 

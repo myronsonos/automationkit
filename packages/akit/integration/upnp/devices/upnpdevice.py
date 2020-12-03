@@ -291,5 +291,3 @@ class UpnpDevice:
                     eventsTable[name] = varInfo
 
         return variablesTable, typesTable, eventsTable
-
-

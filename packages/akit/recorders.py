@@ -26,31 +26,51 @@ import shutil
 
 from datetime import datetime
 
+from akit.exceptions import AKitNotOverloadedError
 from akit.results import ResultCode, ResultType
 from akit.templates import TEMPLATE_TESTSUMMARY
 from akit.testing.utilities import catalog_tree
 
 
-class JsonResultRecorder:
+class ResultRecorder:
     """
-        The :class:`JsonResultRecorder` object records test results in JSON format.
+        The :class:`ResultRecorder` object is the base class object that establishes the API patterns
+        for recorders of different formats to use when implementing a test result recorder.
     """
     def __init__(self, title: str, runid: str, start: datetime, summary_filename: str,
                  result_filename: str, branch: Optional[str] = None, build: Optional[str] = None,
-                flavor: Optional[str] = None):
+                 flavor: Optional[str] = None):
         """
-            Initializes the :class:`JsonResultRecorder` object for recording test results for
-            a test run.
+            Initializes an instance of a ResultRecorder with the information about a test run.
+
+            :param title: A title to associated with the summary for the test results.
+            :type title: str
+            :param runid: The uuid string that identifies a set of test results.
+            :type runid: str
+            :param start: The date and time of the start of the test run.
+            :type start: datetime
+            :param summary_filename: The full path to the summary file where the test run summary should be written to.
+            :type summary_filename: str
+            :param result_filename: The full path to the results file where the test run results should be written to.
+            :type result_filename: str
+            :param branch: Optional name of a code 'branch' to associate with the test results.
+            :type branch: str
+            :param build: Optional name of a product 'build' to associate with the test results.
+            :type build: str
+            :param flavor: Optional label that indicates the flavor of build the test run is running against.
+            :type flavor: str
         """
+
         self._title = title
         self._runid = runid
         self._start = start
-        self._output_dir = os.path.dirname(summary_filename)
         self._summary_filename = summary_filename
         self._result_filename = result_filename
         self._branch = branch
         self._build = build
         self._flavor = flavor
+
+        self._output_dir = os.path.dirname(summary_filename)
 
         self._rout = None
 
@@ -133,14 +153,11 @@ class JsonResultRecorder:
         self._rout.write(json_str)
         return
 
-    def update_summary(self):
+    def update_summary(self): # pylint: disable=no-self-use
         """
             Writes out an update to the test run summary file.
         """
-        with open(self._summary_filename, 'w') as sout:
-            json.dump(self._summary, sout, indent=4)
-
-        return
+        raise AKitNotOverloadedError("The 'update_summary' method must be overridden by derived 'ResultRecorder' objects.")
 
     def finalize(self):
         """
@@ -166,5 +183,28 @@ class JsonResultRecorder:
 
         catalog_tree(self._output_dir)
         shutil.copy(TEMPLATE_TESTSUMMARY, self._summary_report)
+
+        return
+
+class JsonResultRecorder(ResultRecorder):
+    """
+        The :class:`JsonResultRecorder` object records test results in JSON format.
+    """
+    def __init__(self, title: str, runid: str, start: datetime, summary_filename: str,
+                 result_filename: str, branch: Optional[str] = None, build: Optional[str] = None,
+                flavor: Optional[str] = None):
+        """
+            Initializes the :class:`JsonResultRecorder` object for recording test results for
+            a test run.
+        """
+        super(JsonResultRecorder, self).__init__(title, runid, start, summary_filename, result_filename, branch=branch, build=build, flavor=flavor)
+        return
+
+    def update_summary(self):
+        """
+            Writes out an update to the test run summary file.
+        """
+        with open(self._summary_filename, 'w') as sout:
+            json.dump(self._summary, sout, indent=4)
 
         return
