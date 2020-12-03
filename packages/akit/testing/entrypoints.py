@@ -18,8 +18,8 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
-
 import argparse
+import inspect
 import os
 import sys
 
@@ -74,6 +74,18 @@ def generic_test_entrypoint():
     # Copy the test module to the name of the module_fullname name so the loader won't reload it
     sys.modules[module_fullname] = test_module
 
+
+    if test_module.__name__ == "__main__":
+        test_module.__name__ = module_fullname
+
+        # Re-map the object classes from the module over to the module name we just registered the test
+        # module under.
+        test_class_coll = inspect.getmembers(test_module, inspect.isclass)
+        for testclass_name, testclass_obj in test_class_coll:
+            tcobj_module_name = testclass_obj.__module__
+            if tcobj_module_name == "__main__":
+                testclass_obj.__module__ = module_fullname
+
     args = base_parser.parse_args()
 
     logging_initialize()
@@ -84,8 +96,8 @@ def generic_test_entrypoint():
         includes.append("*")
 
     result_code = 0
-    with DefaultTestJob(ctx, logger, test_root, includes=includes, excludes=excludes, test_module=test_module) as tjob:
-        result_code = tjob.sequence()
+    with DefaultTestJob(logger, test_root, includes=includes, excludes=excludes, test_module=test_module) as tjob:
+        result_code = tjob.execute()
 
     sys.exit(result_code)
 

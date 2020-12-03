@@ -13,7 +13,7 @@ from akit.mixins.scope import ScopeMixIn
 from akit.testing.testpack import TestPack
 from akit.testing.testcontainer import TestContainer, PositiveTestContainer
 
-from scopes.examplescopes import ExampleScopeAMixIn, ExampleScopeAAMixIn, ExampleScopeABMixIn, ExampleScopeBMixIn
+from internal.scopes.examplescopes import ExampleScopeAMixIn, ExampleScopeAAMixIn, ExampleScopeABMixIn, ExampleScopeBMixIn
 
 
 class TestPackageAA(TestPack, ExampleScopeAAMixIn):

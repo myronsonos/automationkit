@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/packages"
+                "PYTHONPATH": "${workspaceFolder}/packages:${workspaceFolder}/testroots"
             },
             "program": "${file}",
             "console": "integratedTerminal",

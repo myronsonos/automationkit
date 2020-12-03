@@ -17,6 +17,9 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Optional, Union
+from types import ModuleType
+
 import fnmatch
 import inspect
 import os
@@ -37,12 +40,21 @@ from akit.xlogging.foundations import getAutomatonKitLogger
 
 logger = getAutomatonKitLogger()
 
-def find_included_tests(root, package, module, testclass, testname):
+def find_included_tests(root: str, package: Union[str, None], module: Union[str, None], testclass: Union[str, None], testname: Union[str, None]):
+    """
+        Walks through a directory tree starting at a root directory and finds all of the
+        tests that corresponded to the package, module, testclass and testname specified.
+
+        :param root: The root directory to start from when performing the tree walk to look
+                     for included tests.
+        :type root: str
+    """
+
 
     included_files = []
 
-    if module is None:
-        # If expr_module is None, then we had a single item expression, this means
+    if package is None:
+        # If package is None, then we had a single item expression, this means
         # we can look for a single file, or a directory with lots of files.
         filenames = os.listdir(root)
         for fname in filenames:
@@ -74,28 +86,54 @@ def find_included_tests(root, package, module, testclass, testname):
 
     return included_files
 
-def parse_expression(expression, testmodule=None, method_prefix="test"):
+def parse_include_expression(expression: str, testmodule: Optional[ModuleType], method_prefix: str = "test"):
+    """
+        Parses the include expression in connection with the testmodule and method_prefix information provided
+        and returns the components (package, module, testclass, testname) which can be used to perform a
+        test tree search for included tests based on the expression.
+
+        :param expression: A test include expression in the form of (package).(module)@(testclass)#(testcase).  The module,
+                           testclass, and testcase are optional.  If these items are excluded every descendant test found
+                           under the (package) will be included.
+        :type expression: str
+        :param testmodule: A test module that contains the tests to be run.  This is passed when a individual test file
+                           debugging workflow is being used.
+        :type testmodule: ModuleType
+        :param method_prefix: The string prefix that identifies test methods on a :class:`TestContainer` derived class.
+        :type method_prefix: str
+    """
 
     expr_package = None
     expr_module = None
     expr_testclass = None
     expr_testname = None
 
-    # If self._test_module was set then we are running a test module as a script or debugging a test module
+    # If test_module was passed then we are running a test module as a script or debugging a test module
     # so we handle the special case where we only collect the test references from the test module that
     # was set.
     if testmodule is not None:
         if expression.find(".") > -1 or expression.find("@") > -1 or expression.find(":") > -1:
-            raise ValueError("parse_expression: The include expression for test module runs should only have a " \
+            raise ValueError("parse_include_expression: The include expression for test module runs should only have a " \
                              "test class and test method.")
+
+        testmodule_name = testmodule.__name__
 
         expr_package = "*"
         expr_module = "*"
 
+        # If the full path to the module was set correctly by the generic entry point, then replace the package and module
+        # expressions with exact expressions so we don't load coad that does not need to be loaded when we are scanning
+        # for tests.
+        if testmodule_name != "__main__":
+            tm_name_parts = testmodule_name.split('.')
+            if len(tm_name_parts) > 1:
+                expr_package = '.'.join(tm_name_parts[:-1])
+                expr_module = tm_name_parts[-1]
+        
         if expression.find("#") > -1:
             expression, expr_testname = expression.split("#")
             if not expr_testname.startswith(method_prefix):
-                raise ValueError("parse_expression: The testname component of the expression must start with the " \
+                raise ValueError("parse_include_expression: The testname component of the expression must start with the " \
                                 "method_prefix=%r. expression%r" % (method_prefix, expression))
 
         expr_testclass = expression
@@ -103,22 +141,29 @@ def parse_expression(expression, testmodule=None, method_prefix="test"):
     # If self._test_module was not set then we are performing a commmandline run where a test job or includes, excludes
     # collection was passed we need to use one of those to determine what to run.
     else:
+        # Start from the end of the expression and work backwards to determine what components in the expression were passed
+
+        # First look for the # to see if we have a test name specified.
         if expression.find("#") > -1:
             expression, expr_testname = expression.split("#")
             if not expr_testname.startswith(method_prefix):
-                raise ValueError("TestCollector:collect_references: The testname component of the expression must " \
+                raise ValueError("parse_include_expression: The testname component of the expression must " \
                                 "start with the method_prefix=%r. expression%r" % (method_prefix, expression))
 
         if expression.find("@") > -1:
             expression, expr_testclass = expression.split("@")
 
-        comb_expr_comp = expression.split(".")
-        if len(comb_expr_comp) > 1:
-            expr_package = ".".join(comb_expr_comp[:-1])
-            expr_module = comb_expr_comp[-1]
+            comb_expr_comp = expression.split(".")
+            if len(comb_expr_comp) > 1:
+                expr_package = ".".join(comb_expr_comp[:-1])
+                expr_module = comb_expr_comp[-1]
+            else:
+                expr_package = None
+                expr_module = expression
         else:
-            expr_package = expression
-            expr_module = None
+            # If we did not find a @ then we were not given a package and module components.
+            errmsg = "parse_include_expression: The (package).(module) components of the include must be provided when you specify a Classname with @."
+            raise ValueError(errmsg)
 
     return expr_package, expr_module, expr_testclass, expr_testname
 
@@ -171,7 +216,7 @@ class TestCollector:
             for this class.
         """
 
-        expr_package, expr_module, expr_testclass, expr_testname = parse_expression(expression, self._test_module, self._method_prefix)
+        expr_package, expr_module, expr_testclass, expr_testname = parse_include_expression(expression, self._test_module, self._method_prefix)
 
         # Find all the files that are included based on the expression
         included_files = []

@@ -42,7 +42,7 @@ def find_testmodule_fullname(module, root_path=None) -> str:
     if root_path is None:
         root_path = find_testmodule_root(module)
 
-    mod_filebase, _ = os.path.splitext(os.path.basename(module.__file__))
+    mod_filebase, _ = os.path.splitext(os.path.abspath(module.__file__))
     testmodule_fullname = mod_filebase[len(root_path):].strip("/").replace("/", ".")
 
     return testmodule_fullname
