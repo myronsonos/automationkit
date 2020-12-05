@@ -28,12 +28,12 @@ import traceback
 from akit.compat import import_file
 
 from akit.mixins.integration import is_integration_mixin
-from akit.mixins.scope import is_scope_mixin
+from akit.mixins.scope import is_iteration_scope_mixin
 
 from akit.paths import collect_python_modules
 
 from akit.testing.testcontainer import TestContainer, inherits_from_testcontainer
-from akit.testing.testpack import TestPack, DefaultTestPack, inherits_from_testpack, testpack_compare
+from akit.testing.testpack import DefaultTestPack, inherits_from_testpack, testpack_compare
 from akit.testing.testref import TestRef
 
 from akit.xlogging.foundations import getAutomatonKitLogger
@@ -276,7 +276,7 @@ class TestCollector:
                 # Import the module for the file being processed
                 mod = import_file(modname, ifile)
 
-                # Go through all of the members of the 
+                # Go through all of the members of the
                 test_class_coll = inspect.getmembers(mod, inspect.isclass)
                 for testclass_name, testclass_obj in test_class_coll:
                     tcobj_module_name = testclass_obj.__module__
@@ -519,7 +519,7 @@ class TestCollector:
         scopes_found = []
 
         for nxt_cls in scope_cls.__bases__:
-            if is_scope_mixin(nxt_cls):
+            if is_iteration_scope_mixin(nxt_cls):
                 if not hasattr(nxt_cls, "refcount"):
                     setattr(nxt_cls, "refcount", 1)
                 else:

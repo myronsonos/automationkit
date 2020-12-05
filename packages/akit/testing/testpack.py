@@ -18,7 +18,7 @@ __license__ = "MIT"
 
 import inspect
 
-from akit.mixins.scope import ScopeMixIn, is_scope_mixin
+from akit.mixins.scope import ScopeMixIn, inherits_from_scope_mixin
 
 from akit.xlogging.foundations import getAutomatonKitLogger
 
@@ -76,15 +76,16 @@ class TestPack(ScopeMixIn):
         """
         return
 
-    def scopes_enter(self):
+    def scopes_enter(self): # pylint: disable=no-self-use
         """
+            Called to enter the scopes to setup for running the :class:`TestPack`.
         """
 
         rev_mro = list(TestPack.mro())
         rev_mro.reverse()
 
         for nxt_cls in rev_mro:
-            if is_scope_mixin(nxt_cls):
+            if inherits_from_scope_mixin(nxt_cls):
                 nxt_cls.scope_enter()
                 if not hasattr(nxt_cls, "scope_enter_count"):
                     nxt_cls.scope_enter_count = 1
@@ -93,14 +94,15 @@ class TestPack(ScopeMixIn):
 
         return
 
-    def scopes_exit(self):
+    def scopes_exit(self): # pylint: disable=no-self-use
         """
+            Called to exit the scopes to cleanup after running the :class:`TestPack`.
         """
 
         norm_mro = list(TestPack.mro())
 
         for nxt_cls in norm_mro:
-            if is_scope_mixin(nxt_cls):
+            if inherits_from_scope_mixin(nxt_cls):
                 nxt_cls.scope_exit()
                 if hasattr(nxt_cls, "scope_enter_count"):
                     nxt_cls.scope_enter_count -= 1 # pylint: disable=no-member
@@ -119,10 +121,17 @@ class DefaultTestPack(TestPack):
     pathname = ""
 
 def inherits_from_testpack(cls) -> bool:
+    """
+        Helper method that detects if an objects type inherits from :class:`TestPack` but ensures
+        that the object is not a :class:`TestPack` type from this file.
+    """
     istp = False
     if inspect.isclass(cls) and cls is not TestPack and issubclass(cls, TestPack):
         istp = True
     return istp
 
 def testpack_compare(tpack):
+    """
+        Used to provide a key for comparing :class:`TestPack` objects.
+    """
     return tpack.weight

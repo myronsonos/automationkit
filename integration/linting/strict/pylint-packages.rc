@@ -3,7 +3,8 @@ max-attributes=15
 
 [MESSAGE CONTROL]
 # C0301 Line too long
-disable=duplicate-code,
+disable=consider-using-in,
+        duplicate-code,
         global-statement,
         invalid-name,
         line-too-long,
@@ -17,6 +18,7 @@ disable=duplicate-code,
         too-many-locals,
         too-many-nested-blocks,
         too-many-public-methods,
+        too-many-statements,
         unnecessary-comprehension
 
 extension-pkg-whitelist=netifaces

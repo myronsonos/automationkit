@@ -68,7 +68,7 @@ if logfile_level is None:
 
 # Step 5 - Force the context to load with defaults ifz it is not already loaded
 # and setup the run type if not already set
-from akit.environment.context import Context
+from akit.environment.context import Context # pylint: disable=wrong-import-position
 
 ctx = Context()
 

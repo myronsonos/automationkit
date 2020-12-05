@@ -42,6 +42,7 @@ class ReadWriteLock:
 
         tid = threading.get_ident()
         start_time = time.time()
+        stop_time = start_time + timeout
 
         try:
             self._lock.acquire()
@@ -55,7 +56,7 @@ class ReadWriteLock:
                     else:
                         self._lock.release()
                         try:
-                            time_left = time.time() - start_time
+                            time_left = stop_time - time.time()
                             if time_left < 0:
                                 raise TimeoutError("Timeout waiting on read lock.")
 
@@ -65,11 +66,11 @@ class ReadWriteLock:
 
             finally:
                 self._lock.release()
-        except TimeoutError:
+        except TimeoutError as toerr:
             now_time = time.time()
             elapsed = now_time - start_time
-            errmsg = "Timeout waiting to acquire read lock. start=%d end=%d elapesed=%d" % (start_time, now_time, elapsed)
-            raise TimeoutError(errmsg)
+            errmsg = "Timeout waiting to acquire read lock. start=%d end=%d elapsed=%d" % (start_time, now_time, elapsed)
+            raise TimeoutError(errmsg) from toerr
 
         return
 
@@ -77,6 +78,7 @@ class ReadWriteLock:
 
         tid = threading.get_ident()
         start_time = time.time()
+        stop_time = start_time + timeout
 
         # Block new readers from starting to read
         self._read_gate.clear()
@@ -89,7 +91,7 @@ class ReadWriteLock:
                     self._lock.release()
                     try:
 
-                        time_left = time.time() - start_time
+                        time_left = stop_time - time.time()
                         if time_left < 0:
                             raise TimeoutError("Timeout waiting on write lock.")
 
@@ -103,11 +105,11 @@ class ReadWriteLock:
                 self._writer = tid
             finally:
                 self._lock.release()
-        except TimeoutError:
+        except TimeoutError as toerr:
             now_time = time.time()
             elapsed = now_time - start_time
             errmsg = "Timeout waiting to acquire write lock. start=%d end=%d elapesed=%d" % (start_time, now_time, elapsed)
-            raise TimeoutError(errmsg)
+            raise TimeoutError(errmsg) from toerr
 
         return
 

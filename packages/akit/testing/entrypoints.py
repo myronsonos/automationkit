@@ -81,7 +81,7 @@ def generic_test_entrypoint():
         # Re-map the object classes from the module over to the module name we just registered the test
         # module under.
         test_class_coll = inspect.getmembers(test_module, inspect.isclass)
-        for testclass_name, testclass_obj in test_class_coll:
+        for _, testclass_obj in test_class_coll:
             tcobj_module_name = testclass_obj.__module__
             if tcobj_module_name == "__main__":
                 testclass_obj.__module__ = module_fullname

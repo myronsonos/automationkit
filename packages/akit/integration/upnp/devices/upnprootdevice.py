@@ -452,9 +452,9 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
                     nxtheader = "TIMEOUT"
                     sub_timeout_str = resp_headers[nxtheader]
-                except KeyError:
+                except KeyError as kerr:
                     errmsg = "Event subscription response was missing in %r header." % nxtheader
-                    raise AKitCommunicationsProtocolError(errmsg)
+                    raise AKitCommunicationsProtocolError(errmsg) from kerr
 
                 mobj = REGEX_SUBSCRIPTION_TIMEOUT.match(sub_timeout_str)
                 if mobj is not None:

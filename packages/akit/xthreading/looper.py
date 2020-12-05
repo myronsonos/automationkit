@@ -73,7 +73,7 @@ class Looper:
         self._exit_gate.wait(timeout=timeout)
         return
 
-    def loop(self, packet) -> bool: # pylint: disable=no-self-user
+    def loop(self, packet) -> bool: # pylint: disable=no-self-use
         """
             Method that is overloaded by derived classes in order to implement a work loop.
         """

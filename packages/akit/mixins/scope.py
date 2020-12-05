@@ -126,7 +126,7 @@ class IteratorScopeMixIn(ContextUser):
         """
         return
 
-def is_scope_mixin(cls) -> bool:
+def inherits_from_scope_mixin(cls) -> bool:
     """
         Helper function that is used to determine if a type is an :class:`ScopeMixIn` subclass, but not
         the ScopeMixIn type itself.

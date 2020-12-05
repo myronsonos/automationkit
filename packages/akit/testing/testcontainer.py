@@ -294,8 +294,8 @@ class SmokeTestContainer(TestContainer):
 
 def inherits_from_testcontainer(cls):
     """
-        Helper method that detects if an objects type inherits from TestContainer but ensures
-        that the object is not a TestContainer type from this file.
+        Helper method that detects if an objects type inherits from :class:`TestContainer` but
+        ensures that the object is not a :class:`TestContainer` type from this file.
     """
     is_testcontainer = False
     if inspect.isclass(cls) and cls is not TestContainer and issubclass(cls, TestContainer):

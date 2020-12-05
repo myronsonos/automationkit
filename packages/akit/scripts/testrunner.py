@@ -99,9 +99,9 @@ def testrunner_main():
 
             try:
                 job_mod = import_by_name(job_package)
-            except ImportError:
+            except ImportError as imperr:
                 errmsg = "Failure while importing job package %r"  % job_package
-                raise argparse.ArgumentError("--job", errmsg)
+                raise argparse.ArgumentError("--job", errmsg) from imperr
 
             if not hasattr(job_mod, job_class):
                 errmsg = "The job package %r does not have a job type %r." % (job_package, job_class)

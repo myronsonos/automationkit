@@ -16,6 +16,8 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Sequence
+
 import logging
 import json
 import uuid
@@ -23,7 +25,7 @@ import uuid
 import akit.environment.activate # pylint: disable=unused-import
 from akit.environment.context import ContextUser
 
-from akit.mixins.scope import is_scope_mixin
+from akit.mixins.scope import inherits_from_scope_mixin
 from akit.results import ResultContainer, ResultType
 from akit.testing.testcollector import TestCollector
 
@@ -31,6 +33,9 @@ from akit.testing.testcollector import TestCollector
 logger = logging.getLogger("AKIT")
 
 class TEST_SEQUENCER_PHASES:
+    """
+        Indicates the current state of the sequencer.
+    """
     Initial = 0
     Discovery = 1
     Collection = 2
@@ -38,8 +43,12 @@ class TEST_SEQUENCER_PHASES:
     Traversal = 4
 
 class TestSequencer(ContextUser):
+    """
+        The :class:`TestSequencer` is a state machine that helps to orchestrate the flow fo the test run.  It ensures
+        that the steps of the test flow are consistent between runs.
+    """
 
-    def __init__(self, jobtitle, root, includes=[], excludes=[]):
+    def __init__(self, jobtitle: str, root: str, includes: Sequence[str], excludes: Sequence[str]):
         """
             Creates a 'TestSequencer' object which is used to discover the tests and control the flow of a test run.
 
@@ -67,17 +76,29 @@ class TestSequencer(ContextUser):
         return
 
     def __enter__(self):
+        """
+            Provides 'with' statement scope semantics for the :class:`TestSequencer`
+        """
         return self
 
     def __exit__(self, ex_type, ex_inst, ex_tb):
+        """
+            Provides 'with' statement scope semantics for the :class:`TestSequencer`
+        """
         return False
 
     @property
     def import_errors(self):
+        """
+            A list of import errors that were encountered during the sequencing of the test run.
+        """
         return self._import_errors
 
     @property
     def testpacks(self):
+        """
+            A list of :class:`TestPack` objects that are included in the test run.
+        """
         return self._testpacks
 
     def attach_to_environment(self, landscape):
@@ -125,7 +146,9 @@ class TestSequencer(ContextUser):
         return
 
     def discover(self, test_module=None):
-
+        """
+            Initiates the discovery phase of the test run.
+        """
         collector = TestCollector(self._root, excludes=self._excludes, test_module=test_module)
 
         # Discover the tests, integration points, and scopes.  If test modules is not None then
@@ -146,7 +169,9 @@ class TestSequencer(ContextUser):
         return testcount
 
     def execute_testpacks(self, runid: str, recorder, sequencer):
-
+        """
+            Called in order to execute the tests contained in the :class:`TestPacks` being run.
+        """
         exit_code = 0
 
         res_name = "(root)"
@@ -159,11 +184,16 @@ class TestSequencer(ContextUser):
 
         return exit_code
 
-    def parse_extended_args(self, base_parser):
-
+    def parse_extended_args(self, base_parser): # pylint: disable=no-self-use
+        """
+            Called for the sequencer to parse the extended arguments to be passed on to integrations and mixins.
+        """
         return
 
-    def publish_integrations(self):
+    def publish_integrations(self): # pylint: disable=no-self-use
+        """
+            Called for the sequencer to publish the integrations that it found during discovery.
+        """
         return
 
     def record_import_errors(self, outputfilename: str):
@@ -215,12 +245,12 @@ class TestSequencer(ContextUser):
 
         return
 
-    def _enter_testpack(self, leaf_scope):
+    def _enter_testpack(self, leaf_scope): # pylint: disable=no-self-use
         rev_mro = list(leaf_scope.__mro__)
         rev_mro.reverse()
 
         for nxt_cls in rev_mro:
-            if is_scope_mixin(nxt_cls):
+            if inherits_from_scope_mixin(nxt_cls):
                 # We only want to call scope_enter when we find the type it is directly
                 # implemented on
                 if "scope_enter" in nxt_cls.__dict__:
@@ -232,11 +262,11 @@ class TestSequencer(ContextUser):
 
         return
 
-    def _exit_testpack(self, leaf_scope):
+    def _exit_testpack(self, leaf_scope): # pylint: disable=no-self-use
         norm_mro = list(leaf_scope.__mro__)
 
         for nxt_cls in norm_mro:
-            if is_scope_mixin(nxt_cls):
+            if inherits_from_scope_mixin(nxt_cls):
                 # We only want to call scope_enter when we find the type it is directly
                 # implemented on
                 if "scope_exit" in nxt_cls.__dict__:

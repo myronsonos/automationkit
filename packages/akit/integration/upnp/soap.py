@@ -266,7 +266,7 @@ class SoapProcessor:
                     errorDescription = UPNP_ERROR_TEST_LOOKUP[errorCode]
                 else:
                     errorDescription = "Unknown error."
-        except:
-            raise SOAPProtocolError("Unable to process xml response:\n%s" % content)
+        except Exception as xcpt:
+            raise SOAPProtocolError("Unable to process xml response:\n%s" % content) from xcpt
 
         return errorCode, errorDescription
