@@ -118,7 +118,7 @@ class DefaultTestPack(TestPack):
     """
     pathname = ""
 
-def is_testpack(cls) -> bool:
+def inherits_from_testpack(cls) -> bool:
     istp = False
     if inspect.isclass(cls) and cls is not TestPack and issubclass(cls, TestPack):
         istp = True

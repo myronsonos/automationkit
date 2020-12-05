@@ -17,7 +17,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Optional, Union
+from typing import Optional, Sequence, Union
 from types import ModuleType
 
 import fnmatch
@@ -33,21 +33,27 @@ from akit.mixins.scope import is_scope_mixin
 from akit.paths import collect_python_modules
 
 from akit.testing.testcontainer import TestContainer, inherits_from_testcontainer
-from akit.testing.testpack import TestPack, DefaultTestPack, is_testpack, testpack_compare
+from akit.testing.testpack import TestPack, DefaultTestPack, inherits_from_testpack, testpack_compare
 from akit.testing.testref import TestRef
 
 from akit.xlogging.foundations import getAutomatonKitLogger
 
 logger = getAutomatonKitLogger()
 
-def find_included_tests(root: str, package: Union[str, None], module: Union[str, None], testclass: Union[str, None], testname: Union[str, None]):
+def find_included_test_modules_under_root(root: str, package: Union[str, None], module: str):
     """
-        Walks through a directory tree starting at a root directory and finds all of the
-        tests that corresponded to the package, module, testclass and testname specified.
+        Walks through a directory tree starting at a root directory and finds all of the files that corresponded to
+        the package, module expressions specified.
 
         :param root: The root directory to start from when performing the tree walk to look
                      for included tests.
         :type root: str
+        :param package: The package name component if there is one.  The package components are the directories
+                        with __init__.py files up to the file where the module file itself is found. It could be
+                        that there is only a module name.
+        :type package: str
+        :param module: The module name component.  There must be a module because that is the file where the tests
+                       are found.
     """
 
 
@@ -129,7 +135,7 @@ def parse_include_expression(expression: str, testmodule: Optional[ModuleType], 
             if len(tm_name_parts) > 1:
                 expr_package = '.'.join(tm_name_parts[:-1])
                 expr_module = tm_name_parts[-1]
-        
+
         if expression.find("#") > -1:
             expression, expr_testname = expression.split("#")
             if not expr_testname.startswith(method_prefix):
@@ -169,9 +175,27 @@ def parse_include_expression(expression: str, testmodule: Optional[ModuleType], 
 
 class TestCollector:
     """
+        The :class:`TestCollector` object utilizes the include and exclude expressions along with any test_module
+        provided to collect the information about the test references and the associated test packages that will
+        be involved in test run.
     """
 
-    def __init__(self, root, excludes, method_prefix="test", test_module=None):
+    def __init__(self, root: str, excludes: Sequence[str], method_prefix: str = "test", test_module: ModuleType = None):
+        """
+            Initializes a :class:`TestCollector` instance in order to process the test tree and
+            collect references and test packages to be run.
+
+            :param root: The root directory to scan for included tests
+            :type root: str
+            :param excludes: A list or sequence of exclude expressions to apply during test collection operations.
+            :type excludes: Sequence[str]
+            :param module_prefix: The prefix or word that test methods will start with.  The default is 'test'.
+            :type module_prefix: str
+            :param test_module: A test module which is passed for the debug workflow where a test module is run directly
+                                as a script using the generic_test_entrypoint or in the debugger by Right-Click
+            :type test_module: ModuleType
+
+        """
         self._root = root
         self._root_directory_listing = None
         self._excludes = excludes
@@ -184,10 +208,16 @@ class TestCollector:
 
     @property
     def import_errors(self):
+        """
+            A list of import errors that were encountered while collecting test references.
+        """
         return self._import_errors
 
     @property
     def references(self):
+        """
+            A list of :class:`TestReferences` that were collected.
+        """
         return self._references
 
     def collect_integrations(self):
@@ -210,34 +240,43 @@ class TestCollector:
 
         return integlist
 
-    def collect_references(self, expression):
+    def collect_references(self, expression: str):
         """
             Collects and appends the test references based on the expression provided and the excludes
-            for this class.
+            for this class.  The `collect_references` method is intended to be called multiple times,
+            once with each include expression provided by the users.  The :class:`TestCollector` will
+            extend its collection of reference with each successive call.
+
+            :param expression: An include expression to process and collect references for.
+            :type expression: str
         """
 
         expr_package, expr_module, expr_testclass, expr_testname = parse_include_expression(expression, self._test_module, self._method_prefix)
 
-        # Find all the files that are included based on the expression
+        # Find all the files that are included based on the expr_package, expr_module expressions
         included_files = []
 
         if self._test_module is not None:
-            test_module_basename, test_module_ext = os.path.splitext(self._test_module.__file__)
+            test_module_basename, _ = os.path.splitext(self._test_module.__file__)
             included_files.append(test_module_basename + ".py")
         elif expr_package is not None:
-            included_files = find_included_tests(self._root, expr_package, expr_module, expr_testclass, expr_testname)
+            included_files = find_included_test_modules_under_root(self._root, expr_package, expr_module)
 
         import_errors = []
 
         # Go through the files and import them, then go through the classes and find the TestPack and
-        # TestContainer objects that match the specified
+        # TestContainer objects that match the specified include expression criteria
         rootlen = len(self._root)
         for ifile in included_files:
             try:
-                ifilebase, ifileext = os.path.splitext(ifile)
+                ifilebase, _ = os.path.splitext(ifile)
                 ifileleaf = ifilebase[rootlen:].strip("/")
                 modname = ifileleaf.replace("/", ".")
+
+                # Import the module for the file being processed
                 mod = import_file(modname, ifile)
+
+                # Go through all of the members of the 
                 test_class_coll = inspect.getmembers(mod, inspect.isclass)
                 for testclass_name, testclass_obj in test_class_coll:
                     tcobj_module_name = testclass_obj.__module__
@@ -249,7 +288,7 @@ class TestCollector:
                     if expr_testclass is not None and not fnmatch.fnmatch(testclass_name, expr_testclass):
                         continue
 
-                    if issubclass(testclass_obj, TestContainer):
+                    if inherits_from_testcontainer(testclass_obj):
                         if expr_testname is not None:
                             # We have a testname expression so go through all the test methods and and check
                             # the test method names
@@ -261,21 +300,36 @@ class TestCollector:
                                         tref = TestRef(testclass_obj, method_obj)
                                         self._references[tname] = tref
                         else:
-                            # If we don't have a testname expression then add all the test test methods for the class
-                            test_method_coll = inspect.getmembers(testclass_obj, inspect.isfunction)
-                            for method_name, method_obj in test_method_coll:
-                                if method_name.startswith(self._method_prefix):
-                                    tname = test_class_name + "#" + method_name
-                                    tref = TestRef(testclass_obj, method_obj)
-                                    self._references[tname] = tref
-                    elif issubclass(testclass_obj, TestPack):
+                            include_class = False
+                            if expr_testclass is None:
+                                include_class = True
+                            else:
+                                class_name = testclass_obj.__name__
+                                if fnmatch.fnmatch(expr_testclass, class_name):
+                                    include_class = True
+
+                            if include_class:
+                                # If we don't have a testname expression then add all the test test methods for the class
+                                test_method_coll = inspect.getmembers(testclass_obj, inspect.isfunction)
+                                for method_name, method_obj in test_method_coll:
+                                    if method_name.startswith(self._method_prefix):
+                                        tname = test_class_name + "#" + method_name
+                                        tref = TestRef(testclass_obj, method_obj)
+                                        self._references[tname] = tref
+
+                    elif inherits_from_testpack(testclass_obj):
                         # If we find a TestPack object that matches the criteria, look to see if the
                         # expression had a testname.  If it didn't we should save the TestPack reference
                         # in order to load the tests from the test pack.
                         if expr_testname is None:
-                            self._test_packages[test_class_name] = testclass_obj
+                            if expr_testclass is None:
+                                self._test_packages[test_class_name] = testclass_obj
+                            else:
+                                class_name = testclass_obj.__name__
+                                if fnmatch.fnmatch(expr_testclass, class_name):
+                                    self._test_packages[test_class_name] = testclass_obj
 
-            except Exception as xcpt:
+            except ImportError:
                 errmsg = traceback.format_exc()
                 print(errmsg)
                 import_errors.append((modname, ifile, errmsg))
@@ -288,7 +342,11 @@ class TestCollector:
         return
 
     def collect_testpacks(self):
-
+        """
+            Goes through all of the test references and collects a list of the :class:`TestPack` types that are
+            included in the collection of test references.  The :class:`TestPack` collection can be used to
+            determine analyze the integrations and scopes that are associated with the collected test references.
+        """
         # The testpack_table is filled with the top-level testpack types which
         # also are the top level scopes associated with an object.
         testpack_table = {}
@@ -297,13 +355,13 @@ class TestCollector:
 
         # Walk through all the test references. For each test reference, find its immediate testpack
         # or if it doesn't have one assign it to the default testpack
-        for ref_name, ref in self._references.items():
+        for _, ref in self._references.items():
 
             # Go through all the parent objects and add the current test ref to each of the scope
             # classes found in the main class
             ref_testpacks = []
             for bcls in ref.testcontainer.__bases__:
-                if is_testpack(bcls):
+                if inherits_from_testpack(bcls):
                     ref_testpacks.append(bcls)
 
             # If we didn't find a TestPackMixIn derived object, then
@@ -339,7 +397,7 @@ class TestCollector:
         # the tests associated with each testpack, however, we only execute the enter code
         # when the scope is entered for the first time and we only execute the exit code when
         # the last reference count is removed.
-        for nxt_tpack_key, nxt_tpack_val in testpack_table.items():
+        for _, nxt_tpack_val in testpack_table.items():
 
             # The tope TestPack will always have a reference count of 1
             nxt_tpack_val.refcount = 1
@@ -381,6 +439,13 @@ class TestCollector:
         return testpacks
 
     def expand_testpacks(self):
+        """
+            The includes and excludes passed to the :class:`TestCollector` can also be used to find :class:`TestPack`(s).
+            When an include specification includes a :class:`TestPack`, all the tests that are associated with that
+            :class:`TestPack` are included in the test run.  They `expand_testpacks` method goes through all of the
+            :class:`TestPack`(s), collect test references for all of the tests and then adds the test references to
+            the list of included tests.
+        """
 
         excluded = []
 
@@ -405,39 +470,39 @@ class TestCollector:
             searchin = tpack_obj.searchin
             if searchin is None:
                 # If searchin was None, then we scan utilize the descendant directories of root
-                searchin = self._root_directories()
+                searchin = self._directories_in_root()
 
             scanfiles = []
             for sdir in searchin:
                 scanfiles = collect_python_modules(sdir)
 
-            rootlen = len(self._root)
-            for ifile in scanfiles:
-                fbase, fext = os.path.splitext(ifile)
-                if fext == ".py":
-                    ifile_full = os.path.join(sdir, ifile)
-                    try:
-                        ifilebase, ifileext = os.path.splitext(ifile)
-                        ifileleaf = ifilebase[rootlen:].strip("/")
-                        modname = ifileleaf.replace("/", ".")
-                        mod = import_file(modname, ifile)
+                rootlen = len(self._root)
+                for ifile in scanfiles:
+                    _, fext = os.path.splitext(ifile)
+                    if fext == ".py":
+                        ifile_full = os.path.join(sdir, ifile)
+                        try:
+                            ifilebase, _ = os.path.splitext(ifile_full)
+                            ifileleaf = ifilebase[rootlen:].strip("/")
+                            modname = ifileleaf.replace("/", ".")
+                            mod = import_file(modname, ifile_full)
 
-                        test_class_coll = inspect.getmembers(mod, inherits_from_testcontainer)
-                        for testclass_name, testclass_obj in test_class_coll:
-                            test_class_name = testclass_obj.__module__ + "@" + testclass_obj.__name__
-                            if issubclass(testclass_obj, TestContainer) and issubclass(testclass_obj, tpack_obj):
-                                # If we don't have a testname expression then add all the test test methods for the class
-                                test_method_coll = inspect.getmembers(testclass_obj, inspect.isfunction)
-                                for method_name, method_obj in test_method_coll:
-                                    if method_name.startswith(self._method_prefix):
-                                        tname = test_class_name + "#" + method_name
-                                        tref = TestRef(testclass_obj, method_obj)
-                                        self._references[tname] = tref
+                            test_class_coll = inspect.getmembers(mod, inherits_from_testcontainer)
+                            for _, testclass_obj in test_class_coll:
+                                test_class_name = testclass_obj.__module__ + "@" + testclass_obj.__name__
+                                if issubclass(testclass_obj, TestContainer) and issubclass(testclass_obj, tpack_obj):
+                                    # If we don't have a testname expression then add all the test test methods for the class
+                                    test_method_coll = inspect.getmembers(testclass_obj, inspect.isfunction)
+                                    for method_name, method_obj in test_method_coll:
+                                        if method_name.startswith(self._method_prefix):
+                                            tname = test_class_name + "#" + method_name
+                                            tref = TestRef(testclass_obj, method_obj)
+                                            self._references[tname] = tref
 
-                    except Exception as xcpt:
-                        errmsg = traceback.format_exc()
-                        print(errmsg)
-                        import_errors.append((modname, ifile, errmsg))
+                        except ImportError:
+                            errmsg = traceback.format_exc()
+                            print(errmsg)
+                            import_errors.append((modname, ifile, errmsg))
 
         self._import_errors.extend(import_errors)
 
@@ -447,6 +512,10 @@ class TestCollector:
         return
 
     def _record_child_scopes_at_level(self, scope_cls, level):
+        """
+            Records all the scopes found in the hierarchy of a class at the level specified.
+        """
+
         scopes_found = []
 
         for nxt_cls in scope_cls.__bases__:
@@ -459,10 +528,14 @@ class TestCollector:
 
         return scopes_found
 
-    def _root_directories(self):
+    def _directories_in_root(self):
+        """
+            Gets a list of all the directories in the root directory tree.
+        """
+
         if self._root_directory_listing is None:
             self._root_directory_listing = []
-            for root, dirs, files in os.walk(self._root, topdown = False):
+            for root, _, _ in os.walk(self._root, topdown = False):
                 self._root_directory_listing.append(root)
 
         return self._root_directory_listing
