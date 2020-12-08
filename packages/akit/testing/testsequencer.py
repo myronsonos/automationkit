@@ -20,6 +20,7 @@ from typing import Sequence
 
 import logging
 import json
+import traceback
 import uuid
 
 import akit.environment.activate # pylint: disable=unused-import
@@ -184,7 +185,7 @@ class TestSequencer(ContextUser):
 
         return exit_code
 
-    def parse_extended_args(self, base_parser): # pylint: disable=no-self-use
+    def parse_extended_args(self, base_parser): # pylint: disable=no-self-use,unused-argument
         """
             Called for the sequencer to parse the extended arguments to be passed on to integrations and mixins.
         """
@@ -210,7 +211,14 @@ class TestSequencer(ContextUser):
         return
 
     def _traverse_testpack(self, testpack, recorder, parent_inst=None):
-
+        """
+            This function is called in order to traverse the execution of a TestPack and its associated scope tree.  The
+            `_traverse_testpack` method calls the scopes_enter method which intern will call scope_enter on its inherited scopes
+            creating the correct test scope required by all of the tests in the `TestPack`.  It will then run all of the tests
+            that belong to the `TestPack` and then call scopes_exit in order to tear down any scopes no longer needed by any
+            `TestPack`.  The scopes can be shared scopes that can be shared across `TestPack`(s) and the scopes are reference
+            counted in order to know when the last `TestPack` is finished using the scope.
+        """
         testpack_key = testpack.__module__ + "." + testpack.__name__
         logger.info("TESTPACK ENTER: %s" % testpack_key)
 
@@ -231,15 +239,18 @@ class TestSequencer(ContextUser):
                     # Run the test, it shouldn't raise any exceptions unless a stop
                     # is raised or a framework exception occurs
                     testinst.run(result_container.result_inst)
-                except Exception as xcpt:
-                    pass
+                except Exception: # pylint: disable=broad-except
+                    errmsg = traceback.format_exc()
+                    logger.exception(errmsg)
+                    raise
 
         finally:
             try:
                 self._exit_testpack(testpack)
-            except Exception as xcpt:
-                #TODO: Handing exception logging here
-                pass
+            except Exception: # pylint: disable=broad-except
+                errmsg = traceback.format_exc()
+                logger.exception(errmsg)
+                raise
 
             logger.info("TESTPACK EXIT: %s" % testpack_key)
 

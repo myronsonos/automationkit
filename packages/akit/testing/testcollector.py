@@ -511,7 +511,7 @@ class TestCollector:
 
         return
 
-    def _record_child_scopes_at_level(self, scope_cls, level):
+    def _record_child_scopes_at_level(self, scope_cls, level): # pylint: disable=no-self-use
         """
             Records all the scopes found in the hierarchy of a class at the level specified.
         """

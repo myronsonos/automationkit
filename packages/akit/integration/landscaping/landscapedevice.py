@@ -128,4 +128,3 @@ class LandscapeDevice:
 
     def _intitialize_serial(self, serial_info):
         return
-

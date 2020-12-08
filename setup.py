@@ -2,7 +2,21 @@
 
 from setuptools import setup, find_namespace_packages
 
-DEPENDENCIES = [ "coverage", "ipython", "netifaces", "paramiko", "psycopg2", "pylint", "requests", "SQLAlchemy==1.3.20", "SQLAlchemy-Utils", "ssdp", "pyyaml", "dlipower", ]
+DEPENDENCIES = [
+      "click",
+      "coverage",
+      "ipython",
+      "netifaces",
+      "paramiko",
+      "psycopg2",
+      "pylint",
+      "requests",
+      "SQLAlchemy==1.3.20",
+      "SQLAlchemy-Utils",
+      "ssdp",
+      "pyyaml",
+      "dlipower"
+]
 
 DEPENDENCY_LINKS = []
 
@@ -16,5 +30,10 @@ setup(name='akit',
       package_data={'': ['*.html']},
       packages=find_namespace_packages(where='packages'),
       install_requires=DEPENDENCIES,
-      dependency_links=DEPENDENCY_LINKS
-     )
+      dependency_links=DEPENDENCY_LINKS,
+      entry_points = {
+            "console_scripts": [
+                  "akit = akit.cli.akitcommand:akit_command_main"
+            ]
+      }
+)

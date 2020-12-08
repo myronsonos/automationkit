@@ -146,6 +146,7 @@ if [ ! -f $INITIALIZED_FILE ]; then
             pip install sphinx
 
             # Install pylint into the virtual environment
+            pip install click
             pip install coverage
             pip install ipython
             pip install netifaces

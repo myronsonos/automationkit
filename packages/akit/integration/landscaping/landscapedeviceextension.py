@@ -19,8 +19,18 @@ __license__ = "MIT"
 import weakref
 
 class LandscapeDeviceExtension:
+    """
+        The :class:`LandscapeDeviceExtension` object is the base class object that allows for the
+        extension of functionality for a :class:`LandscapeDevice`.  The :class:`LandscapeDeviceExtension`
+        is used by the UPnP, SSH and Muse coordinators to extend landscape devices with metadata and
+        device connectivity for the UPnp, SSH and Muse protocols.
+    """
+
 
     def __init__(self):
+        """
+            Constructor use to create an instance of and to initialize a :class:`LandscapeDeviceExtension`.
+        """
         self._coord_ref = None
         self._basedevice_ref = None
         self._configinfo = None
@@ -30,6 +40,9 @@ class LandscapeDeviceExtension:
 
     @property
     def coordinator(self):
+        """
+            Returns a reference to the coordinator that created the :class:`LandscapeDeviceExtension`.
+        """
         coord = None
         if self._coord_ref is not None:
             coord = self._coord_ref()
@@ -37,10 +50,16 @@ class LandscapeDeviceExtension:
 
     @property
     def configuration(self):
+        """
+            The protocol specific configuration infor for the device.
+        """
         return self._configinfo
 
     @property
     def basedevice(self):
+        """
+            Returns a reference to the base :class:`LandscapeDevice` that this extension was attached to.
+        """
         dev = None
         if self._basedevice_ref is not None:
             dev = self._basedevice_ref()
@@ -48,10 +67,17 @@ class LandscapeDeviceExtension:
 
     @property
     def extid(self):
+        """
+            A unique device identifier created by the coordinator for this device extension.  The identier is
+            typically something associated with the protocol.
+        """
         return self._extid
 
     @property
     def location(self):
+        """
+            A network location the device extension is referenced to.
+        """
         return self._location
 
     def initialize(self, coord_ref: weakref.ReferenceType, basedevice_ref: weakref.ReferenceType, extid: str, location: str, configinfo: dict):

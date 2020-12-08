@@ -16,6 +16,8 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Union
+
 from akit.exceptions import AKitSemanticError
 from akit.extensible import generate_extension_key
 
@@ -31,6 +33,10 @@ from akit.extensible import collect_extensions_under_code_container
 
 class UpnpFactory:
     """
+        The :class:`UpnpFactory` object is a singleton object that manages the cataloging and instantiation
+        of code generated UPnP device and service extensions.  We utilize code generated device classes and
+        service proxy classes because that makes each class of device and each method on those classes
+        individually isolatable and debugable.
     """
 
     _instance = None
@@ -38,7 +44,7 @@ class UpnpFactory:
 
     def __new__(cls):
         """
-            Constructs new instances of the UpnpDeviceFactory object from the :class:`UpnpDeviceFactory`.
+            Constructs new instances of the UpnpFactory object from the :class:`UpnpDeviceFactory`.
             This is a singlton object that is used to register and instantiate UPNP devices based on
             their devicetype id.
         """
@@ -62,14 +68,46 @@ class UpnpFactory:
             self._scan_for_service_extensions_under_code_container(standard_extensions)
         return
 
-    def create_embedded_device_instance(self, manufacturer:str, modelNumber: str, modelDescription: str):
+    def create_embedded_device_instance(self, manufacturer:str, modelNumber: str, modelDescription: str) -> UpnpEmbeddedDevice:
+        """
+            Method that is called to create an instance of an extension for a specific UPnP embedded device. If an
+            embedded device extension is not found matching the specified parameters then a generic UpnpEmbeddedDevice
+            instance is created and returned.
+
+            :param manufacturer: The manufacturer associated with the embedded device.
+            :type manufacturer: str
+            :param modelNumber: The model number associated with the embedded device.
+            :type modelNumber: str
+            :param modelDescription: The model description associated with the embedded device.
+            :type modelDescription: str
+
+            :returns: An instance of an embedded device extension of a specific manaufacturer or a default generic
+                      UpnpEmbeddedDevice.
+            :rtype: UpnpEmbeddedDevice
+        """
         deviceClass = UpnpEmbeddedDevice
         extkey = generate_extension_key(manufacturer, modelNumber, modelDescription)
         if extkey in self._embedded_device_registry:
             deviceClass = self._embedded_device_registry[extkey]
         return deviceClass()
 
-    def create_root_device_instance(self, manufacturer:str, modelNumber: str, modelDescription: str):
+    def create_root_device_instance(self, manufacturer:str, modelNumber: str, modelDescription: str) -> UpnpRootDevice:
+        """
+            Method that is called to create an instance of an extension for a specific UPnP root device.  If a device
+            extension is not found matching the specified parameters then a generic UpnpRootDevice instance is
+            created and returned.
+
+            :param manufacturer: The manufacturer associated with the root device.
+            :type manufacturer: str
+            :param modelNumber: The model number associated with the root device.
+            :type modelNumber: str
+            :param modelDescription: The model description associated with the root device.
+            :type modelDescription: str
+
+            :returns: An instance of an root device extension of a specific manaufacturer or a default generic
+                      UpnpRootDevice.
+            :rtype: UpnpRootDevice
+        """
         deviceClass = UpnpRootDevice
         if manufacturer is not None and modelNumber is not None and modelDescription is not None:
             extkey = generate_extension_key(manufacturer, modelNumber, modelDescription)
@@ -77,7 +115,22 @@ class UpnpFactory:
                 deviceClass = self._root_device_registry[extkey]
         return deviceClass(manufacturer, modelNumber, modelDescription)
 
-    def create_service_instance(self, serviceManufacturer, serviceType):
+    def create_service_instance(self, serviceManufacturer, serviceType) -> Union[UpnpServiceProxy, None]:
+        """
+            Method that is called to create an instance of an extension for a specific UPnP service proxy.  If a
+            service proxy extension is not found matching the specified parameters then None is returned.
+
+            :param manufacturer: The manufacturer associated with the root device.
+            :type manufacturer: str
+            :param modelNumber: The model number associated with the root device.
+            :type modelNumber: str
+            :param modelDescription: The model description associated with the root device.
+            :type modelDescription: str
+
+            :returns: An instance of an root device extension of a specific manaufacturer or a default generic
+                      UpnpRootDevice.
+            :rtype: UpnpRootDevice or None
+        """
         serviceInst = None
         if serviceType is not None:
             extkey = generate_extension_key(serviceManufacturer, serviceType)
@@ -87,6 +140,9 @@ class UpnpFactory:
         return serviceInst
 
     def _register_root_device(self, extkey, extcls):
+        """
+            Method that registers the extension class of a specific type of root device.
+        """
         if extkey not in self._root_device_registry:
             self._root_device_registry[extkey] = extcls
         else:
@@ -94,6 +150,9 @@ class UpnpFactory:
         return
 
     def _register_service(self, extkey, extcls):
+        """
+            Method that registers the extension class of a specific type of service proxy.
+        """
         if extkey not in self._service_registry:
             self._service_registry[extkey] = extcls
         else:
@@ -101,6 +160,9 @@ class UpnpFactory:
         return
 
     def _scan_for_device_extensions_under_code_container(self, container):
+        """
+            Method that scans a code container and its descendants for UpnpRootDevice objects.
+        """
         extcoll = collect_extensions_under_code_container(container, UpnpRootDevice)
         for _, extcls in extcoll:
             if hasattr(extcls, "MANUFACTURER") and hasattr(extcls, "MODEL_NUMBER") and hasattr(extcls, "MODEL_DESCRIPTION"):
@@ -110,6 +172,9 @@ class UpnpFactory:
         return
 
     def _scan_for_service_extensions_under_code_container(self, container):
+        """
+            Method that scans a code container and its descendants for UpnpServiceProxy objects.
+        """
         extcoll = collect_extensions_under_code_container(container, UpnpServiceProxy)
         for _, extcls in extcoll:
             if (hasattr(extcls, "SERVICE_MANUFACTURER") and hasattr(extcls, "SERVICE_TYPE")):

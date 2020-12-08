@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Akit Command",
+            "type": "python",
+            "request": "launch",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/packages:${workspaceFolder}/testroots"
+            },
+            "program": "${workspaceFolder}/packages/akit/cli/akitcommand.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",

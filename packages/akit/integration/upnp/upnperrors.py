@@ -22,18 +22,19 @@ from akit.exceptions import AKitCommunicationsProtocolError
 
 class UpnpError(AKitCommunicationsProtocolError):
     """
+        The base class for UPnP based errors.
     """
     def __init__(self, errorCode, errorDescription, extra=None):
         self.errorCode = errorCode
         self.errorDescription = errorDescription
         self.extra = extra
-        return
 
-    def __str__(self):
-        errstr = "UpnpError: errorCode=%s errorDescription=%s"
+        errstr = "UpnpError: errorCode=%s errorDescription=%s" % (self.errorCode, self.errorDescription)
         if self.extra is not None:
-            errstr += "\n" + self.extra
-        return errstr
+            errstr += self.extra
+
+        super(UpnpError, self).__init__(errstr)
+        return
 
 class UpnpErrorCodes(Enum):
     InvalidAction = 401
