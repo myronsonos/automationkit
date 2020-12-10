@@ -23,8 +23,17 @@ import time
 from akit.exceptions import AKitSemanticError
 
 class ReadWriteLock:
+    """
+        The :class:`ReadWriteLock` implements a lock with read/write semantics that allows multiple
+        readers threads to hold read access to the lock at a time or that allows a single writer to
+        hold write access to the lock.
+    """
+
 
     def __init__(self):
+        """
+            Initializes the :class:`ReadWriteLock`.
+        """
         self._read_gate = threading.Event()
         self._read_gate.set()
         self._write_gate = threading.Semaphore(1)
@@ -37,7 +46,9 @@ class ReadWriteLock:
         return
 
     def acquire_read(self, timeout=None):
-
+        """
+            Method called by a thread to acquire read access on the :class:`ReadWriteLock`.
+        """
         self._read_gate.wait()
 
         tid = threading.get_ident()
@@ -53,16 +64,16 @@ class ReadWriteLock:
                     if self._read_write_pivot >= 0:
                         self._read_write_pivot += 1
                         break
-                    else:
-                        self._lock.release()
-                        try:
-                            time_left = stop_time - time.time()
-                            if time_left < 0:
-                                raise TimeoutError("Timeout waiting on read lock.")
 
-                            self._read_gate.wait(timeout=time_left)
-                        finally:
-                            self._lock.acquire()
+                    self._lock.release()
+                    try:
+                        time_left = stop_time - time.time()
+                        if time_left < 0:
+                            raise TimeoutError("Timeout waiting on read lock.")
+
+                        self._read_gate.wait(timeout=time_left)
+                    finally:
+                        self._lock.acquire()
 
             finally:
                 self._lock.release()
@@ -75,7 +86,9 @@ class ReadWriteLock:
         return
 
     def acquire_write(self, timeout=None):
-
+        """
+            Method called by a thread to acquire write access on the :class:`ReadWriteLock`.
+        """
         tid = threading.get_ident()
         start_time = time.time()
         stop_time = start_time + timeout
@@ -114,7 +127,9 @@ class ReadWriteLock:
         return
 
     def release_read(self):
-
+        """
+            Method called by a thread to release read access on the :class:`ReadWriteLock`.
+        """
         tid = threading.get_ident()
 
         self._lock.acquire()
@@ -133,7 +148,9 @@ class ReadWriteLock:
         return
 
     def release_write(self):
-
+        """
+            Method called by a thread to release write access on the :class:`ReadWriteLock`.
+        """
         tid = threading.get_ident()
 
         self._lock.acquire()

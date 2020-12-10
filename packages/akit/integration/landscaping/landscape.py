@@ -832,7 +832,7 @@ def load_and_set_landscape_type(lscape_module):
     for _, cls_type in class_items:
         type_module_name = cls_type.__module__
         if type_module_name == lscape_module.__name__:
-            Landscape._landscape_type = cls_type
+            Landscape._landscape_type = cls_type # pylint: disable=protected-access
             break
     return
 
@@ -840,8 +840,3 @@ if VARIABLES.AKIT_LANDSCAPE_MODULE is not None:
     lscape_module_override = import_by_name(VARIABLES.AKIT_LANDSCAPE_MODULE)
     load_and_set_landscape_type(lscape_module_override )
     check_landscape = Landscape()
-    pass
-
-if __name__ == "__main__":
-    lscape = Landscape()
-    lscape.first_contact()

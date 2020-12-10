@@ -46,49 +46,88 @@ class LandscapeDevice:
 
     @property
     def contacted_first(self):
+        """
+            A datetime stamp of when this device was first contacted
+        """
         return self._contacted_first
 
     @property
     def contacted_last(self):
+        """
+            A datetime stamp of when this device was last contacted
+        """
         return self._contacted_last
 
     @property
     def device_config(self):
+        """
+            A dictionary of the configuration information for this device.
+        """
         return self._device_config
 
     @property
     def device_lock(self):
+        """
+            Returns the lock for the device.
+        """
         return self._device_lock
 
     @property
     def device_type(self):
+        """
+            A string representing the type of device.
+        """
         return self._device_type
 
     @property
     def is_watched(self):
+        """
+            A boolean indicating if this device is a watched device.
+        """
         return self._is_watched
 
     @property
     def keyid(self):
+        """
+            The key identifier for this device, this is generally the identifier provided
+            by the coordinator that created the device instance.
+        """
         return self._keyid
 
     @property
     def muse(self):
+        """
+            The 'Muse' :class:`LandscapeDeviceExtension` attached to this device or None.
+        """
         return self._muse
 
     @property
     def ssh(self):
+        """
+            The 'SSH' :class:`LandscapeDeviceExtension` attached to this device or None.
+        """
         return self._ssh
 
     @property
     def upnp(self):
+        """
+            The 'UPnP' :class:`LandscapeDeviceExtension` attached to this device or None.
+        """
         return self._upnp
 
     def attach_extension(self, ext_type, extension):
+        """
+            Method called by device coordinators to attach a device extension to a :class:`LandscapeDevice`.
+        """
         setattr(self, "_" + ext_type, extension)
         return
 
     def match_using_params(self, match_type, *match_params):
+        """
+            Method that allows you to match :class:`LandscapeDevice` objects by providing a match_type and
+            parameters.  The match type is mapped to functions that are registered by device coordinators
+            and then the function is called with the match parameters to determine if a device is a match.
+        """
         matches = False
         match_func = None
 
@@ -105,7 +144,9 @@ class LandscapeDevice:
         return matches
 
     def update_match_table(self, match_table: dict):
-
+        """
+            Method called  to update the match functions.
+        """
         self._device_lock.acquire()
         try:
             self._match_functions.update(match_table)
@@ -115,6 +156,10 @@ class LandscapeDevice:
         return
 
     def _initialize_features(self):
+        """
+            Initializes the features of the device based on the feature declarations and the information
+            found in the feature config.
+        """
         if "features" in self._device_config:
             feature_info = self._device_config["features"]
             for fkey, fval in feature_info.items():
@@ -126,5 +171,8 @@ class LandscapeDevice:
                     pass
         return
 
-    def _intitialize_serial(self, serial_info):
+    def _intitialize_serial(self, serial_info): # pylint: disable=no-self-use,unused-argument
+        """
+            Initializes the serial port connectivity for this device.
+        """
         return

@@ -20,7 +20,6 @@ from typing import Sequence
 
 import logging
 import json
-import traceback
 import uuid
 
 import akit.environment.activate # pylint: disable=unused-import
@@ -198,7 +197,9 @@ class TestSequencer(ContextUser):
         return
 
     def record_import_errors(self, outputfilename: str):
-
+        """
+            Method that writes out the import errors to the active results directory.
+        """
         with open(outputfilename, 'w') as ief:
             for modname, filename, errmsg in self._import_errors:
                 ieitem = {
@@ -232,24 +233,26 @@ class TestSequencer(ContextUser):
 
             for tref in testpack.test_references:
 
+                testinst = None
                 try:
                     # Create an instance of the test case using the test reference
                     testinst = tref.create_instance(recorder)
+                except Exception: # pylint: disable=broad-except
+                    logger.exception("Error creating test instance.")
+                    raise
 
+                try:
                     # Run the test, it shouldn't raise any exceptions unless a stop
                     # is raised or a framework exception occurs
                     testinst.run(result_container.result_inst)
                 except Exception: # pylint: disable=broad-except
-                    errmsg = traceback.format_exc()
-                    logger.exception(errmsg)
+                    logger.exception("Error running test instance.")
                     raise
-
         finally:
             try:
                 self._exit_testpack(testpack)
             except Exception: # pylint: disable=broad-except
-                errmsg = traceback.format_exc()
-                logger.exception(errmsg)
+                logger.exception("Error exiting testpack.")
                 raise
 
             logger.info("TESTPACK EXIT: %s" % testpack_key)

@@ -31,4 +31,3 @@ from akit.xlogging.foundations import logging_initialize, LoggingDefaults # pyli
 
 LoggingDefaults.DefaultFileLoggingHandler = RotatingFileHandler
 logging_initialize()
-

@@ -37,6 +37,9 @@ class UpnpError(AKitCommunicationsProtocolError):
         return
 
 class UpnpErrorCodes(Enum):
+    """
+        An enumeration of the standard UPnP error codes
+    """
     InvalidAction = 401
     InvalidArgs = 402
     DepricatedA = 403

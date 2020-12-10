@@ -21,7 +21,6 @@ from typing import Union
 from akit.exceptions import AKitSemanticError
 from akit.extensible import generate_extension_key
 
-from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.devices.upnpembeddeddevice import UpnpEmbeddedDevice
 from akit.integration.upnp.devices.upnprootdevice import UpnpRootDevice
 from akit.integration.upnp.services.upnpserviceproxy import UpnpServiceProxy

@@ -31,6 +31,10 @@ LOG_LEVEL_NAMES = [
 ]
 
 class VARIABLES:
+    """
+        Container for all the configuration variables that can be passed via environmental variables.
+    """
+
     AKIT_BRANCH = "unknown"
     if "AKIT_BRANCH" in environ:
         AKIT_BRANCH = environ["AKIT_BRANCH"]

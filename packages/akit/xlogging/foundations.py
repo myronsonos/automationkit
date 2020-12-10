@@ -41,6 +41,9 @@ LOGGING_SECTION_MARKER_LENGTH = 80
 
 
 def format_log_section_header(title):
+    """
+        Formats a log section header by centering the title inside of the section marker character string.
+    """
     title_upper = " %s " % title.strip().upper()
     marker_count = LOGGING_SECTION_MARKER_LENGTH - len(title_upper)
     marker_half = marker_count >> 1
@@ -52,6 +55,9 @@ def format_log_section_header(title):
 akit_logger = None
 
 def getAutomatonKitLogger():
+    """
+        Gets the automation kit logger.
+    """
     global akit_logger
     if akit_logger is None:
         akit_logger = TestKitLoggerWrapper(logging.getLogger(LOGGER_NAME))
@@ -60,11 +66,13 @@ def getAutomatonKitLogger():
 OTHER_LOGGER_FILTERS = []
 
 
-class LoggingManagerWrapper(logging.Manager):
+class LoggingManagerWrapper:
     """
         There is [under normal circumstances] just one Manager instance, which
         holds the hierarchy of loggers.
     """
+    # pylint: disable=protected-access
+
     def __init__(self, manager):
         """
             Initialize the manager with the root node of the logger hierarchy.
@@ -74,26 +82,44 @@ class LoggingManagerWrapper(logging.Manager):
 
     @property
     def disable(self):
+        """
+            Git if logging is disabled.
+        """
         return self.manager.disable
 
     @property
     def emittedNoHandlerWarning(self):
+        """
+            Get if the emittion of handler warnings is turned off.
+        """
         return self.manager.emittedNoHandlerWarning
 
     @property
     def loggerClass(self):
+        """
+            Returns the logger Class.
+        """
         return self.manager.loggerClass
 
     @property
     def loggerDict(self):
+        """
+            Returns a dictionary of the loggers.
+        """
         return self.manager.loggerDict
 
     @property
     def logRecordFactory(self):
+        """
+            Returns the log record factory.
+        """
         return self.manager.logRecordFactory
 
     @property
     def root(self):
+        """
+            Returns the root logger.
+        """
         return self.manager.root
 
     def getLogger(self, name):
@@ -189,10 +215,16 @@ class LoggingManagerWrapper(logging.Manager):
         return
 
 class LoggingDefaults:
-
+    """
+        Makes all the default values associated with logging available.
+    """
     DefaultFileLoggingHandler = logging.FileHandler
 
 class TestKitLoggerWrapper:
+    """
+        We utilize a log wrapper so we can re-initialize logging and switch out the logger
+        without invalidating references to the logger that we have given out.
+    """
 
     def __init__(self, logger):
         self._logger = logger
@@ -236,6 +268,14 @@ class TestKitLoggerWrapper:
         return
 
     def warn(self, msg, *args, **kwargs):
+        """
+            Log 'msg % args' with severity 'WARNING'.
+
+            To pass exception information, use the keyword argument exc_info with
+            a true value, e.g.
+
+            logger.warning("Houston, we have a %s", "bit of a problem", exc_info=1)
+        """
         self._logger.warning(msg, *args, **kwargs)
         return
 
@@ -276,29 +316,48 @@ class TestKitLoggerWrapper:
         """
             Logs a log section marker
         """
-        self._logger.info(format_log_section_header(title))
+        marker = format_log_section_header(title)
+        self._logger.info(marker)
         return
 
 class WarningFilter(logging.Filter):
-    def filter(self, rec):
-        process_rec = rec.levelno < logging.WARNING
+    """
+        Filters records with a log level < WARNING
+    """
+
+    def filter(self, record): # pylint: disable=no-self-use
+        """
+            Performs the filtering of records.
+        """
+        process_rec = record.levelno < logging.WARNING
         return process_rec
 
 class OtherFilter:
+    """
+        Filters records with a name that match a prefix expression and marks them as other.
+    """
     def __init__(self, prefix):
         self.prefix = prefix
         return
 
-    def filter(self, rec):
-        rec.is_other = fnmatch.fnmatch(rec.name, self.prefix)
-        return rec.is_other
+    def filter(self, record):
+        """
+            Performs the filtering of records.
+        """
+        record.is_other = fnmatch.fnmatch(record.name, self.prefix)
+        return record.is_other
 
 class RelevantFilter:
-
-    def filter(self, rec):
+    """
+        Allows records that are not marked as other.
+    """
+    def filter(self, record): # pylint: disable=no-self-use
+        """
+            Performs the filtering of records.
+        """
         process_rec = True
-        if hasattr(rec, "is_other"):
-            if rec.is_other:
+        if hasattr(record, "is_other"):
+            if record.is_other:
                 process_rec = False
         return process_rec
 
@@ -365,7 +424,11 @@ def logging_create_branch_logger(logger_name, logfilename, log_level):
     return
 
 def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basename, log_branches):
-
+    """
+        Helper method to re-initialize the logging when the path to the output directory changes
+        shortly after startup of the framework.  This method also handles the configuration of
+        output levels, stdout and stderr file wrappers.
+    """
     print("")
     print("NOTE: Console logging set to %r" % consolelevel)
     print("NOTE: outputdir=%s" % output_dir)
@@ -437,7 +500,7 @@ def _reinitialize_logging(consolelevel, logfilelevel, output_dir, logfile_basena
             log_level = binfo["loglevel"]
 
             logging_create_branch_logger(logger_name, logfilename, log_level)
-        except Exception as xcpt:
+        except Exception: # pylint: disable=broad-except
             errmsg = "Error configuration branch logger." + os.linesep
             errmsg = traceback.format_exc()
             root_logger.error(errmsg)

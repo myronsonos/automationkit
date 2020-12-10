@@ -31,25 +31,3 @@ from akit.xlogging.foundations import logging_initialize, LoggingDefaults # pyli
 
 LoggingDefaults.DefaultFileLoggingHandler = RotatingFileHandler
 logging_initialize()
-
-def showlog():
-    """
-        Opens up another terminal and shows the output of the console log in the terminal.  This way we don't
-        need to clutter the interactive terminal with logging based output.
-    """
-    import subprocess # pylint: disable=import-outside-toplevel
-
-    from akit.environment.context import context # pylint: disable=import-outside-toplevel
-    targetlog = context.lookup("/environment/logfile_debug")
-
-    terminal_exec = "gnome-terminal"
-
-    tail_exec = subprocess.check_output(["which","tail"]).strip().decode("utf-8")
-    terminal_args = ['--', tail_exec, "-f", targetlog]
-
-    proc_args = [terminal_exec]
-    proc_args.extend(terminal_args)
-
-    subprocess.call(proc_args)
-
-    return

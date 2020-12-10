@@ -20,7 +20,7 @@ __license__ = "MIT"
 import os
 import yaml
 
-from akit.exceptions import AKitConfigurationError, AKitSemanticError
+from akit.exceptions import AKitConfigurationError
 
 from akit.integration.clients.linuxclientmixin import LinuxClientMixIn
 from akit.integration.clients.windowsclientmixin import WindowsClientMixIn
@@ -36,6 +36,14 @@ class LandscapeDescription:
 
     @classmethod
     def register_integration_points(cls, landscape):
+        """
+            Method called during the test framework ininitalization in order to register integartion mixins and their
+            associated roles with the test framework.
+
+            :param landscape: A reference to the landscape singleton object.  We pass in the landscape parameter in order
+                              to eliminate the need to import the landscape module which would cause a circular reference.
+            :type landscape: Landscape
+        """
         landscape.register_integration_point("primary-linux", LinuxClientMixIn)
         landscape.register_integration_point("secondary-linux", LinuxClientMixIn)
 
@@ -46,7 +54,10 @@ class LandscapeDescription:
         landscape.register_integration_point("secondary-cluster", ClusterMixIn)
         return
 
-    def load(self, landscape_file):
+    def load(self, landscape_file: str):
+        """
+            Loads and validates the landscape description file.
+        """
         landscape_info = None
 
         with open(landscape_file, 'r') as lf:
@@ -68,6 +79,9 @@ class LandscapeDescription:
         return landscape_info
 
     def validate_landscape(self, landscape_info):
+        """
+            Validates the landscape description file.
+        """
         errors = []
 
         if "pod" in landscape_info:
@@ -83,7 +97,7 @@ class LandscapeDescription:
 
         return errors
 
-    def validate_devices_list(self, devlist, prefix=""):
+    def validate_devices_list(self, devlist, prefix=""): # pylint: disable=unused-argument
         """
             Verifies that all the devices in a device list are valid and returns a list of errors found.
         """
@@ -135,7 +149,7 @@ class LandscapeDescription:
 
         return errors
 
-    def validate_ssh_info(self, sshinfo, require_host=True, prefix=""):
+    def validate_ssh_info(self, sshinfo, require_host=True, prefix=""): # pylint: disable=no-self-use,unused-argument
         """
             Verifies that a ssh info dictionary has valid data member combinations and can be used. Returns a
             list of errors found.
@@ -152,7 +166,7 @@ class LandscapeDescription:
 
         return errors
 
-    def validate_upnp_info(self, upnpinfo, prefix=""):
+    def validate_upnp_info(self, upnpinfo, prefix=""): # pylint: disable=no-self-use,unused-argument
         """
             Verifies that a upnp info dictionary has valid data member combinations and can be used. Returns a
             list of errors found.

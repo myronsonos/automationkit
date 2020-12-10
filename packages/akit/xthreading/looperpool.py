@@ -30,12 +30,13 @@ class LooperPool:
         performed by the :class:`LooperPool`
     """
 
-    def __init__(self, looper_type, group_name: str=None, min_loopers: int=5, max_loopers: int=10, highwater: int=5, daemon=True, **kwargs):
+    def __init__(self, looper_type: Looper, group_name: str=None, min_loopers: int=5, max_loopers: int=10, highwater: int=5, daemon=True, **kwargs):
         self._looper_type = looper_type
         self._group_name = group_name
         self._min_loopers = min_loopers
         self._max_loopers = max_loopers
         self._highwater = highwater
+        self._daemon = daemon
         self._kwargs = kwargs
 
         self._queue = LooperQueue()
@@ -123,7 +124,7 @@ class LooperPool:
         try:
             self._thread_count += 1
             looper_name = "%s-%d" % (self._group_name, self._thread_count)
-            looper = self._looper_type(self._queue, name=looper_name, group=self._group_name, daemon=True, **self._kwargs)
+            looper = self._looper_type(self._queue, name=looper_name, group=self._group_name, daemon=self._daemon, **self._kwargs)
             looper.start()
             self._threads.append(looper)
         except:
