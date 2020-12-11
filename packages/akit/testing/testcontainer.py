@@ -18,6 +18,9 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from types import MethodType, TracebackType
+from typing import Optional, Sequence
+
 import inspect
 import sys
 import traceback
@@ -26,6 +29,7 @@ import uuid
 from akit.metadata import Category
 from akit.exceptions import AKitSkipError
 from akit.results import ResultType, ResultNode
+from akit.recorders import ResultRecorder
 from akit.xlogging.foundations import getAutomatonKitLogger
 
 logger = getAutomatonKitLogger()
@@ -71,23 +75,17 @@ class TestContainer:
         target scope of execution should be included through the :class:`akit.mixins.scopes.ScopeMixIn`.
     """
 
-    def __init__(self, testmethod, recorder, *args, extname=None, parameters=None, **kwargs):
+    def __init__(self, testmethod: MethodType, recorder: ResultRecorder, *args, extname: str = None, parameters: Optional[Sequence] = None, **kwargs):
         """
             Intializes an instance of the test container along with the test method that is to be run for
             a given test instance.
 
             :param testmethod: The test method to run for this instance of a test container.
-            :type testmethod: MethodType
             :param recorder: A recorder object to report test results to.
-            :type recorder: ResultRecorder
             :param *args: Handle the passing of positional parameters.
-            :type *args: list[object]
             :param extname: The extended name of the test container in the event that parameterization is used.
-            :type extname: str
             :param parameters: The parameters to pass for the test instance to use.
-            :type parameters: sequence[object]
             :param **kwargs: A catch all for any kwargs that are passed to the constructor.
-            :type **kwargs: dict
         """
         self._testmethod = testmethod
         self._args = args
@@ -132,7 +130,7 @@ class TestContainer:
         """
         return self._parameters
 
-    def run(self, parent_inst):
+    def run(self, parent_inst: str):
         """
             The 'run' method controls the sequence of steps for the setup for a test, the running of a test, and the
             cleanup after the test.  It also lays out the behaviors that occur when a test fails and handles
@@ -140,7 +138,6 @@ class TestContainer:
 
             :param parent_inst: The instance id of the parent ResultNode instance to mark as the parent for the ResultNode
                                 created for the results of this test.
-            :type parent_inst: str
         """
 
         self._result = ResultNode(self._instance_id, self.testname, ResultType.TEST, parent_inst=parent_inst)
@@ -190,7 +187,7 @@ class TestContainer:
         """
         return
 
-    def _handle_failure(self, tmethod, ftype, finst, ftb):
+    def _handle_failure(self, tmethod: MethodType, ftype: type, finst: Exception, ftb: TracebackType):
         """
             Handler for failure exceptions that occur during the running of the test.
         """
@@ -199,7 +196,7 @@ class TestContainer:
         self._result.set_documentation(tmethod.__doc__)
         return
 
-    def _handle_error(self, tmethod, etype, einst, etb):
+    def _handle_error(self, tmethod: MethodType, etype: type, einst: Exception, etb: TracebackType):
         """
             Handler for error exceptions that occur during the running of the test.
         """
@@ -208,7 +205,7 @@ class TestContainer:
         self._result.set_documentation(tmethod.__doc__)
         return
 
-    def _handle_cleanup_error(self, etype, einst, etb):
+    def _handle_cleanup_error(self, etype: type, einst: Exception, etb: TracebackType):
         """
             Handles the cleanup step error by recording a warning.
         """
@@ -216,7 +213,7 @@ class TestContainer:
         self._result.add_warning(warn_lines)
         return
 
-    def _handle_setup_error(self, etype, einst, etb):
+    def _handle_setup_error(self, etype: type, einst: Exception, etb: TracebackType):
         """
             Handles the setup error from the setup of this test instance.
         """

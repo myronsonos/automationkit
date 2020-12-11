@@ -29,14 +29,10 @@ def indent_lines(msg: str, level: int, indent: int=4) -> str:
         to the specified level using 'indent' spaces for each level.
 
         :param msg: The text content to split into lines and then indent.
-        :type msg: str
         :param level: The integer level number to indent to.
-        :type level: int
         :param indent: The number of spaces to indent for each level.
-        :type indent: int
 
         :returns: The indenting content
-        :rtype: str
     """
     # Split msg into lines keeping the line endings
     msglines = msg.splitlines(True)
@@ -56,14 +52,10 @@ def split_and_indent_lines(msg: str, level: int, indent: int=4) -> List[str]:
         to the specified level using 'indent' spaces for each level.
 
         :param msg: The text content to split into lines and then indent.
-        :type msg: str
         :param level: The integer level number to indent to.
-        :type level: int
         :param indent: The number of spaces to indent for each level.
-        :type indent: int
 
         :returns: The indenting lines
-        :rtype: list of str
     """
 
     # Split msg into lines keeping the line endings

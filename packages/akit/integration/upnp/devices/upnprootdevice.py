@@ -274,12 +274,10 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
             :param coord_ref: A weak reference to the coordinator that is managing interactions through this
                               device extension.
-            :type coord_ref: weakref.ReferenceType
             :param extid: A unique reference that can be used to identify this device via the coordinator even if its location changes.
-            :type extid: str
             :param location: The location reference where this device can be found via the coordinator.
-            :type location: str
-            :param
+            :param configinfo: The UPNP configuration information associated with a device in the landscape configuration file.
+            :param devinfo:  The device configuration information from the landscape configuration file.
         """
         LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
 

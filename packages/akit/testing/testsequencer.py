@@ -53,14 +53,10 @@ class TestSequencer(ContextUser):
             Creates a 'TestSequencer' object which is used to discover the tests and control the flow of a test run.
 
             :param jobtitle: The name of the test job.
-            :type jobtitle: str
             :param root: The path to the root folder that is the base of the tests.
-            :type root: str
             :param includes: List of expressions used to determine which tests to include.
                              (scope):(package).(package)@(module)#(testname)
-            :type includes: list
             :param excludes: List of expressions used to determine which tests to exclued from the included tests.
-            :type excludes: list.
 
         """
         self._jobtitle = jobtitle

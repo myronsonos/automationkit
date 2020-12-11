@@ -118,7 +118,7 @@ class IntegrationMixIn(ContextUser):
         return
 
     @classmethod
-    def diagnostic(cls, diag_level, diag_folder): # pylint: disable=unused-argument
+    def diagnostic(cls, diag_level: int, diag_folder: str): # pylint: disable=unused-argument
         """
             The API is called by the :class:`akit.sequencer.Sequencer` object when the automation sequencer is
             building out a diagnostic package at a diagnostic point in the automation sequence.  Example diagnostic
@@ -131,9 +131,7 @@ class IntegrationMixIn(ContextUser):
             can simply write to their specified output folder.
 
             :param diag_level: The maximum diagnostic level to run dianostics for.
-            :type diag_level: int
             :param diag_folder: The output folder path where the diagnostic information should be written.
-            :type diag_folder: str
         """
         return
 

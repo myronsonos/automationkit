@@ -60,9 +60,7 @@ class ContextCursor:
             Insert an object at the path specified.
 
             :param path: Path where the object is to be inserted
-            :type path: str
             :param obj: The object to insert
-            :type obj: Any
 
             :raises: :class:`ValueError`
         """
@@ -81,10 +79,8 @@ class ContextCursor:
             Lookup an object at the path specified.
 
             :param path: Path where the desired object is located.
-            :type path: str
 
             :returns: The object stored at the specified path.
-            :rtype: Any
 
             :raises: :class:`LookupError`
         """
@@ -105,10 +101,8 @@ class ContextCursor:
             Remove an object at the specified path
 
             :param path: Path where the desired object is located.
-            :type path: str
 
             :returns: The being removed from the specified path.
-            :rtype: Any
 
             :raises: :class:`LookupError`
         """
@@ -222,9 +216,7 @@ class Context:
             Insert an object at the path specified.
 
             :param path: Path where the object is to be inserted
-            :type path: str
             :param obj: The object to insert
-            :type obj: Any
 
             :raises: :class:`ValueError`
         """
@@ -243,7 +235,6 @@ class Context:
             Lookup an object at the path specified.
 
             :param path: Path where the desired object is located.
-            :type path: str
 
             :returns: The object stored at the specified path.
             :rtype: Any
@@ -267,10 +258,8 @@ class Context:
             Remove an object at the specified path
 
             :param path: Path where the desired object is located.
-            :type path: str
 
             :returns: The being removed from the specified path.
-            :rtype: Any
 
             :raises: :class:`LookupError`
         """

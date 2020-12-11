@@ -95,12 +95,9 @@ class MuseAgent(LandscapeDeviceExtension):
 
             :param coord_ref: A weak reference to the coordinator that is managing interactions through this
                               device extension.
-            :type coord_ref: weakref.ReferenceType
             :param extid: A unique reference that can be used to identify this device via the coordinator even if its location changes.
-            :type extid: str
             :param location: The location reference where this device can be found via the coordinator.
-            :type location: str
-            :param
+            :param configinfo: The muse configuration information dictionary for the associated device from the landscape file.
         """
         LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
         return

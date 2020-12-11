@@ -50,23 +50,18 @@ class Aspects:
         or constant you can  pass to multiple APIs
     """
 
-    def __init__(self, run_pattern=RunPattern.SINGLE_RUN, completion_timeout=DEFAULT_COMPLETION_TIMEOUT, completion_interval=DEFAULT_COMPLETION_INTERVAL,
-                       inactivity_timeout=DEFAULT_INACTIVITY_TIMEOUT, inactivity_interval=DEFAULT_INACTIVITY_INTERVAL, monitor_delay=DEFAULT_MONITOR_DELAY,
-                       logging_pattern=DEFAULT_LOGGING_PATTERN):
+    def __init__(self, run_pattern: RunPattern = RunPattern.SINGLE_RUN, completion_timeout: float = DEFAULT_COMPLETION_TIMEOUT, completion_interval: float = DEFAULT_COMPLETION_INTERVAL,
+                       inactivity_timeout: float = DEFAULT_INACTIVITY_TIMEOUT, inactivity_interval: float = DEFAULT_INACTIVITY_INTERVAL, monitor_delay: float = DEFAULT_MONITOR_DELAY,
+                       logging_pattern: LoggingPattern = DEFAULT_LOGGING_PATTERN):
         """
             Creates an :class:`Aspects` package.
 
             :param run_pattern: The :class:`RunPattern` that the API should exhibit such as SINGLE_RUN, RUN_UNTIL_SUCCESS, RUN_WHILE_SUCCESS
-            :type run_pattern: :class:`RunPattern`
             :param completion_timeout: The time in seconds as a float that is the max time before timeout for the activity to complete.
-            :type completion_timeout: float
             :param completion_interval: The time in seconds as a float that is waited before reattempting an activity.
-            :type completion_interval: float
             :param inactivity_timeout: The time in seconds as a float that is the max time before timeout that is waited before a :class:`TimeoutError`
                                        is raised due to inactivity.
-            :type inactivity_timeout: float
             :param inactivity_interval: The time in seconds as a float that is waited before reattempting an activity.
-            :type inactivity_interval: float
         """
         self.run_pattern = run_pattern
         self.completion_timeout = completion_timeout

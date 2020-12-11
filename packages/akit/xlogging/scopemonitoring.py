@@ -268,7 +268,6 @@ class ScopeMonitor:
             Register a monitor context with the :class:`ScopeMonitor` singleton.
 
             :param monitor: The monitor context to add to the the list of monitored scopes.
-            :type monitor: :class:`MonitoredScope`
         """
 
         self._monitors_lock.acquire()

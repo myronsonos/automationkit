@@ -305,9 +305,7 @@ class Landscape:
             Can be called in order to perform a diagnostic capture across the test landscape.
 
             :param diaglabel: The label to use for the diagnostic.
-            :type diaglabel: str
             :param diags: A dictionary of diagnostics to run.
-            :type diags: dict
         """
         self.landscape_initialized.wait()
         return
@@ -551,7 +549,7 @@ class Landscape:
 
         return device
 
-    def register_integration_point(self, role, mixin):
+    def register_integration_point(self, role: str, mixin: type):
         """
             This method should be called from the attach_to_environment methods from individual mixins
             in order to register the base level integrations.  Integrations can be hierarchical so it
@@ -559,9 +557,7 @@ class Landscape:
             be called from the root level mixins.
 
             :param role: The name of a role to assign for a mixin.
-            :type role: str
             :param mixin: The mixin to register for the associated role.
-            :type mixin: MixIn
         """
         self.landscape_initialized.wait()
 

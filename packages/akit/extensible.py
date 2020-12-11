@@ -16,6 +16,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 from typing import List
+from types import ModuleType
 
 import inspect
 import os
@@ -29,19 +30,16 @@ class LoadableExtension: # pylint: disable=too-few-public-methods
         extension classes from base classes
     """
 
-def collect_extensions_under_code_container(container, ext_base_type) -> List[type]:
+def collect_extensions_under_code_container(container: ModuleType, ext_base_type: type) -> List[type]:
     """
         Scans the code `container` provide and all descendant containers for classes
         that inherit from the type passed as `ext_base_type`
 
         :param container: A python package or module to scan for extension types.
-        :type container: ModuleType
         :param ext_base_type: A python class type that serves as a base class to identify other
                               types that are a type of extension.
-        :type ext_base_type: Type
 
         :returns: A list of types found that inherit from `ext_base_type`
-        :rtype: List[Type]
     """
     ext_collection = []
 
@@ -80,16 +78,14 @@ def collect_extensions_under_code_container(container, ext_base_type) -> List[ty
 
     return ext_collection
 
-def generate_extension_key(*parts) -> str:
+def generate_extension_key(*parts: str) -> str:
     """
         Generates a unique key that identifies an extension type based on where
         it was found in a hiearchy of code containers.
 
         :params parts: List of names of the path to the extension type
-        :type parts: List[str]
 
         :returns: A unique path based identifier for a type.
-        :rtype: str
     """
     extkey = "/".join(parts)
     return extkey

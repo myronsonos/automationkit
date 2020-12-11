@@ -17,6 +17,8 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import List
+
 import os
 import re
 import socket
@@ -179,16 +181,14 @@ class MSearchScanContext:
 
         return
 
-def msearch_parse_request(content: bytes):
+def msearch_parse_request(content: bytes) -> dict:
     """
         Takes in the content of the MSEARCH request and parses it into a
         python dictionary object.
 
         :param content: MSearch request content as a bytes.
-        :type content: bytes
 
         :return: A python dictionary with key and values from the MSearch request
-        :rtype: :class:`dict`
     """
     content = content.decode('utf-8')
 
@@ -208,16 +208,14 @@ def msearch_parse_request(content: bytes):
 
     return respinfo
 
-def msearch_parse_response(content: bytes):
+def msearch_parse_response(content: bytes) -> dict:
     """
         Takes in the content of the response of an MSEARCH request and parses it into a
         python dictionary object.
 
         :param content: MSearch response content as a bytes.
-        :type content: bytes
 
         :return: A python dictionary with key and values from the MSearch response
-        :rtype: :class:`dict`
     """
     content = content.decode('utf-8')
 
@@ -238,7 +236,7 @@ def msearch_parse_response(content: bytes):
     return respinfo
 
 
-def mquery_on_interface(query_context, ifname, ifaddress, mx=1, st=MSearchTargets.ROOTDEVICE, response_timeout=45, interval=5):
+def mquery_on_interface(query_context: MSearchScanContext, ifname: str, ifaddress: str, mx: int = 1, st: str = MSearchTargets.ROOTDEVICE, response_timeout: float = 45, interval: float = 5):
     """
         The inline msearch function provides a mechanism to do a synchronous msearch
         in order to determine if a set of available devices are available and to
@@ -247,11 +245,13 @@ def mquery_on_interface(query_context, ifname, ifaddress, mx=1, st=MSearchTarget
         :param scan_context: A shared scan context that shares information between the scan threads and
                              speeds up the process of finding the expected UPNP devices across the
                              interfaces.
-        :type scan_context: :class:`MSearchScanContext`
-        :param timeout: The maximum time in seconds to wait for the expected devices to report.
-        :type timeout: float
+        :param ifname: The name if the interface being searched.
+        :param ifaddress: The IP address of the interface being searched.
+        :param mx: The time to live for the UPnP MSearch packets.
+        :param st: The search target of the MSearch.
+        :param response_timeout:  The timeout to wait for responses from all the expected devices.
+        :param interval: The retry interval to wait before retrying to search for an expected device.
 
-        :returns:  dict -- A dictionary of the devices that were found.
         :raises: TimeoutError, KeyboardInterrupt
     """
 
@@ -323,7 +323,7 @@ def mquery_on_interface(query_context, ifname, ifaddress, mx=1, st=MSearchTarget
     return
 
 
-def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTargets.ROOTDEVICE, response_timeout=45, interval=5):
+def msearch_on_interface(scan_context: MSearchScanContext, ifname: str, ifaddress: str, mx: int = 1, st: str = MSearchTargets.ROOTDEVICE, response_timeout: float = 45, interval: float = 5):
     """
         The inline msearch function provides a mechanism to do a synchronous msearch
         in order to determine if a set of available devices are available and to
@@ -332,9 +332,12 @@ def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTarget
         :param scan_context: A shared scan context that shares information between the scan threads and
                              speeds up the process of finding the expected UPNP devices across the
                              interfaces.
-        :type scan_context: :class:`MSearchScanContext`
-        :param timeout: The maximum time in seconds to wait for the expected devices to report.
-        :type timeout: float
+        :param ifname: The name if the interface being searched.
+        :param ifaddress: The IP address of the interface being searched.
+        :param mx: The time to live for the UPnP MSearch packets.
+        :param st: The search target of the MSearch.
+        :param response_timeout:  The timeout to wait for responses from all the expected devices.
+        :param interval: The retry interval to wait before retrying to search for an expected device.
 
         :returns:  dict -- A dictionary of the devices that were found.
         :raises: TimeoutError, KeyboardInterrupt
@@ -404,8 +407,19 @@ def msearch_on_interface(scan_context, ifname, ifaddress, mx=1, st=MSearchTarget
 
     return
 
-def mquery(expected_device, interface_list, response_timeout=45, interval=2, raise_exception=False):
+def mquery(expected_device: str, interface_list: List[str], response_timeout: float = 45, interval: float = 2, raise_exception: bool = False) -> dict:
+    """ 
+        Performs a msearch across a list of interfaces for a specific expected device.  This method is typically used
+        during a persistent search when a device was not found in a broad msearch.
 
+        :param expected_device: The USN of a device to search for.
+        :param interface_list: A list of interface names to scan for the device.
+        :param response_timeout:  The timeout to wait for responses from all the expected devices.
+        :param interval: The retry interval to wait before retrying to search for an expected device.
+        :param raise_exception: A boolean indicating if the mquery should raise an exception on failure.
+
+        :returns: A dictionary with the query results.
+    """
     if interface_list is None:
         interface_list = netifaces.interfaces()
 
@@ -448,8 +462,19 @@ def mquery(expected_device, interface_list, response_timeout=45, interval=2, rai
     return query_context.query_results
 
 
-def msearch_scan(expected_devices, interface_list=None, response_timeout=45, interval=2, raise_exception=False):
+def msearch_scan(expected_devices, interface_list=None, response_timeout=45, interval=2, raise_exception=False) -> Tuple[dict, dict]:
+    """ 
+        Performs a msearch across a list of interfaces for a specific expected device.  This method is typically used
+        during a persistent search when a device was not found in a broad msearch.
 
+        :param expected_devices: A list of USN(s) of a list of devices to search for.
+        :param interface_list: A list of interface names to scan for the device.
+        :param response_timeout:  The timeout to wait for responses from all the expected devices.
+        :param interval: The retry interval to wait before retrying to search for an expected device.
+        :param raise_exception: A boolean indicating if the mquery should raise an exception on failure.
+
+        :returns: A tuple with a dictionary of found and a dictionary of matching devices found.
+    """
     if interface_list is None:
         interface_list = netifaces.interfaces()
 
@@ -519,16 +544,14 @@ def msearch_scan(expected_devices, interface_list=None, response_timeout=45, int
 
     return scan_context.found_devices, scan_context.matching_devices
 
-def notify_parse_request(content):
+def notify_parse_request(content: str) -> dict:
     """
         Takes in the content of the NOTIFY request and parses it into a
         python dictionary object.
 
         :param content: Notify request content as a string.
-        :type content: str
 
         :return: A python dictionary with key and values from the Notify request
-        :rtype: :class:`dict`
     """
     content = content.decode('utf-8')
 

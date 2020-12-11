@@ -36,7 +36,6 @@ def collect_python_modules(search_dir: str) -> List[str]:
         __init__.py file.
 
         :params searchdir: The root directory to search when collecting python modules.
-        :type searchdir: str
     """
     pyfiles = []
 
@@ -55,9 +54,7 @@ def ensure_directory_is_package(package_dir: str, package_title: Optional[str] =
         directory has an __init__.py file and if not it adds one.
 
         :param package_dir: The direcotry to represent as a package.
-        :type package_dir: str
         :param package_title: Optional title to be written into the documentation string in the package file.
-        :type package_title: str
     """
     package_dir_init = os.path.join(package_dir, "__init__.py")
     if not os.path.exists(package_dir_init):
@@ -68,16 +65,14 @@ def ensure_directory_is_package(package_dir: str, package_title: Optional[str] =
             initf.write('"""\n')
     return
 
-def get_directory_for_code_container(container: str):
+def get_directory_for_code_container(container: str) -> str:
     """
         Returns the directory for a code container (module or package)
 
         :param container: The code container you want to get a directory for.
-        :type container: str
 
         :returns: The string that represents the parent directory of the code
                   container specified.
-        :rtype: str
     """
     if hasattr(container, '__path__'):
         container_dir = str(container.__path__[0]).rstrip(os.sep)
@@ -95,24 +90,20 @@ def get_expanded_path(path: str) -> str:
 
         :param path: A path which you want to expand to a full path, expanding the
                      user, variables and relative path syntax.
-        :type path: str
 
         :returns: The expanded path
-        :rtype: str
     """
     exp_path = os.path.abspath(os.path.expandvars(os.path.expanduser(path)))
     return exp_path
 
-def get_path_for_artifacts(label) -> str:
+def get_path_for_artifacts(label: str) -> str:
     """
         Returns a path in the form (testresultdir)/artifacts/(label)
 
         :param label: A label to associate with the collection of artifacts. The label is used for
                       the name of the artifact container folder.
-        :type label: str
 
         :returns: A path that is descendant from (testresultdir)/artifacts
-        :rtype: str
     """
     trdir = get_path_for_testresults()
     afdir = os.path.join(trdir, "artifacts", label)
@@ -140,16 +131,14 @@ def get_path_for_testresults() -> str:
 
     return DIR_TESTRESULTS
 
-def normalize_name_for_path(name) -> str:
+def normalize_name_for_path(name: str) -> str:
     """
         Normalizes a path string by replacing ",.:;" with space and then removing
         white space.
 
         :param name: A name as a str which is to be normalized to allow it to be used in a path.
-        :type name: str
 
         :returns: The normalized string which can be used in a path.
-        :rtype: str
     """
     norm_name = name.translate(TRANSLATE_TABLE_NORMALIZE_FOR_PATH).replace(" ", "")
     return norm_name

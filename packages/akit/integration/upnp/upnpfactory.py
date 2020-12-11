@@ -74,15 +74,11 @@ class UpnpFactory:
             instance is created and returned.
 
             :param manufacturer: The manufacturer associated with the embedded device.
-            :type manufacturer: str
             :param modelNumber: The model number associated with the embedded device.
-            :type modelNumber: str
             :param modelDescription: The model description associated with the embedded device.
-            :type modelDescription: str
 
             :returns: An instance of an embedded device extension of a specific manaufacturer or a default generic
                       UpnpEmbeddedDevice.
-            :rtype: UpnpEmbeddedDevice
         """
         deviceClass = UpnpEmbeddedDevice
         extkey = generate_extension_key(manufacturer, modelNumber, modelDescription)
@@ -97,15 +93,11 @@ class UpnpFactory:
             created and returned.
 
             :param manufacturer: The manufacturer associated with the root device.
-            :type manufacturer: str
             :param modelNumber: The model number associated with the root device.
-            :type modelNumber: str
             :param modelDescription: The model description associated with the root device.
-            :type modelDescription: str
 
             :returns: An instance of an root device extension of a specific manaufacturer or a default generic
                       UpnpRootDevice.
-            :rtype: UpnpRootDevice
         """
         deviceClass = UpnpRootDevice
         if manufacturer is not None and modelNumber is not None and modelDescription is not None:
@@ -120,15 +112,11 @@ class UpnpFactory:
             service proxy extension is not found matching the specified parameters then None is returned.
 
             :param manufacturer: The manufacturer associated with the root device.
-            :type manufacturer: str
             :param modelNumber: The model number associated with the root device.
-            :type modelNumber: str
             :param modelDescription: The model description associated with the root device.
-            :type modelDescription: str
 
             :returns: An instance of an root device extension of a specific manaufacturer or a default generic
                       UpnpRootDevice.
-            :rtype: UpnpRootDevice or None
         """
         serviceInst = None
         if serviceType is not None:

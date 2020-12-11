@@ -47,11 +47,9 @@ def find_included_test_modules_under_root(root: str, package: Union[str, None], 
 
         :param root: The root directory to start from when performing the tree walk to look
                      for included tests.
-        :type root: str
         :param package: The package name component if there is one.  The package components are the directories
                         with __init__.py files up to the file where the module file itself is found. It could be
                         that there is only a module name.
-        :type package: str
         :param module: The module name component.  There must be a module because that is the file where the tests
                        are found.
     """
@@ -101,12 +99,9 @@ def parse_include_expression(expression: str, testmodule: Optional[ModuleType], 
         :param expression: A test include expression in the form of (package).(module)@(testclass)#(testcase).  The module,
                            testclass, and testcase are optional.  If these items are excluded every descendant test found
                            under the (package) will be included.
-        :type expression: str
         :param testmodule: A test module that contains the tests to be run.  This is passed when a individual test file
                            debugging workflow is being used.
-        :type testmodule: ModuleType
         :param method_prefix: The string prefix that identifies test methods on a :class:`TestContainer` derived class.
-        :type method_prefix: str
     """
 
     expr_package = None
@@ -186,14 +181,10 @@ class TestCollector:
             collect references and test packages to be run.
 
             :param root: The root directory to scan for included tests
-            :type root: str
             :param excludes: A list or sequence of exclude expressions to apply during test collection operations.
-            :type excludes: Sequence[str]
             :param module_prefix: The prefix or word that test methods will start with.  The default is 'test'.
-            :type module_prefix: str
             :param test_module: A test module which is passed for the debug workflow where a test module is run directly
                                 as a script using the generic_test_entrypoint or in the debugger by Right-Click
-            :type test_module: ModuleType
 
         """
         self._root = root
@@ -248,7 +239,6 @@ class TestCollector:
             extend its collection of reference with each successive call.
 
             :param expression: An include expression to process and collect references for.
-            :type expression: str
         """
 
         expr_package, expr_module, expr_testclass, expr_testname = parse_include_expression(expression, self._test_module, self._method_prefix)

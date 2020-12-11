@@ -24,9 +24,7 @@ def insert_into_ordered_list_ascending(ordered_list: list, item: Any):
         and inserts the 'item' parameter into the list in the correct order.
 
         :param ordered_list: The sorted list to insert into.
-        :type ordered_list: list
         :param item: The item to insert into the list.
-        :type item: Any
     """
     ordered_list = []
     index = None
@@ -56,7 +54,6 @@ class CaseInsensitiveBytesDict(dict):
             Converts a key to a lower case string so case insensative comparisons can be made.
 
             :param key: A key value to check to see if an object is stored under the key.
-            :type key: bytes
         """
         if not isinstance(key, bytes):
             raise KeyError("Only bytes keys can be used with the CaseInsensitiveBytesDict type.")
@@ -75,10 +72,8 @@ class CaseInsensitiveBytesDict(dict):
             to perform a case insensative dictionary key lookup.
 
             :param key: A key value to check to see if an object is stored under the key.
-            :type key: bytes
-
+        
             :returns: A boolean indicating if the key provided is in this objects keys.
-            :rtype: bool
         """
         return super(CaseInsensitiveBytesDict, self).__contains__(CaseInsensitiveBytesDict.key_to_lower(key))
 
@@ -88,8 +83,7 @@ class CaseInsensitiveBytesDict(dict):
             to perform a case insensative dictionary item delete.
 
             :param key: A key value to delete the object stored under the key.
-            :type key: bytes
-
+        
             :raises: KeyError
         """
         return super(CaseInsensitiveBytesDict, self).__delitem__(CaseInsensitiveBytesDict.key_to_lower(key))
@@ -100,24 +94,20 @@ class CaseInsensitiveBytesDict(dict):
             to perform a case insensative dictionary item lookup.
 
             :param key: A key value to lookup and return the object stored under the key.
-            :type key: bytes
-
+        
             :returns: The object associated with the key provided.
-            :rtype: object
-
+        
             :raises: KeyError
         """
         return super(CaseInsensitiveBytesDict, self).__getitem__(CaseInsensitiveBytesDict.key_to_lower(key))
 
-    def __setitem__(self, key: bytes, value):
+    def __setitem__(self, key: bytes, value: Any):
         """
             Overrides the :method:`__setitem__` operator providing a key conversion in order
             to perform a case insensative dictionary item set.
 
             :param key: A key value to use to store the object stored under the key.
-            :type key: bytes
             :param value: The value to store with the key.
-            :type value: object
         """
         super(CaseInsensitiveBytesDict, self).__setitem__(CaseInsensitiveBytesDict.key_to_lower(key), value)
 
@@ -127,11 +117,9 @@ class CaseInsensitiveBytesDict(dict):
             to perform a case insensative dictionary pop item.
 
             :param key: A key value to use to pop and return the object stored under the key.
-            :type key: bytes
-
+        
             :returns: The object associated with the key provided.
-            :rtype: object
-
+        
             :raises: KeyError
         """
         return super(CaseInsensitiveBytesDict, self).pop(CaseInsensitiveBytesDict.key_to_lower(key), *args, **kwargs)
@@ -142,26 +130,22 @@ class CaseInsensitiveBytesDict(dict):
             to perform a case insensative dictionary get item.
 
             :param key: A key value to use to get and return the object stored under the key.
-            :type key: bytes
 
             :returns: The object associated with the key provided.
-            :rtype: object
 
             :raises: KeyError
         """
         return super(CaseInsensitiveBytesDict, self).get(CaseInsensitiveBytesDict.key_to_lower(key), *args, **kwargs)
 
-    def setdefault(self, key: bytes, *args, **kwargs):
+    def setdefault(self, key: bytes, value: Any, *args, **kwargs):
         """
             Overrides the :method:`setdefault` method providing a key conversion in order
             to perform a case insensative dictionary setdefault for the given key.
 
             :param key: A key value to use to store the object stored under the key.
-            :type key: bytes
             :param value: The default value to store with the key.
-            :type value: object
         """
-        return super(CaseInsensitiveBytesDict, self).setdefault(CaseInsensitiveBytesDict.key_to_lower(key), *args, **kwargs)
+        return super(CaseInsensitiveBytesDict, self).setdefault(CaseInsensitiveBytesDict.key_to_lower(key), value, *args, **kwargs)
 
     def update(self, dobj: dict = {}, **kwargs): # pylint: disable=dangerous-default-value
         """
@@ -199,7 +183,6 @@ class CaseInsensitiveStringDict(dict):
             Converts a key to a lower case string so case insensative comparisons can be made.
 
             :param key: A key value to check to see if an object is stored under the key.
-            :type key: str
         """
         if not isinstance(key, str):
             raise KeyError("Only string keys can be used with the CaseInsensitiveStringDict type.")
@@ -212,16 +195,14 @@ class CaseInsensitiveStringDict(dict):
         self._convert_keys()
         return
 
-    def __contains__(self, key: str):
+    def __contains__(self, key: str) -> bool:
         """
             Overrides the :method:`__contains__` operator providing a key conversion in order
             to perform a case insensative dictionary key lookup.
 
             :param key: A key value to check to see if an object is stored under the key.
-            :type key: str
-
+        
             :returns: A boolean indicating if the key provided is in this objects keys.
-            :rtype: bool
         """
         return super(CaseInsensitiveStringDict, self).__contains__(CaseInsensitiveStringDict.key_to_lower(key))
 
@@ -231,80 +212,69 @@ class CaseInsensitiveStringDict(dict):
             to perform a case insensative dictionary item delete.
 
             :param key: A key value to delete the object stored under the key.
-            :type key: str
 
             :raises: KeyError
         """
         return super(CaseInsensitiveStringDict, self).__delitem__(CaseInsensitiveStringDict.key_to_lower(key))
 
-    def __getitem__(self, key: str):
+    def __getitem__(self, key: str) -> Any:
         """
             Overrides the :method:`__getitem__` operator providing a key conversion in order
             to perform a case insensative dictionary item lookup.
 
             :param key: A key value to lookup and return the object stored under the key.
-            :type key: str
 
             :returns: The object associated with the key provided.
-            :rtype: object
 
             :raises: KeyError
         """
         return super(CaseInsensitiveStringDict, self).__getitem__(CaseInsensitiveStringDict.key_to_lower(key))
 
-    def __setitem__(self, key: str, value):
+    def __setitem__(self, key: str, value: Any):
         """
             Overrides the :method:`__setitem__` operator providing a key conversion in order
             to perform a case insensative dictionary item set.
 
             :param key: A key value to use to store the object stored under the key.
-            :type key: str
             :param value: The value to store with the key.
-            :type value: object
         """
         super(CaseInsensitiveStringDict, self).__setitem__(CaseInsensitiveStringDict.key_to_lower(key), value)
 
-    def pop(self, key: str, *args, **kwargs):
+    def pop(self, key: str, *args, **kwargs) -> Any:
         """
             Overrides the :method:`pop` method providing a key conversion in order
             to perform a case insensative dictionary pop item.
 
             :param key: A key value to use to pop and return the object stored under the key.
-            :type key: str
 
             :returns: The object associated with the key provided.
-            :rtype: object
 
             :raises: KeyError
         """
         return super(CaseInsensitiveStringDict, self).pop(CaseInsensitiveStringDict.key_to_lower(key), *args, **kwargs)
 
-    def get(self, key: str, *args, **kwargs):
+    def get(self, key: str, *args, **kwargs) -> Any:
         """
             Overrides the :method:`get` method providing a key conversion in order
             to perform a case insensative dictionary get item.
 
             :param key: A key value to use to get and return the object stored under the key.
-            :type key: str
 
             :returns: The object associated with the key provided.
-            :rtype: object
 
             :raises: KeyError
         """
         return super(CaseInsensitiveStringDict, self).get(CaseInsensitiveStringDict.key_to_lower(key), *args, **kwargs)
 
-    def setdefault(self, key: str, *args, **kwargs):
+    def setdefault(self, key: str, value: Any, *args, **kwargs):
         """
             Overrides the :method:`setdefault` method providing a key conversion in order
             to perform a case insensative dictionary setdefault for the given key.
 
             :param key: A key value to use to store the object stored under the key.
-            :type key: str
             :param value: The default value to store with the key.
-            :type value: object
         """
-        return super(CaseInsensitiveStringDict, self).setdefault(CaseInsensitiveStringDict.key_to_lower(key), *args, **kwargs)
+        return super(CaseInsensitiveStringDict, self).setdefault(CaseInsensitiveStringDict.key_to_lower(key), value, *args, **kwargs)
 
     def update(self, dobj: dict = {}, **kwargs): # pylint: disable=dangerous-default-value
         """

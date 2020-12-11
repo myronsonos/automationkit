@@ -15,6 +15,8 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Optional
+
 import socket
 import weakref
 
@@ -146,7 +148,7 @@ class SshPoolCoordinator:
 
         return agent
 
-    def verify_connectivity(self, cmd="echo 'It Works'", user=None, raiseerror=True):
+    def verify_connectivity(self, cmd: str = "echo 'It Works'", user: Optional[str] = None, raiseerror: bool = True):
         """
             Loops through the nodes in the SSH pool and utilizes the
             credentials for the specified user in order to verify
@@ -154,11 +156,10 @@ class SshPoolCoordinator:
 
             :param cmd: A command to run on the remote machine in order
                         to verify that ssh connectivity can be establish.
-            :type cmd: str
             :param user: The name of the user credentials to use for connectivity.
                          If the 'user' parameter is not provided, then the
                          credentials of the default or priviledged user will be used.
-            :type user: str
+            :param raiseerror: A boolean value indicating if this API should raise an Exception on failure.
         """
         results = []
 

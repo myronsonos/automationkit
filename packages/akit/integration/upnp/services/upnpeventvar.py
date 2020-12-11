@@ -17,6 +17,8 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Any, Tuple
+
 import time
 import weakref
 
@@ -47,27 +49,17 @@ class UpnpEventVar:
         API is provided to ensure this synchronization.
     """
 
-    def __init__(self, key, name, service, value=None, data_type=None, default=None,
-                 allowed_list=None, timestamp=None):
+    def __init__(self, key: str, name: str, service: weakref.ReferenceType, value: Any = None, data_type: Optional[str] = None, default: Any = None,
+                 allowed_list=None, timestamp: datetime = None):
         """
             Constructor for the :class:`UpnpEventVar` object.
 
             :param key: The key {service type}/{event name} for this event
-            :type key: str
             :param name: The name of the event this variable is storing information on.
-            :type name: str
-            :param service_lock: The lock from the :class:`UpnpServiceProxy` that hosts the service event
-                                 variable list.
-            :type service_lock: :class:`threading.RLock`
             :param value: Optional initially reported value for the variable.  This is used when we have reports for
                           variables that we are not subscribed to.
-            :type value: various (str, int, etc)
-
-
-
             :param timestamp: The timestamp of the creation of this variable.  If a timestamp is passed then a value
                               needs to also be passed.
-            :type timestamp: datetime
 
         """
         self._key = key
@@ -90,14 +82,14 @@ class UpnpEventVar:
         return
 
     @property
-    def created(self):
+    def created(self) -> datetime:
         """
             When the event variabled value was set for the first time.
         """
         return self._created
 
     @property
-    def expired(self):
+    def expired(self) -> datetime:
         """
             When the event variabled subscription has expired.
         """
@@ -105,14 +97,14 @@ class UpnpEventVar:
         return True
 
     @property
-    def key(self):
+    def key(self) -> str:
         """
             The key {service type}/{event name} for this event.
         """
         return self._key
 
     @property
-    def state(self):
+    def state(self) -> UpnpEventVarState:
         """
             The state of this event variable, UnInitialized, Valid or Stale
         """
@@ -127,21 +119,21 @@ class UpnpEventVar:
         return rtn_state
 
     @property
-    def modified(self):
+    def modified(self) -> datetime:
         """
             A datetime object that indicates when the value was last modified.
         """
         return self._modified
 
     @property
-    def name(self):
+    def name(self) -> str:
         """
             The name of the event this variable is storing information on.
         """
         return self._name
 
     @property
-    def value(self):
+    def value(self) -> Any:
         """
             The last value reported for the event variable this instance is referencing.
         """
@@ -160,7 +152,7 @@ class UpnpEventVar:
         self._modified = None
         return
 
-    def sync_read(self):
+    def sync_read(self) -> Tuple[Any, datetime, UpnpEventVarState]:
         """
             Performs a threadsafe read of the value, modified, and state members of a
             :class:`UpnpEventVar` instance.
@@ -180,7 +172,7 @@ class UpnpEventVar:
 
         return value, modified, state
 
-    def sync_update(self, value, sid=None, service_locked=False):
+    def sync_update(self, value: Any, sid: str = None, service_locked: bool = False):
         """
             Peforms a threadsafe update of the value, modified and sid members of a
             :class:`UpnpEventVar` instance.
@@ -196,7 +188,7 @@ class UpnpEventVar:
 
         return
 
-    def wait_for_update(self, pre_modify_timestamp, timeout=60, interval=2):
+    def wait_for_update(self, pre_modify_timestamp: datetime, timeout: float = 60, interval: float = 2) -> Any:
         """
             Takes a datetime timestamp that is taken before a modification is made that
             will cause a state variable update and waits for the modified timestamp of
@@ -205,12 +197,9 @@ class UpnpEventVar:
 
             :param pre_modify_timestamp: A timestamp taken from datetime.now() prior to engaging in
                                          an activity that will result in a state variable change.
-            :type pre_modify_timestamp: datetime
             :param timeout: The time in seconds to wait for the update to occur.
-            :type timeout: float
             :param interval: The time interval in seconds to wait before attempting to retry and
                              check to see if the modified timestamp has changed.
-            :type interval: float
 
         """
         now_time = time.time()
@@ -227,16 +216,14 @@ class UpnpEventVar:
 
         return self._value
 
-    def wait_for_value(self, timeout=60, interval=2):
+    def wait_for_value(self, timeout: float = 60, interval: float = 2) -> Any:
         """
             Waits for this :class:`UpnpEventVar` instance to contain a value.  It constains a
             value once the modified timestamp has been set.
 
             :param timeout: The time in seconds to wait for a value to be present.
-            :type timeout: float
             :param interval: The time interval in seconds to wait before attempting to retry and
                              check to see if the modified timestamp has been set.
-            :type interval: float
         """
         now_time = time.time()
         start_time = now_time
@@ -252,6 +239,6 @@ class UpnpEventVar:
 
         return self._value
 
-    def __str__(self):
+    def __str__(self) -> str:
         rtnstr = "name={} value={}".format(self._name, self._value)
         return rtnstr

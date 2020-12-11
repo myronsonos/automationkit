@@ -26,12 +26,11 @@ class TestRef:
         being used.
     """
 
-    def __init__(self, testcontainer, testmeth):
+    def __init__(self, testcontainer: TestContainer, testmeth: str):
         """
             Initializes the test reference object.
 
             :param testcontainer: The class of the test object that is being created.
-            :type testcontainer: TestContainer
             :param testmeth: The method on the test container
         """
         self.testcontainer = testcontainer

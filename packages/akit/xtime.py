@@ -40,10 +40,8 @@ def format_time_with_fractional(tsecs: float) -> str:
         Format the time in seconds as a fractional in seconds.
 
         :param tsecs: Time in seconds as a float.
-        :type tsecs: float
 
         :returns: Formatted time in (seconds).(fractions of seconds)
-        :rtype: str
     """
     sec_comp = int(tsecs)
     frac_comp = (tsecs - sec_comp) * 1000
@@ -55,12 +53,9 @@ def parse_datetime(dtstr: str, datetime_format: str=FORMAT_DATETIME) -> datetime
         Parses a date time from string and includes the microseconds component.
 
         :param dtstr: The date in the form of a date time string.
-        :type dtstr: str
         :param datetime_format: The format string to when parsing the datetime string.
-        :type datetime_format: str
 
         :returns: The datetime from the parsed string.
-        :rtype: :class:`datetime.datetime`
     """
     microsecs = 0
 

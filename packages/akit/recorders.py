@@ -17,6 +17,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 from typing import Optional
+from types import TracebackType
 
 import collections
 import datetime
@@ -44,21 +45,13 @@ class ResultRecorder:
             Initializes an instance of a ResultRecorder with the information about a test run.
 
             :param title: A title to associated with the summary for the test results.
-            :type title: str
             :param runid: The uuid string that identifies a set of test results.
-            :type runid: str
             :param start: The date and time of the start of the test run.
-            :type start: datetime
             :param summary_filename: The full path to the summary file where the test run summary should be written to.
-            :type summary_filename: str
             :param result_filename: The full path to the results file where the test run results should be written to.
-            :type result_filename: str
             :param branch: Optional name of a code 'branch' to associate with the test results.
-            :type branch: str
             :param build: Optional name of a product 'build' to associate with the test results.
-            :type build: str
             :param flavor: Optional label that indicates the flavor of build the test run is running against.
-            :type flavor: str
         """
 
         self._title = title
@@ -107,19 +100,15 @@ class ResultRecorder:
         self._rout = open(self._result_filename, 'w')
         return self
 
-    def __exit__(self, ex_type, ex_inst, ex_tb) -> bool:
+    def __exit__(self, ex_type: type, ex_inst: Exception, ex_tb: TracebackType) -> bool:
         """
             Starts up the recording process of test results.
 
             :param ex_type: The type associated with the exception being raised.
-            :type ex_type: type
             :param ex_inst: The exception instance of the exception being raised.
-            :type ex_inst: Exception
             :param ex_tb: The traceback associated with the exception being raised.
-            :type ex_tb: traceback
 
             :returns: Returns true if an exception was handled and should be suppressed.
-            :rtype: bool
         """
         self.finalize()
         self.update_summary()
@@ -130,7 +119,6 @@ class ResultRecorder:
             Records an entry for the result object that is passed.
 
             :param result: A result object to be recorded.
-            :type result: ResultType
         """
         if result.result_type == ResultType.TEST:
             self._total_count += 1

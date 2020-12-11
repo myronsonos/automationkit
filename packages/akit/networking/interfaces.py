@@ -15,6 +15,8 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Tuple, Union
+
 import socket
 
 import netifaces
@@ -24,24 +26,20 @@ def encode_address(address: str) -> bytes:
         Encodes the address string to bytes
 
         :param address: The IP address to encode.
-        :type address: str
 
         :returns: A packed string suitable for use with low-level network functions.
-        :rtype: bytes
     """
     is_ipv6 = ':' in address
     address_family = socket.AF_INET6 if is_ipv6 else socket.AF_INET
     return socket.inet_pton(address_family, address)
 
-def get_ipv4_address(ifname: str) -> str:
+def get_ipv4_address(ifname: str) -> Union[str, None]:
     """
         Get the first IPv4 address associated with the specified interface name.
 
         :param ifname: The interface name to lookup the IP address for.
-        :type ifname: str
 
         :returns: The IPv4 address associated with the specified interface name or None
-        :rtype: str or None
     """
     addr = None
 
@@ -52,7 +50,7 @@ def get_ipv4_address(ifname: str) -> str:
 
     return addr
 
-def get_correspondance_interface(ref_ip: str, ref_port: int, addr_family=socket.AF_INET) -> str:
+def get_correspondance_interface(ref_ip: str, ref_port: int, addr_family=socket.AF_INET) -> Tuple[str, str]:
     """
         Utilizes the TCP stack to make a connection to a remote computer and utilizes
         gets the network interface that was used to connect to the remote computer.
@@ -63,19 +61,15 @@ def get_correspondance_interface(ref_ip: str, ref_port: int, addr_family=socket.
         :param ref_ip: An IP address of a computer that is on the subnet that you wish
                        to find the correspondance ip address for and that is hosting a
                        service that will accept a TCP connection from a client.
-        :type ref_ip: str
         :param ref_port: The port number of a service on a computer that will accept a
                          TCP connection so we can determine a path to the computer.
-        :type ref_port: int
         :param addr_family: The socket address family to utilize when making a remote
                             connection to a host socket.AF_INET or socket.AF_INET6.
                             The address family used will determine the type of IP address
                             returned from this function.
-        :type addr_family: int
 
         :returns: The correspondance interface and IPAddress that can be used to setup a
                   service that is visible to the reference IP address.
-        :rtype: (str, str)
     """
 
     corr_iface = None
@@ -109,19 +103,15 @@ def get_correspondance_ip_address(ref_ip: str, ref_port: int, addr_family=socket
         :param ref_ip: An IP address of a computer that is on the subnet that you wish
                        to find the correspondance ip address for and that is hosting a
                        service that will accept a TCP connection from a client.
-        :type ref_ip: str
         :param ref_port: The port number of a service on a computer that will accept a
                          TCP connection so we can determine a path to the computer.
-        :type ref_port: int
         :param addr_family: The socket address family to utilize when making a remote
                             connection to a host socket.AF_INET or socket.AF_INET6.
                             The address family used will determine the type of IP address
                             returned from this function.
-        :type addr_family: int
 
         :returns: The correspondance IP address that can be used to setup a service that
                   is visible to the reference IP address.
-        :rtype: str
     """
     corr_ip = None
 
@@ -138,12 +128,13 @@ def get_correspondance_ip_address(ref_ip: str, ref_port: int, addr_family=socket
 
     return corr_ip
 
-def is_ipv6_address(candidate: str) -> str:
+def is_ipv6_address(candidate: str) -> bool:
     """
         Checks to see if 'candidate' is an ipv6 address.
 
         :param candidate: A string that is to be checked to see if it is a valid IPv6 address.
-        :type candidate: str
+
+        :returns: A boolean indicating if an IP address is an IPv6 address
     """
     is_ipv6 = False
     if len(candidate) == 16:

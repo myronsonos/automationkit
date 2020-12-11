@@ -34,15 +34,13 @@ PRV_KEYENC_END_RSA_PKCS8 = "-----END ENCRYPTED PRIVATE KEY-----"
 # ASCII magic "openssh-key-v1" plus null byte
 "6f70656e7373682d6b65792d7631 00"
 
-def detect_private_key_type(filename):
+def detect_private_key_type(filename: str) -> str:
     """
         Inspects the private key file specified and determines the keytype found in the file.
 
         :param filename: The filename of a private key file.
-        :type filename: str
 
         :returns: A string for the keytype
-        :rtype: str
     """
     # pylint: disable=invalid-name,no-else-break
 

@@ -16,6 +16,8 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import List, Optional
+
 import collections
 import enum
 import json
@@ -56,21 +58,16 @@ class ResultNode:
         does not contain results that can be computed by analyzing the relationship of the nodes in the tree.  The nodes that are
         computed are :class:`ResultContainer` instances and do not contain instance result data.
     """
-    def __init__(self, result_inst, result_name, result_type, result_code=ResultCode.UNSET, parent_inst=None):
+    def __init__(self, result_inst: str, result_name: str, result_type: ResultType, result_code: ResultCode = ResultCode.UNSET, parent_inst: Optional[str] = None):
         """
             Initializes an instance of a :class:`ResultNode` object that represent the information associated with
             a specific result in a result tree.
 
             :param result_inst: The unique identifier to link this result container with its children.
-            :type result_inst: str
             :param result_name: The name of the result container.
-            :type result_name: str
             :param result_type: The type :class:`ResultType` type code of result container.
-            :type result_inst: :class:`ResultType`
-            :param result_code:
-            :type result_code: :class:`ResultCode`
+            :param result_code: The result code to initialize the result node to.
             :param parent_inst: The unique identifier fo this result nodes parent.
-            :type parent_inst: str
         """
         self._result_inst = result_inst
         self._result_name = result_name
@@ -121,7 +118,7 @@ class ResultNode:
         """
         return self._result_type
 
-    def add_error(self, err_lines):
+    def add_error(self, err_lines: List[str]):
         """
             Adds error trace lines for a single error to this result node.
         """
@@ -137,7 +134,7 @@ class ResultNode:
         self._errors.append(trim_lines)
         return
 
-    def add_failure(self, fail_lines):
+    def add_failure(self, fail_lines: List[str]):
         """
             Adds failure trace lines for a single failure to this result node.
         """
@@ -153,7 +150,7 @@ class ResultNode:
         self._failures.append(trim_lines)
         return
 
-    def add_warning(self, warn_lines):
+    def add_warning(self, warn_lines: List[str]):
         """
             Adds warning trace lines for a single warning to this result node.
         """
@@ -199,18 +196,17 @@ class ResultNode:
         self._result_code = ResultCode.PASSED
         return
 
-    def mark_skip(self, reason):
+    def mark_skip(self, reason: str):
         """
             Marks this result with a :class:`ResultCode` of ResultCode.SKIPPED
 
             :param reason: The reason the task or test this result is associated with was skipped.
-            :type reason: str
         """
         self._reason = reason
         self._result_code = ResultCode.SKIPPED
         return
 
-    def to_json(self):
+    def to_json(self) -> str:
         """
             Convers the result node instance to JSON format
         """
@@ -249,18 +245,14 @@ class ResultContainer:
         result tree.  The :class:`ResultContainer` nodes do not contain result data but link data so the data can
         be computed on demand.
     """
-    def __init__(self, result_inst, result_name, result_type, parent_inst=None):
+    def __init__(self, result_inst: str, result_name: str, result_type, parent_inst: Optional[str] = None):
         """
             Creates an instance of a result container.
 
             :param result_inst: The unique identifier to link this result container with its children.
-            :type result_inst: str
             :param result_name: The name of the result container.
-            :type result_name: str
             :param result_type: The type :class:`ResultType` type code of result container.
-            :type result_inst: :class:`ResultType`
             :param parent_inst: The unique identifier fo this result nodes parent.
-            :type parent_inst: str
         """
         self._result_inst = result_inst
         self._result_name = result_name
@@ -269,34 +261,34 @@ class ResultContainer:
         return
 
     @property
-    def parent_inst(self):
+    def parent_inst(self) -> str:
         """
             The unique identifier fo this result nodes parent.
         """
         return self._parent_inst
 
     @property
-    def result_inst(self):
+    def result_inst(self) -> str:
         """
             The unique identifier to link this result container with its children.
         """
         return self._result_inst
 
     @property
-    def result_name(self):
+    def result_name(self) -> str:
         """
             The name of the result container.
         """
         return self._result_name
 
     @property
-    def result_type(self):
+    def result_type(self) -> ResultType:
         """
             The type :class:`ResultType` type code of result container.
         """
         return self._result_type
 
-    def to_json(self):
+    def to_json(self) -> str:
         """
             Convers the result container instance to JSON format
         """
