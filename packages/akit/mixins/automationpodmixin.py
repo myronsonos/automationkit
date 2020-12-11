@@ -16,8 +16,6 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 from akit.integration.landscaping.landscape import Landscape
-from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
-from akit.integration.upnp.upnpprotocol import inline_msearch
 
 from akit.mixins.integration import IntegrationMixIn
 
@@ -41,6 +39,7 @@ class AutomationPodMixIn(IntegrationMixIn):
         """
             The default contructor for an :class:`AutomationPodMixIn`.
         """
+        super(AutomationPodMixIn, self).__init__(*args, **kwargs)
         if self.pathbase is None:
             raise ValueError("The 'pathbase' class member variable must be set to a unique name for each integration class type.")
 
@@ -79,14 +78,7 @@ class AutomationPodMixIn(IntegrationMixIn):
 
             :raises :class:`akit.exceptions.AKitMissingConfigError`, :class:`akit.exceptions.AKitInvalidConfigError`:
         """
-        cls.upnp_devices_expected = cls.landscape.get_upnp_devices()
 
-        # First do an inline search for devices with a timeout to make sure all the expected
-        # devices are visible.
-        found_devices, matching_devices = inline_msearch(cls.upnp_devices_expected)
-
-        # If the inline m-search was successful, then go ahead and startup the UpnpAgent
-        cls.upnp_coord = UpnpCoordinator()
         return
 
     @classmethod

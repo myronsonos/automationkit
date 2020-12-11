@@ -16,7 +16,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Callable, List, Optional, Sequence, Union, Tuple
+from typing import Callable, Optional, Sequence, Union, Tuple
 
 import os
 import re
@@ -333,7 +333,7 @@ def sftp_list_tree_recurse(sftp: paramiko.SFTPClient, rootdir: str, userlookup: 
         :param treeroot: The root directory to get the directory listing for.
         :param userlookup: A dictionary to utilize in order to lookup the user associated with a directory item.
         :param grouplookup: A dictionary to utilize in order to lookup the group associated with a directory item.
-        :param max_depth: The depth to which to create a directory tree. 
+        :param max_depth: The depth to which to create a directory tree.
     """
     level_items = sftp_list_directory(sftp, rootdir, userlookup, grouplookup)
 
@@ -354,7 +354,7 @@ def sftp_list_tree_recurse(sftp: paramiko.SFTPClient, rootdir: str, userlookup: 
 
     return children_info
 
-def ssh_execute_command(ssh_client: paramiko.SSHClient, command: str, pty_params=None, inactivity_timeout: float=DEFAULT_SSH_TIMEOUT, inactivity_interval: float=DEFAULT_SSH_RETRY_INTERVAL, chunk_size: int=1024, attach_pty: bool=False) -> Tuple[int, str, str]:
+def ssh_execute_command(ssh_client: paramiko.SSHClient, command: str, pty_params=None, inactivity_timeout: float=DEFAULT_SSH_TIMEOUT, inactivity_interval: float=DEFAULT_SSH_RETRY_INTERVAL, chunk_size: int=1024) -> Tuple[int, str, str]:
     """
         Runs a command on a remote server using the specified ssh_client.  We implement our own version of ssh_execute_command
         in order to have better control over the timeouts and to make sure all the checks are sequenced properly in order
@@ -459,14 +459,14 @@ def ssh_execute_command_in_channel(ssh_channel: paramiko.Channel, command: str, 
                 stdout_buffer.extend(rcv_data)
                 if rcv_data.endswith(INTERACTIVE_PROMPT_BYTES):
                     stdout_pipe_timeout = 2
-            except paramiko.buffered_pipe.PipeTimeout as pto:
+            except paramiko.buffered_pipe.PipeTimeout:
                 stdout_pipe_timeout += 1
 
         if stderr_pipe_timeout < 2:
             try:
                 rcv_data = ssh_channel.in_stderr_buffer.read(chunk_size, read_timeout)
                 stderr_buffer.extend(rcv_data)
-            except paramiko.buffered_pipe.PipeTimeout as pto:
+            except paramiko.buffered_pipe.PipeTimeout:
                 stderr_pipe_timeout += 1
 
         if stdout_pipe_timeout > 1 and stderr_pipe_timeout > 1:
@@ -756,7 +756,7 @@ class SshBase:
 
         return dir_info
 
-    def _log_command_result(self, command: str, status: int, stdout: str, stderr: str, exp_status: Union[int, Sequence[int]], logging_pattern: LoggingPattern):
+    def _log_command_result(self, command: str, status: int, stdout: str, stderr: str, exp_status: Union[int, Sequence[int]], logging_pattern: LoggingPattern): # pylint: disable=no-self-use
         """
             Private method that handles the logging of command results based on the expected status and logging pattern
             specified.
@@ -768,7 +768,7 @@ class SshBase:
             :param exp_status: The status code or possible status codes that was expected to be returned from running the command.
             :param logging_pattern: The result logging pattern (LoggingPattern) to use when logging.
         """
-        if type(exp_status) == int:
+        if isinstance(exp_status, int):
             if status == exp_status:
                 if logging_pattern == LoggingPattern.ALL_RESULTS or logging_pattern == LoggingPattern.SUCCESS_ONLY:
                     logger.info(TEMPLATE_COMMAND_SUCCESS % (command, stdout, stderr) )
@@ -844,7 +844,7 @@ class SshBase:
 
                 self._log_command_result(command, status, stdout, stderr, exp_status, logging_pattern)
 
-                if type(exp_status) == int:
+                if isinstance(exp_status, int):
                     if status == exp_status:
                         break
                 elif status in exp_status:
@@ -879,7 +879,7 @@ class SshBase:
 
                 self._log_command_result(command, status, stdout, stderr, exp_status, logging_pattern)
 
-                if type(exp_status) == int:
+                if isinstance(exp_status, int):
                     if status != exp_status:
                         break
                 elif status not in exp_status:
@@ -940,7 +940,7 @@ class SshBase:
 
         return
 
-    def _ssh_execute_command(self, ssh_runner, command: str, pty_params=None, inactivity_timeout: float=DEFAULT_SSH_TIMEOUT, inactivity_interval: float=DEFAULT_SSH_RETRY_INTERVAL, chunk_size: int=1024, attach_pty: bool=False) -> Tuple[int, str, str]:
+    def _ssh_execute_command(self, ssh_runner, command: str, pty_params=None, inactivity_timeout: float=DEFAULT_SSH_TIMEOUT, inactivity_interval: float=DEFAULT_SSH_RETRY_INTERVAL, chunk_size: int=1024) -> Tuple[int, str, str]: # pylint: disable=no-self-use
         """
             Private helper method used to route the command running parameters to the correct routine based on whether the command is being run interactively
             through a session or is a single run command from an SshAgent.
@@ -951,13 +951,18 @@ class SshBase:
             :param inactivity_timeout: A timeout for inactivity between the local machine and remote machine.
             :param inactivity_interval: The interval to wait between attempts to interact or read from the remote machine.
             :param chunk_size: The size of the buffer to use when reading results from the remote machine.
-            :param attach_pty: A boolean value indicating if a PTY should be requested when running the command.
         """
-        status, stdout, stderr = ssh_execute_command(ssh_runner, command, pty_params=pty_params, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
+        status, stdout, stderr = ssh_execute_command(ssh_runner, command, pty_params=pty_params, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval, chunk_size=chunk_size)
         return status, stdout, stderr
 
 
 class SshSession(SshBase):
+    """
+        The :class:`SshSession` provides an extension of the :class:`SshBase` class interface and api(s).  The :class:`SshSession` serves to
+        act as a session scoping object that establishes a set of SSH credentials, settings and patterns that are to be used for a series of
+        SSH operations.  The :class:`SshSession` also holds open the SSHClient for its entire scope and ensures the SSHClient is closed and
+        cleaned up properly when the :class:`SshSession` goes out of scope.
+    """
     def __init__(self, host: str, username: str, password: str=None, keyfile: Optional[str] = None, keypasswd: Optional[str] = None,
                  allow_agent: bool=False, users: Optional[dict] = None, port:int=22, primitive: bool = False, pty_params: Optional[dict] = None,
                  session_user=None, interactive=False, aspects: Aspects=DEFAULT_ASPECTS):
@@ -973,6 +978,9 @@ class SshSession(SshBase):
         return
 
     def __enter__(self):
+        """
+            Method that implements the __enter__ symantics used for 'with' statements.
+        """
         self._ssh_client = self._create_client()
 
         if self._interactive:
@@ -1006,6 +1014,9 @@ class SshSession(SshBase):
         return self
 
     def __exit__(self, ex_val, ex_type, ex_tb):
+        """
+            Method that implements the __exit__ symantics used for 'with' statements.
+        """
         self._ssh_client.close()
         handled = False
         return handled
@@ -1024,54 +1035,61 @@ class SshSession(SshBase):
 
         return status, stdout, stderr
 
-    def directory_tree(self, root_dir, depth=1, ssh_client=None) -> dict:
+    def directory_tree(self, root_dir, depth=1) -> dict:
         """
             Method that creates a directory tree for the folder.
 
             :param root_dir: The root directory to scan when creating the tree.
             :param depth: The dept to scan to
-            :param ssh_client: The SSHClient to use to for geting a list tree.
         """
         dir_info = self._directory_tree(self._ssh_client, root_dir, depth=depth)
 
         return dir_info
 
-    def directory(self, root_dir, ssh_client=None) -> dict:
+    def directory(self, root_dir) -> dict:
         """
             Method that creates a directory listing for the folder.
 
             :param root_dir: The directory to scan when creating the tree.
-            :param ssh_client: The SSHClient to use to for geting a list tree.
         """
         dir_info = self._directory(self._ssh_client, root_dir)
 
         return dir_info
 
-    def pull_file(self, remotepath: str, localpath: str, ssh_client: Optional[paramiko.SSHClient] = None):
+    def pull_file(self, remotepath: str, localpath: str):
         """
             Method used to pull a remote file to a local file path.
 
             :param remotepath: The remote file path to pull to the local file.
             :param localpath: The local file path to pull the content to.
-            :param ssh_client: An optional :class:`paramiko.SSHClient` to use when pulling the file.
         """
         self._pull_file(self._ssh_client, remotepath, localpath)
 
         return
 
-    def push_file(self, localpath: str, remotepath: str, ssh_client: Optional[paramiko.SSHClient] = None):
+    def push_file(self, localpath: str, remotepath: str):
         """
             Method used to push a local file to a remote file path.
 
             :param localpath: The local file path to push the content of to the remote file.
             :param remotepath: The remote file path to push content to.
-            :param ssh_client: An optional :class:`paramiko.SSHClient` to use when pushing the file.
         """
         self._push_file(self._ssh_client, localpath, remotepath)
 
         return
 
-    def _ssh_execute_command(self, ssh_runner, command: str, pty_params=None, inactivity_timeout: float=DEFAULT_SSH_TIMEOUT, inactivity_interval: float=DEFAULT_SSH_RETRY_INTERVAL, chunk_size: int=1024, attach_pty: bool=False) -> Tuple[int, str, str]:
+    def _ssh_execute_command(self, ssh_runner, command: str, pty_params=None, inactivity_timeout: float=DEFAULT_SSH_TIMEOUT, inactivity_interval: float=DEFAULT_SSH_RETRY_INTERVAL, chunk_size: int=1024) -> Tuple[int, str, str]:
+        """
+            Private helper method used to route the command running parameters to the correct routine based on whether the command is being run interactively
+            through a session or is a single run command from an SshAgent.
+
+            :param ssh_runner: A :class:`paramiko.SSHClient` or :class:`paramiko.Channel` object that can be used to run a command on a remote machine.
+            :param command: The command that is to be run.
+            :param pty_params: A dictionary of parameters that are passed to paramiko to get a pty when running commands.
+            :param inactivity_timeout: A timeout for inactivity between the local machine and remote machine.
+            :param inactivity_interval: The interval to wait between attempts to interact or read from the remote machine.
+            :param chunk_size: The size of the buffer to use when reading results from the remote machine.
+        """
         if self._interactive:
             status, stdout, stderr = ssh_execute_command_in_channel(ssh_runner, command, read_timeout=self._read_timeout, inactivity_timeout=inactivity_timeout, inactivity_interval=inactivity_interval)
         else:
@@ -1080,7 +1098,12 @@ class SshSession(SshBase):
 
 
 class SshAgent(SshBase, LandscapeDeviceExtension):
-
+    """
+        The :class:`SshAgent` provides an extension of the :class:`SshBase` class interface and api(s).  The :class:`SshAgent` manages connection
+        and interop settings that are used to perform operations and interact with a remote SSH service.  The :class:`SshAgent` provides standard
+        APIs for running command and transferring files along with code that helps ensure commands are logged cleanly.  The :class:`SshAgent` also
+        provides run patterning to help eliminate duplication of code associated with running SSH commands in loops.
+    """
     def __init__(self, host: str, username: str, password: Optional[str] = None, keyfile: Optional[str] = None, keypasswd: Optional[str] = None,
                  allow_agent: bool = False, users: Optional[dict] = None, port: int = 22, primitive: bool = False, pty_params: Optional[dict] = None,
                  aspects=DEFAULT_ASPECTS):
@@ -1104,11 +1127,20 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
         return
 
     def open_session(self, primitive: bool = False, pty_params: Optional[dict] = None, interactive=False, aspects=DEFAULT_ASPECTS):
+        """
+            Provies a mechanism to create a :class:`SshSession` object with derived settings.  This method allows various parameters for the session
+            to be overridden.  This allows for the performing of a series of SSH operations under a particular set of shared settings and or credentials.
+
+            :param primitive: Use primitive mode for FTP operations for the session.
+            :param pty_params: The default pty parameters to use to request a PTY when running commands through the session.
+            :param interactive: Creates an interactive session which holds open an interactive shell so commands can interact in the shell.
+            :param aspects: The run default aspects to use for the operations performed by the session.
+        """
         session = SshSession(self._host, self._username, password=self._password, keyfile=self._keyfile, keypasswd=self._keypasswd, allow_agent=self._allow_agent,
                              users=self._users, port=self._port, primitive=primitive, pty_params=pty_params, interactive=interactive, aspects=aspects)
         return session
 
-    def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None, ssh_client: Optional[paramiko.SSHClient]=None) -> Tuple[int, str, str]:
+    def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None, ssh_client: Optional[paramiko.SSHClient]=None) -> Tuple[int, str, str]: # pylint: disable=arguments-differ
         """
             Runs a command on the designated host using the specified parameters.
 
@@ -1117,6 +1149,7 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
             :param user: The registered name of the user role to use to lookup the credentials for running the command.
             :param pty_params: The pty parameters to use to request a PTY when running the command.
             :param aspects: The run aspects to use when running the command.
+            :param ssh_client: An optional connected SSHClient that should be for the operation.
         """
         cleanup_client = False
 
@@ -1139,8 +1172,14 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
 
         return status, stdout, stderr
 
-    def directory_tree(self, root_dir, depth=1, ssh_client=None):
+    def directory_tree(self, root_dir, depth=1, ssh_client: Optional[paramiko.SSHClient]=None):
+        """
+            Method that creates a directory tree for the folder.
 
+            :param root_dir: The root directory to scan when creating the tree.
+            :param depth: The dept to scan to
+            :param ssh_client: An optional connected SSHClient that should be for the operation.
+        """
         dir_info = {}
 
         cleanup_client = False
@@ -1158,8 +1197,13 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
 
         return dir_info
 
-    def directory(self, root_dir, ssh_client=None):
+    def directory(self, root_dir, ssh_client: Optional[paramiko.SSHClient]=None):
+        """
+            Method that creates a directory listing for the folder.
 
+            :param root_dir: The directory to scan when creating the tree.
+            :param ssh_client: An optional connected SSHClient that should be for the operation.
+        """
         dir_info = {}
 
         cleanup_client = False
@@ -1177,8 +1221,14 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
 
         return dir_info
 
-    def pull_file(self, remotepath, localpath, ssh_client=None):
+    def pull_file(self, remotepath, localpath, ssh_client: Optional[paramiko.SSHClient]=None):
+        """
+            Method used to pull a remote file to a local file path.
 
+            :param remotepath: The remote file path to pull to the local file.
+            :param localpath: The local file path to pull the content to.
+            :param ssh_client: An optional connected SSHClient that should be for the operation.
+        """
         cleanup_client = False
         try:
             if ssh_client is None:
@@ -1194,8 +1244,14 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
 
         return
 
-    def push_file(self, localpath, remotepath, ssh_client=None):
+    def push_file(self, localpath, remotepath, ssh_client: Optional[paramiko.SSHClient]=None):
+        """
+            Method used to push a local file to a remote file path.
 
+            :param localpath: The local file path to push the content of to the remote file.
+            :param remotepath: The remote file path to push content to.
+            :param ssh_client: An optional connected SSHClient that should be for the operation.
+        """
         cleanup_client = False
         try:
             if ssh_client is None:

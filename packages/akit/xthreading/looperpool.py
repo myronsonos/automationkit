@@ -58,7 +58,7 @@ class LooperPool:
             if available > self._highwater:
                 self._threads_lock.acquire()
                 try:
-                    if self._thread_count < max:
+                    if self._thread_count < self._max_loopers:
                         self._locked_start_looper()
                 finally:
                     self._threads_lock.release()
@@ -77,7 +77,7 @@ class LooperPool:
             if available > self._highwater:
                 self._threads_lock.acquire()
                 try:
-                    if self._thread_count < max:
+                    if self._thread_count < self._max_loopers:
                         self._locked_start_looper()
                 finally:
                     self._threads_lock.release()
