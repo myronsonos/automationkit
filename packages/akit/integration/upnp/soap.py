@@ -51,15 +51,20 @@ PYTHON_TO_SOAP_TYPE_MAP = {
 
 class SOAPError(AKitCommunicationsProtocolError):
     """
+        Error that is raised when a Soap error occurs.
     """
 
 
 class SOAPProtocolError(AKitCommunicationsProtocolError):
     """
+        Error that is raised when a Soap protocol error occurs.
     """
 
 class SoapProcessor:
-
+    """
+        The Soap processor object stores encoding and decoding settings for processing the Soap messages
+        senti to and from a UPNP device.
+    """
     def __init__(self, encoding=URI_SOAP_ENCODING, envelope_attrib=None, typed=None):
         self._encoding = encoding
         self._envelope_attrib = envelope_attrib
@@ -67,7 +72,9 @@ class SoapProcessor:
         return
 
     def create_request(self, action_name: str, arguments: dict, encoding=None, envelope_attrib=None, typed=None):
-
+        """
+            Creates a Soap request for a call on the specified action and with the specified arguments.
+        """
         register_namespace('', None)
 
         if encoding is None:
@@ -121,7 +128,9 @@ class SoapProcessor:
         return content
 
     def create_response(self, action_name: str, arguments: dict, encoding=None, envelope_attrib=None, typed=None):
-
+        """
+            Creates a Soap response to the action with the specified arguments.
+        """
         register_namespace('', None)
 
         if encoding is None:
@@ -174,7 +183,9 @@ class SoapProcessor:
         return content
 
     def parse_response(self, action_name, content, encoding=None, envelope_attrib=None, typed=None):
-
+        """
+            Parses a response from the server with the given action name and content.
+        """
         register_namespace('', None)
 
         if encoding is None:
@@ -220,7 +231,9 @@ class SoapProcessor:
         return resp_dict
 
     def parse_response_error_for_upnp(self, action_name, content, status_code, extra=None, encoding=None, envelope_attrib=None, typed=None):
-
+        """
+            Parse response error for a upnp response.
+        """
         register_namespace('', None)
 
         if encoding is None:

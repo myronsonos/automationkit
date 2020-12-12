@@ -17,6 +17,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 from typing import Callable, Optional, Sequence, Union, Tuple
+from types import TracebackType
 
 import os
 import re
@@ -61,6 +62,8 @@ def lookup_entry_type(pdir: str, ename: str, finfo: paramiko.SFTPAttributes) -> 
         :param pdir: The parent directory of the file, passed for logging purposes.
         :param ename: The entry name of the file in the directory listing.
         :param finfo: The file information as returned by lstat on the file entry.
+
+        :returns: A label indicating the type of directory entry.
     """
     etype = None
     if stat.S_ISREG(finfo.st_mode):
@@ -87,6 +90,8 @@ def primitive_list_directory(ssh_client: paramiko.SSHClient, directory: str) -> 
         :param ssh_client: A :class:`paramiko.SSHClient` object that has already been connected
                            to the remote server.
         :param directory: The remote directory to get a list catalog for.
+
+        :returns: A dictionary with the information about the items in the target directory.
     """
     entries = None
 
@@ -114,6 +119,8 @@ def primitive_list_tree(ssh_client: paramiko.SSHClient, treeroot: str, max_depth
                            to the remote server.
         :param treeroot: The remote root directory to get a directory tree catalog for.
         :param max_depth: The maximum descent depth to go to when building the tree catalog.
+
+        :returns: A dictionary with the information about the root directory and its children.
     """
 
     level_items = primitive_list_directory(ssh_client, treeroot)
@@ -147,6 +154,8 @@ def primitive_list_tree_recurse(ssh_client: paramiko.SSHClient, targetdir: str, 
                             about a directory.
         :params targetdir: The target directory of the local tree to scan.
         :params remaining: The remaining levels to descend
+
+        :returns: A dictionary with the information about the target directory and its children.
     """
 
     level_items = primitive_list_directory(ssh_client, targetdir)
@@ -174,6 +183,8 @@ def primitive_parse_directory_listing(listing_dir:str, content: str) -> dict:
 
         :params listing_dir: The directory path associated with the directory listing content being parsed.
         :params content: The directory listing content to be parsed.
+
+        :returns: A dictionary with the directory entry items from a directoy based on the directory listing content being parsed.
     """
     entries = {}
 
@@ -264,6 +275,8 @@ def sftp_list_directory(sftp, directory, userlookup, grouplookup) -> dict:
         :param directory: The remote directory to get the directory listing for.
         :param userlookup: A dictionary to utilize in order to lookup the user associated with a directory item.
         :param grouplookup: A dictionary to utilize in order to lookup the group associated with a directory item.
+
+        :returns: A dictionary with the information about the items in the target directory.
     """
     entries = {}
 
@@ -304,6 +317,8 @@ def sftp_list_tree(sftp: paramiko.SFTPClient, treeroot: str, userlookup: Callabl
         :param userlookup: A dictionary to utilize in order to lookup the user associated with a directory item.
         :param grouplookup: A dictionary to utilize in order to lookup the group associated with a directory item.
         :param max_depth: The depth to which to create a directory tree.
+
+        :returns: A dictionary with the information about the root directory and its children.
     """
     level_items = sftp_list_directory(sftp, treeroot, userlookup, grouplookup)
 
@@ -325,26 +340,28 @@ def sftp_list_tree(sftp: paramiko.SFTPClient, treeroot: str, userlookup: Callabl
 
     return tree_info
 
-def sftp_list_tree_recurse(sftp: paramiko.SFTPClient, rootdir: str, userlookup: Callable[[int, Optional[bool]], str], grouplookup: Callable[[int, Optional[bool]], str], remaining: int) -> dict:
+def sftp_list_tree_recurse(sftp: paramiko.SFTPClient, targetdir: str, userlookup: Callable[[int, Optional[bool]], str], grouplookup: Callable[[int, Optional[bool]], str], remaining: int) -> dict:
     """
         Gets a listing of the directory passed and then recursively calls itself to create sub directory listings up to the remaining depth.
 
         :param sftp: A paramiko.SFTPClient that is connected to a remote machine.
-        :param treeroot: The root directory to get the directory listing for.
+        :param targetdir: The target directory to get the directory tree listing for.
         :param userlookup: A dictionary to utilize in order to lookup the user associated with a directory item.
         :param grouplookup: A dictionary to utilize in order to lookup the group associated with a directory item.
         :param max_depth: The depth to which to create a directory tree.
+
+        :returns: A dictionary with the information about the target directory and its children.
     """
-    level_items = sftp_list_directory(sftp, rootdir, userlookup, grouplookup)
+    level_items = sftp_list_directory(sftp, targetdir, userlookup, grouplookup)
 
     if remaining > 1:
-        if not rootdir.endswith("/"):
-            rootdir = rootdir + "/"
+        if not targetdir.endswith("/"):
+            targetdir = targetdir + "/"
 
         for nxtitem in level_items.values():
             nxtname = nxtitem["name"]
             if nxtitem["type"] == "dir":
-                nxtroot = rootdir + nxtname
+                nxtroot = targetdir + nxtname
                 nxtchildren = sftp_list_tree_recurse(sftp, nxtroot, userlookup, grouplookup, remaining - 1)
                 nxtitem.update(nxtchildren)
 
@@ -367,7 +384,6 @@ def ssh_execute_command(ssh_client: paramiko.SSHClient, command: str, pty_params
         :param chunk_size: The size of the chunks that are read during receive operations
 
         :returns: A tuple with the command result code, the standard output and the standard error output.
-        :rtype: (int, str, str)
     """
     status = None
     stdout_buffer = bytearray()
@@ -504,7 +520,7 @@ class SshBase:
     """
     def __init__(self, host: str, username: str, password: Optional[str] = None, keyfile: Optional[str] = None, keypasswd: Optional[str] = None,
                  allow_agent: bool = False, users: Optional[dict] = None, port: int = 22, primitive: bool = False, pty_params: Optional[dict] = None,
-                 aspects=DEFAULT_ASPECTS):
+                 aspects: Aspects = DEFAULT_ASPECTS):
 
         self._host = host
 
@@ -529,83 +545,83 @@ class SshBase:
         return
 
     @property
-    def allow_agent(self):
+    def allow_agent(self) -> bool:
         """
             Boolean indicating if the SSH agent is allowed to be used for authentication.
         """
         return self._allow_agent
 
     @property
-    def aspects(self):
+    def aspects(self) -> Aspects:
         """
             The logging, iteration and other aspects that have been assigned to be used with interacting with the remote SSH service.
         """
         return self._aspects
 
     @property
-    def host(self):
+    def host(self) -> str:
         """
             The target SSH host machine.
         """
         return self._host
 
     @property
-    def keyfile(self):
+    def keyfile(self) -> str:
         """
             The keyfile to use for SSH authentication if one was specified.
         """
         return self._keyfile
 
     @property
-    def keypasswd(self):
+    def keypasswd(self) -> str:
         """
             The password for the SSH key if an SSH keyfile was specified.
         """
         return self._keypasswd
 
     @property
-    def ipaddr(self):
+    def ipaddr(self) -> str:
         """
             The IP address that was found to be associated with the specified host machine.
         """
         return self._ipaddr
 
     @property
-    def password(self):
+    def password(self) -> str:
         """
             The password of the default user for SSH interactions.
         """
         return self._password
 
     @property
-    def port(self):
+    def port(self) -> int:
         """
             The port to use for SSH communications.  The default is 22.
         """
         return self._port
 
     @property
-    def pty_params(self):
+    def pty_params(self) -> dict:
         """
             A dictionary of parameters that are to be passed when getting a PTY when interacting with the remote SSH server.
         """
         return self._pty_params
 
     @property
-    def username(self):
+    def username(self) -> str:
         """
             The username of the default user for SSH interactions.
         """
         return self._username
 
     @property
-    def users(self):
+    def users(self) -> dict:
         """
             A dictionary of roles and user credentials that can be used for interaction with the remote SSH server.
         """
         return self._users
 
-    def lookup_user_by_uid(self, uid: int, update: bool = False) -> Union[dict, None]:
+    def lookup_user_by_uid(self, uid: int, update: bool = True) -> Union[dict, None]:
         """
             A helper method used to lookup cached user information by uid.
 
@@ -616,7 +632,7 @@ class SshBase:
 
         if uid in self._user_lookup_table:
             username = self._user_lookup_table[uid]
-        else:
+        elif update:
             status, stdout, _ = self.run_cmd("id -n -u %d" % uid)
             if status == 0:
                 username = stdout.strip()
@@ -624,18 +640,20 @@ class SshBase:
 
         return username
 
-    def lookup_group_by_uid(self, gid: int, update: bool = False) -> Union[dict, None]:
+    def lookup_group_by_uid(self, gid: int, update: bool = True) -> Union[dict, None]:
         """
             A helper method used to lookup cached group information by uid.
 
             :param gid: The gid of a group.
             :param update: A boolean indicating that the table should be updated if the uid is not found.
+
+            :returns: The name of the group associated with the group id or None.
         """
         grpname = None
 
         if gid in self._group_lookup_table:
             grpname = self._group_lookup_table[gid]
-        else:
+        elif update:
             status, stdout, _ = self.run_cmd("id -n -g %d" % gid)
             if status == 0:
                 grpname = stdout.strip()
@@ -652,12 +670,16 @@ class SshBase:
             :param user: The registered name of the user role to use to lookup the credentials for running the command.
             :param pty_params: The pty parameters to use to request a PTY when running the command.
             :param aspects: The run aspects to use when running the command.
+
+            :returns: The status, stderr and stdout from the command that was run.
         """
         raise AKitNotOverloadedError("SshBase.run_cmd must be overloaded by derived class '%s'." % type(self).__name__)
 
     def verify_connectivity(self) -> bool:
         """
             Method that can be used to verify connectivity to the target computer.
+
+            :returns: A boolean value indicating whether connectivity with the remote machine was successful.
         """
         vok = False
 
@@ -673,6 +695,8 @@ class SshBase:
             Create an SSHClient to use for running commands and performing FTP operations.
 
             :param session_user: The user role and associated credentials to use when creating the SSHClient.
+
+            :returns: An SSHClient object connected to the remote machine under the default or specified user credential.
         """
         cl_username = self._username
         cl_password = self._password
@@ -705,38 +729,14 @@ class SshBase:
         ssh_client.connect(self._ipaddr, port=self._port, username=cl_username, password=cl_password, pkey=pkey, allow_agent=cl_allow_agent)
         return ssh_client
 
-    def _directory_tree(self, ssh_client: paramiko.SSHClient, root_dir: str, depth: int = 1) -> dict:
-        """
-            Private method that creates a directory tree for the folder.
-
-            :param ssh_client: The SSHClient to use to for geting a list tree.
-            :param root_dir: The root directory to scan when creating the tree.
-            :param depth: The dept to scan to
-        """
-        dir_info = {}
-
-        if not self._primitive:
-            transport = ssh_client.get_transport()
-            try:
-
-                sftp = paramiko.SFTPClient.from_transport(transport)
-                try:
-                    dir_info = sftp_list_tree(sftp, root_dir, self.lookup_user_by_uid, self.lookup_group_by_uid, max_depth=depth)
-                finally:
-                    sftp.close()
-            finally:
-                transport.close()
-        else:
-            dir_info = primitive_list_tree(ssh_client, root_dir, max_depth=depth)
-
-        return dir_info
-
     def _directory(self, ssh_client: paramiko.SSHClient, root_dir: str) -> dict:
         """
             Private method that creates a directory listing for the folder.
 
             :param ssh_client: The SSHClient to use to for geting a list tree.
             :param root_dir: The directory to scan when creating the tree.
+
+            :returns: A dictionary that contains information about the items in the target directory.
         """
         dir_info = {}
 
@@ -756,7 +756,35 @@ class SshBase:
 
         return dir_info
 
-    def _log_command_result(self, command: str, status: int, stdout: str, stderr: str, exp_status: Union[int, Sequence[int]], logging_pattern: LoggingPattern): # pylint: disable=no-self-use
+    def _directory_tree(self, ssh_client: paramiko.SSHClient, root_dir: str, depth: int = 1) -> dict:
+        """
+            Private method that creates a directory tree for the folder.
+
+            :param ssh_client: The SSHClient to use to for geting a list tree.
+            :param root_dir: The root directory to scan when creating the tree.
+            :param depth: The dept to scan to
+
+            :returns: A dictionary with a tree of information about the directory tree found on the remote system.
+        """
+        dir_info = {}
+
+        if not self._primitive:
+            transport = ssh_client.get_transport()
+            try:
+
+                sftp = paramiko.SFTPClient.from_transport(transport)
+                try:
+                    dir_info = sftp_list_tree(sftp, root_dir, self.lookup_user_by_uid, self.lookup_group_by_uid, max_depth=depth)
+                finally:
+                    sftp.close()
+            finally:
+                transport.close()
+        else:
+            dir_info = primitive_list_tree(ssh_client, root_dir, max_depth=depth)
+
+        return dir_info
+
+    def _log_command_result(self, command: str, status: int, stdout: str, stderr: str, exp_status: Union[int, Sequence[int]], logging_pattern: LoggingPattern):
         """
             Private method that handles the logging of command results based on the expected status and logging pattern
             specified.
@@ -768,6 +796,8 @@ class SshBase:
             :param exp_status: The status code or possible status codes that was expected to be returned from running the command.
             :param logging_pattern: The result logging pattern (LoggingPattern) to use when logging.
         """
+        # pylint: disable=no-self-use
+
         if isinstance(exp_status, int):
             if status == exp_status:
                 if logging_pattern == LoggingPattern.ALL_RESULTS or logging_pattern == LoggingPattern.SUCCESS_ONLY:
@@ -779,6 +809,7 @@ class SshBase:
             else:
                 if logging_pattern == LoggingPattern.ALL_RESULTS or logging_pattern == LoggingPattern.FAILURE_ONLY:
                     logger.error(TEMPLATE_COMMAND_FAILURE % (command, stdout, stderr))
+
         return
 
     def _run_cmd(self, ssh_runner: Union[paramiko.SSHClient, paramiko.Channel], command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None) -> Tuple[int, str, str]:
@@ -791,6 +822,8 @@ class SshBase:
             :param user: The role name of the user account to utilize when looking up the credentials used to connect to the remote host.
             :param pty_params: A dictionary of parameters that are passed to paramiko to get a pty when running commands.
             :param aspects: The run aspects to use when running the command.
+
+            :returns: The status, stderr and stdout from the command that was run.
         """
         # Go through the overrides and if they are not passed use the agent defaults.
         if pty_params is None:
@@ -1013,9 +1046,11 @@ class SshSession(SshBase):
 
         return self
 
-    def __exit__(self, ex_val, ex_type, ex_tb):
+    def __exit__(self, ex_type: type, ex_val: Exception, ex_tb: TracebackType) -> bool:
         """
             Method that implements the __exit__ symantics used for 'with' statements.
+
+            :returns: Returns false indicating that exceptions are not handled.
         """
         self._ssh_client.close()
         handled = False
@@ -1030,29 +1065,35 @@ class SshSession(SshBase):
             :param user: The registered name of the user role to use to lookup the credentials for running the command.
             :param pty_params: The pty parameters to use to request a PTY when running the command.
             :param aspects: The run aspects to use when running the command.
+
+            :returns: The status, stderr and stdout from the command that was run.
         """
         status, stdout, stderr = self._run_cmd(self._ssh_runner, command, user=user, pty_params=pty_params, aspects=aspects)
 
         return status, stdout, stderr
 
-    def directory_tree(self, root_dir, depth=1) -> dict:
+    def directory(self, root_dir: str) -> dict:
+        """
+            Method that creates a directory listing for the folder.
+
+            :param root_dir: The directory to scan when creating the tree.
+
+            :returns: A dictionary that contains information about the items in the target directory.
+        """
+        dir_info = self._directory(self._ssh_client, root_dir)
+
+        return dir_info
+
+    def directory_tree(self, root_dir: str, depth: int = 1) -> dict:
         """
             Method that creates a directory tree for the folder.
 
             :param root_dir: The root directory to scan when creating the tree.
             :param depth: The dept to scan to
+
+            :returns: A dictionary with a tree of information about the directory tree found on the remote system.
         """
         dir_info = self._directory_tree(self._ssh_client, root_dir, depth=depth)
-
-        return dir_info
-
-    def directory(self, root_dir) -> dict:
-        """
-            Method that creates a directory listing for the folder.
-
-            :param root_dir: The directory to scan when creating the tree.
-        """
-        dir_info = self._directory(self._ssh_client, root_dir)
 
         return dir_info
 
@@ -1106,7 +1147,7 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
     """
     def __init__(self, host: str, username: str, password: Optional[str] = None, keyfile: Optional[str] = None, keypasswd: Optional[str] = None,
                  allow_agent: bool = False, users: Optional[dict] = None, port: int = 22, primitive: bool = False, pty_params: Optional[dict] = None,
-                 aspects=DEFAULT_ASPECTS):
+                 aspects: Aspects = DEFAULT_ASPECTS):
         SshBase.__init__(self, host, username, password=password, keyfile=keyfile, keypasswd=keypasswd, allow_agent=allow_agent, users=users,
                          port=port, primitive=primitive, pty_params=pty_params, aspects=aspects)
         LandscapeDeviceExtension.__init__(self)
@@ -1126,7 +1167,7 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
         LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
         return
 
-    def open_session(self, primitive: bool = False, pty_params: Optional[dict] = None, interactive=False, aspects=DEFAULT_ASPECTS):
+    def open_session(self, primitive: bool = False, pty_params: Optional[dict] = None, interactive=False, aspects: Optional[Aspects] = None) -> SshSession:
         """
             Provies a mechanism to create a :class:`SshSession` object with derived settings.  This method allows various parameters for the session
             to be overridden.  This allows for the performing of a series of SSH operations under a particular set of shared settings and or credentials.
@@ -1134,10 +1175,14 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
             :param primitive: Use primitive mode for FTP operations for the session.
             :param pty_params: The default pty parameters to use to request a PTY when running commands through the session.
             :param interactive: Creates an interactive session which holds open an interactive shell so commands can interact in the shell.
-            :param aspects: The run default aspects to use for the operations performed by the session.
+            :param aspects: The default run aspects to use for the operations performed by the session.
         """
+
+        if aspects is None:
+            aspects = self._aspects
+
         session = SshSession(self._host, self._username, password=self._password, keyfile=self._keyfile, keypasswd=self._keypasswd, allow_agent=self._allow_agent,
-                             users=self._users, port=self._port, primitive=primitive, pty_params=pty_params, interactive=interactive, aspects=aspects)
+                             users=self._users, port=self._port, primitive=primitive, pty_params=pty_params, interactive=interactive, aspects: Aspects = aspects)
         return session
 
     def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None, ssh_client: Optional[paramiko.SSHClient]=None) -> Tuple[int, str, str]: # pylint: disable=arguments-differ
@@ -1150,6 +1195,8 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
             :param pty_params: The pty parameters to use to request a PTY when running the command.
             :param aspects: The run aspects to use when running the command.
             :param ssh_client: An optional connected SSHClient that should be for the operation.
+
+            :returns: The status, stderr and stdout from the command that was run.
         """
         cleanup_client = False
 
@@ -1172,13 +1219,15 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
 
         return status, stdout, stderr
 
-    def directory_tree(self, root_dir, depth=1, ssh_client: Optional[paramiko.SSHClient]=None):
+    def directory_tree(self, root_dir: str, depth: int = 1, ssh_client: Optional[paramiko.SSHClient] = None) -> dict:
         """
             Method that creates a directory tree for the folder.
 
             :param root_dir: The root directory to scan when creating the tree.
             :param depth: The dept to scan to
             :param ssh_client: An optional connected SSHClient that should be for the operation.
+
+            :returns: A dictionary with a tree of information about the directory tree found on the remote system.
         """
         dir_info = {}
 
@@ -1197,12 +1246,14 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
 
         return dir_info
 
-    def directory(self, root_dir, ssh_client: Optional[paramiko.SSHClient]=None):
+    def directory(self, root_dir: str, ssh_client: Optional[paramiko.SSHClient] = None) -> dict:
         """
             Method that creates a directory listing for the folder.
 
             :param root_dir: The directory to scan when creating the tree.
             :param ssh_client: An optional connected SSHClient that should be for the operation.
+
+            :returns: A dictionary that contains information about the items in the target directory.
         """
         dir_info = {}
 
@@ -1221,7 +1272,7 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
 
         return dir_info
 
-    def pull_file(self, remotepath, localpath, ssh_client: Optional[paramiko.SSHClient]=None):
+    def pull_file(self, remotepath: str, localpath: str, ssh_client: Optional[paramiko.SSHClient] = None):
         """
             Method used to pull a remote file to a local file path.
 
@@ -1244,7 +1295,7 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
 
         return
 
-    def push_file(self, localpath, remotepath, ssh_client: Optional[paramiko.SSHClient]=None):
+    def push_file(self, localpath: str, remotepath: str, ssh_client: Optional[paramiko.SSHClient] = None):
         """
             Method used to push a local file to a remote file path.
 
