@@ -21,29 +21,35 @@ import socket
 import weakref
 
 from akit.paths import get_expanded_path
-from akit.xlogging.foundations import getAutomatonKitLogger
+
+from akit.integration.coordinators.coordinatorbase import CoordinatorBase
 
 from akit.integration.landscaping.landscapedevice import LandscapeDevice
 
 from akit.integration.agents.sshagent import SshAgent
 
-class SshPoolCoordinator:
+class SshPoolCoordinator(CoordinatorBase):
     """
         The :class:`SshPoolCoordinator` creates a pool of agents that can be used to
         coordinate the interop activities of the automation process and remote SSH
         nodes.
     """
-
     def __init__(self):
-        self._logger = getAutomatonKitLogger()
-        self._agent_table = {}
+        super(SshPoolCoordinator, self).__init__()
+        return
+
+    def _initialize(self):
+        """
+            Called by the CoordinatorBase constructor to perform the one time initialization of the coordinator Singleton
+            of a given type.
+        """
         self._usn_to_ip_lookup = {}
         self._ip_to_host_lookup = {}
         return
 
     @property
     def device_agents(self):
-        dalist = [a for a in self._agent_table.values()]
+        dalist = [a for a in self._cl_children.values()]
         return dalist
 
     def attach_to_devices(self, lscape, sshdevices, upnp_coord=None):
@@ -91,7 +97,7 @@ class SshPoolCoordinator:
 
                 agent = SshAgent(host, username, password=password, keyfile=keyfile, keypasswd=keypasswd, allow_agent=allow_agent)
 
-                self._agent_table[host] = agent
+                self._cl_children[host] = agent
 
                 coord_ref = weakref.ref(self)
 
@@ -115,10 +121,7 @@ class SshPoolCoordinator:
             Looks up the agent for a device by its hostname.  If the
             agent is not found then the API returns None.
         """
-        agent = None
-
-        if host in self._agent_table:
-            agent = self._agent_table[host]
+        agent = self.lookup_device_by_key(host).ssh
 
         return agent
 
@@ -160,10 +163,12 @@ class SshPoolCoordinator:
                          If the 'user' parameter is not provided, then the
                          credentials of the default or priviledged user will be used.
             :param raiseerror: A boolean value indicating if this API should raise an Exception on failure.
+
+            :returns: A list of errors encountered when verifying connectivity with the devices managed or watched by the coordinator.
         """
         results = []
 
-        for agent in self._agent_table.values():
+        for agent in self.children_as_extension:
             host = agent.host
             ipaddr = agent.ipaddr
             try:

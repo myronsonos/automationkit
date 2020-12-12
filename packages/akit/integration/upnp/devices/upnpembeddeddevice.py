@@ -17,7 +17,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 from akit.exceptions import AKitSemanticError
-from akit.integration.upnp.protocols.msearch import MSearchKeys
+from akit.integration.upnp.upnpprotocol import MSearchKeys
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 
 class UpnpEmbeddedDevice(UpnpDevice):

@@ -40,6 +40,8 @@ from akit.integration.upnp.upnpprotocol import mquery, msearch_parse_request, ms
 from akit.integration.upnp.upnpprotocol import MSearchKeys, MSearchRouteKeys, UpnpProtocol
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE
 
+from akit.integration.coordinators.coordinatorbase import CoordinatorBase
+
 from akit.networking.interfaces import get_ipv4_address
 
 from akit.xlogging.foundations import getAutomatonKitLogger
@@ -48,108 +50,85 @@ EMPTY_LIST = []
 
 UPNP_DIR = os.path.dirname(upnp_module.__file__)
 
-class UpnpCoordinator:
+class UpnpCoordinator(CoordinatorBase):
     """
+        The UpnpCoordinator utilizes the expected device declarations of type 'network/upnp' to establish and maintain connectivity
+        and interoperability with UPNP based network devices.  The UpnpCoordinator will scan all interfaces except for the excluded
+        interfaces.  It also creates a general broadcast monitor thread and a subscription dispatch thread for each interface it
+        is monitoring.
     """
-
-    instance = None
-    initialized = False
-
-    def __new__(cls, **kwargs):
-        """
-            Constructs new instances of the :class:`UpnpCoordinator` object. The
-            :class:`UpnpCoordinator` object is a singleton so following instantiations
-            of the object will reference the existing singleton
-        """
-
-        if cls.instance is None:
-            cls.instance = super(UpnpCoordinator, cls).__new__(cls)
-        return cls.instance
 
     def __init__(self, control_point=False, workers=5, watch_all=False):
-        thisType = type(self)
-        if not thisType.initialized:
-            thisType.initialized = True
-
-            # ============================ Fixed Variables ============================
-            # These variables are fixed at the start of the UpnpCoordinator and because
-            # they are fixed, we don't protect them with the all.
-            self._logger = getAutomatonKitLogger()
-
-            self._control_point = control_point
-            self._worker_count = workers
-            self._watch_all = watch_all
-
-            self._factory = UpnpFactory()
-
-            self._running = False
-
-            # The count for the shutdown gate semaphore is set at startup so we don't
-            # need to lock protect it.  Once it is set, it is fixed for the lifespan
-            # of the UpnpCoordinator
-            self._shutdown_gate = None
-
-            # ======================= Coordinator Lock Variables =======================
-            # These variables are protected and read/write synchronized by the coordinator
-            # lock.  They are all prefixed with _cl_ so it is easy to identify in code
-            # if the lock is being held properly when the variables are being accessed.
-
-            self._coord_lock = threading.RLock()
-
-            # Callback threads are created on a per interface basis so we use a list
-            # to manage them.
-            self._cl_callback_threads = []
-
-            # We don't want our threads that are answering requests or filtering traffic
-            # to do extensive amounts of work, so we have a pool of worker threads that
-            # that work is dispatched to for incoming requests and information processing.
-            self._cl_worker_threads = []
-
-            # Collection that manages UPNP device loop by location -> UpnpRootDevice
-            self._cl_children = {}
-
-            # A lookup table from USN -> devinfo for devices that were declared as
-            # watched devices, the watched devices are devices that will be monitored
-            # under special constraints and the coordinator will ensure they are found
-            # during startup and will expend thread resources to ensure they are updated
-            self._cl_watched_devices = {}
-
-            self._cl_iface_callback_addr_lookup = None
-
-            # A lookup table that store device registrations for differen subscription id(s)
-            # The UpnpCoordinator spins up one thread per interface that needs to be monitored
-            # for callback traffic from devices and provides a callback URL for subscriptions
-            # to the devices,  the callback threads use this table to dispatch subscription
-            # callbacks on given interfaces to the appropriate device. So UpnpEventVar instances
-            # can be updated.
-            self._cl_subscription_id_to_device = {}
-
-            # =========================== Queue Lock Variables ==========================
-            # Variables that manage the work queue and dispatching of work to worker threads
-            self._queue_lock = threading.RLock()
-            self._queue_available = threading.Semaphore(0)
-            self._queue_work = []
-
-            self._match_table = {
-                "modelName": UpnpRootDevice._matches_model_name,
-                "modelNumber": UpnpRootDevice._matches_model_number
-            }
-
+        super(UpnpCoordinator, self).__init__(control_point=control_point, workers=workers, watch_all=watch_all)
         return
 
-    @property
-    def children(self):
+    def _initialize(self, control_point=False, workers=5, watch_all=False):
         """
+            Called by the CoordinatorBase constructor to perform the one time initialization of the coordinator Singleton
+            of a given type.
         """
-        chlist = EMPTY_LIST
+        # ============================ Fixed Variables ============================
+        # These variables are fixed at the start of the UpnpCoordinator and because
+        # they are fixed, we don't protect them with the all.
 
-        self._coord_lock.acquire()
-        try:
-            chlist = [c for c in self._cl_children.values()]
-        finally:
-            self._coord_lock.release()
+        self._control_point = control_point
+        self._worker_count = workers
+        self._watch_all = watch_all
 
-        return chlist
+        self._factory = UpnpFactory()
+
+        self._running = False
+
+        # The count for the shutdown gate semaphore is set at startup so we don't
+        # need to lock protect it.  Once it is set, it is fixed for the lifespan
+        # of the UpnpCoordinator
+        self._shutdown_gate = None
+
+        # ======================= Coordinator Lock Variables =======================
+        # These variables are protected and read/write synchronized by the coordinator
+        # lock.  They are all prefixed with _cl_ so it is easy to identify in code
+        # if the lock is being held properly when the variables are being accessed.
+
+        # Callback threads are created on a per interface basis so we use a list
+        # to manage them.
+        self._cl_callback_threads = []
+
+        # We don't want our threads that are answering requests or filtering traffic
+        # to do extensive amounts of work, so we have a pool of worker threads that
+        # that work is dispatched to for incoming requests and information processing.
+        self._cl_worker_threads = []
+
+        # Collection that manages UPNP device loop by location -> UpnpRootDevice
+        self._cl_children = {}
+
+        # A lookup table from USN -> devinfo for devices that were declared as
+        # watched devices, the watched devices are devices that will be monitored
+        # under special constraints and the coordinator will ensure they are found
+        # during startup and will expend thread resources to ensure they are updated
+        self._cl_watched_devices = {}
+
+        self._cl_iface_callback_addr_lookup = None
+
+        # A lookup table that store device registrations for differen subscription id(s)
+        # The UpnpCoordinator spins up one thread per interface that needs to be monitored
+        # for callback traffic from devices and provides a callback URL for subscriptions
+        # to the devices,  the callback threads use this table to dispatch subscription
+        # callbacks on given interfaces to the appropriate device. So UpnpEventVar instances
+        # can be updated.
+        self._cl_subscription_id_to_device = {}
+
+        # =========================== Queue Lock Variables ==========================
+        # Variables that manage the work queue and dispatching of work to worker threads
+        self._queue_lock = threading.RLock()
+        self._queue_available = threading.Semaphore(0)
+        self._queue_work = []
+
+        self._match_table = {
+            "modelName": UpnpRootDevice._matches_model_name,
+            "modelNumber": UpnpRootDevice._matches_model_number
+        }
+
+        return
 
     @property
     def watch_devices(self):
@@ -731,63 +710,3 @@ class UpnpCoordinator:
                 self._logger.debug(errmsg)
 
         return
-
-
-
-if __name__ == "__main__":
-
-    import akit.environment.activate # pylint: disable=unused-import
-
-    from akit.xlogging.foundations import logging_initialize
-    logging_initialize()
-
-    from akit.integration.landscaping.landscape import Landscape # pylint: disable=cyclic-import
-
-
-    lscape = Landscape()
-    lscape.first_contact()
-
-    s17 = lscape.lookup_device_by_modelNumber("S17")
-
-    #muse_coord = lscape.muse_coord
-    #firstMuseAgent = muse_coord.device_agents[0]
-
-    #firstMuseAgent.households()
-
-    upnpcoord = lscape.upnp_coord
-    firstdev = upnpcoord.watch_devices[0]
-    print(type(firstdev))
-    print(firstdev)
-
-    devProps = firstdev.serviceDeviceProperties()
-
-    value = devProps.action_GetLEDState()
-
-    if devProps.subscribe_to_events():
-        var_mic_enabled = devProps.lookup_event_variable("MicEnabled")
-        meval = var_mic_enabled.wait_for_value(timeout=600)
-        print (var_mic_enabled)
-
-        var_zonename = devProps.lookup_event_variable("ZoneName")
-        znval = var_zonename.wait_for_value(timeout=600)
-        print (var_zonename)
-
-        isbval = devProps.lookup_event_variable("IsZoneBridge")
-        print (isbval)
-
-    LEDSTATES = ["Off", "On"]
-
-    SMALL_COUNTER = 0
-    LARGE_COUNTER = 0
-    while True:
-        time.sleep(2)
-        if SMALL_COUNTER == 0:
-            print("tick")
-        else:
-            print("tock")
-
-        if LARGE_COUNTER == 0:
-            print("Refreshing upnp device status.")
-
-        SMALL_COUNTER = (SMALL_COUNTER + 1) % 2
-        LARGE_COUNTER = (LARGE_COUNTER + 1) % 30

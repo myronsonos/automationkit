@@ -17,7 +17,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Any, Tuple
+from typing import Any, Tuple, Optional
 
 import time
 import weakref
