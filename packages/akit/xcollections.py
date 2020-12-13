@@ -72,7 +72,7 @@ class CaseInsensitiveBytesDict(dict):
             to perform a case insensative dictionary key lookup.
 
             :param key: A key value to check to see if an object is stored under the key.
-        
+
             :returns: A boolean indicating if the key provided is in this objects keys.
         """
         return super(CaseInsensitiveBytesDict, self).__contains__(CaseInsensitiveBytesDict.key_to_lower(key))
@@ -83,7 +83,7 @@ class CaseInsensitiveBytesDict(dict):
             to perform a case insensative dictionary item delete.
 
             :param key: A key value to delete the object stored under the key.
-        
+
             :raises: KeyError
         """
         return super(CaseInsensitiveBytesDict, self).__delitem__(CaseInsensitiveBytesDict.key_to_lower(key))
@@ -94,9 +94,9 @@ class CaseInsensitiveBytesDict(dict):
             to perform a case insensative dictionary item lookup.
 
             :param key: A key value to lookup and return the object stored under the key.
-        
+
             :returns: The object associated with the key provided.
-        
+
             :raises: KeyError
         """
         return super(CaseInsensitiveBytesDict, self).__getitem__(CaseInsensitiveBytesDict.key_to_lower(key))
@@ -117,9 +117,9 @@ class CaseInsensitiveBytesDict(dict):
             to perform a case insensative dictionary pop item.
 
             :param key: A key value to use to pop and return the object stored under the key.
-        
+
             :returns: The object associated with the key provided.
-        
+
             :raises: KeyError
         """
         return super(CaseInsensitiveBytesDict, self).pop(CaseInsensitiveBytesDict.key_to_lower(key), *args, **kwargs)
@@ -201,7 +201,7 @@ class CaseInsensitiveStringDict(dict):
             to perform a case insensative dictionary key lookup.
 
             :param key: A key value to check to see if an object is stored under the key.
-        
+
             :returns: A boolean indicating if the key provided is in this objects keys.
         """
         return super(CaseInsensitiveStringDict, self).__contains__(CaseInsensitiveStringDict.key_to_lower(key))

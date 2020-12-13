@@ -342,7 +342,7 @@ class Landscape:
             self._logger.info("UPNP DEVICES:")
             for devinfo in available_upnp_devices:
                 usn = devinfo["upnp"]["USN"]
-                agent = self._ssh_coord.lookup_agent_by_usn(usn)
+                agent = self._ssh_coord.lookup_device_by_usn(usn)
                 self._logger.info("    Verifying USN={} HOST={} IP={}".format(usn, agent.host, agent.ipaddr))
                 if not agent.verify_connectivity():
                     error_lists.append(devinfo)
@@ -353,7 +353,7 @@ class Landscape:
             for devinfo in available_ssh_devices:
                 sshinfo = devinfo["ssh"]
                 host = sshinfo["host"]
-                agent = self._ssh_coord.lookup_agent_by_host(host)
+                agent = self._ssh_coord.lookup_device_by_host(host)
                 self._logger.info("    Verifying HOST={} IP={}".format(agent.host, agent.ipaddr))
                 if not agent.verify_connectivity():
                     error_lists.append(devinfo)
@@ -656,15 +656,15 @@ class Landscape:
 
             self._has_upnp_devices = True
             upnp_hint_list = self._internal_get_upnp_device_config_lookup_table()
-            self._upnp_coord = UpnpCoordinator()
-            self._upnp_coord.startup_scan(lscape, upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=["lo"])
+            self._upnp_coord = UpnpCoordinator(lscape)
+            self._upnp_coord.startup_scan(upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=["lo"])
 
         if len(ssh_device_list) > 0:
             from akit.integration.coordinators.sshpoolcoordinator import SshPoolCoordinator # pylint: disable=import-outside-toplevel
 
             self._has_ssh_devices = True
-            self._ssh_coord = SshPoolCoordinator()
-            self._ssh_coord.attach_to_devices(lscape, ssh_device_list, upnp_coord=self._upnp_coord)
+            self._ssh_coord = SshPoolCoordinator(lscape)
+            self._ssh_coord.attach_to_devices(ssh_device_list, upnp_coord=self._upnp_coord)
 
         if len(muse_device_list) > 0 and self._environment_muse is not None:
             envlabel = self._environment_label
@@ -675,8 +675,8 @@ class Landscape:
             from akit.integration.coordinators.musecoordinator import MuseCoordinator # pylint: disable=import-outside-toplevel
 
             self._has_muse_devices = True
-            self._muse_coord = MuseCoordinator()
-            self._muse_coord.attach_to_devices(lscape, envlabel, muse_authhost, muse_ctlhost, muse_version, muse_device_list, upnp_coord=self._upnp_coord)
+            self._muse_coord = MuseCoordinator(lscape)
+            self._muse_coord.attach_to_devices(envlabel, muse_authhost, muse_ctlhost, muse_version, muse_device_list, upnp_coord=self._upnp_coord)
 
         return
 

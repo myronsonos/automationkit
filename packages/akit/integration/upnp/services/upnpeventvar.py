@@ -26,6 +26,9 @@ from enum import IntEnum
 from datetime import datetime
 
 class UpnpEventVarState(IntEnum):
+    """
+        An enumeration that indicates the state of the event variable.
+    """
     UnInitialized = 0
     Valid = 1
     Stale = 2
@@ -70,6 +73,7 @@ class UpnpEventVar:
         self._default = default
         self._allowed_list = allowed_list
         self._timestamp = None
+        self._expires = None
 
         if self._value is not None and timestamp is None:
             self._timestamp  = datetime.now()
@@ -89,12 +93,16 @@ class UpnpEventVar:
         return self._created
 
     @property
-    def expired(self) -> datetime:
+    def expired(self) -> bool:
         """
             When the event variabled subscription has expired.
         """
-        #TODO: Implement expired
-        return True
+        exp = False
+        if self._expires is not None:
+            now = datetime.now()
+            if now > self._expires:
+                exp = True
+        return exp
 
     @property
     def key(self) -> str:
@@ -172,7 +180,7 @@ class UpnpEventVar:
 
         return value, modified, state
 
-    def sync_update(self, value: Any, sid: str = None, service_locked: bool = False):
+    def sync_update(self, value: Any, expires: Optional[datetime] = None, service_locked: bool = False):
         """
             Peforms a threadsafe update of the value, modified and sid members of a
             :class:`UpnpEventVar` instance.
@@ -181,10 +189,14 @@ class UpnpEventVar:
 
         if service_locked:
             self._value, self._modified = value, modified
+            if expires is not None:
+                self._expires = expires
         else:
             service = self._service_ref()
             for _ in service.yield_service_lock():
                 self._value, self._modified = value, modified
+                if expires is not None:
+                    self._expires = expires
 
         return
 

@@ -27,49 +27,32 @@ from akit.xlogging.foundations import getAutomatonKitLogger
 from akit.integration.agents.museagent import MuseAgent
 from akit.integration.landscaping.landscapedevice import LandscapeDevice
 
-class MuseCoordinator:
+from akit.integration.coordinators.coordinatorbase import CoordinatorBase
+
+class MuseCoordinator(CoordinatorBase):
     """
+        The :class:`MuseCoordinator` creates a pool of agents that can be used to
+        coordinate the interop activities of the automation process and remote MUSE
+        nodes.
     """
+    # pylint: disable=attribute-defined-outside-init
 
-    instance = None
-    initialized = False
-
-    def __new__(cls, **kwargs):
-        """
-            Constructs new instances of the :class:`MuseCoordinator` object. The
-            :class:`MuseCoordinator` object is a singleton so following instantiations
-            of the object will reference the existing singleton
-        """
-
-        if cls.instance is None:
-            cls.instance = super(MuseCoordinator, cls).__new__(cls)
-        return cls.instance
-
-    def __init__(self, control_point=False, workers=5, watch_all=False):
-        thisType = type(self)
-        if not thisType.initialized:
-            thisType.initialized = True
-
-            self._logger = getAutomatonKitLogger()
-
-            self._envlabel = None
-            self._authhost = None
-            self._ctlhost = None
-            self._version = None
-
-            self._agent_table = {}
-            self._usn_to_ip_lookup = {}
-            self._ip_to_host_lookup = {}
-
-
+    def __init__(self, lscape, control_point=None, workers: int = 5):
+        super(MuseCoordinator, self).__init__(lscape, control_point=control_point, workers=workers)
         return
 
-    @property
-    def device_agents(self):
-        dalist = [a for a in self._agent_table.values()]
-        return dalist
+    def _initialize(self, control_point=None, workers: int = 5):
+        """
+            Called by the CoordinatorBase constructor to perform the one time initialization of the coordinator Singleton
+            of a given type.
+        """
+        self._cl_usn_to_ip_lookup = {}
+        self._cl_ip_to_host_lookup = {}
+        return
 
-    def attach_to_devices(self, lscape, envlabel, authhost, ctlhost, version, musedevices, upnp_coord=None):
+    def attach_to_devices(self, envlabel, authhost, ctlhost, version, musedevices, upnp_coord=None):
+
+        lscape = self._lscape_ref()
 
         self._envlabel = envlabel
         self._authhost = authhost
@@ -82,6 +65,7 @@ class MuseCoordinator:
             devtype = musedev_config["deviceType"]
             museinfo = musedev_config["muse"]
             host = None
+            usn = None
 
             if "host" in museinfo:
                 host = museinfo["host"]
@@ -93,7 +77,6 @@ class MuseCoordinator:
                         dev = upnp_coord.lookup_device_by_usn(usn)
                     ipaddr = dev.IPAddress
                     host = ipaddr
-                    self._usn_to_ip_lookup[usn] = ipaddr
                 else:
                     muse_config_errors.append(museinfo)
 
@@ -108,10 +91,16 @@ class MuseCoordinator:
                     bearer = museinfo["bearer"]
 
                 ip = socket.gethostbyname(host)
-                self._ip_to_host_lookup[ip] = host
-
                 agent = MuseAgent(envlabel, authhost, ctlhost, host, username, password, apikey, secret, bearer=bearer, version=self._version)
-                self._agent_table[host] = agent
+
+                self._coord_lock.acquire()
+                try:
+                    self._cl_ip_to_host_lookup[ip] = host
+                    self._cl_children[host] = agent
+                    if usn is not None:
+                        self._cl_usn_to_ip_lookup[usn] = ipaddr
+                finally:
+                    self._coord_lock.release()
 
                 coord_ref = weakref.ref(self)
 
@@ -122,6 +111,7 @@ class MuseCoordinator:
                 else:
                     basedevice = LandscapeDevice(host, "network/muse", musedev_config)
                     basedevice.attach_extension("muse", agent)
+                    lscape._internal_register_device(host, basedevice)
 
                 basedevice_ref = weakref.ref(basedevice)
                 agent.initialize(coord_ref, basedevice_ref, host, ip, musedev_config)
@@ -130,30 +120,38 @@ class MuseCoordinator:
 
         return muse_config_errors
 
-    def lookup_agent_by_host(self, host):
+    def lookup_device_by_host(self, host):
         """
             Looks up the agent for a device by its hostname.  If the
             agent is not found then the API returns None.
         """
-        agent = None
+        device = None
 
-        if host in self._agent_table:
-            agent = self._agent_table[host]
+        self._coord_lock.acquire()
+        try:
+            if host in self._cl_children:
+                device = self._cl_children[host]
+        finally:
+            self._coord_lock.release()
 
-        return agent
+        return device
 
-    def lookup_agent_by_ip(self, ip):
+    def lookup_device_by_ip(self, ip):
         """
             Looks up the agent for a device by its ip address.  If the
             agent is not found then the API returns None.
         """
-        agent = None
+        device = None
 
-        if ip in self._ip_to_host_lookup:
-            host = self._ip_to_host_lookup[ip]
-            agent = self.lookup_agent_by_host(host)
+        self._coord_lock.acquire()
+        try:
+            if ip in self._cl_ip_to_host_lookup:
+                host = self._cl_ip_to_host_lookup[ip]
+                device = self.lookup_agent_by_host(host)
+        finally:
+            self._coord_lock.release()
 
-        return agent
+        return device
 
     def lookup_agent_by_usn(self, usn):
         """
@@ -162,9 +160,13 @@ class MuseCoordinator:
         """
         agent = None
 
-        if usn in self._usn_to_ip_lookup:
-            ip = self._usn_to_ip_lookup[usn]
-            agent = self.lookup_agent_by_ip(ip)
+        self._coord_lock.acquire()
+        try:
+            if usn in self._cl_usn_to_ip_lookup:
+                ip = self._cl_usn_to_ip_lookup[usn]
+                agent = self.lookup_agent_by_ip(ip)
+        finally:
+            self._coord_lock.release()
 
         return agent
 
@@ -179,4 +181,6 @@ class MuseCoordinator:
 
         self._callback_server = HTTPServer(('localhost', 5000), AuthenticationCallbackHandler)
 
-        self._callback_server.server_forever()
+        self._callback_server.serve_forever()
+
+        return

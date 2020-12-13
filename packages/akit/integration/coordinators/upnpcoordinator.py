@@ -15,10 +15,11 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import List, Optional, Union
+
 import os
 import socket
 import threading
-import time
 import traceback
 import weakref
 
@@ -36,15 +37,14 @@ from akit.integration.upnp.devices.upnprootdevice import device_description_load
 from akit.integration.upnp.devices.upnprootdevice import device_description_find_components
 
 from akit.integration.upnp.upnpfactory import UpnpFactory
-from akit.integration.upnp.upnpprotocol import mquery, msearch_parse_request, msearch_scan, notify_parse_request
+from akit.integration.upnp.upnpprotocol import mquery, msearch_scan, notify_parse_request
 from akit.integration.upnp.upnpprotocol import MSearchKeys, MSearchRouteKeys, UpnpProtocol
+from akit.integration.upnp.services.upnpserviceproxy import UpnpServiceProxy
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE
 
 from akit.integration.coordinators.coordinatorbase import CoordinatorBase
 
 from akit.networking.interfaces import get_ipv4_address
-
-from akit.xlogging.foundations import getAutomatonKitLogger
 
 EMPTY_LIST = []
 
@@ -57,23 +57,28 @@ class UpnpCoordinator(CoordinatorBase):
         interfaces.  It also creates a general broadcast monitor thread and a subscription dispatch thread for each interface it
         is monitoring.
     """
+    # pylint: disable=attribute-defined-outside-init
 
-    def __init__(self, control_point=False, workers=5, watch_all=False):
-        super(UpnpCoordinator, self).__init__(control_point=control_point, workers=workers, watch_all=watch_all)
+    def __init__(self, lscape, control_point=None, workers: int = 5):
+        super(UpnpCoordinator, self).__init__(lscape, control_point=control_point, workers=workers)
         return
 
-    def _initialize(self, control_point=False, workers=5, watch_all=False):
+    def _initialize(self, *_args, control_point=None, workers: int = 5, **_kwargs):
         """
             Called by the CoordinatorBase constructor to perform the one time initialization of the coordinator Singleton
             of a given type.
+
+            :param control_point: An object that acts as a UPNP control point.
+            :param workers: The number of worker threads to spin up for handling work packets.
         """
+        # pylint: disable=arguments-differ
+
         # ============================ Fixed Variables ============================
         # These variables are fixed at the start of the UpnpCoordinator and because
         # they are fixed, we don't protect them with the all.
 
         self._control_point = control_point
         self._worker_count = workers
-        self._watch_all = watch_all
 
         self._factory = UpnpFactory()
 
@@ -124,14 +129,17 @@ class UpnpCoordinator(CoordinatorBase):
         self._queue_work = []
 
         self._match_table = {
-            "modelName": UpnpRootDevice._matches_model_name,
-            "modelNumber": UpnpRootDevice._matches_model_number
+            "modelName": UpnpRootDevice._matches_model_name, # pylint: disable=protected-access
+            "modelNumber": UpnpRootDevice._matches_model_number # pylint: disable=protected-access
         }
 
         return
 
     @property
-    def watch_devices(self):
+    def watch_devices(self) -> List[LandscapeDevice]:
+        """
+            Returns a list of the devices being watched by the UPNP coordinator.
+        """
         wlist = []
 
         self._coord_lock.acquire()
@@ -142,8 +150,14 @@ class UpnpCoordinator(CoordinatorBase):
 
         return wlist
 
-    def lookup_callback_url_for_interface(self, ifname):
+    def lookup_callback_url_for_interface(self, ifname: str) -> str:
         """
+            The callback url that is utilized by devices to determine the URL that should be used as a callback
+            for a given network interface.
+
+            :param ifname: The interface name of the interface to get the callback url for.
+
+            :returns: Returns the callback url being monintored by the coordinator for a given interface.
         """
         callback_url = None
 
@@ -156,9 +170,13 @@ class UpnpCoordinator(CoordinatorBase):
 
         return callback_url
 
-    def lookup_device_by_mac(self, mac):
+    def lookup_device_by_mac(self, mac: str) -> Union[LandscapeDevice, None]:
         """
             Lookup a UPNP device by its MAC address.
+
+            :param mac: The mac address of the device to search for.
+
+            :returns: The device found with the associated MAC address or None
         """
 
         found = None
@@ -167,16 +185,20 @@ class UpnpCoordinator(CoordinatorBase):
         try:
             for nxtdev in self._cl_children.values():
                 if mac == nxtdev.MACAddress:
-                    found = nxtdev
+                    found = nxtdev.basedevice
                     break
         finally:
             self._coord_lock.release()
 
         return found
 
-    def lookup_device_by_usn(self, usn):
+    def lookup_device_by_usn(self, usn: str) -> Union[LandscapeDevice, None]:
         """
             Lookup a UPNP device by its USN id.
+
+            :param usn: The usn of the device to search for.
+
+            :returns: The device found with the associated USN address or None
         """
 
         found = None
@@ -185,15 +207,20 @@ class UpnpCoordinator(CoordinatorBase):
         try:
             for nxtdev in self._cl_children.values():
                 if usn == nxtdev.USN:
-                    found = nxtdev
+                    found = nxtdev.basedevice
                     break
         finally:
             self._coord_lock.release()
 
         return found
 
-    def lookup_device_list_by_usn(self, usnlist):
+    def lookup_device_list_by_usn(self, usnlist: List[str]) -> List[LandscapeDevice]:
         """
+            Lookup a list of UPNP devices by thier USN id.
+
+            :param usn: A list of USN identifiers for devices to search for.
+
+            :returns: A list of devices found with USN(s) in the usn search list.
         """
         found = []
 
@@ -208,24 +235,31 @@ class UpnpCoordinator(CoordinatorBase):
 
         return found
 
-    def lookup_service_instance_by_sid(self, sid):
+    def lookup_device_instance_for_sid(self, sid: str) -> UpnpServiceProxy:
         """
-            Lookup a service instance that had registered for subscription callbacks by sid
+            Lookup a device instance that has been registered with a subscription id.
+
+            :param sid: The sid of a service device to search for.
+
+            :returns: A device found to be associated with the sid provided.
         """
-        svc_inst = None
+        device_inst = None
 
         self._coord_lock.acquire()
         try:
             if sid in self._cl_subscription_id_to_device:
-                svc_inst = self._cl_subscription_id_to_device[sid]
+                device_inst = self._cl_subscription_id_to_device[sid]
         finally:
             self._coord_lock.release()
 
-        return svc_inst
+        return device_inst
 
-    def register_subscription_for_device(self, sid, device):
+    def register_subscription_for_device(self, sid: str, device: LandscapeDevice):
         """
             Registers a service instance for event callbacks via a 'sid'.
+
+            :param sid: The service subscription id to register a device with.
+            :param device: The device to register as a handler for notifications for the sid provided.
         """
 
         self._coord_lock.acquire()
@@ -236,11 +270,21 @@ class UpnpCoordinator(CoordinatorBase):
 
         return
 
-    def startup_scan(self, lscape, upnp_hint_list, watchlist=None, exclude_interfaces=[], response_timeout=20, retry=2, force_recording=False):
+    def startup_scan(self, upnp_hint_list: List[str], watchlist: Optional[List[str]] = None, exclude_interfaces: List = [], response_timeout: float = 20, retry: int = 2, force_recording: bool = False):
         """
             Starts up and initilizes the UPNP coordinator by utilizing a hint list to determine
             what network interfaces to setup UPNP monitoring on.
+
+            :param upnp_hint_list: A list of upnp USN(s) to search for.
+            :param watchlist: A list of required USN(s) that we will setup watching and updates for.
+            :param exclude_interfaces: Network interfaces that will be excluded from the search for devices.
+            :param response_timeout: A timeout to wait for a response.
+            :param retry: The number of retry attempts to make before giving up on finding devices.
+            :param force_recording: Forces the updating or recording of device descriptions from devices found on the network.
         """
+        # pylint: disable=dangerous-default-value
+
+        lscape = self._lscape_ref()
 
         if self._running:
             raise AKitRuntimeError("UpnpCoordinator.startup_scan called twice, The UpnpCoordinator is already running.")
@@ -258,7 +302,7 @@ class UpnpCoordinator(CoordinatorBase):
         for exif in exclude_interfaces:
             interface_list.remove(exif)
 
-        config_lookup = lscape._internal_get_upnp_device_config_lookup_table()
+        config_lookup = lscape._internal_get_upnp_device_config_lookup_table() # pylint: disable=protected-access
 
         found_devices = {}
         matching_devices = {}
@@ -317,11 +361,29 @@ class UpnpCoordinator(CoordinatorBase):
 
         return
 
-    def _create_root_device(self, manufacturer, modelNumber, modelDescription):
-        dev = self._factory.create_root_device_instance(manufacturer, modelNumber, modelDescription)
+    def _create_root_device(self, manufacturer: str, model_number: str, model_description: str) -> UpnpRootDevice:
+        """
+            Create a root UPNP device using the provided manufacturer and modelNumber provided.  If no
+            device is found for the provided manufacturer and model_number then a generic UPNP root device
+            will be instantiated using the manufacturer, model_number and model_description.
+
+            :param manufacturer: The manufacturer of the root device to instantiate.
+            :param model_number: The model_number of the root device to instantiate.
+            :param model_description: The description to give to a device when it is instantiated.
+
+            :returns: A upnp root device instance.
+        """
+        dev = self._factory.create_root_device_instance(manufacturer, model_number, model_description)
         return dev
 
     def _log_scan_results(self, found_devices: dict, matching_devices:dict , missing_devices: list):
+        """
+            Logs the results of the device scan.
+
+            :param found_devices: A list of found devices.
+            :param matching_devices: A list of devices matching the expected devices listed in the upnp_hint_list.
+            :param missing_devices: A list of USN(s) for devices that were not found.
+        """
 
         devmsg_lines = ["FOUND DEVICES:"]
         for dkey, _ in found_devices.items():
@@ -344,15 +406,28 @@ class UpnpCoordinator(CoordinatorBase):
 
         return
 
-    def _normalize_name(self, name):
+    def _normalize_name(self, name: str) -> str:
+        """
+            Normalizes a name by removing non-alphanumeric characters.
+
+            :param name: A name to normalize.
+
+            :returns: The normalized name with all the non-alphanumeric characters removed.
+        """
+        # pylint: disable=no-self-use
 
         normal_chars = [ nc for nc in name if str.isalnum(nc) ]
         normal_name = ''.join(normal_chars)
 
         return normal_name
 
-    def _process_device_notification(self, usn, request_info):
+    def _process_device_notification(self, usn: str, request_info: dict):
+        """
+            Processes a device notification when given the USN and dictionary of header keys and values.
 
+            :param usn: The USN of the device which the notification is from.
+            :param request_info: The headers from the notification request.
+        """
         host = request_info["HOST"]
         subtype = request_info["NTS"]
 
@@ -365,7 +440,15 @@ class UpnpCoordinator(CoordinatorBase):
 
         return
 
-    def _process_subscription_callback(self, ifname, claddr, request):
+    def _process_subscription_callback(self, ifname: str, claddr: str, request: str):
+        """
+            Processes a callback request on the specified interface and address request.
+
+            :param ifname: The name of the ifname the request came from.
+            :param claddr: The address of the client that made the callback.
+            :param request: The content of the callback request.
+        """
+        # pylint: disable=unused-argument
 
         self._logger.debug("RESPONDING TO SUBSCRIPTION CALLBACK")
         self._logger.debug(request)
@@ -388,15 +471,25 @@ class UpnpCoordinator(CoordinatorBase):
 
         return
 
-    def _process_request_for_msearch(self, addr, request):
+    def _process_request_for_msearch(self, addr: str, request: str):
+        """
+            Process an msearch request from the given address.
 
+            :param addr: The address of machine making the msearch request.
+            :param request: The request content of the msearch request to process.
+        """
         #reqinfo = msearch_parse_request(request)
         self._logger.debug("RESPONDING TO MSEARCH")
 
         return
 
-    def _process_request_for_notify(self, addr, request):
+    def _process_request_for_notify(self, addr: str, request: str):
+        """
+            Process a notify request.
 
+            :param addr: The address of machine making the notify request.
+            :param request: The request content of the notify request to process.
+        """
         req_headers, _ = notify_parse_request(request)
 
         usn = req_headers["USN"]
@@ -408,6 +501,8 @@ class UpnpCoordinator(CoordinatorBase):
 
     def _start_all_threads(self):
         """
+            Starts up all the thread the UPNP coordinator uses for monitoring, callback notification servicing and
+            the worker threads used for processing work packges from notifications and callbacks.
         """
 
         ifacelist = []
@@ -480,8 +575,14 @@ class UpnpCoordinator(CoordinatorBase):
 
         return
 
-    def _thread_entry_callback(self, sgate, ifname):
+    def _thread_entry_callback(self, sgate: threading.Event, ifname: str):
+        """
+            The entry point for callback processing threads.
 
+            :param sgate: The startup gate that is used to indicate to the thread spinning up the coordinator
+                          that the callback thread has started.
+            :param ifname: The interface name of interface this thread is assigned to process callbacks for.
+        """
         self._shutdown_gate.acquire()
 
         try:
@@ -539,8 +640,13 @@ class UpnpCoordinator(CoordinatorBase):
 
         return
 
-    def _thread_entry_monitor(self, sgate):
+    def _thread_entry_monitor(self, sgate: threading.Event):
+        """
+            The entry point for monitor thread.  The monitor thread sets up monitoring on all interfaces.
 
+            :param sgate: The startup gate that is used to indicate to the thread spinning up the coordinator
+                          that the monitor thread has started.
+        """
         self._shutdown_gate.acquire()
 
         multicast_address = UpnpProtocol.MULTICAST_ADDRESS
@@ -597,8 +703,13 @@ class UpnpCoordinator(CoordinatorBase):
 
         return
 
-    def _thread_entry_worker(self, sgate):
+    def _thread_entry_worker(self, sgate: threading.Event):
+        """
+            The entry point for worker threads.  Worker threads process work packets queued up by other threads.
 
+            :param sgate: The startup gate that is used to indicate to the thread spinning up the coordinator
+                          that this worker thread has started.
+        """
         try:
             # Set the start gate to allow the thread spinning us up to continue
             sgate.set()
@@ -610,7 +721,7 @@ class UpnpCoordinator(CoordinatorBase):
                 try:
                     wkfunc, wkargs = self._queue_work.pop(0)
                     wkfunc(*wkargs)
-                except:
+                except: # pylint: disable=bare-except
                     self._logger.exception("UpnpCoordinator: Worker exception.")
                 finally:
                     self._queue_lock.release()
@@ -620,8 +731,16 @@ class UpnpCoordinator(CoordinatorBase):
 
         return
 
-    def _update_root_device(self, lscape, config_lookup, ip_addr: str, location: str, deviceinfo: dict, force_recording: bool = False):
+    def _update_root_device(self, lscape, config_lookup: dict, ip_addr: str, location: str, deviceinfo: dict, force_recording: bool = False):
         """
+            Updates a UPNP root device.
+
+            :param lscape: The landscape singleton instance.
+            :param config_lookup: A configuration lookup table that can be used to lookup configuration information for upnp devices.
+            :param ip_addr: The IP address of the device to update.
+            :param location: The location URL associated with the device.
+            :param deviceinfo: The device information from the msearch response headers.
+            :param force_recording: Forces the UpnpCoordinator to record device and service descriptions.
         """
 
         if MSearchKeys.USN in deviceinfo:
@@ -660,7 +779,7 @@ class UpnpCoordinator(CoordinatorBase):
                                     self._logger.error(errmsg)
                                     raise
 
-                                if type(dev_extension) == UpnpRootDevice:
+                                if isinstance(dev_extension, UpnpRootDevice):
                                     dev_extension.record_description(urlBase, manufacturer, modelName, docTree, devNode, namespaces=namespaces, force_recording=force_recording)
 
                                 coord_ref = weakref.ref(self)
@@ -677,7 +796,7 @@ class UpnpCoordinator(CoordinatorBase):
 
                                 basedevice.attach_extension("upnp", dev_extension)
 
-                                lscape._internal_register_device(usn, basedevice)
+                                lscape._internal_register_device(usn, basedevice) # pylint: disable=protected-access
                             finally:
                                 self._coord_lock.acquire()
 
@@ -690,7 +809,7 @@ class UpnpCoordinator(CoordinatorBase):
                             dev_extension.refresh_description(ip_addr, self._factory, docTree.getroot(), namespaces=namespaces)
                     finally:
                         self._coord_lock.release()
-                except:
+                except:  # pylint: disable=bare-except
                     errmsg_lines = [
                         "ERROR: Unable to parse description for. IP: %s LOCATION: %s" % (ip_addr, location)
                     ]
@@ -699,7 +818,7 @@ class UpnpCoordinator(CoordinatorBase):
 
                     errmsg = os.linesep.join(errmsg_lines)
                     self._logger.debug(errmsg)
-            except:
+            except:  # pylint: disable=bare-except
                 errmsg_lines = [
                     "ERROR: Unable to parse description for. IP: %s LOCATION: %s" % (ip_addr, location)
                 ]

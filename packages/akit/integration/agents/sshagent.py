@@ -1182,7 +1182,7 @@ class SshAgent(SshBase, LandscapeDeviceExtension):
             aspects = self._aspects
 
         session = SshSession(self._host, self._username, password=self._password, keyfile=self._keyfile, keypasswd=self._keypasswd, allow_agent=self._allow_agent,
-                             users=self._users, port=self._port, primitive=primitive, pty_params=pty_params, interactive=interactive, aspects: Aspects = aspects)
+                             users=self._users, port=self._port, primitive=primitive, pty_params=pty_params, interactive=interactive, aspects=aspects)
         return session
 
     def run_cmd(self, command: str, exp_status: Union[int, Sequence]=0, user: str = None, pty_params: dict = None, aspects: Optional[Aspects] = None, ssh_client: Optional[paramiko.SSHClient]=None) -> Tuple[int, str, str]: # pylint: disable=arguments-differ

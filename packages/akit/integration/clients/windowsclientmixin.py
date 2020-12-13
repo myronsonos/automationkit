@@ -24,7 +24,7 @@ class WindowsClientMixIn(IntegrationMixIn):
 
     pathbase = "clients/windows"
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, role=None, **kwargs):
         """
             The default contructor for an :class:`WindowsClientMixIn`.
         """

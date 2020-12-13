@@ -19,6 +19,7 @@ __license__ = "MIT"
 from typing import List, Optional
 
 import threading
+import weakref
 
 from akit.exceptions import AKitNotOverloadedError
 from akit.integration.landscaping.landscapedevice import LandscapeDevice
@@ -39,7 +40,7 @@ class CoordinatorBase:
     instance = None
     initialized = False
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *_args, **_kwargs):
         """
             Constructs new instances of the :class:`UpnpCoordinator` object. The
             :class:`UpnpCoordinator` object is a singleton so following instantiations
@@ -50,12 +51,14 @@ class CoordinatorBase:
             cls.instance = super(CoordinatorBase, cls).__new__(cls)
         return cls.instance
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, lscape, *args, **kwargs):
         this_type = type(self)
         if not this_type.initialized:
             this_type.initialized = True
 
             self._logger = getAutomatonKitLogger()
+
+            self._lscape_ref = weakref.ref(lscape)
 
             self._coord_lock = threading.RLock()
 
@@ -64,11 +67,12 @@ class CoordinatorBase:
             self._initialize(*args, **kwargs)
         return
 
-    def _initialize(self, *args, **kwargs):
+    def _initialize(self, *_args, **_kwargs):
         """
             Called by the CoordinatorBase constructor to perform the one time initialization of the coordinator Singleton
             of a given type.
         """
+        # pylint: disable=no-self-use
         raise AKitNotOverloadedError("_initialize: must be overloaded by derived coordinator classes")
 
     @property
@@ -85,6 +89,14 @@ class CoordinatorBase:
             self._coord_lock.release()
 
         return chlist
+
+    @property
+    def landscape(self):
+        """
+            Returns a hard reference to the Landscape singleton instance.
+        """
+        lscape = self._lscape_ref()
+        return lscape
 
     @property
     def children_as_extension(self) -> List[LandscapeDeviceExtension]:
@@ -132,4 +144,5 @@ class CoordinatorBase:
 
             :returns: A list of errors encountered when verifying connectivity with the devices managed or watched by the coordinator.
         """
+        # pylint: disable=no-self-use
         raise AKitNotOverloadedError("verify_connectivity: must be overloaded by derived coordinator classes")

@@ -15,7 +15,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Optional
+from typing import List, Optional, Union
 
 import socket
 import weakref
@@ -23,6 +23,7 @@ import weakref
 from akit.paths import get_expanded_path
 
 from akit.integration.coordinators.coordinatorbase import CoordinatorBase
+from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 
 from akit.integration.landscaping.landscapedevice import LandscapeDevice
 
@@ -34,25 +35,34 @@ class SshPoolCoordinator(CoordinatorBase):
         coordinate the interop activities of the automation process and remote SSH
         nodes.
     """
-    def __init__(self):
-        super(SshPoolCoordinator, self).__init__()
+    # pylint: disable=attribute-defined-outside-init
+
+    def __init__(self, lscape, *args, **kwargs):
+        super(SshPoolCoordinator, self).__init__(lscape, *args, **kwargs)
         return
 
-    def _initialize(self):
+    def _initialize(self, *_args, **_kwargs):
         """
             Called by the CoordinatorBase constructor to perform the one time initialization of the coordinator Singleton
             of a given type.
         """
-        self._usn_to_ip_lookup = {}
-        self._ip_to_host_lookup = {}
+        # pylint: disable=arguments-differ
+        self._cl_usn_to_ip_lookup = {}
+        self._cl_ip_to_host_lookup = {}
         return
 
-    @property
-    def device_agents(self):
-        dalist = [a for a in self._cl_children.values()]
-        return dalist
+    def attach_to_devices(self, sshdevices: List[dict], upnp_coord: Optional[UpnpCoordinator]=None):
+        """
+            Processes a list of device configs and creates and registers devices and SSH device extensions
+            attached with the landscape for the devices not already registered.  If a device has already
+            been registered by the UPNP coordinator then a device extension is created and attached to the
+            existing device.
 
-    def attach_to_devices(self, lscape, sshdevices, upnp_coord=None):
+            :param sshdevices: A list of ssh device configuration dictionaries.
+            :param upnp_coord: The UpnpCoordinator singleton instance.
+        """
+
+        lscape = self._lscape_ref()
 
         ssh_config_errors = []
 
@@ -72,7 +82,7 @@ class SshPoolCoordinator(CoordinatorBase):
                         dev = upnp_coord.lookup_device_by_usn(usn)
                     ipaddr = dev.IPAddress
                     host = ipaddr
-                    self._usn_to_ip_lookup[usn] = ipaddr
+                    self._cl_usn_to_ip_lookup[usn] = ipaddr
                 else:
                     ssh_config_errors.append(sshinfo)
 
@@ -93,7 +103,7 @@ class SshPoolCoordinator(CoordinatorBase):
                     allow_agent = sshinfo["allow_agent"]
 
                 ip = socket.gethostbyname(host)
-                self._ip_to_host_lookup[ip] = host
+                self._cl_ip_to_host_lookup[ip] = host
 
                 agent = SshAgent(host, username, password=password, keyfile=keyfile, keypasswd=keypasswd, allow_agent=allow_agent)
 
@@ -103,7 +113,7 @@ class SshPoolCoordinator(CoordinatorBase):
 
                 basedevice = None
                 if usn is not None:
-                    basedevice = lscape._internal_lookup_device_by_keyid(usn)
+                    basedevice = lscape._internal_lookup_device_by_keyid(usn) # pylint: disable=protected-access
                     basedevice.attach_extension("ssh", agent)
                 else:
                     basedevice = LandscapeDevice(host, "network/ssh", sshdev_config)
@@ -116,42 +126,74 @@ class SshPoolCoordinator(CoordinatorBase):
 
         return ssh_config_errors
 
-    def lookup_agent_by_host(self, host):
+    def lookup_device_by_host(self, host: str) -> Union[LandscapeDevice, None]:
         """
             Looks up the agent for a device by its hostname.  If the
             agent is not found then the API returns None.
+
+            :param host: The host name of the LandscapeDevice to search for.
+
+            :returns: The found LandscapeDevice or None
         """
-        agent = self.lookup_device_by_key(host).ssh
+        device = None
 
-        return agent
+        self._coord_lock.acquire()
+        try:
+            if host in self._cl_children:
+                device = self._cl_children[host].basedevice
+        finally:
+            self._coord_lock.release()
 
-    def lookup_agent_by_ip(self, ip):
+        return device
+
+    def lookup_device_by_ip(self, ip) -> Union[LandscapeDevice, None]:
         """
             Looks up the agent for a device by its ip address.  If the
             agent is not found then the API returns None.
+
+            :param ip: The ip address of the LandscapeDevice to search for.
+
+            :returns: The found LandscapeDevice or None
         """
-        agent = None
+        device = None
 
-        if ip in self._ip_to_host_lookup:
-            host = self._ip_to_host_lookup[ip]
-            agent = self.lookup_agent_by_host(host)
+        self._coord_lock.acquire()
+        try:
+            if ip in self._cl_ip_to_host_lookup:
+                if ip in self._cl_ip_to_host_lookup:
+                    host = self._cl_ip_to_host_lookup[ip]
+                    if host in self._cl_children:
+                        device = self._cl_children[host].basedevice
+        finally:
+            self._coord_lock.release()
 
-        return agent
+        return device
 
-    def lookup_agent_by_usn(self, usn):
+    def lookup_device_by_usn(self, usn: str) -> Union[LandscapeDevice, None]:
         """
             Looks up the agent for a UPNP device by its USN.  If the
             agent is not found then the API returns None.
+
+            :param usn: The USN of the LandscapeDevice to search for.
+
+            :returns: The found LandscapeDevice or None
         """
-        agent = None
+        device = None
 
-        if usn in self._usn_to_ip_lookup:
-            ip = self._usn_to_ip_lookup[usn]
-            agent = self.lookup_agent_by_ip(ip)
+        self._coord_lock.acquire()
+        try:
+            if usn in self._cl_usn_to_ip_lookup:
+                ip = self._cl_usn_to_ip_lookup[usn]
+                if ip in self._cl_ip_to_host_lookup:
+                    host = self._cl_ip_to_host_lookup[ip]
+                    if host in self._cl_children:
+                        device = self._cl_children[host].basedevice
+        finally:
+            self._coord_lock.release()
 
-        return agent
+        return device
 
-    def verify_connectivity(self, cmd: str = "echo 'It Works'", user: Optional[str] = None, raiseerror: bool = True):
+    def verify_connectivity(self, cmd: str = "echo 'It Works'", user: Optional[str] = None, raiseerror: bool = True) -> List[tuple]:
         """
             Loops through the nodes in the SSH pool and utilizes the
             credentials for the specified user in order to verify
@@ -174,7 +216,7 @@ class SshPoolCoordinator(CoordinatorBase):
             try:
                 status, stdout, stderr = agent.run_cmd(cmd)
                 results.append((host, ipaddr, status, stdout, stderr, None))
-            except Exception as xcpt:
+            except Exception as xcpt: # pylint: disable=broad-except
                 if raiseerror:
                     raise
                 results.append((host, ipaddr, None, None, None, xcpt))
