@@ -236,7 +236,7 @@ def msearch_parse_response(content: bytes) -> dict:
     return respinfo
 
 
-def mquery_on_interface(query_context: MSearchScanContext, ifname: str, ifaddress: str, mx: int = 1, st: str = MSearchTargets.ROOTDEVICE, response_timeout: float = 45, interval: float = 5):
+def mquery_on_interface(query_context: MSearchScanContext, ifname: str, ifaddress: str, mx: int = 1, st: str = MSearchTargets.ROOTDEVICE, response_timeout: float = 45, interval: float = 5, ttl: int = 3):
     """
         The inline msearch function provides a mechanism to do a synchronous msearch
         in order to determine if a set of available devices are available and to
@@ -251,6 +251,13 @@ def mquery_on_interface(query_context: MSearchScanContext, ifname: str, ifaddres
         :param st: The search target of the MSearch.
         :param response_timeout:  The timeout to wait for responses from all the expected devices.
         :param interval: The retry interval to wait before retrying to search for an expected device.
+        :param ttl: The time to live for the multicast packet
+                    0 = same host
+                    1 = same subnet
+                    32 = same site
+                    64 = same region
+                    128 = same continent
+                    255 = unrestricted scope
 
         :raises: TimeoutError, KeyboardInterrupt
     """
@@ -285,7 +292,7 @@ def mquery_on_interface(query_context: MSearchScanContext, ifname: str, ifaddres
         # Set the IP protocol level socket opition binding the socket to the interface
         # specified by the IP address provided
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(ifaddress))
-        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
+        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
 
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
 
@@ -323,7 +330,7 @@ def mquery_on_interface(query_context: MSearchScanContext, ifname: str, ifaddres
     return
 
 
-def msearch_on_interface(scan_context: MSearchScanContext, ifname: str, ifaddress: str, mx: int = 1, st: str = MSearchTargets.ROOTDEVICE, response_timeout: float = 45, interval: float = 5):
+def msearch_on_interface(scan_context: MSearchScanContext, ifname: str, ifaddress: str, mx: int = 1, st: str = MSearchTargets.ROOTDEVICE, response_timeout: float = 45, interval: float = 5, ttl: int = 3):
     """
         The inline msearch function provides a mechanism to do a synchronous msearch
         in order to determine if a set of available devices are available and to
@@ -338,6 +345,13 @@ def msearch_on_interface(scan_context: MSearchScanContext, ifname: str, ifaddres
         :param st: The search target of the MSearch.
         :param response_timeout:  The timeout to wait for responses from all the expected devices.
         :param interval: The retry interval to wait before retrying to search for an expected device.
+        :param ttl: The time to live for the multicast packet
+                    0 = same host
+                    1 = same subnet
+                    32 = same site
+                    64 = same region
+                    128 = same continent
+                    255 = unrestricted scope
 
         :returns:  dict -- A dictionary of the devices that were found.
         :raises: TimeoutError, KeyboardInterrupt
@@ -371,7 +385,7 @@ def msearch_on_interface(scan_context: MSearchScanContext, ifname: str, ifaddres
         # Set the IP protocol level socket opition binding the socket to the interface
         # specified by the IP address provided
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(ifaddress))
-        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
+        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
 
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
 
