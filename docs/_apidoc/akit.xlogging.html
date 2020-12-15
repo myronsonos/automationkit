@@ -1,37 +1,199 @@
 
-<!DOCTYPE html>
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>akit.xlogging package &#8212; Automation Kit 1.0.0.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>akit.xlogging package &mdash; Automation Kit 1.0.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="akit.xthreading package" href="akit.xthreading.html" />
-    <link rel="prev" title="akit.testing package" href="akit.testing.html" />
+    <link rel="prev" title="akit.testing package" href="akit.testing.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Automation Kit
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">akit</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="akit.html">akit package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="akit.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="akit.cli.html">akit.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.cryptography.html">akit.cryptography package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.datum.html">akit.datum package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.environment.html">akit.environment package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.html">akit.integration package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.mixins.html">akit.mixins package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.networking.html">akit.networking package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.scripts.html">akit.scripts package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.tasking.html">akit.tasking package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.templates.html">akit.templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.testing.html">akit.testing package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">akit.xlogging package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.xthreading.html">akit.xthreading package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.aspects">akit.aspects module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.compat">akit.compat module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.exceptions">akit.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.extensible">akit.extensible module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.metadata">akit.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.paths">akit.paths module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.recorders">akit.recorders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.results">akit.results module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.taskbase">akit.taskbase module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.timeouts">akit.timeouts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xcollections">akit.xcollections module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xformatting">akit.xformatting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xinspect">akit.xinspect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xtime">akit.xtime module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Automation Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">akit</a> &raquo;</li>
+        
+          <li><a href="akit.html">akit package</a> &raquo;</li>
+        
+      <li>akit.xlogging package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/_apidoc/akit.xlogging.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="akit-xlogging-package">
 <h1>akit.xlogging package<a class="headerlink" href="#akit-xlogging-package" title="Permalink to this headline">¶</a></h1>
@@ -50,6 +212,7 @@ prevent module name collisions with python modules.</p>
 <dt id="akit.xlogging.foundations.LoggingDefaults">
 <em class="property">class </em><code class="sig-prename descclassname">akit.xlogging.foundations.</code><code class="sig-name descname">LoggingDefaults</code><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#LoggingDefaults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.LoggingDefaults" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Makes all the default values associated with logging available.</p>
 <dl class="py attribute">
 <dt id="akit.xlogging.foundations.LoggingDefaults.DefaultFileLoggingHandler">
 <code class="sig-name descname">DefaultFileLoggingHandler</code><a class="headerlink" href="#akit.xlogging.foundations.LoggingDefaults.DefaultFileLoggingHandler" title="Permalink to this definition">¶</a></dt>
@@ -61,18 +224,20 @@ prevent module name collisions with python modules.</p>
 <dl class="py class">
 <dt id="akit.xlogging.foundations.LoggingManagerWrapper">
 <em class="property">class </em><code class="sig-prename descclassname">akit.xlogging.foundations.</code><code class="sig-name descname">LoggingManagerWrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">manager</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#LoggingManagerWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.LoggingManagerWrapper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Manager</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>There is [under normal circumstances] just one Manager instance, which
 holds the hierarchy of loggers.</p>
 <dl class="py method">
 <dt id="akit.xlogging.foundations.LoggingManagerWrapper.disable">
 <em class="property">property </em><code class="sig-name descname">disable</code><a class="headerlink" href="#akit.xlogging.foundations.LoggingManagerWrapper.disable" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Git if logging is disabled.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.xlogging.foundations.LoggingManagerWrapper.emittedNoHandlerWarning">
 <em class="property">property </em><code class="sig-name descname">emittedNoHandlerWarning</code><a class="headerlink" href="#akit.xlogging.foundations.LoggingManagerWrapper.emittedNoHandlerWarning" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get if the emittion of handler warnings is turned off.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.xlogging.foundations.LoggingManagerWrapper.getLogger">
@@ -89,17 +254,20 @@ placeholder to now point to the logger.</p>
 <dl class="py method">
 <dt id="akit.xlogging.foundations.LoggingManagerWrapper.logRecordFactory">
 <em class="property">property </em><code class="sig-name descname">logRecordFactory</code><a class="headerlink" href="#akit.xlogging.foundations.LoggingManagerWrapper.logRecordFactory" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the log record factory.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.xlogging.foundations.LoggingManagerWrapper.loggerClass">
 <em class="property">property </em><code class="sig-name descname">loggerClass</code><a class="headerlink" href="#akit.xlogging.foundations.LoggingManagerWrapper.loggerClass" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the logger Class.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.xlogging.foundations.LoggingManagerWrapper.loggerDict">
 <em class="property">property </em><code class="sig-name descname">loggerDict</code><a class="headerlink" href="#akit.xlogging.foundations.LoggingManagerWrapper.loggerDict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns a dictionary of the loggers.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.xlogging.foundations.LoggingManagerWrapper.matchLoggers">
@@ -110,7 +278,8 @@ placeholder to now point to the logger.</p>
 <dl class="py method">
 <dt id="akit.xlogging.foundations.LoggingManagerWrapper.root">
 <em class="property">property </em><code class="sig-name descname">root</code><a class="headerlink" href="#akit.xlogging.foundations.LoggingManagerWrapper.root" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the root logger.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.xlogging.foundations.LoggingManagerWrapper.setLogRecordFactory">
@@ -131,10 +300,12 @@ Manager.</p>
 <dt id="akit.xlogging.foundations.OtherFilter">
 <em class="property">class </em><code class="sig-prename descclassname">akit.xlogging.foundations.</code><code class="sig-name descname">OtherFilter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#OtherFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.OtherFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Filters records with a name that match a prefix expression and marks them as other.</p>
 <dl class="py method">
 <dt id="akit.xlogging.foundations.OtherFilter.filter">
-<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rec</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#OtherFilter.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.OtherFilter.filter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">record</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#OtherFilter.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.OtherFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs the filtering of records.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -142,10 +313,12 @@ Manager.</p>
 <dt id="akit.xlogging.foundations.RelevantFilter">
 <em class="property">class </em><code class="sig-prename descclassname">akit.xlogging.foundations.</code><code class="sig-name descname">RelevantFilter</code><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#RelevantFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.RelevantFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Allows records that are not marked as other.</p>
 <dl class="py method">
 <dt id="akit.xlogging.foundations.RelevantFilter.filter">
-<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rec</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#RelevantFilter.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.RelevantFilter.filter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">record</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#RelevantFilter.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.RelevantFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs the filtering of records.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -153,6 +326,8 @@ Manager.</p>
 <dt id="akit.xlogging.foundations.TestKitLoggerWrapper">
 <em class="property">class </em><code class="sig-prename descclassname">akit.xlogging.foundations.</code><code class="sig-name descname">TestKitLoggerWrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logger</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#TestKitLoggerWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.TestKitLoggerWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>We utilize a log wrapper so we can re-initialize logging and switch out the logger
+without invalidating references to the logger that we have given out.</p>
 <dl class="py method">
 <dt id="akit.xlogging.foundations.TestKitLoggerWrapper.critical">
 <code class="sig-name descname">critical</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#TestKitLoggerWrapper.critical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.TestKitLoggerWrapper.critical" title="Permalink to this definition">¶</a></dt>
@@ -213,7 +388,11 @@ a true value, e.g.</p>
 <dl class="py method">
 <dt id="akit.xlogging.foundations.TestKitLoggerWrapper.warn">
 <code class="sig-name descname">warn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#TestKitLoggerWrapper.warn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.TestKitLoggerWrapper.warn" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Log ‘msg % args’ with severity ‘WARNING’.</p>
+<p>To pass exception information, use the keyword argument exc_info with
+a true value, e.g.</p>
+<p>logger.warning(“Houston, we have a %s”, “bit of a problem”, exc_info=1)</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.xlogging.foundations.TestKitLoggerWrapper.warning">
@@ -230,12 +409,11 @@ a true value, e.g.</p>
 <dt id="akit.xlogging.foundations.WarningFilter">
 <em class="property">class </em><code class="sig-prename descclassname">akit.xlogging.foundations.</code><code class="sig-name descname">WarningFilter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#WarningFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.WarningFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Filter" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Filter</span></code></a></p>
+<p>Filters records with a log level &lt; WARNING</p>
 <dl class="py method">
 <dt id="akit.xlogging.foundations.WarningFilter.filter">
-<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rec</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#WarningFilter.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.WarningFilter.filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine if the specified record is to be logged.</p>
-<p>Is the specified record to be logged? Returns 0 for no, nonzero for
-yes. If deemed appropriate, the record may be modified in-place.</p>
+<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">record</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#WarningFilter.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.WarningFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs the filtering of records.</p>
 </dd></dl>
 
 </dd></dl>
@@ -243,12 +421,14 @@ yes. If deemed appropriate, the record may be modified in-place.</p>
 <dl class="py function">
 <dt id="akit.xlogging.foundations.format_log_section_header">
 <code class="sig-prename descclassname">akit.xlogging.foundations.</code><code class="sig-name descname">format_log_section_header</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">title</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#format_log_section_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.format_log_section_header" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Formats a log section header by centering the title inside of the section marker character string.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="akit.xlogging.foundations.getAutomatonKitLogger">
 <code class="sig-prename descclassname">akit.xlogging.foundations.</code><code class="sig-name descname">getAutomatonKitLogger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/foundations.html#getAutomatonKitLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.foundations.getAutomatonKitLogger" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Gets the automation kit logger.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="akit.xlogging.foundations.logging_create_branch_logger">
@@ -348,7 +528,7 @@ message along with the information collected by the diagnostic function.</p>
 
 <dl class="py class">
 <dt id="akit.xlogging.scopemonitoring.ScopeMonitor">
-<em class="property">class </em><code class="sig-prename descclassname">akit.xlogging.scopemonitoring.</code><code class="sig-name descname">ScopeMonitor</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/scopemonitoring.html#ScopeMonitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.scopemonitoring.ScopeMonitor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.xlogging.scopemonitoring.</code><code class="sig-name descname">ScopeMonitor</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">_args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">_kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/scopemonitoring.html#ScopeMonitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.scopemonitoring.ScopeMonitor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The <a class="reference internal" href="#akit.xlogging.scopemonitoring.ScopeMonitor" title="akit.xlogging.scopemonitoring.ScopeMonitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScopeMonitor</span></code></a> object is utilized to provide monitoring of threads that are entering
 sections of code that might have a tendency to block and cause disruptions in automation processes.</p>
@@ -382,8 +562,14 @@ code in a timely manner.</p>
 
 <dl class="py method">
 <dt id="akit.xlogging.scopemonitoring.ScopeMonitor.register_monitor">
-<code class="sig-name descname">register_monitor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">monitor</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/scopemonitoring.html#ScopeMonitor.register_monitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.scopemonitoring.ScopeMonitor.register_monitor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">register_monitor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">monitor</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#akit.xlogging.scopemonitoring.MonitoredScope" title="akit.xlogging.scopemonitoring.MonitoredScope">akit.xlogging.scopemonitoring.MonitoredScope</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xlogging/scopemonitoring.html#ScopeMonitor.register_monitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xlogging.scopemonitoring.ScopeMonitor.register_monitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a monitor context with the <a class="reference internal" href="#akit.xlogging.scopemonitoring.ScopeMonitor" title="akit.xlogging.scopemonitoring.ScopeMonitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScopeMonitor</span></code></a> singleton.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>monitor</strong> – The monitor context to add to the the list of monitored scopes.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -394,79 +580,59 @@ code in a timely manner.</p>
 </div>
 
 
+           </div>
+           
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">Automation Kit</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">akit</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="akit.html">akit package</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">akit</a><ul>
-  <li><a href="akit.html">akit package</a><ul>
-      <li>Previous: <a href="akit.testing.html" title="previous chapter">akit.testing package</a></li>
-      <li>Next: <a href="akit.xthreading.html" title="next chapter">akit.xthreading package</a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="akit.xthreading.html" class="btn btn-neutral float-right" title="akit.xthreading package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="akit.testing.html" class="btn btn-neutral float-left" title="akit.testing package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+  
 
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Myron W. Walker
 
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Myron W. Walker.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/_apidoc/akit.xlogging.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
 
-    
+    </section>
 
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-  </body>
+   
+
+</body>
 </html>

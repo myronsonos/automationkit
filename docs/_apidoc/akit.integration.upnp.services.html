@@ -1,37 +1,203 @@
 
-<!DOCTYPE html>
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>akit.integration.upnp.services package &#8212; Automation Kit 1.0.0.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>akit.integration.upnp.services package &mdash; Automation Kit 1.0.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="akit.integration.upnp.xml package" href="akit.integration.upnp.xml.html" />
-    <link rel="prev" title="akit.integration.upnp.protocols package" href="akit.integration.upnp.protocols.html" />
+    <link rel="prev" title="akit.integration.upnp.generator.dynamic package" href="akit.integration.upnp.generator.dynamic.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Automation Kit
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">akit</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="akit.html">akit package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="akit.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="akit.cli.html">akit.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.cryptography.html">akit.cryptography package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.datum.html">akit.datum package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.environment.html">akit.environment package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="akit.integration.html">akit.integration package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.mixins.html">akit.mixins package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.networking.html">akit.networking package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.scripts.html">akit.scripts package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.tasking.html">akit.tasking package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.templates.html">akit.templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.testing.html">akit.testing package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.xlogging.html">akit.xlogging package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.xthreading.html">akit.xthreading package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.aspects">akit.aspects module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.compat">akit.compat module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.exceptions">akit.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.extensible">akit.extensible module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.metadata">akit.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.paths">akit.paths module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.recorders">akit.recorders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.results">akit.results module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.taskbase">akit.taskbase module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.timeouts">akit.timeouts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xcollections">akit.xcollections module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xformatting">akit.xformatting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xinspect">akit.xinspect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xtime">akit.xtime module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Automation Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">akit</a> &raquo;</li>
+        
+          <li><a href="akit.html">akit package</a> &raquo;</li>
+        
+          <li><a href="akit.integration.html">akit.integration package</a> &raquo;</li>
+        
+          <li><a href="akit.integration.upnp.html">akit.integration.upnp package</a> &raquo;</li>
+        
+      <li>akit.integration.upnp.services package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/_apidoc/akit.integration.upnp.services.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="akit-integration-upnp-services-package">
 <h1>akit.integration.upnp.services package<a class="headerlink" href="#akit-integration-upnp-services-package" title="Permalink to this headline">¶</a></h1>
@@ -42,7 +208,7 @@
 <span id="akit-integration-upnp-services-upnpeventvar-module"></span><h2>akit.integration.upnp.services.upnpeventvar module<a class="headerlink" href="#module-akit.integration.upnp.services.upnpeventvar" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-upnpeventvar"></span><dl class="py class">
 <dt id="akit.integration.upnp.services.upnpeventvar.UpnpEventVar">
-<em class="property">class </em><code class="sig-prename descclassname">akit.integration.upnp.services.upnpeventvar.</code><code class="sig-name descname">UpnpEventVar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">service</span></em>, <em class="sig-param"><span class="n">value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">allowed_list</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">timestamp</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/upnp/services/upnpeventvar.html#UpnpEventVar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.integration.upnp.services.upnpeventvar.</code><code class="sig-name descname">UpnpEventVar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">service</span><span class="p">:</span> <span class="n">weakref</span></em>, <em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">allowed_list</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">timestamp</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.9)">datetime.datetime</a></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/upnp/services/upnpeventvar.html#UpnpEventVar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The UpnpEvent object is utilized to handle the storage and propagation
 of Upnp event values and updates and timeouts.</p>
@@ -105,14 +271,14 @@ stale and should be used with caution.</p>
 
 <dl class="py method">
 <dt id="akit.integration.upnp.services.upnpeventvar.UpnpEventVar.sync_read">
-<code class="sig-name descname">sync_read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/upnp/services/upnpeventvar.html#UpnpEventVar.sync_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar.sync_read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sync_read</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>Any<span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.9)">datetime.datetime</a><span class="p">, </span><a class="reference internal" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVarState" title="akit.integration.upnp.services.upnpeventvar.UpnpEventVarState">akit.integration.upnp.services.upnpeventvar.UpnpEventVarState</a><span class="p">]</span><a class="reference internal" href="../_modules/akit/integration/upnp/services/upnpeventvar.html#UpnpEventVar.sync_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar.sync_read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs a threadsafe read of the value, modified, and state members of a
 <a class="reference internal" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar" title="akit.integration.upnp.services.upnpeventvar.UpnpEventVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">UpnpEventVar</span></code></a> instance.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="akit.integration.upnp.services.upnpeventvar.UpnpEventVar.sync_update">
-<code class="sig-name descname">sync_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">sid</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">service_locked</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/upnp/services/upnpeventvar.html#UpnpEventVar.sync_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar.sync_update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sync_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">Any</span></em>, <em class="sig-param"><span class="n">expires</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.9)">datetime.datetime</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">service_locked</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/upnp/services/upnpeventvar.html#UpnpEventVar.sync_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar.sync_update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Peforms a threadsafe update of the value, modified and sid members of a
 <a class="reference internal" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar" title="akit.integration.upnp.services.upnpeventvar.UpnpEventVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">UpnpEventVar</span></code></a> instance.</p>
 </dd></dl>
@@ -125,7 +291,7 @@ stale and should be used with caution.</p>
 
 <dl class="py method">
 <dt id="akit.integration.upnp.services.upnpeventvar.UpnpEventVar.wait_for_update">
-<code class="sig-name descname">wait_for_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pre_modify_timestamp</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">60</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/upnp/services/upnpeventvar.html#UpnpEventVar.wait_for_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar.wait_for_update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">wait_for_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pre_modify_timestamp</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.9)">datetime.datetime</a></span></em>, <em class="sig-param"><span class="n">timeout</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">60</span></em>, <em class="sig-param"><span class="n">interval</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">2</span></em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/akit/integration/upnp/services/upnpeventvar.html#UpnpEventVar.wait_for_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar.wait_for_update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes a datetime timestamp that is taken before a modification is made that
 will cause a state variable update and waits for the modified timestamp of
 this <a class="reference internal" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar" title="akit.integration.upnp.services.upnpeventvar.UpnpEventVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">UpnpEventVar</span></code></a> instance to set to a timestamp that comes after the
@@ -133,10 +299,10 @@ pre modification timestamp.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>pre_modify_timestamp</strong> (<em>datetime</em>) – A timestamp taken from datetime.now() prior to engaging in
+<li><p><strong>pre_modify_timestamp</strong> – A timestamp taken from datetime.now() prior to engaging in
 an activity that will result in a state variable change.</p></li>
-<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – The time in seconds to wait for the update to occur.</p></li>
-<li><p><strong>interval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – The time interval in seconds to wait before attempting to retry and
+<li><p><strong>timeout</strong> – The time in seconds to wait for the update to occur.</p></li>
+<li><p><strong>interval</strong> – The time interval in seconds to wait before attempting to retry and
 check to see if the modified timestamp has changed.</p></li>
 </ul>
 </dd>
@@ -145,14 +311,14 @@ check to see if the modified timestamp has changed.</p></li>
 
 <dl class="py method">
 <dt id="akit.integration.upnp.services.upnpeventvar.UpnpEventVar.wait_for_value">
-<code class="sig-name descname">wait_for_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">60</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/upnp/services/upnpeventvar.html#UpnpEventVar.wait_for_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar.wait_for_value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">wait_for_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeout</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">60</span></em>, <em class="sig-param"><span class="n">interval</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">2</span></em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/akit/integration/upnp/services/upnpeventvar.html#UpnpEventVar.wait_for_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar.wait_for_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Waits for this <a class="reference internal" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVar" title="akit.integration.upnp.services.upnpeventvar.UpnpEventVar"><code class="xref py py-class docutils literal notranslate"><span class="pre">UpnpEventVar</span></code></a> instance to contain a value.  It constains a
 value once the modified timestamp has been set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – The time in seconds to wait for a value to be present.</p></li>
-<li><p><strong>interval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – The time interval in seconds to wait before attempting to retry and
+<li><p><strong>timeout</strong> – The time in seconds to wait for a value to be present.</p></li>
+<li><p><strong>interval</strong> – The time interval in seconds to wait before attempting to retry and
 check to see if the modified timestamp has been set.</p></li>
 </ul>
 </dd>
@@ -165,7 +331,7 @@ check to see if the modified timestamp has been set.</p></li>
 <dt id="akit.integration.upnp.services.upnpeventvar.UpnpEventVarState">
 <em class="property">class </em><code class="sig-prename descclassname">akit.integration.upnp.services.upnpeventvar.</code><code class="sig-name descname">UpnpEventVarState</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/upnp/services/upnpeventvar.html#UpnpEventVarState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVarState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.IntEnum" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></a></p>
-<p>An enumeration.</p>
+<p>An enumeration that indicates the state of the event variable.</p>
 <dl class="py attribute">
 <dt id="akit.integration.upnp.services.upnpeventvar.UpnpEventVarState.Stale">
 <code class="sig-name descname">Stale</code><em class="property"> = 2</em><a class="headerlink" href="#akit.integration.upnp.services.upnpeventvar.UpnpEventVarState.Stale" title="Permalink to this definition">¶</a></dt>
@@ -271,83 +437,59 @@ check to see if the modified timestamp has been set.</p></li>
 </div>
 
 
+           </div>
+           
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">Automation Kit</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">akit</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="akit.html">akit package</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">akit</a><ul>
-  <li><a href="akit.html">akit package</a><ul>
-  <li><a href="akit.integration.html">akit.integration package</a><ul>
-  <li><a href="akit.integration.upnp.html">akit.integration.upnp package</a><ul>
-      <li>Previous: <a href="akit.integration.upnp.protocols.html" title="previous chapter">akit.integration.upnp.protocols package</a></li>
-      <li>Next: <a href="akit.integration.upnp.xml.html" title="next chapter">akit.integration.upnp.xml package</a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="akit.integration.upnp.xml.html" class="btn btn-neutral float-right" title="akit.integration.upnp.xml package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="akit.integration.upnp.generator.dynamic.html" class="btn btn-neutral float-left" title="akit.integration.upnp.generator.dynamic package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+  
 
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Myron W. Walker
 
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Myron W. Walker.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/_apidoc/akit.integration.upnp.services.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
 
-    
+    </section>
 
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-  </body>
+   
+
+</body>
 </html>

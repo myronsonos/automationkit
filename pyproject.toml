@@ -22,6 +22,7 @@ dlipower = "^1.0.176"
 Werkzeug = "0.16.1"
 Flask = "^1.1.2"
 flask-restplus = "^0.13.0"
+sphinx-rtd-theme = "^0.5.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.6.0"

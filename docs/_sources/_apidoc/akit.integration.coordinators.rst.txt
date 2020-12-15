@@ -4,6 +4,22 @@ akit.integration.coordinators package
 Submodules
 ----------
 
+akit.integration.coordinators.coordinatorbase module
+----------------------------------------------------
+
+.. automodule:: akit.integration.coordinators.coordinatorbase
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+akit.integration.coordinators.musecoordinator module
+----------------------------------------------------
+
+.. automodule:: akit.integration.coordinators.musecoordinator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 akit.integration.coordinators.sshpoolcoordinator module
 -------------------------------------------------------
 

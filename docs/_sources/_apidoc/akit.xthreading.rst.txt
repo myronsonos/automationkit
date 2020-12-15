@@ -28,6 +28,14 @@ akit.xthreading.looperqueue module
    :undoc-members:
    :show-inheritance:
 
+akit.xthreading.readwritelock module
+------------------------------------
+
+.. automodule:: akit.xthreading.readwritelock
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

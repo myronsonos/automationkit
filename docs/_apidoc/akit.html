@@ -1,37 +1,197 @@
 
-<!DOCTYPE html>
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>akit package &#8212; Automation Kit 1.0.0.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>akit package &mdash; Automation Kit 1.0.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="akit.cryptography package" href="akit.cryptography.html" />
-    <link rel="prev" title="akit" href="modules.html" />
+    <link rel="next" title="akit.cli package" href="akit.cli.html" />
+    <link rel="prev" title="akit" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Automation Kit
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">akit</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">akit package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="akit.cli.html">akit.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.cryptography.html">akit.cryptography package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.datum.html">akit.datum package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.environment.html">akit.environment package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.html">akit.integration package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.mixins.html">akit.mixins package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.networking.html">akit.networking package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.scripts.html">akit.scripts package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.tasking.html">akit.tasking package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.templates.html">akit.templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.testing.html">akit.testing package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.xlogging.html">akit.xlogging package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.xthreading.html">akit.xthreading package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.aspects">akit.aspects module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.compat">akit.compat module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.exceptions">akit.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.extensible">akit.extensible module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.metadata">akit.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.paths">akit.paths module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.recorders">akit.recorders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.results">akit.results module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.taskbase">akit.taskbase module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.timeouts">akit.timeouts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.xcollections">akit.xcollections module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.xformatting">akit.xformatting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.xinspect">akit.xinspect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit.xtime">akit.xtime module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-akit">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Automation Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">akit</a> &raquo;</li>
+        
+      <li>akit package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/_apidoc/akit.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="akit-package">
 <h1>akit package<a class="headerlink" href="#akit-package" title="Permalink to this headline">¶</a></h1>
@@ -39,6 +199,12 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="akit.cli.html">akit.cli package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="akit.cli.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="akit.cli.html#module-akit.cli.akitcommand">akit.cli.akitcommand module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="akit.cli.html#module-akit.cli">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="akit.cryptography.html">akit.cryptography package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="akit.cryptography.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="akit.cryptography.html#module-akit.cryptography.pkey">akit.cryptography.pkey module</a></li>
@@ -55,6 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="akit.environment.html">akit.environment package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="akit.environment.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="akit.environment.html#module-akit.environment.activate">akit.environment.activate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="akit.environment.html#module-akit.environment.command">akit.environment.command module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="akit.environment.html#module-akit.environment.configuration">akit.environment.configuration module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="akit.environment.html#module-akit.environment.console">akit.environment.console module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="akit.environment.html#module-akit.environment.context">akit.environment.context module</a></li>
@@ -68,6 +235,8 @@
 <li class="toctree-l2"><a class="reference internal" href="akit.integration.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="akit.integration.agents.html">akit.integration.agents package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.agents.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.agents.html#module-akit.integration.agents.museagent">akit.integration.agents.museagent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.agents.html#module-akit.integration.agents.serialagent">akit.integration.agents.serialagent module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.agents.html#module-akit.integration.agents.sshagent">akit.integration.agents.sshagent module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.agents.html#module-akit.integration.agents">Module contents</a></li>
 </ul>
@@ -87,9 +256,20 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="akit.integration.coordinators.html">akit.integration.coordinators package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.coordinators.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="akit.integration.coordinators.html#module-akit.integration.coordinators.sshpoolcoordinator">akit.integration.coordinators.sshpoolcoordinator module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="akit.integration.coordinators.html#module-akit.integration.coordinators.upnpcoordinator">akit.integration.coordinators.upnpcoordinator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.coordinators.html#module-akit.integration.coordinators.coordinatorbase">akit.integration.coordinators.coordinatorbase module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.coordinators.html#module-akit.integration.coordinators.musecoordinator">akit.integration.coordinators.musecoordinator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.coordinators.html#akit-integration-coordinators-sshpoolcoordinator-module">akit.integration.coordinators.sshpoolcoordinator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.coordinators.html#akit-integration-coordinators-upnpcoordinator-module">akit.integration.coordinators.upnpcoordinator module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.coordinators.html#module-akit.integration.coordinators">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="akit.integration.landscaping.html">akit.integration.landscaping package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.landscaping.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.landscaping.html#module-akit.integration.landscaping.landscape">akit.integration.landscaping.landscape module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.landscaping.html#module-akit.integration.landscaping.landscapedescription">akit.integration.landscaping.landscapedescription module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.landscaping.html#module-akit.integration.landscaping.landscapedevice">akit.integration.landscaping.landscapedevice module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.landscaping.html#module-akit.integration.landscaping.landscapedeviceextension">akit.integration.landscaping.landscapedeviceextension module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.landscaping.html#module-akit.integration.landscaping">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="akit.integration.mdns.html">akit.integration.mdns package</a><ul>
@@ -103,21 +283,25 @@
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.mdns.html#module-akit.integration.mdns">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="akit.integration.serial.html">akit.integration.serial package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.serial.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.serial.html#module-akit.integration.serial.serialtelnet">akit.integration.serial.serialtelnet module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.serial.html#module-akit.integration.serial">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="akit.integration.upnp.html">akit.integration.upnp package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.upnp.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.upnp.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.upnp.html#module-akit.integration.upnp.paths">akit.integration.upnp.paths module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.upnp.html#module-akit.integration.upnp.soap">akit.integration.upnp.soap module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.upnp.html#module-akit.integration.upnp.upnperrors">akit.integration.upnp.upnperrors module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="akit.integration.upnp.html#module-akit.integration.upnp.upnpfactory">akit.integration.upnp.upnpfactory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.upnp.html#akit-integration-upnp-upnpfactory-module">akit.integration.upnp.upnpfactory module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.upnp.html#module-akit.integration.upnp.upnpprotocol">akit.integration.upnp.upnpprotocol module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="akit.integration.upnp.html#module-akit.integration.upnp">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="akit.integration.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="akit.integration.html#module-akit.integration.landscaping">akit.integration.landscaping module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="akit.integration.html#module-akit.integration">Module contents</a></li>
 </ul>
 </li>
@@ -144,6 +328,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="akit.tasking.html">akit.tasking package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="akit.tasking.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="akit.tasking.html#module-akit.tasking.task">akit.tasking.task module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="akit.tasking.html#module-akit.tasking">Module contents</a></li>
 </ul>
 </li>
@@ -176,6 +362,7 @@
 <li class="toctree-l2"><a class="reference internal" href="akit.xthreading.html#module-akit.xthreading.looper">akit.xthreading.looper module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="akit.xthreading.html#module-akit.xthreading.looperpool">akit.xthreading.looperpool module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="akit.xthreading.html#module-akit.xthreading.looperqueue">akit.xthreading.looperqueue module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="akit.xthreading.html#module-akit.xthreading.readwritelock">akit.xthreading.readwritelock module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="akit.xthreading.html#module-akit.xthreading">Module contents</a></li>
 </ul>
 </li>
@@ -189,7 +376,7 @@
 <span id="akit-aspects-module"></span><h2>akit.aspects module<a class="headerlink" href="#module-akit.aspects" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-aspects"></span><dl class="py class">
 <dt id="akit.aspects.Aspects">
-<em class="property">class </em><code class="sig-prename descclassname">akit.aspects.</code><code class="sig-name descname">Aspects</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">run_pattern</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">completion_timeout</span><span class="o">=</span><span class="default_value">600</span></em>, <em class="sig-param"><span class="n">completion_interval</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">inactivity_timeout</span><span class="o">=</span><span class="default_value">600</span></em>, <em class="sig-param"><span class="n">inactivity_interval</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">monitor_delay</span><span class="o">=</span><span class="default_value">30</span></em>, <em class="sig-param"><span class="n">logging_pattern</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/aspects.html#Aspects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.aspects.Aspects" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.aspects.</code><code class="sig-name descname">Aspects</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">run_pattern</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#akit.aspects.RunPattern" title="akit.aspects.RunPattern">akit.aspects.RunPattern</a></span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">completion_timeout</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">600</span></em>, <em class="sig-param"><span class="n">completion_interval</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">10</span></em>, <em class="sig-param"><span class="n">inactivity_timeout</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">600</span></em>, <em class="sig-param"><span class="n">inactivity_interval</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">5</span></em>, <em class="sig-param"><span class="n">monitor_delay</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">30</span></em>, <em class="sig-param"><span class="n">logging_pattern</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#akit.aspects.LoggingPattern" title="akit.aspects.LoggingPattern">akit.aspects.LoggingPattern</a></span> <span class="o">=</span> <span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/aspects.html#Aspects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.aspects.Aspects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Aspects are utilized with the interop APIs and agents such as the <code class="xref py py-class docutils literal notranslate"><span class="pre">SSHAgent</span></code> class in order
 to modify the behavior of APIs with respect to retry parameter such as timeout, interval, looping patterns
@@ -201,6 +388,7 @@ or constant you can  pass to multiple APIs</p>
 <dt id="akit.aspects.LoggingPattern">
 <em class="property">class </em><code class="sig-prename descclassname">akit.aspects.</code><code class="sig-name descname">LoggingPattern</code><a class="reference internal" href="../_modules/akit/aspects.html#LoggingPattern"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.aspects.LoggingPattern" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A logging pattern to use when logging commands.</p>
 <dl class="py attribute">
 <dt id="akit.aspects.LoggingPattern.ALL_RESULTS">
 <code class="sig-name descname">ALL_RESULTS</code><em class="property"> = 0</em><a class="headerlink" href="#akit.aspects.LoggingPattern.ALL_RESULTS" title="Permalink to this definition">¶</a></dt>
@@ -222,6 +410,7 @@ or constant you can  pass to multiple APIs</p>
 <dt id="akit.aspects.RunPattern">
 <em class="property">class </em><code class="sig-prename descclassname">akit.aspects.</code><code class="sig-name descname">RunPattern</code><a class="reference internal" href="../_modules/akit/aspects.html#RunPattern"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.aspects.RunPattern" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A run pattern to use when running commands.</p>
 <dl class="py attribute">
 <dt id="akit.aspects.RunPattern.RUN_UNTIL_SUCCESS">
 <code class="sig-name descname">RUN_UNTIL_SUCCESS</code><em class="property"> = 1</em><a class="headerlink" href="#akit.aspects.RunPattern.RUN_UNTIL_SUCCESS" title="Permalink to this definition">¶</a></dt>
@@ -478,8 +667,15 @@ utilized.</p>
 </dd></dl>
 
 <dl class="py exception">
+<dt id="akit.exceptions.AKitSetupError">
+<em class="property">exception </em><code class="sig-prename descclassname">akit.exceptions.</code><code class="sig-name descname">AKitSetupError</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/exceptions.html#AKitSetupError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.exceptions.AKitSetupError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#akit.exceptions.AKitRuntimeError" title="akit.exceptions.AKitRuntimeError"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.exceptions.AKitRuntimeError</span></code></a></p>
+<p>An error occured during the setup of a Task, Test, Step or Process</p>
+</dd></dl>
+
+<dl class="py exception">
 <dt id="akit.exceptions.AKitSkipError">
-<em class="property">exception </em><code class="sig-prename descclassname">akit.exceptions.</code><code class="sig-name descname">AKitSkipError</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/exceptions.html#AKitSkipError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.exceptions.AKitSkipError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">akit.exceptions.</code><code class="sig-name descname">AKitSkipError</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">reason</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/exceptions.html#AKitSkipError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.exceptions.AKitSkipError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#akit.exceptions.AKitRuntimeError" title="akit.exceptions.AKitRuntimeError"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.exceptions.AKitRuntimeError</span></code></a></p>
 <p>This error is raised when a test indicates it wants to be skipped while being run</p>
 </dd></dl>
@@ -504,29 +700,26 @@ extension classes from base classes</p>
 
 <dl class="py function">
 <dt id="akit.extensible.collect_extensions_under_code_container">
-<code class="sig-prename descclassname">akit.extensible.</code><code class="sig-name descname">collect_extensions_under_code_container</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">container</span></em>, <em class="sig-param"><span class="n">ext_base_type</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.9)">type</a><span class="p">]</span><a class="reference internal" href="../_modules/akit/extensible.html#collect_extensions_under_code_container"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.extensible.collect_extensions_under_code_container" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">akit.extensible.</code><code class="sig-name descname">collect_extensions_under_code_container</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">container</span><span class="p">:</span> <span class="n">module</span></em>, <em class="sig-param"><span class="n">ext_base_type</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.9)">type</a></span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.9)">type</a><span class="p">]</span><a class="reference internal" href="../_modules/akit/extensible.html#collect_extensions_under_code_container"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.extensible.collect_extensions_under_code_container" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scans the code <cite>container</cite> provide and all descendant containers for classes
 that inherit from the type passed as <cite>ext_base_type</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>container</strong> (<em>ModuleType</em>) – A python package or module to scan for extension types.</p></li>
-<li><p><strong>ext_base_type</strong> (<em>Type</em>) – A python class type that serves as a base class to identify other
+<li><p><strong>container</strong> – A python package or module to scan for extension types.</p></li>
+<li><p><strong>ext_base_type</strong> – A python class type that serves as a base class to identify other
 types that are a type of extension.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A list of types found that inherit from <cite>ext_base_type</cite></p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[Type]</p>
-</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="akit.extensible.generate_extension_key">
-<code class="sig-prename descclassname">akit.extensible.</code><code class="sig-name descname">generate_extension_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">parts</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><a class="reference internal" href="../_modules/akit/extensible.html#generate_extension_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.extensible.generate_extension_key" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">akit.extensible.</code><code class="sig-name descname">generate_extension_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">parts</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><a class="reference internal" href="../_modules/akit/extensible.html#generate_extension_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.extensible.generate_extension_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a unique key that identifies an extension type based on where
 it was found in a hiearchy of code containers.</p>
 <dl class="field-list simple">
@@ -535,9 +728,6 @@ it was found in a hiearchy of code containers.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A unique path based identifier for a type.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -586,8 +776,8 @@ directory has an __init__.py file and if not it adds one.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>package_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The direcotry to represent as a package.</p></li>
-<li><p><strong>package_title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Optional title to be written into the documentation string in the package file.</p></li>
+<li><p><strong>package_dir</strong> – The direcotry to represent as a package.</p></li>
+<li><p><strong>package_title</strong> – Optional title to be written into the documentation string in the package file.</p></li>
 </ul>
 </dd>
 </dl>
@@ -595,18 +785,15 @@ directory has an __init__.py file and if not it adds one.</p>
 
 <dl class="py function">
 <dt id="akit.paths.get_directory_for_code_container">
-<code class="sig-prename descclassname">akit.paths.</code><code class="sig-name descname">get_directory_for_code_container</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">container</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/paths.html#get_directory_for_code_container"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.paths.get_directory_for_code_container" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">akit.paths.</code><code class="sig-name descname">get_directory_for_code_container</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">container</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><a class="reference internal" href="../_modules/akit/paths.html#get_directory_for_code_container"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.paths.get_directory_for_code_container" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the directory for a code container (module or package)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>container</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The code container you want to get a directory for.</p>
+<dd class="field-odd"><p><strong>container</strong> – The code container you want to get a directory for.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The string that represents the parent directory of the code
 container specified.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -618,32 +805,26 @@ container specified.</p>
 the provided path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – A path which you want to expand to a full path, expanding the
+<dd class="field-odd"><p><strong>path</strong> – A path which you want to expand to a full path, expanding the
 user, variables and relative path syntax.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The expanded path</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="akit.paths.get_path_for_artifacts">
-<code class="sig-prename descclassname">akit.paths.</code><code class="sig-name descname">get_path_for_artifacts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><a class="reference internal" href="../_modules/akit/paths.html#get_path_for_artifacts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.paths.get_path_for_artifacts" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">akit.paths.</code><code class="sig-name descname">get_path_for_artifacts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><a class="reference internal" href="../_modules/akit/paths.html#get_path_for_artifacts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.paths.get_path_for_artifacts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a path in the form (testresultdir)/artifacts/(label)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – A label to associate with the collection of artifacts. The label is used for
+<dd class="field-odd"><p><strong>label</strong> – A label to associate with the collection of artifacts. The label is used for
 the name of the artifact container folder.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A path that is descendant from (testresultdir)/artifacts</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -656,18 +837,15 @@ the name of the artifact container folder.</p>
 
 <dl class="py function">
 <dt id="akit.paths.normalize_name_for_path">
-<code class="sig-prename descclassname">akit.paths.</code><code class="sig-name descname">normalize_name_for_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><a class="reference internal" href="../_modules/akit/paths.html#normalize_name_for_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.paths.normalize_name_for_path" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">akit.paths.</code><code class="sig-name descname">normalize_name_for_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><a class="reference internal" href="../_modules/akit/paths.html#normalize_name_for_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.paths.normalize_name_for_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalizes a path string by replacing “,.:;” with space and then removing
 white space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – A name as a str which is to be normalized to allow it to be used in a path.</p>
+<dd class="field-odd"><p><strong>name</strong> – A name as a str which is to be normalized to allow it to be used in a path.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The normalized string which can be used in a path.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -678,28 +856,42 @@ white space.</p>
 <span class="target" id="module-recorders"></span><dl class="py class">
 <dt id="akit.recorders.JsonResultRecorder">
 <em class="property">class </em><code class="sig-prename descclassname">akit.recorders.</code><code class="sig-name descname">JsonResultRecorder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">runid</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">start</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.9)">datetime.datetime</a></span></em>, <em class="sig-param"><span class="n">summary_filename</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">result_filename</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">branch</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">build</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">flavor</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/recorders.html#JsonResultRecorder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.recorders.JsonResultRecorder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#akit.recorders.ResultRecorder" title="akit.recorders.ResultRecorder"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.recorders.ResultRecorder</span></code></a></p>
 <p>The <a class="reference internal" href="#akit.recorders.JsonResultRecorder" title="akit.recorders.JsonResultRecorder"><code class="xref py py-class docutils literal notranslate"><span class="pre">JsonResultRecorder</span></code></a> object records test results in JSON format.</p>
 <dl class="py method">
-<dt id="akit.recorders.JsonResultRecorder.finalize">
-<code class="sig-name descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/recorders.html#JsonResultRecorder.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.recorders.JsonResultRecorder.finalize" title="Permalink to this definition">¶</a></dt>
+<dt id="akit.recorders.JsonResultRecorder.update_summary">
+<code class="sig-name descname">update_summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/recorders.html#JsonResultRecorder.update_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.recorders.JsonResultRecorder.update_summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes out an update to the test run summary file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="akit.recorders.ResultRecorder">
+<em class="property">class </em><code class="sig-prename descclassname">akit.recorders.</code><code class="sig-name descname">ResultRecorder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">runid</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">start</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.9)">datetime.datetime</a></span></em>, <em class="sig-param"><span class="n">summary_filename</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">result_filename</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">branch</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">build</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">flavor</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/recorders.html#ResultRecorder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.recorders.ResultRecorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The <a class="reference internal" href="#akit.recorders.ResultRecorder" title="akit.recorders.ResultRecorder"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultRecorder</span></code></a> object is the base class object that establishes the API patterns
+for recorders of different formats to use when implementing a test result recorder.</p>
+<dl class="py method">
+<dt id="akit.recorders.ResultRecorder.finalize">
+<code class="sig-name descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/recorders.html#ResultRecorder.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.recorders.ResultRecorder.finalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finalizes the test results counters and status of the test run.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="akit.recorders.JsonResultRecorder.record">
-<code class="sig-name descname">record</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">result</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#akit.results.ResultType" title="akit.results.ResultType">akit.results.ResultType</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/recorders.html#JsonResultRecorder.record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.recorders.JsonResultRecorder.record" title="Permalink to this definition">¶</a></dt>
+<dt id="akit.recorders.ResultRecorder.record">
+<code class="sig-name descname">record</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">result</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#akit.results.ResultType" title="akit.results.ResultType">akit.results.ResultType</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/recorders.html#ResultRecorder.record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.recorders.ResultRecorder.record" title="Permalink to this definition">¶</a></dt>
 <dd><p>Records an entry for the result object that is passed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>result</strong> (<a class="reference internal" href="#akit.results.ResultType" title="akit.results.ResultType"><em>ResultType</em></a>) – A result object to be recorded.</p>
+<dd class="field-odd"><p><strong>result</strong> – A result object to be recorded.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="akit.recorders.JsonResultRecorder.update_summary">
-<code class="sig-name descname">update_summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/recorders.html#JsonResultRecorder.update_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.recorders.JsonResultRecorder.update_summary" title="Permalink to this definition">¶</a></dt>
+<dt id="akit.recorders.ResultRecorder.update_summary">
+<code class="sig-name descname">update_summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/recorders.html#ResultRecorder.update_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.recorders.ResultRecorder.update_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes out an update to the test run summary file.</p>
 </dd></dl>
 
@@ -712,7 +904,7 @@ white space.</p>
 <dt id="akit.results.ResultCode">
 <em class="property">class </em><code class="sig-prename descclassname">akit.results.</code><code class="sig-name descname">ResultCode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultCode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultCode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.IntEnum" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></a></p>
-<p>An enumeration.</p>
+<p>Enumeration that summarizes a result.</p>
 <dl class="py attribute">
 <dt id="akit.results.ResultCode.ERRORED">
 <code class="sig-name descname">ERRORED</code><em class="property"> = 3</em><a class="headerlink" href="#akit.results.ResultCode.ERRORED" title="Permalink to this definition">¶</a></dt>
@@ -747,103 +939,134 @@ white space.</p>
 
 <dl class="py class">
 <dt id="akit.results.ResultContainer">
-<em class="property">class </em><code class="sig-prename descclassname">akit.results.</code><code class="sig-name descname">ResultContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">result_inst</span></em>, <em class="sig-param"><span class="n">result_name</span></em>, <em class="sig-param"><span class="n">result_type</span></em>, <em class="sig-param"><span class="n">parent_inst</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.results.</code><code class="sig-name descname">ResultContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">result_inst</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">result_name</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">result_type</span></em>, <em class="sig-param"><span class="n">parent_inst</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The <a class="reference internal" href="#akit.results.ResultContainer" title="akit.results.ResultContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultContainer</span></code></a> instances are container nodes that are used to link result nodes in the
+result tree.  The <a class="reference internal" href="#akit.results.ResultContainer" title="akit.results.ResultContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultContainer</span></code></a> nodes do not contain result data but link data so the data can
+be computed on demand.</p>
 <dl class="py method">
 <dt id="akit.results.ResultContainer.parent_inst">
 <em class="property">property </em><code class="sig-name descname">parent_inst</code><a class="headerlink" href="#akit.results.ResultContainer.parent_inst" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The unique identifier fo this result nodes parent.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultContainer.result_inst">
 <em class="property">property </em><code class="sig-name descname">result_inst</code><a class="headerlink" href="#akit.results.ResultContainer.result_inst" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The unique identifier to link this result container with its children.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultContainer.result_name">
 <em class="property">property </em><code class="sig-name descname">result_name</code><a class="headerlink" href="#akit.results.ResultContainer.result_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The name of the result container.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultContainer.result_type">
 <em class="property">property </em><code class="sig-name descname">result_type</code><a class="headerlink" href="#akit.results.ResultContainer.result_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The type <a class="reference internal" href="#akit.results.ResultType" title="akit.results.ResultType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultType</span></code></a> type code of result container.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultContainer.to_json">
-<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultContainer.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultContainer.to_json" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><a class="reference internal" href="../_modules/akit/results.html#ResultContainer.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultContainer.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convers the result container instance to JSON format</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt id="akit.results.ResultNode">
-<em class="property">class </em><code class="sig-prename descclassname">akit.results.</code><code class="sig-name descname">ResultNode</code><span class="sig-paren">(</span><em class="sig-param">result_inst</em>, <em class="sig-param">result_name</em>, <em class="sig-param">result_type</em>, <em class="sig-param">result_code=&lt;ResultCode.UNSET: 0&gt;</em>, <em class="sig-param">parent_inst=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.results.</code><code class="sig-name descname">ResultNode</code><span class="sig-paren">(</span><em class="sig-param">result_inst: str</em>, <em class="sig-param">result_name: str</em>, <em class="sig-param">result_type: akit.results.ResultType</em>, <em class="sig-param">result_code: akit.results.ResultCode = &lt;ResultCode.UNSET: 0&gt;</em>, <em class="sig-param">parent_inst: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The <a class="reference internal" href="#akit.results.ResultNode" title="akit.results.ResultNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultNode</span></code></a> object marks a result node that contains results from a task, test or step in a result tree.  The
+result trees only store results that contain result data not associated with the hierarchy of the results.  The result tree
+does not contain results that can be computed by analyzing the relationship of the nodes in the tree.  The nodes that are
+computed are <a class="reference internal" href="#akit.results.ResultContainer" title="akit.results.ResultContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultContainer</span></code></a> instances and do not contain instance result data.</p>
 <dl class="py method">
 <dt id="akit.results.ResultNode.add_error">
-<code class="sig-name descname">add_error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">err_lines</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode.add_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.add_error" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">add_error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">err_lines</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode.add_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.add_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds error trace lines for a single error to this result node.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultNode.add_failure">
-<code class="sig-name descname">add_failure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fail_lines</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode.add_failure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.add_failure" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">add_failure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fail_lines</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode.add_failure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.add_failure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds failure trace lines for a single failure to this result node.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultNode.add_warning">
-<code class="sig-name descname">add_warning</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warn_lines</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode.add_warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.add_warning" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">add_warning</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warn_lines</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode.add_warning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.add_warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds warning trace lines for a single warning to this result node.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultNode.finalize">
 <code class="sig-name descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.finalize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Finalizes the <a class="reference internal" href="#akit.results.ResultCode" title="akit.results.ResultCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultCode</span></code></a> code for this result node based on whether
+there were any errors or failures added to the node.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultNode.mark_passed">
 <code class="sig-name descname">mark_passed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode.mark_passed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.mark_passed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Marks this result with a <a class="reference internal" href="#akit.results.ResultCode" title="akit.results.ResultCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultCode</span></code></a> of ResultCode.PASSED</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultNode.mark_skip">
-<code class="sig-name descname">mark_skip</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">reason</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode.mark_skip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.mark_skip" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">mark_skip</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">reason</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode.mark_skip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.mark_skip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks this result with a <a class="reference internal" href="#akit.results.ResultCode" title="akit.results.ResultCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultCode</span></code></a> of ResultCode.SKIPPED</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>reason</strong> – The reason the task or test this result is associated with was skipped.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultNode.parent_inst">
 <em class="property">property </em><code class="sig-name descname">parent_inst</code><a class="headerlink" href="#akit.results.ResultNode.parent_inst" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The unique identifier fo this result nodes parent.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultNode.result_code">
 <em class="property">property </em><code class="sig-name descname">result_code</code><a class="headerlink" href="#akit.results.ResultNode.result_code" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The type <a class="reference internal" href="#akit.results.ResultType" title="akit.results.ResultType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultType</span></code></a> type code of result container.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultNode.result_inst">
 <em class="property">property </em><code class="sig-name descname">result_inst</code><a class="headerlink" href="#akit.results.ResultNode.result_inst" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The unique identifier to link this result container with its children.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultNode.result_name">
 <em class="property">property </em><code class="sig-name descname">result_name</code><a class="headerlink" href="#akit.results.ResultNode.result_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The name of the result item.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultNode.result_type">
 <em class="property">property </em><code class="sig-name descname">result_type</code><a class="headerlink" href="#akit.results.ResultNode.result_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The <a class="reference internal" href="#akit.results.ResultType" title="akit.results.ResultType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultType</span></code></a> code associated with this result node.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultNode.set_documentation">
 <code class="sig-name descname">set_documentation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">docstr</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode.set_documentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.set_documentation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sets the documentation string associated with this result node.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.results.ResultNode.to_json">
-<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultNode.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.to_json" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><a class="reference internal" href="../_modules/akit/results.html#ResultNode.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultNode.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convers the result node instance to JSON format</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -851,7 +1074,7 @@ white space.</p>
 <dt id="akit.results.ResultType">
 <em class="property">class </em><code class="sig-prename descclassname">akit.results.</code><code class="sig-name descname">ResultType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/results.html#ResultType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.results.ResultType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.IntEnum" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></a></p>
-<p>An enumeration.</p>
+<p>Enumeration to mark the type of result.</p>
 <dl class="py attribute">
 <dt id="akit.results.ResultType.JOB">
 <code class="sig-name descname">JOB</code><em class="property"> = 0</em><a class="headerlink" href="#akit.results.ResultType.JOB" title="Permalink to this definition">¶</a></dt>
@@ -954,16 +1177,13 @@ to lower case.</p>
 to perform a case insensative dictionary get item.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><em>bytes</em></a>) – A key value to use to get and return the object stored under the key.</p>
+<dd class="field-odd"><p><strong>key</strong> – A key value to use to get and return the object stored under the key.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The object associated with the key provided.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)">object</a></p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p>KeyError</p>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p>KeyError</p>
 </dd>
 </dl>
 </dd></dl>
@@ -974,7 +1194,7 @@ to perform a case insensative dictionary get item.</p>
 <dd><p>Converts a key to a lower case string so case insensative comparisons can be made.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><em>bytes</em></a>) – A key value to check to see if an object is stored under the key.</p>
+<dd class="field-odd"><p><strong>key</strong> – A key value to check to see if an object is stored under the key.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -986,30 +1206,27 @@ to perform a case insensative dictionary get item.</p>
 to perform a case insensative dictionary pop item.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><em>bytes</em></a>) – A key value to use to pop and return the object stored under the key.</p>
+<dd class="field-odd"><p><strong>key</strong> – A key value to use to pop and return the object stored under the key.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The object associated with the key provided.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)">object</a></p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p>KeyError</p>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p>KeyError</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="akit.xcollections.CaseInsensitiveBytesDict.setdefault">
-<code class="sig-name descname">setdefault</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)">bytes</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xcollections.html#CaseInsensitiveBytesDict.setdefault"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xcollections.CaseInsensitiveBytesDict.setdefault" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setdefault</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)">bytes</a></span></em>, <em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">Any</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xcollections.html#CaseInsensitiveBytesDict.setdefault"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xcollections.CaseInsensitiveBytesDict.setdefault" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overrides the <a href="#id5"><span class="problematic" id="id6">:method:`setdefault`</span></a> method providing a key conversion in order
 to perform a case insensative dictionary setdefault for the given key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><em>bytes</em></a>) – A key value to use to store the object stored under the key.</p></li>
-<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><em>object</em></a>) – The default value to store with the key.</p></li>
+<li><p><strong>key</strong> – A key value to use to store the object stored under the key.</p></li>
+<li><p><strong>value</strong> – The default value to store with the key.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1034,21 +1251,18 @@ way.  It accomplishes this by converting all ascii characters in a key
 to lower case.</p>
 <dl class="py method">
 <dt id="akit.xcollections.CaseInsensitiveStringDict.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xcollections.html#CaseInsensitiveStringDict.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xcollections.CaseInsensitiveStringDict.get" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/akit/xcollections.html#CaseInsensitiveStringDict.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xcollections.CaseInsensitiveStringDict.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overrides the <a href="#id9"><span class="problematic" id="id10">:method:`get`</span></a> method providing a key conversion in order
 to perform a case insensative dictionary get item.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – A key value to use to get and return the object stored under the key.</p>
+<dd class="field-odd"><p><strong>key</strong> – A key value to use to get and return the object stored under the key.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The object associated with the key provided.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)">object</a></p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p>KeyError</p>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p>KeyError</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1059,42 +1273,39 @@ to perform a case insensative dictionary get item.</p>
 <dd><p>Converts a key to a lower case string so case insensative comparisons can be made.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – A key value to check to see if an object is stored under the key.</p>
+<dd class="field-odd"><p><strong>key</strong> – A key value to check to see if an object is stored under the key.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="akit.xcollections.CaseInsensitiveStringDict.pop">
-<code class="sig-name descname">pop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xcollections.html#CaseInsensitiveStringDict.pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xcollections.CaseInsensitiveStringDict.pop" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/akit/xcollections.html#CaseInsensitiveStringDict.pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xcollections.CaseInsensitiveStringDict.pop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overrides the <a href="#id11"><span class="problematic" id="id12">:method:`pop`</span></a> method providing a key conversion in order
 to perform a case insensative dictionary pop item.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – A key value to use to pop and return the object stored under the key.</p>
+<dd class="field-odd"><p><strong>key</strong> – A key value to use to pop and return the object stored under the key.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The object associated with the key provided.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)">object</a></p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p>KeyError</p>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p>KeyError</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="akit.xcollections.CaseInsensitiveStringDict.setdefault">
-<code class="sig-name descname">setdefault</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xcollections.html#CaseInsensitiveStringDict.setdefault"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xcollections.CaseInsensitiveStringDict.setdefault" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setdefault</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">Any</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xcollections.html#CaseInsensitiveStringDict.setdefault"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xcollections.CaseInsensitiveStringDict.setdefault" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overrides the <a href="#id13"><span class="problematic" id="id14">:method:`setdefault`</span></a> method providing a key conversion in order
 to perform a case insensative dictionary setdefault for the given key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – A key value to use to store the object stored under the key.</p></li>
-<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><em>object</em></a>) – The default value to store with the key.</p></li>
+<li><p><strong>key</strong> – A key value to use to store the object stored under the key.</p></li>
+<li><p><strong>value</strong> – The default value to store with the key.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1117,8 +1328,8 @@ and inserts the ‘item’ parameter into the list in the correct order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ordered_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – The sorted list to insert into.</p></li>
-<li><p><strong>item</strong> (<em>Any</em>) – The item to insert into the list.</p></li>
+<li><p><strong>ordered_list</strong> – The sorted list to insert into.</p></li>
+<li><p><strong>item</strong> – The item to insert into the list.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1141,16 +1352,13 @@ to the specified level using ‘indent’ spaces for each level.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The text content to split into lines and then indent.</p></li>
-<li><p><strong>level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The integer level number to indent to.</p></li>
-<li><p><strong>indent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of spaces to indent for each level.</p></li>
+<li><p><strong>msg</strong> – The text content to split into lines and then indent.</p></li>
+<li><p><strong>level</strong> – The integer level number to indent to.</p></li>
+<li><p><strong>indent</strong> – The number of spaces to indent for each level.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The indenting content</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1163,18 +1371,37 @@ to the specified level using ‘indent’ spaces for each level.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The text content to split into lines and then indent.</p></li>
-<li><p><strong>level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The integer level number to indent to.</p></li>
-<li><p><strong>indent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of spaces to indent for each level.</p></li>
+<li><p><strong>msg</strong> – The text content to split into lines and then indent.</p></li>
+<li><p><strong>level</strong> – The integer level number to indent to.</p></li>
+<li><p><strong>indent</strong> – The number of spaces to indent for each level.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The indenting lines</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list of str</p>
-</dd>
 </dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-akit.xinspect">
+<span id="akit-xinspect-module"></span><h2>akit.xinspect module<a class="headerlink" href="#module-akit.xinspect" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-xinspect"></span><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The modules that are named <cite>xsomething</cite> like this module are prefixed with an <cite>x</cite> character to
+indicate they extend the functionality of a base python module and the <cite>x</cite> is pre-pended to
+prevent module name collisions with python modules.</p>
+</div>
+<dl class="py function">
+<dt id="akit.xinspect.get_caller_function_name">
+<code class="sig-prename descclassname">akit.xinspect.</code><code class="sig-name descname">get_caller_function_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xinspect.html#get_caller_function_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xinspect.get_caller_function_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the function name of the calling function which is the parent of the function calling
+get_caller_function_name or returns None if there is not stack frame available.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="akit.xinspect.get_current_function_name">
+<code class="sig-prename descclassname">akit.xinspect.</code><code class="sig-name descname">get_current_function_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xinspect.html#get_current_function_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xinspect.get_current_function_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the function name of the current function which is calling get_current_function_name.</p>
 </dd></dl>
 
 </div>
@@ -1206,13 +1433,10 @@ prevent module name collisions with python modules.</p>
 <dd><p>Format the time in seconds as a fractional in seconds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tsecs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Time in seconds as a float.</p>
+<dd class="field-odd"><p><strong>tsecs</strong> – Time in seconds as a float.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Formatted time in (seconds).(fractions of seconds)</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1224,15 +1448,12 @@ prevent module name collisions with python modules.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dtstr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The date in the form of a date time string.</p></li>
-<li><p><strong>datetime_format</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The format string to when parsing the datetime string.</p></li>
+<li><p><strong>dtstr</strong> – The date in the form of a date time string.</p></li>
+<li><p><strong>datetime_format</strong> – The format string to when parsing the datetime string.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The datetime from the parsed string.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1244,77 +1465,59 @@ prevent module name collisions with python modules.</p>
 </div>
 
 
+           </div>
+           
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">Automation Kit</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">akit</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">akit package</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">akit</a><ul>
-      <li>Previous: <a href="modules.html" title="previous chapter">akit</a></li>
-      <li>Next: <a href="akit.cryptography.html" title="next chapter">akit.cryptography package</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="akit.cli.html" class="btn btn-neutral float-right" title="akit.cli package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modules.html" class="btn btn-neutral float-left" title="akit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+  
 
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Myron W. Walker
 
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Myron W. Walker.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/_apidoc/akit.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
 
-    
+    </section>
 
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-  </body>
+   
+
+</body>
 </html>

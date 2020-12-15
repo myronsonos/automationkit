@@ -624,4 +624,3 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
     def __str__(self):
         rtnstr = "%s: USN:%s MAC=%s IP=%s" % (self.modelName, self.USN, self.MACAddress, self.IPAddress)
         return rtnstr
-

@@ -1,37 +1,199 @@
 
-<!DOCTYPE html>
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>akit.testing package &#8212; Automation Kit 1.0.0.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>akit.testing package &mdash; Automation Kit 1.0.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="akit.xlogging package" href="akit.xlogging.html" />
-    <link rel="prev" title="akit.templates package" href="akit.templates.html" />
+    <link rel="prev" title="akit.templates package" href="akit.templates.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Automation Kit
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">akit</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="akit.html">akit package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="akit.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="akit.cli.html">akit.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.cryptography.html">akit.cryptography package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.datum.html">akit.datum package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.environment.html">akit.environment package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.html">akit.integration package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.mixins.html">akit.mixins package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.networking.html">akit.networking package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.scripts.html">akit.scripts package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.tasking.html">akit.tasking package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.templates.html">akit.templates package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">akit.testing package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.xlogging.html">akit.xlogging package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.xthreading.html">akit.xthreading package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.aspects">akit.aspects module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.compat">akit.compat module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.exceptions">akit.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.extensible">akit.extensible module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.metadata">akit.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.paths">akit.paths module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.recorders">akit.recorders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.results">akit.results module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.taskbase">akit.taskbase module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.timeouts">akit.timeouts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xcollections">akit.xcollections module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xformatting">akit.xformatting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xinspect">akit.xinspect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xtime">akit.xtime module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Automation Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">akit</a> &raquo;</li>
+        
+          <li><a href="akit.html">akit package</a> &raquo;</li>
+        
+      <li>akit.testing package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/_apidoc/akit.testing.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="akit-testing-package">
 <h1>akit.testing package<a class="headerlink" href="#akit-testing-package" title="Permalink to this headline">¶</a></h1>
@@ -59,8 +221,11 @@ them to easily be run for debugging purposes.</p>
 <span id="akit-testing-testcollector-module"></span><h2>akit.testing.testcollector module<a class="headerlink" href="#module-akit.testing.testcollector" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-testcollector"></span><dl class="py class">
 <dt id="akit.testing.testcollector.TestCollector">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcollector.</code><code class="sig-name descname">TestCollector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">root</span></em>, <em class="sig-param"><span class="n">excludes</span></em>, <em class="sig-param"><span class="n">method_prefix</span><span class="o">=</span><span class="default_value">'test'</span></em>, <em class="sig-param"><span class="n">test_module</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcollector.html#TestCollector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcollector.TestCollector" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcollector.</code><code class="sig-name descname">TestCollector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">root</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">excludes</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">method_prefix</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">'test'</span></em>, <em class="sig-param"><span class="n">test_module</span><span class="p">:</span> <span class="n">module</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcollector.html#TestCollector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcollector.TestCollector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The <a class="reference internal" href="#akit.testing.testcollector.TestCollector" title="akit.testing.testcollector.TestCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestCollector</span></code></a> object utilizes the include and exclude expressions along with any test_module
+provided to collect the information about the test references and the associated test packages that will
+be involved in test run.</p>
 <dl class="py method">
 <dt id="akit.testing.testcollector.TestCollector.collect_integrations">
 <code class="sig-name descname">collect_integrations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcollector.html#TestCollector.collect_integrations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcollector.TestCollector.collect_integrations" title="Permalink to this definition">¶</a></dt>
@@ -70,49 +235,96 @@ are found.</p>
 
 <dl class="py method">
 <dt id="akit.testing.testcollector.TestCollector.collect_references">
-<code class="sig-name descname">collect_references</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expression</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcollector.html#TestCollector.collect_references"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcollector.TestCollector.collect_references" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">collect_references</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expression</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcollector.html#TestCollector.collect_references"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcollector.TestCollector.collect_references" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collects and appends the test references based on the expression provided and the excludes
-for this class.</p>
+for this class.  The <cite>collect_references</cite> method is intended to be called multiple times,
+once with each include expression provided by the users.  The <a class="reference internal" href="#akit.testing.testcollector.TestCollector" title="akit.testing.testcollector.TestCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestCollector</span></code></a> will
+extend its collection of reference with each successive call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>expression</strong> – An include expression to process and collect references for.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testcollector.TestCollector.collect_testpacks">
 <code class="sig-name descname">collect_testpacks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcollector.html#TestCollector.collect_testpacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcollector.TestCollector.collect_testpacks" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Goes through all of the test references and collects a list of the <code class="xref py py-class docutils literal notranslate"><span class="pre">TestPack</span></code> types that are
+included in the collection of test references.  The <code class="xref py py-class docutils literal notranslate"><span class="pre">TestPack</span></code> collection can be used to
+determine analyze the integrations and scopes that are associated with the collected test references.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testcollector.TestCollector.expand_testpacks">
 <code class="sig-name descname">expand_testpacks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcollector.html#TestCollector.expand_testpacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcollector.TestCollector.expand_testpacks" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The includes and excludes passed to the <a class="reference internal" href="#akit.testing.testcollector.TestCollector" title="akit.testing.testcollector.TestCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestCollector</span></code></a> can also be used to find <code class="xref py py-class docutils literal notranslate"><span class="pre">TestPack`(s).</span>
+<span class="pre">When</span> <span class="pre">an</span> <span class="pre">include</span> <span class="pre">specification</span> <span class="pre">includes</span> <span class="pre">a</span> <span class="pre">:class:`TestPack</span></code>, all the tests that are associated with that
+<code class="xref py py-class docutils literal notranslate"><span class="pre">TestPack</span></code> are included in the test run.  They <cite>expand_testpacks</cite> method goes through all of the
+:class:<a href="#id1"><span class="problematic" id="id2">`</span></a>TestPack`(s), collect test references for all of the tests and then adds the test references to
+the list of included tests.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testcollector.TestCollector.import_errors">
 <em class="property">property </em><code class="sig-name descname">import_errors</code><a class="headerlink" href="#akit.testing.testcollector.TestCollector.import_errors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A list of import errors that were encountered while collecting test references.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testcollector.TestCollector.references">
 <em class="property">property </em><code class="sig-name descname">references</code><a class="headerlink" href="#akit.testing.testcollector.TestCollector.references" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">TestReferences</span></code> that were collected.</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
-<dt id="akit.testing.testcollector.find_included_tests">
-<code class="sig-prename descclassname">akit.testing.testcollector.</code><code class="sig-name descname">find_included_tests</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">root</span></em>, <em class="sig-param"><span class="n">package</span></em>, <em class="sig-param"><span class="n">module</span></em>, <em class="sig-param"><span class="n">testclass</span></em>, <em class="sig-param"><span class="n">testname</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcollector.html#find_included_tests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcollector.find_included_tests" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="akit.testing.testcollector.find_included_test_modules_under_root">
+<code class="sig-prename descclassname">akit.testing.testcollector.</code><code class="sig-name descname">find_included_test_modules_under_root</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">root</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">package</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">module</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcollector.html#find_included_test_modules_under_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcollector.find_included_test_modules_under_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Walks through a directory tree starting at a root directory and finds all of the files that corresponded to
+the package, module expressions specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> – The root directory to start from when performing the tree walk to look
+for included tests.</p></li>
+<li><p><strong>package</strong> – The package name component if there is one.  The package components are the directories
+with __init__.py files up to the file where the module file itself is found. It could be
+that there is only a module name.</p></li>
+<li><p><strong>module</strong> – The module name component.  There must be a module because that is the file where the tests
+are found.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
-<dt id="akit.testing.testcollector.parse_expression">
-<code class="sig-prename descclassname">akit.testing.testcollector.</code><code class="sig-name descname">parse_expression</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expression</span></em>, <em class="sig-param"><span class="n">testmodule</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">method_prefix</span><span class="o">=</span><span class="default_value">'test'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcollector.html#parse_expression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcollector.parse_expression" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="akit.testing.testcollector.parse_include_expression">
+<code class="sig-prename descclassname">akit.testing.testcollector.</code><code class="sig-name descname">parse_include_expression</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expression</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">testmodule</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>module<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">method_prefix</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">'test'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcollector.html#parse_include_expression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcollector.parse_include_expression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the include expression in connection with the testmodule and method_prefix information provided
+and returns the components (package, module, testclass, testname) which can be used to perform a
+test tree search for included tests based on the expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expression</strong> – A test include expression in the form of (package).(module)&#64;(testclass)#(testcase).  The module,
+testclass, and testcase are optional.  If these items are excluded every descendant test found
+under the (package) will be included.</p></li>
+<li><p><strong>testmodule</strong> – A test module that contains the tests to be run.  This is passed when a individual test file
+debugging workflow is being used.</p></li>
+<li><p><strong>method_prefix</strong> – The string prefix that identifies test methods on a <code class="xref py py-class docutils literal notranslate"><span class="pre">TestContainer</span></code> derived class.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-akit.testing.testcontainer">
 <span id="akit-testing-testcontainer-module"></span><h2>akit.testing.testcontainer module<a class="headerlink" href="#module-akit.testing.testcontainer" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-testcontainer"></span><dl class="py class">
 <dt id="akit.testing.testcontainer.ArchitectureTestContainer">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">ArchitectureTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span></em>, <em class="sig-param"><span class="n">recorder</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#ArchitectureTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.ArchitectureTestContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">ArchitectureTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span><span class="p">:</span> <span class="n">method</span></em>, <em class="sig-param"><span class="n">recorder</span><span class="p">:</span> <span class="n"><a class="reference internal" href="akit.html#akit.recorders.ResultRecorder" title="akit.recorders.ResultRecorder">akit.recorders.ResultRecorder</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Sequence<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#ArchitectureTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.ArchitectureTestContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#akit.testing.testcontainer.TestContainer" title="akit.testing.testcontainer.TestContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.testing.testcontainer.TestContainer</span></code></a></p>
 <p>The <cite>ArchitectureTestContainer</cite> is a categorized <cite>TestContainer</cite> derivative that can be used
 as a base type for derivative test containers.  The <cite>ArchitectureTestContainer</cite> attaches the
@@ -121,7 +333,7 @@ as a base type for derivative test containers.  The <cite>ArchitectureTestContai
 
 <dl class="py class">
 <dt id="akit.testing.testcontainer.BrickTestContainer">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">BrickTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span></em>, <em class="sig-param"><span class="n">recorder</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#BrickTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.BrickTestContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">BrickTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span><span class="p">:</span> <span class="n">method</span></em>, <em class="sig-param"><span class="n">recorder</span><span class="p">:</span> <span class="n"><a class="reference internal" href="akit.html#akit.recorders.ResultRecorder" title="akit.recorders.ResultRecorder">akit.recorders.ResultRecorder</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Sequence<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#BrickTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.BrickTestContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#akit.testing.testcontainer.TestContainer" title="akit.testing.testcontainer.TestContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.testing.testcontainer.TestContainer</span></code></a></p>
 <p>The <cite>BrickTestContainer</cite> is a categorized <cite>TestContainer</cite> derivative that can be used
 as a base type for derivative test containers.  The <cite>BrickTestContainer</cite> attaches the
@@ -130,7 +342,7 @@ as a base type for derivative test containers.  The <cite>BrickTestContainer</ci
 
 <dl class="py class">
 <dt id="akit.testing.testcontainer.LimitsTestContainer">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">LimitsTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span></em>, <em class="sig-param"><span class="n">recorder</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#LimitsTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.LimitsTestContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">LimitsTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span><span class="p">:</span> <span class="n">method</span></em>, <em class="sig-param"><span class="n">recorder</span><span class="p">:</span> <span class="n"><a class="reference internal" href="akit.html#akit.recorders.ResultRecorder" title="akit.recorders.ResultRecorder">akit.recorders.ResultRecorder</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Sequence<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#LimitsTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.LimitsTestContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#akit.testing.testcontainer.TestContainer" title="akit.testing.testcontainer.TestContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.testing.testcontainer.TestContainer</span></code></a></p>
 <p>The <cite>LimitsTestContainer</cite> is a categorized <cite>TestContainer</cite> derivative that can be used
 as a base type for derivative test containers.  The <cite>LimitsTestContainer</cite> attaches the
@@ -139,7 +351,7 @@ as a base type for derivative test containers.  The <cite>LimitsTestContainer</c
 
 <dl class="py class">
 <dt id="akit.testing.testcontainer.NegativeTestContainer">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">NegativeTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span></em>, <em class="sig-param"><span class="n">recorder</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#NegativeTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.NegativeTestContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">NegativeTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span><span class="p">:</span> <span class="n">method</span></em>, <em class="sig-param"><span class="n">recorder</span><span class="p">:</span> <span class="n"><a class="reference internal" href="akit.html#akit.recorders.ResultRecorder" title="akit.recorders.ResultRecorder">akit.recorders.ResultRecorder</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Sequence<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#NegativeTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.NegativeTestContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#akit.testing.testcontainer.TestContainer" title="akit.testing.testcontainer.TestContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.testing.testcontainer.TestContainer</span></code></a></p>
 <p>The <cite>NegativeTestContainer</cite> is a categorized <cite>TestContainer</cite> derivative that can be used
 as a base type for derivative test containers.  The <cite>NegativeTestContainer</cite> attaches the
@@ -148,7 +360,7 @@ as a base type for derivative test containers.  The <cite>NegativeTestContainer<
 
 <dl class="py class">
 <dt id="akit.testing.testcontainer.PositiveTestContainer">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">PositiveTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span></em>, <em class="sig-param"><span class="n">recorder</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#PositiveTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.PositiveTestContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">PositiveTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span><span class="p">:</span> <span class="n">method</span></em>, <em class="sig-param"><span class="n">recorder</span><span class="p">:</span> <span class="n"><a class="reference internal" href="akit.html#akit.recorders.ResultRecorder" title="akit.recorders.ResultRecorder">akit.recorders.ResultRecorder</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Sequence<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#PositiveTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.PositiveTestContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#akit.testing.testcontainer.TestContainer" title="akit.testing.testcontainer.TestContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.testing.testcontainer.TestContainer</span></code></a></p>
 <p>The <cite>PositiveTestContainer</cite> is a categorized <cite>TestContainer</cite> derivative that can be used
 as a base type for derivative test containers.  The <cite>PositiveTestContainer</cite> attaches the
@@ -157,7 +369,7 @@ as a base type for derivative test containers.  The <cite>PositiveTestContainer<
 
 <dl class="py class">
 <dt id="akit.testing.testcontainer.SmokeTestContainer">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">SmokeTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span></em>, <em class="sig-param"><span class="n">recorder</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#SmokeTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.SmokeTestContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">SmokeTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span><span class="p">:</span> <span class="n">method</span></em>, <em class="sig-param"><span class="n">recorder</span><span class="p">:</span> <span class="n"><a class="reference internal" href="akit.html#akit.recorders.ResultRecorder" title="akit.recorders.ResultRecorder">akit.recorders.ResultRecorder</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Sequence<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#SmokeTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.SmokeTestContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#akit.testing.testcontainer.TestContainer" title="akit.testing.testcontainer.TestContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.testing.testcontainer.TestContainer</span></code></a></p>
 <p>The <cite>SmokeTestContainer</cite> is a categorized <cite>TestContainer</cite> derivative that can be used
 as a base type for derivative test containers.  The <cite>SmokeTestContainer</cite> attaches the
@@ -166,7 +378,7 @@ as a base type for derivative test containers.  The <cite>SmokeTestContainer</ci
 
 <dl class="py class">
 <dt id="akit.testing.testcontainer.StressTestContainer">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">StressTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span></em>, <em class="sig-param"><span class="n">recorder</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#StressTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.StressTestContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">StressTestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span><span class="p">:</span> <span class="n">method</span></em>, <em class="sig-param"><span class="n">recorder</span><span class="p">:</span> <span class="n"><a class="reference internal" href="akit.html#akit.recorders.ResultRecorder" title="akit.recorders.ResultRecorder">akit.recorders.ResultRecorder</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Sequence<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#StressTestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.StressTestContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#akit.testing.testcontainer.TestContainer" title="akit.testing.testcontainer.TestContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.testing.testcontainer.TestContainer</span></code></a></p>
 <p>The <cite>StressTestContainer</cite> is a categorized <cite>TestContainer</cite> derivative that can be used
 as a base type for derivative test containers.  The <cite>StressTestContainer</cite> attaches the
@@ -177,6 +389,7 @@ as a base type for derivative test containers.  The <cite>StressTestContainer</c
 <dt id="akit.testing.testcontainer.TEST_CATEGORIES">
 <em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">TEST_CATEGORIES</code><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#TEST_CATEGORIES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.TEST_CATEGORIES" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Labels for the different types of test categories.</p>
 <dl class="py attribute">
 <dt id="akit.testing.testcontainer.TEST_CATEGORIES.ARCHITECTURE">
 <code class="sig-name descname">ARCHITECTURE</code><em class="property"> = 'ARCHITECTURE'</em><a class="headerlink" href="#akit.testing.testcontainer.TEST_CATEGORIES.ARCHITECTURE" title="Permalink to this definition">¶</a></dt>
@@ -216,12 +429,12 @@ as a base type for derivative test containers.  The <cite>StressTestContainer</c
 
 <dl class="py class">
 <dt id="akit.testing.testcontainer.TestContainer">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">TestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span></em>, <em class="sig-param"><span class="n">recorder</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#TestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.TestContainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">TestContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testmethod</span><span class="p">:</span> <span class="n">method</span></em>, <em class="sig-param"><span class="n">recorder</span><span class="p">:</span> <span class="n"><a class="reference internal" href="akit.html#akit.recorders.ResultRecorder" title="akit.recorders.ResultRecorder">akit.recorders.ResultRecorder</a></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">extname</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Sequence<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#TestContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.TestContainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The <cite>TestContainer</cite> object is the base container object that all other test containers
 should derive from.  The ‘akit’ framework unitizes the <cite>TestContainer</cite> as a code construct
 that is used to link testcases to external resources and also as a declaritive way to
-link test cases to the scopes of execution that they should execute in.  <a href="#id1"><span class="problematic" id="id2">`</span></a>TestContainer`s
+link test cases to the scopes of execution that they should execute in.  <a href="#id3"><span class="problematic" id="id4">`</span></a>TestContainer`s
 provide:</p>
 <ul class="simple">
 <li><p>class and instance methods</p></li>
@@ -244,47 +457,64 @@ target scope of execution should be included through the <code class="xref py py
 <dl class="py method">
 <dt id="akit.testing.testcontainer.TestContainer.extname">
 <em class="property">property </em><code class="sig-name descname">extname</code><a class="headerlink" href="#akit.testing.testcontainer.TestContainer.extname" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The extended name of the test based on the parameterized parameters for this test instance.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testcontainer.TestContainer.instance_id">
 <em class="property">property </em><code class="sig-name descname">instance_id</code><a class="headerlink" href="#akit.testing.testcontainer.TestContainer.instance_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The point in time uuid identifier for this instance of a particular test.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testcontainer.TestContainer.parameters">
 <em class="property">property </em><code class="sig-name descname">parameters</code><a class="headerlink" href="#akit.testing.testcontainer.TestContainer.parameters" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The parameterized parameters for this test instance if there are any.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testcontainer.TestContainer.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent_inst</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#TestContainer.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.TestContainer.run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent_inst</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#TestContainer.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.TestContainer.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>The ‘run’ method controls the sequence of steps for the setup for a test, the running of a test, and the
+cleanup after the test.  It also lays out the behaviors that occur when a test fails and handles
+the capture and reporting of test results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parent_inst</strong> – The instance id of the parent ResultNode instance to mark as the parent for the ResultNode
+created for the results of this test.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testcontainer.TestContainer.setUp">
 <code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#TestContainer.setUp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.TestContainer.setUp" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The test method called to setup the test for a test instance.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testcontainer.TestContainer.testname">
 <em class="property">property </em><code class="sig-name descname">testname</code><a class="headerlink" href="#akit.testing.testcontainer.TestContainer.testname" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The full test name of the test.</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt id="akit.testing.testcontainer.inherits_from_testcontainer">
 <code class="sig-prename descclassname">akit.testing.testcontainer.</code><code class="sig-name descname">inherits_from_testcontainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cls</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testcontainer.html#inherits_from_testcontainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testcontainer.inherits_from_testcontainer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Helper method that detects if an objects type inherits from <a class="reference internal" href="#akit.testing.testcontainer.TestContainer" title="akit.testing.testcontainer.TestContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestContainer</span></code></a> but
+ensures that the object is not a <a class="reference internal" href="#akit.testing.testcontainer.TestContainer" title="akit.testing.testcontainer.TestContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestContainer</span></code></a> type from this file.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-akit.testing.testjob">
 <span id="akit-testing-testjob-module"></span><h2>akit.testing.testjob module<a class="headerlink" href="#module-akit.testing.testjob" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-testjob"></span><dl class="py class">
 <dt id="akit.testing.testjob.DefaultTestJob">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testjob.</code><code class="sig-name descname">DefaultTestJob</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testjob.html#DefaultTestJob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testjob.DefaultTestJob" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testjob.</code><code class="sig-name descname">DefaultTestJob</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">_args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">_kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testjob.html#DefaultTestJob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testjob.DefaultTestJob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#akit.testing.testjob.TestJob" title="akit.testing.testjob.TestJob"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.testing.testjob.TestJob</span></code></a></p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">DefautTestJob</span></code> is utilized as a job container when a job was not specified.</p>
 <dl class="py attribute">
 <dt id="akit.testing.testjob.DefaultTestJob.description">
 <code class="sig-name descname">description</code><em class="property"> = 'Unspecified test job.'</em><a class="headerlink" href="#akit.testing.testjob.DefaultTestJob.description" title="Permalink to this definition">¶</a></dt>
@@ -299,7 +529,7 @@ target scope of execution should be included through the <code class="xref py py
 
 <dl class="py class">
 <dt id="akit.testing.testjob.TestJob">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testjob.</code><code class="sig-name descname">TestJob</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testjob.html#TestJob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testjob.TestJob" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testjob.</code><code class="sig-name descname">TestJob</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">_args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">_kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testjob.html#TestJob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testjob.TestJob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="akit.environment.html#akit.environment.context.ContextUser" title="akit.environment.context.ContextUser"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.environment.context.ContextUser</span></code></a></p>
 <p>The <a class="reference internal" href="#akit.testing.testjob.TestJob" title="akit.testing.testjob.TestJob"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestJob</span></code></a> spans the execution of all <code class="xref py py-class docutils literal notranslate"><span class="pre">TestPack</span></code> and organizes the
 flow of execution of test packs.  It allows for the sequencing of the execution of test
@@ -463,12 +693,14 @@ and determine which tests are applicable to the test</p>
 <dl class="py method">
 <dt id="akit.testing.testpack.TestPack.scopes_enter">
 <code class="sig-name descname">scopes_enter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testpack.html#TestPack.scopes_enter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testpack.TestPack.scopes_enter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called to enter the scopes to setup for running the <a class="reference internal" href="#akit.testing.testpack.TestPack" title="akit.testing.testpack.TestPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestPack</span></code></a>.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testpack.TestPack.scopes_exit">
 <code class="sig-name descname">scopes_exit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testpack.html#TestPack.scopes_exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testpack.TestPack.scopes_exit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called to exit the scopes to cleanup after running the <a class="reference internal" href="#akit.testing.testpack.TestPack" title="akit.testing.testpack.TestPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestPack</span></code></a>.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="akit.testing.testpack.TestPack.searchin">
@@ -483,31 +715,43 @@ and determine which tests are applicable to the test</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="akit.testing.testpack.is_testpack">
-<code class="sig-prename descclassname">akit.testing.testpack.</code><code class="sig-name descname">is_testpack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cls</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a><a class="reference internal" href="../_modules/akit/testing/testpack.html#is_testpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testpack.is_testpack" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="akit.testing.testpack.inherits_from_testpack">
+<code class="sig-prename descclassname">akit.testing.testpack.</code><code class="sig-name descname">inherits_from_testpack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cls</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a><a class="reference internal" href="../_modules/akit/testing/testpack.html#inherits_from_testpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testpack.inherits_from_testpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper method that detects if an objects type inherits from <a class="reference internal" href="#akit.testing.testpack.TestPack" title="akit.testing.testpack.TestPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestPack</span></code></a> but ensures
+that the object is not a <a class="reference internal" href="#akit.testing.testpack.TestPack" title="akit.testing.testpack.TestPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestPack</span></code></a> type from this file.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="akit.testing.testpack.testpack_compare">
 <code class="sig-prename descclassname">akit.testing.testpack.</code><code class="sig-name descname">testpack_compare</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tpack</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testpack.html#testpack_compare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testpack.testpack_compare" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Used to provide a key for comparing <a class="reference internal" href="#akit.testing.testpack.TestPack" title="akit.testing.testpack.TestPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestPack</span></code></a> objects.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-akit.testing.testref">
 <span id="akit-testing-testref-module"></span><h2>akit.testing.testref module<a class="headerlink" href="#module-akit.testing.testref" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-testref"></span><dl class="py class">
 <dt id="akit.testing.testref.TestRef">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testref.</code><code class="sig-name descname">TestRef</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testcls</span></em>, <em class="sig-param"><span class="n">testmeth</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testref.html#TestRef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testref.TestRef" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testref.</code><code class="sig-name descname">TestRef</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">testcontainer</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#akit.testing.testcontainer.TestContainer" title="akit.testing.testcontainer.TestContainer">akit.testing.testcontainer.TestContainer</a></span></em>, <em class="sig-param"><span class="n">testmeth</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testref.html#TestRef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testref.TestRef" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The <a class="reference internal" href="#akit.testing.testref.TestRef" title="akit.testing.testref.TestRef"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestRef</span></code></a> objects are used to refer to a reference to a test.  We use <a class="reference internal" href="#akit.testing.testref.TestRef" title="akit.testing.testref.TestRef"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestRef</span></code></a> instances
+to reference the tests that are going to be run so we can control the lifespan of test case instances
+and control our memory consumption during test runs with large collections of test cases.</p>
+<p>The <a class="reference internal" href="#akit.testing.testref.TestRef" title="akit.testing.testref.TestRef"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestRef</span></code></a> object allows us to delay the creation of test runtime instance data and state until it is
+necessary to instantiate it and allows us to cleanup the runtime instance and state as soon as it is no longer
+being used.</p>
 <dl class="py method">
 <dt id="akit.testing.testref.TestRef.create_instance">
 <code class="sig-name descname">create_instance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recorder</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testref.html#TestRef.create_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testref.TestRef.create_instance" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Method used to create and initialize an instance of the <code class="xref py py-class docutils literal notranslate"><span class="pre">TestContainer</span></code> object and method that
+is referred to by this <a class="reference internal" href="#akit.testing.testref.TestRef" title="akit.testing.testref.TestRef"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestRef</span></code></a> object.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testref.TestRef.test_name">
 <em class="property">property </em><code class="sig-name descname">test_name</code><a class="headerlink" href="#akit.testing.testref.TestRef.test_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The fully qualified name of the test that is referenced.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -518,6 +762,7 @@ and determine which tests are applicable to the test</p>
 <dt id="akit.testing.testsequencer.TEST_SEQUENCER_PHASES">
 <em class="property">class </em><code class="sig-prename descclassname">akit.testing.testsequencer.</code><code class="sig-name descname">TEST_SEQUENCER_PHASES</code><a class="reference internal" href="../_modules/akit/testing/testsequencer.html#TEST_SEQUENCER_PHASES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testsequencer.TEST_SEQUENCER_PHASES" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Indicates the current state of the sequencer.</p>
 <dl class="py attribute">
 <dt id="akit.testing.testsequencer.TEST_SEQUENCER_PHASES.Collection">
 <code class="sig-name descname">Collection</code><em class="property"> = 2</em><a class="headerlink" href="#akit.testing.testsequencer.TEST_SEQUENCER_PHASES.Collection" title="Permalink to this definition">¶</a></dt>
@@ -547,11 +792,13 @@ and determine which tests are applicable to the test</p>
 
 <dl class="py class">
 <dt id="akit.testing.testsequencer.TestSequencer">
-<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testsequencer.</code><code class="sig-name descname">TestSequencer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jobtitle</span></em>, <em class="sig-param"><span class="n">root</span></em>, <em class="sig-param"><span class="n">includes</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">excludes</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testsequencer.html#TestSequencer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testsequencer.TestSequencer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.testing.testsequencer.</code><code class="sig-name descname">TestSequencer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jobtitle</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">root</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">includes</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">excludes</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testsequencer.html#TestSequencer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testsequencer.TestSequencer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="akit.environment.html#akit.environment.context.ContextUser" title="akit.environment.context.ContextUser"><code class="xref py py-class docutils literal notranslate"><span class="pre">akit.environment.context.ContextUser</span></code></a></p>
+<p>The <a class="reference internal" href="#akit.testing.testsequencer.TestSequencer" title="akit.testing.testsequencer.TestSequencer"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestSequencer</span></code></a> is a state machine that helps to orchestrate the flow fo the test run.  It ensures
+that the steps of the test flow are consistent between runs.</p>
 <dl class="py method">
 <dt id="akit.testing.testsequencer.TestSequencer.attach_to_environment">
-<code class="sig-name descname">attach_to_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testsequencer.html#TestSequencer.attach_to_environment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testsequencer.TestSequencer.attach_to_environment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">attach_to_environment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">landscape</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testsequencer.html#TestSequencer.attach_to_environment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testsequencer.TestSequencer.attach_to_environment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Goes through all the integrations and provides them with an opportunity to
 attach to the test environment.</p>
 </dd></dl>
@@ -566,7 +813,8 @@ collect shared resources that are required for testing.</p>
 <dl class="py method">
 <dt id="akit.testing.testsequencer.TestSequencer.discover">
 <code class="sig-name descname">discover</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">test_module</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testsequencer.html#TestSequencer.discover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testsequencer.TestSequencer.discover" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Initiates the discovery phase of the test run.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testsequencer.TestSequencer.establish_connectivity">
@@ -585,32 +833,38 @@ into the automation run.</p>
 <dl class="py method">
 <dt id="akit.testing.testsequencer.TestSequencer.execute_testpacks">
 <code class="sig-name descname">execute_testpacks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">runid</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em>, <em class="sig-param"><span class="n">recorder</span></em>, <em class="sig-param"><span class="n">sequencer</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testsequencer.html#TestSequencer.execute_testpacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testsequencer.TestSequencer.execute_testpacks" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called in order to execute the tests contained in the <code class="xref py py-class docutils literal notranslate"><span class="pre">TestPacks</span></code> being run.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testsequencer.TestSequencer.import_errors">
 <em class="property">property </em><code class="sig-name descname">import_errors</code><a class="headerlink" href="#akit.testing.testsequencer.TestSequencer.import_errors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A list of import errors that were encountered during the sequencing of the test run.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testsequencer.TestSequencer.parse_extended_args">
 <code class="sig-name descname">parse_extended_args</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_parser</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testsequencer.html#TestSequencer.parse_extended_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testsequencer.TestSequencer.parse_extended_args" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called for the sequencer to parse the extended arguments to be passed on to integrations and mixins.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testsequencer.TestSequencer.publish_integrations">
 <code class="sig-name descname">publish_integrations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testsequencer.html#TestSequencer.publish_integrations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testsequencer.TestSequencer.publish_integrations" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Called for the sequencer to publish the integrations that it found during discovery.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testsequencer.TestSequencer.record_import_errors">
 <code class="sig-name descname">record_import_errors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">outputfilename</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/testing/testsequencer.html#TestSequencer.record_import_errors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.testing.testsequencer.TestSequencer.record_import_errors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Method that writes out the import errors to the active results directory.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="akit.testing.testsequencer.TestSequencer.testpacks">
 <em class="property">property </em><code class="sig-name descname">testpacks</code><a class="headerlink" href="#akit.testing.testsequencer.TestSequencer.testpacks" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">TestPack</span></code> objects that are included in the test run.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -644,79 +898,59 @@ then uses the leaf path to a module to develop a full module name.</p>
 </div>
 
 
+           </div>
+           
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">Automation Kit</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">akit</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="akit.html">akit package</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">akit</a><ul>
-  <li><a href="akit.html">akit package</a><ul>
-      <li>Previous: <a href="akit.templates.html" title="previous chapter">akit.templates package</a></li>
-      <li>Next: <a href="akit.xlogging.html" title="next chapter">akit.xlogging package</a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="akit.xlogging.html" class="btn btn-neutral float-right" title="akit.xlogging package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="akit.templates.html" class="btn btn-neutral float-left" title="akit.templates package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+  
 
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Myron W. Walker
 
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Myron W. Walker.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/_apidoc/akit.testing.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
 
-    
+    </section>
 
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-  </body>
+   
+
+</body>
 </html>

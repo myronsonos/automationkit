@@ -1,16 +1,38 @@
 
+"""
+.. module:: upnpgenerator
+    :platform: Darwin, Linux, Unix, Windows
+    :synopsis: Module that processes service descriptions and generates proxy service wrappers used
+               to communicated with UPNP services.
+
+.. moduleauthor:: Myron Walker <myron.walker@gmail.com>
+
+"""
+
+__author__ = "Myron Walker"
+__copyright__ = "Copyright 2020, Myron W Walker"
+__credits__ = []
+__version__ = "1.0.0"
+__maintainer__ = "Myron Walker"
+__email__ = "myron.walker@gmail.com"
+__status__ = "Development" # Prototype, Development or Production
+__license__ = "MIT"
+
+from typing import Optional, Tuple, Union
+
 import os
 import sys
 
 from argparse import ArgumentParser, ArgumentError
 
-from xml.etree.ElementTree import ElementTree
+from xml.etree.ElementTree import Element
 from xml.etree.ElementTree import fromstring as xml_fromstring
 
 from akit.paths import ensure_directory_is_package
 
 from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 
+# pylint: disable=unused-import
 from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS
 
 from akit.integration.upnp.paths import DIR_UPNP_EXTENSIONS_DYNAMIC
@@ -99,17 +121,40 @@ TEMPLATE_ACTION = """
         return rtn_args
 """
 
-def node_lower_strip_text(txt):
+def node_lower_strip_text(txt: Union[str, None]) -> Union[str, None]:
+    """
+        Converts text to lower case and strips leading and trailing whitespace if not None.
+
+        :param txt: The text to convert to lower case and to strip.
+    """
     if txt is not None:
         txt = txt.lower().strip()
     return txt
 
-def node_strip_text(txt):
+def node_strip_text(txt: Union[str, None]) -> Union[str, None]:
+    """
+        Strips leading and trailing whitespace from the given text if not None.
+
+        :param txt: The text to strip.
+    """
     if txt is not None:
         txt = txt.strip()
     return txt
 
-def generate_upnp_service_proxy(servicesDir, serviceManufacturer, serviceType, variablesTable, typesTable, eventsTable, actionsTable):
+def generate_upnp_service_proxy(servicesDir: str, serviceManufacturer: str, serviceType: str, variablesTable: dict, typesTable: dict, eventsTable: dict, actionsTable: dict):
+    """
+        Generates a service proxy using the parameters provided.
+
+        :param servicesDir: The directory to output the service proxy to.
+        :param serviceManufacturer: The name of the manufacturer for the device that a service proxy is being generated for.
+        :param serviceType: The name of the service type that a service proxy is being generated for.
+        :param variablesTable: A table containing the information about the variables associated with a service.
+        :param typesTable: A table containing the types associated with the variables used by the service.
+        :param eventsTable: A table containing information about the events published by the services.
+        :param actionsTable: A table containing information about the actions that can be called on the service.
+
+    """
+    # pylint: disable=unused-argument
 
     if not os.path.exists(servicesDir):
         os.makedirs(servicesDir)
@@ -226,8 +271,16 @@ def generate_upnp_service_proxy(servicesDir, serviceManufacturer, serviceType, v
 
     return
 
-def process_action_list(svcActionListNode, namespaces=None):
+def process_action_list(svcActionListNode: Element, namespaces: Optional[dict] = None) -> dict:
+    """
+        Processes the action list node for a service description and creates a table with all the actions available
+        on the service.
 
+        :param svcActionListNode: The action list xml node from the serivce description document.
+        :param namespace: The namespace to use when processing the XML dom nodes.
+
+        :returns: Returns a table of actions supported by the service.
+    """
     actionsTable = {}
 
     actionNodeList = svcActionListNode.findall("action", namespaces=namespaces)
@@ -276,8 +329,16 @@ def process_action_list(svcActionListNode, namespaces=None):
 
     return actionsTable
 
-def process_service_state_table(svcStateTableNode, namespaces=None):
+def process_service_state_table(svcStateTableNode: Element, namespaces: Optional[dict] = None) -> Tuple[dict, dict, dict]:
+    """
+        Processes the action list node for a service description and creates a table with all the actions available
+        on the service.
 
+        :param svcStateTableNode: The state table XML node from the serivce description document.
+        :param namespace: The namespace to use when processing the XML dom nodes.
+
+        :returns: Returns tables for the variables, types and events supported by the service.
+    """
     variablesTable = {}
     typesTable = {}
     eventsTable = {}
@@ -328,12 +389,20 @@ def process_service_state_table(svcStateTableNode, namespaces=None):
     return variablesTable, typesTable, eventsTable
 
 
-def generate_service_proxies(svc_desc_directory, svc_proxy_directory):
+def generate_service_proxies(svc_desc_directory: str, svc_proxy_directory: str):
+    """
+        Processes the XML service description documents in the description documents folder and generates the
+        service proxy modules.  Then outputs the generated proxy modules to the service proxy foloder specified.
 
-    for dirpath, dirnames, filenames in os.walk(svc_desc_directory, topdown=True):
+        :param svc_desc_directory: The directory that contains the service description documents to process.
+        :param svc_proxy_directory: The directory that is the output directory for the service proxy modules.
+    """
+    for dirpath, _, filenames in os.walk(svc_desc_directory, topdown=True):
         for nxtfile in filenames:
 
             serviceType, nxtfile_ext = os.path.splitext(nxtfile)
+            if nxtfile_ext != ".xml":
+                continue
 
             serviceManufacturer = os.path.basename(dirpath)
 
@@ -344,7 +413,7 @@ def generate_service_proxies(svc_desc_directory, svc_proxy_directory):
                 svc_content = xf.read()
 
             docNode = xml_fromstring(svc_content)
-            if docNode != None:
+            if docNode is not None:
 
                 namespaces = None
                 doc_node_tag = docNode.tag
@@ -376,6 +445,9 @@ def generate_service_proxies(svc_desc_directory, svc_proxy_directory):
     return
 
 def upnpgenerator_main():
+    """
+        The main entry point for the upnpgenerator.py script.
+    """
     aparser = ArgumentParser()
     aparser.add_argument("--action", dest="action", action="store", choices=["scan", "generate"], default="scan",
                          help="The action to perform.")

@@ -16,28 +16,25 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Optional, Union
+
 import threading
 import weakref
 
 from xml.etree.ElementTree import fromstring as xml_fromstring
-from xml.etree.ElementTree import tostring as xml_tostring
-from xml.etree.ElementTree import register_namespace
-from xml.etree.ElementTree import dump as dump_node
-from xml.etree.ElementTree import ElementTree
+from xml.etree.ElementTree import Element
 
 import requests
 
-from requests.compat import urljoin
-
-from akit.exceptions import AKitNotOverloadedError, AKitCommunicationsProtocolError
+from akit.exceptions import AKitNotOverloadedError
 from akit.extensible import generate_extension_key
 from akit.paths import normalize_name_for_path
 
-from akit.integration.upnp.upnpprotocol import MSearchKeys
+from akit.integration.upnp.services.upnpserviceproxy import UpnpServiceProxy
+from akit.integration.upnp.xml.upnpdevice1 import UpnpDevice1Device
+from akit.integration.upnp.upnpfactory import UpnpFactory
 
 UPNP_SERVICE1_NAMESPACE = "urn:schemas-upnp-org:service-1-0"
-
-from akit.paths import normalize_name_for_path
 
 
 class UpnpDevice:
@@ -72,14 +69,23 @@ class UpnpDevice:
 
     @property
     def description(self):
+        """
+            Returns the device description from the UPNP device.
+        """
         return self._description
 
     @property
     def host(self):
+        """
+            Returns the host associated with the UPNP device.
+        """
         return self._host
 
     @property
     def services(self):
+        """
+            Returns a list of service proxies associated with the UPNP device.
+        """
         service_list = None
 
         self._device_lock.acquire()
@@ -92,14 +98,27 @@ class UpnpDevice:
 
     @property
     def services_descriptions(self):
+        """
+            Returns a table of service descriptions associated with the UPNP device.
+        """
         return self._services_descriptions
 
     @property
     def URLBase(self):
+        """
+            Returns the base URL for the UPNP device that is used with any relative URLs in devices or service
+            description documents.
+        """
         return self._urlBase
 
-    def get_service_description(self, service_type):
+    def get_service_description(self, service_type) -> Union[dict, None]:
+        """
+            Gets the service description for the specified service type.
 
+            :param service_type: The service type to lookup the service description for.
+
+            :returns: Returns the description information for the service type if found or None if not found.
+        """
         svc_content = None
 
         devDesc = self.description
@@ -115,54 +134,82 @@ class UpnpDevice:
 
         return svc_content
 
-    def lookup_service(self, serviceManufacturer, serviceType):
+    def lookup_service(self, serviceManufacturer: str, serviceType: str) -> Union[UpnpServiceProxy, None]:
+        """
+            Looks up a service proxy based on the service manufacturer and service type specified.
+
+            :param serviceManufacturer: The manufacturer associated with the device and service manufacturer.
+            :param serviceType: The service type of the service to lookup.
+
+            :returns: The service proxy associated with the manufacturer and service type provided or None.
+        """
+        svc = None
+
         serviceManufacturer = normalize_name_for_path(serviceManufacturer)
         svckey = generate_extension_key(serviceManufacturer, serviceType)
 
         self._device_lock.acquire()
         try:
-            svc = self._services[svckey]
+            if svckey in self._services:
+                svc = self._services[svckey]
         finally:
             self._device_lock.release()
 
         return svc
 
     def to_dict(self, brief=False):
-
+        """
+            Creates a dictionary description of the device and its sub devices and services.
+        """
         dval = None
-        desc = self._description
 
-        if desc is not None:
-            dval = desc.to_dict(brief=brief)
+        self._device_lock.acquire()
+        try:
+            desc = self._description
 
-            dval["URLBase"] = self.URLBase
+            if desc is not None:
+                dval = desc.to_dict(brief=brief)
 
-            if not brief:
-                serviceDescList = []
-                serviceList = dval["serviceList"]
-                for svc_info in serviceList:
-                    svc_type = svc_info["serviceType"]
-                    sdurl = self._urlBase.rstrip("/") + "/" + svc_info["SCPDURL"].lstrip("/")
-                    sdesc = self._process_full_service_description(sdurl)
-                    sdesc["serviceType"] = svc_type
-                    serviceDescList.append(sdesc)
+                dval["URLBase"] = self.URLBase
 
-                dval["serviceDescriptionList"] = serviceDescList
+                if not brief:
+                    serviceDescList = []
+                    serviceList = dval["serviceList"]
+                    for svc_info in serviceList:
+                        svc_type = svc_info["serviceType"]
+                        sdurl = self._urlBase.rstrip("/") + "/" + svc_info["SCPDURL"].lstrip("/")
+                        sdesc = self._locked_process_full_service_description(sdurl)
+                        sdesc["serviceType"] = svc_type
+                        serviceDescList.append(sdesc)
+
+                    dval["serviceDescriptionList"] = serviceDescList
+        finally:
+            self._device_lock.release()
 
         return dval
 
     def to_json(self, brief=False):
+        """
+            Creates a json description of the device and its sub devices and services.
+        """
         json_str = None
-        desc = self._description
 
-        if desc is not None:
-            json_str = self._description.to_json(brief=brief)
+        self._device_lock.acquire()
+        try:
+            desc = self._description
+
+            if desc is not None:
+                json_str = self._description.to_json(brief=brief)
+        finally:
+            self._device_lock.release()
 
         return json_str
 
-    def _locked_populate_embedded_device_descriptions(self, factory, description):
+    def _locked_populate_embedded_device_descriptions(self, factory: UpnpFactory, description: UpnpDevice1Device):
+        """
+        """
+        # pylint: disable=no-self-use,unused-argument
         raise AKitNotOverloadedError("UpnpDevice._populate_embedded_devices: must be overridden.")
-        return
 
     def _locked_populate_icons(self):
 
@@ -174,8 +221,10 @@ class UpnpDevice:
 
         return
 
-    def _locked_populate_services_descriptions(self, factory, description):
-
+    def _locked_populate_services_descriptions(self, factory: UpnpFactory, description: UpnpDevice1Device):
+        """
+        """
+        # pylint: disable=protected-access
         for serviceInfo in description.serviceList:
             serviceManufacturer = normalize_name_for_path(serviceInfo.serviceManufacturer)
             serviceType = serviceInfo.serviceType
@@ -194,7 +243,7 @@ class UpnpDevice:
 
         return
 
-    def _locked_process_full_service_description(self, sdurl):
+    def _locked_process_full_service_description(self, sdurl: str):
         svcdesc = None
 
         resp = requests.get(sdurl)
@@ -208,17 +257,17 @@ class UpnpDevice:
                 descDoc = xml_fromstring(xml_content)
 
                 specVersionNode = descDoc.find("specVersion", namespaces=namespaces)
-                verInfo = self._process_node_spec_version(specVersionNode, namespaces=namespaces)
+                verInfo = self._locked_process_node_spec_version(specVersionNode, namespaces=namespaces)
                 svcdesc["specVersion"] = verInfo
 
                 serviceStateTableNode = descDoc.find("serviceStateTable", namespaces=namespaces)
-                variablesTable, typesTable, eventsTable = self._process_node_state_table(serviceStateTableNode, namespaces=namespaces)
+                variablesTable, typesTable, eventsTable = self._locked_process_node_state_table(serviceStateTableNode, namespaces=namespaces)
                 svcdesc["variablesTable"] = variablesTable
                 svcdesc["typesTable"] = typesTable
                 svcdesc["eventsTable"] = eventsTable
 
                 actionListNode = descDoc.find("actionList", namespaces=namespaces)
-                actionsTable = self._process_node_action_list(actionListNode, namespaces=namespaces)
+                actionsTable = self._locked_process_node_action_list(actionListNode, namespaces=namespaces)
                 svcdesc["actionsTable"] = actionsTable
             except:
                 print("Service Description Failure: %s" % sdurl)
@@ -226,7 +275,7 @@ class UpnpDevice:
 
         return svcdesc
 
-    def _locked_process_node_action_list(self, actionListNode, namespaces=None):
+    def _locked_process_node_action_list(self, actionListNode: Element, namespaces: Optional[dict] = None) -> dict:
         actionTable = {}
 
         actionNodeList = actionListNode.findall("action", namespaces=namespaces)
@@ -259,7 +308,7 @@ class UpnpDevice:
 
         return actionTable
 
-    def _locked_process_node_spec_version(self, specVersionNode, namespaces=None):
+    def _locked_process_node_spec_version(self, specVersionNode: Element, namespaces: Optional[dict] = None) -> dict:
         verInfo = {}
 
         verInfo["major"] = specVersionNode.find("major", namespaces=namespaces).text
@@ -267,7 +316,7 @@ class UpnpDevice:
 
         return verInfo
 
-    def _locked_process_node_state_table(self, serviceStateTableNode, namespaces=None):
+    def _locked_process_node_state_table(self, serviceStateTableNode: Element, namespaces: Optional[dict] = None) -> dict:
         variablesTable = {}
         typesTable = {}
         eventsTable = {}

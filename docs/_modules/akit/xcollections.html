@@ -1,35 +1,154 @@
 
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>akit.xcollections &mdash; Automation Kit 1.0.0.0 documentation</title>
+  
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>akit.xcollections &#8212; Automation Kit 1.0.0.0 documentation</title>
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/language_data.js"></script>
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Automation Kit
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_apidoc/modules.html">akit</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Automation Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>akit.xcollections</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <h1>Source code for akit.xcollections</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
@@ -58,9 +177,7 @@
 <span class="sd">        and inserts the &#39;item&#39; parameter into the list in the correct order.</span>
 
 <span class="sd">        :param ordered_list: The sorted list to insert into.</span>
-<span class="sd">        :type ordered_list: list</span>
 <span class="sd">        :param item: The item to insert into the list.</span>
-<span class="sd">        :type item: Any</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ordered_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span>
@@ -90,7 +207,6 @@
 <span class="sd">            Converts a key to a lower case string so case insensative comparisons can be made.</span>
 
 <span class="sd">            :param key: A key value to check to see if an object is stored under the key.</span>
-<span class="sd">            :type key: bytes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Only bytes keys can be used with the CaseInsensitiveBytesDict type.&quot;</span><span class="p">)</span>
@@ -109,10 +225,8 @@
 <span class="sd">            to perform a case insensative dictionary key lookup.</span>
 
 <span class="sd">            :param key: A key value to check to see if an object is stored under the key.</span>
-<span class="sd">            :type key: bytes</span>
 
 <span class="sd">            :returns: A boolean indicating if the key provided is in this objects keys.</span>
-<span class="sd">            :rtype: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveBytesDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="n">CaseInsensitiveBytesDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
 
@@ -122,7 +236,6 @@
 <span class="sd">            to perform a case insensative dictionary item delete.</span>
 
 <span class="sd">            :param key: A key value to delete the object stored under the key.</span>
-<span class="sd">            :type key: bytes</span>
 
 <span class="sd">            :raises: KeyError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -134,24 +247,20 @@
 <span class="sd">            to perform a case insensative dictionary item lookup.</span>
 
 <span class="sd">            :param key: A key value to lookup and return the object stored under the key.</span>
-<span class="sd">            :type key: bytes</span>
 
 <span class="sd">            :returns: The object associated with the key provided.</span>
-<span class="sd">            :rtype: object</span>
 
 <span class="sd">            :raises: KeyError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveBytesDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">CaseInsensitiveBytesDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Overrides the :method:`__setitem__` operator providing a key conversion in order</span>
 <span class="sd">            to perform a case insensative dictionary item set.</span>
 
 <span class="sd">            :param key: A key value to use to store the object stored under the key.</span>
-<span class="sd">            :type key: bytes</span>
 <span class="sd">            :param value: The value to store with the key.</span>
-<span class="sd">            :type value: object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveBytesDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">CaseInsensitiveBytesDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span>
 
@@ -161,10 +270,8 @@
 <span class="sd">            to perform a case insensative dictionary pop item.</span>
 
 <span class="sd">            :param key: A key value to use to pop and return the object stored under the key.</span>
-<span class="sd">            :type key: bytes</span>
 
 <span class="sd">            :returns: The object associated with the key provided.</span>
-<span class="sd">            :rtype: object</span>
 
 <span class="sd">            :raises: KeyError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -176,26 +283,22 @@
 <span class="sd">            to perform a case insensative dictionary get item.</span>
 
 <span class="sd">            :param key: A key value to use to get and return the object stored under the key.</span>
-<span class="sd">            :type key: bytes</span>
 
 <span class="sd">            :returns: The object associated with the key provided.</span>
-<span class="sd">            :rtype: object</span>
 
 <span class="sd">            :raises: KeyError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveBytesDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CaseInsensitiveBytesDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CaseInsensitiveBytesDict.setdefault"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.xcollections.CaseInsensitiveBytesDict.setdefault">[docs]</a>    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CaseInsensitiveBytesDict.setdefault"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.xcollections.CaseInsensitiveBytesDict.setdefault">[docs]</a>    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Overrides the :method:`setdefault` method providing a key conversion in order</span>
 <span class="sd">            to perform a case insensative dictionary setdefault for the given key.</span>
 
 <span class="sd">            :param key: A key value to use to store the object stored under the key.</span>
-<span class="sd">            :type key: bytes</span>
 <span class="sd">            :param value: The default value to store with the key.</span>
-<span class="sd">            :type value: object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveBytesDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">CaseInsensitiveBytesDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveBytesDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">CaseInsensitiveBytesDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CaseInsensitiveBytesDict.update"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.xcollections.CaseInsensitiveBytesDict.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dobj</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="c1"># pylint: disable=dangerous-default-value</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -233,7 +336,6 @@
 <span class="sd">            Converts a key to a lower case string so case insensative comparisons can be made.</span>
 
 <span class="sd">            :param key: A key value to check to see if an object is stored under the key.</span>
-<span class="sd">            :type key: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Only string keys can be used with the CaseInsensitiveStringDict type.&quot;</span><span class="p">)</span>
@@ -246,16 +348,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_convert_keys</span><span class="p">()</span>
         <span class="k">return</span>
 
-    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Overrides the :method:`__contains__` operator providing a key conversion in order</span>
 <span class="sd">            to perform a case insensative dictionary key lookup.</span>
 
 <span class="sd">            :param key: A key value to check to see if an object is stored under the key.</span>
-<span class="sd">            :type key: str</span>
 
 <span class="sd">            :returns: A boolean indicating if the key provided is in this objects keys.</span>
-<span class="sd">            :rtype: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
 
@@ -265,80 +365,69 @@
 <span class="sd">            to perform a case insensative dictionary item delete.</span>
 
 <span class="sd">            :param key: A key value to delete the object stored under the key.</span>
-<span class="sd">            :type key: str</span>
 
 <span class="sd">            :raises: KeyError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Overrides the :method:`__getitem__` operator providing a key conversion in order</span>
 <span class="sd">            to perform a case insensative dictionary item lookup.</span>
 
 <span class="sd">            :param key: A key value to lookup and return the object stored under the key.</span>
-<span class="sd">            :type key: str</span>
 
 <span class="sd">            :returns: The object associated with the key provided.</span>
-<span class="sd">            :rtype: object</span>
 
 <span class="sd">            :raises: KeyError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Overrides the :method:`__setitem__` operator providing a key conversion in order</span>
 <span class="sd">            to perform a case insensative dictionary item set.</span>
 
 <span class="sd">            :param key: A key value to use to store the object stored under the key.</span>
-<span class="sd">            :type key: str</span>
 <span class="sd">            :param value: The value to store with the key.</span>
-<span class="sd">            :type value: object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CaseInsensitiveStringDict.pop"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.xcollections.CaseInsensitiveStringDict.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CaseInsensitiveStringDict.pop"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.xcollections.CaseInsensitiveStringDict.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Overrides the :method:`pop` method providing a key conversion in order</span>
 <span class="sd">            to perform a case insensative dictionary pop item.</span>
 
 <span class="sd">            :param key: A key value to use to pop and return the object stored under the key.</span>
-<span class="sd">            :type key: str</span>
 
 <span class="sd">            :returns: The object associated with the key provided.</span>
-<span class="sd">            :rtype: object</span>
 
 <span class="sd">            :raises: KeyError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CaseInsensitiveStringDict.get"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.xcollections.CaseInsensitiveStringDict.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CaseInsensitiveStringDict.get"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.xcollections.CaseInsensitiveStringDict.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Overrides the :method:`get` method providing a key conversion in order</span>
 <span class="sd">            to perform a case insensative dictionary get item.</span>
 
 <span class="sd">            :param key: A key value to use to get and return the object stored under the key.</span>
-<span class="sd">            :type key: str</span>
 
 <span class="sd">            :returns: The object associated with the key provided.</span>
-<span class="sd">            :rtype: object</span>
 
 <span class="sd">            :raises: KeyError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CaseInsensitiveStringDict.setdefault"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.xcollections.CaseInsensitiveStringDict.setdefault">[docs]</a>    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CaseInsensitiveStringDict.setdefault"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.xcollections.CaseInsensitiveStringDict.setdefault">[docs]</a>    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Overrides the :method:`setdefault` method providing a key conversion in order</span>
 <span class="sd">            to perform a case insensative dictionary setdefault for the given key.</span>
 
 <span class="sd">            :param key: A key value to use to store the object stored under the key.</span>
-<span class="sd">            :type key: str</span>
 <span class="sd">            :param value: The default value to store with the key.</span>
-<span class="sd">            :type value: object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">CaseInsensitiveStringDict</span><span class="o">.</span><span class="n">key_to_lower</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CaseInsensitiveStringDict.update"><a class="viewcode-back" href="../../_apidoc/akit.html#akit.xcollections.CaseInsensitiveStringDict.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dobj</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="c1"># pylint: disable=dangerous-default-value</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -361,69 +450,50 @@
         <span class="k">return</span></div>
 </pre></div>
 
+           </div>
+           
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../index.html">Automation Kit</a></h1>
+          <footer>
+  
 
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Myron W. Walker
 
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../_apidoc/modules.html">akit</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Myron W. Walker.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-    </div>
 
-    
+    </section>
 
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-  </body>
+   
+
+</body>
 </html>

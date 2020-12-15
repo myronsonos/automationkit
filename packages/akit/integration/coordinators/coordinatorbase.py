@@ -29,6 +29,8 @@ from akit.xlogging.foundations import getAutomatonKitLogger
 
 EMPTY_LIST = []
 
+LITERAL_LANDSCAPE_TYPE = 'akit.integration.landscaping.landscape.Landscape'
+
 class CoordinatorBase:
     """
         The CoordinatorBase utilizes the expected device declarations of type such as 'network/upnp' to establish and maintain
@@ -51,7 +53,14 @@ class CoordinatorBase:
             cls.instance = super(CoordinatorBase, cls).__new__(cls)
         return cls.instance
 
-    def __init__(self, lscape, *args, **kwargs):
+    def __init__(self, lscape: LITERAL_LANDSCAPE_TYPE, *args, **kwargs):
+        """
+            Constructs an instance of a derived :class:`CoordinatorBase` object.
+
+            :param lscape: The :class:`Landscape` singleton instance.
+            :param *args: A pass through for other positional args.
+            :param **kwargs: A pass through for the other keyword args.
+        """
         this_type = type(self)
         if not this_type.initialized:
             this_type.initialized = True

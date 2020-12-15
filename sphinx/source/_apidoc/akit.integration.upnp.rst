@@ -10,7 +10,6 @@ Subpackages
    akit.integration.upnp.devices
    akit.integration.upnp.extensions
    akit.integration.upnp.generator
-   akit.integration.upnp.protocols
    akit.integration.upnp.services
    akit.integration.upnp.xml
 

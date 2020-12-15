@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>akit.integration.serial package &mdash; Automation Kit 1.0.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="akit.integration.upnp package" href="akit.integration.upnp.html" />
+    <link rel="prev" title="akit.integration.mdns package" href="akit.integration.mdns.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Automation Kit
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">akit</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="akit.html">akit package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="akit.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="akit.cli.html">akit.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.cryptography.html">akit.cryptography package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.datum.html">akit.datum package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.environment.html">akit.environment package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="akit.integration.html">akit.integration package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.mixins.html">akit.mixins package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.networking.html">akit.networking package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.scripts.html">akit.scripts package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.tasking.html">akit.tasking package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.templates.html">akit.templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.testing.html">akit.testing package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.xlogging.html">akit.xlogging package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.xthreading.html">akit.xthreading package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.aspects">akit.aspects module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.compat">akit.compat module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.exceptions">akit.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.extensible">akit.extensible module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.metadata">akit.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.paths">akit.paths module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.recorders">akit.recorders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.results">akit.results module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.taskbase">akit.taskbase module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.timeouts">akit.timeouts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xcollections">akit.xcollections module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xformatting">akit.xformatting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xinspect">akit.xinspect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xtime">akit.xtime module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Automation Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">akit</a> &raquo;</li>
+        
+          <li><a href="akit.html">akit package</a> &raquo;</li>
+        
+          <li><a href="akit.integration.html">akit.integration package</a> &raquo;</li>
+        
+      <li>akit.integration.serial package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/_apidoc/akit.integration.serial.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="akit-integration-serial-package">
+<h1>akit.integration.serial package<a class="headerlink" href="#akit-integration-serial-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-akit.integration.serial.serialtelnet">
+<span id="akit-integration-serial-serialtelnet-module"></span><h2>akit.integration.serial.serialtelnet module<a class="headerlink" href="#module-akit.integration.serial.serialtelnet" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="akit.integration.serial.serialtelnet.SerialTelnet">
+<em class="property">class </em><code class="sig-prename descclassname">akit.integration.serial.serialtelnet.</code><code class="sig-name descname">SerialTelnet</code><span class="sig-paren">(</span><em class="sig-param">host=None</em>, <em class="sig-param">port=0</em>, <em class="sig-param">baudrate=None</em>, <em class="sig-param">echo=None</em>, <em class="sig-param">timeout=&lt;object object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/serial/serialtelnet.html#SerialTelnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.serial.serialtelnet.SerialTelnet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/telnetlib.html#telnetlib.Telnet" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">telnetlib.Telnet</span></code></a></p>
+<dl class="py method">
+<dt id="akit.integration.serial.serialtelnet.SerialTelnet.negotiate_options">
+<code class="sig-name descname">negotiate_options</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/serial/serialtelnet.html#SerialTelnet.negotiate_options"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.serial.serialtelnet.SerialTelnet.negotiate_options" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="akit.integration.serial.serialtelnet.SerialTelnet.open">
+<code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param">host</em>, <em class="sig-param">port=0</em>, <em class="sig-param">baudrate=None</em>, <em class="sig-param">echo=None</em>, <em class="sig-param">timeout=&lt;object object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/serial/serialtelnet.html#SerialTelnet.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.serial.serialtelnet.SerialTelnet.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to a host.</p>
+<p>The optional second argument is the port number, which
+defaults to the standard telnet port (23).</p>
+<p>Don’t try to reopen an already connected instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="akit.integration.serial.serialtelnet.TelnetOption">
+<em class="property">class </em><code class="sig-prename descclassname">akit.integration.serial.serialtelnet.</code><code class="sig-name descname">TelnetOption</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">option</span></em>, <em class="sig-param"><span class="n">send_yes</span></em>, <em class="sig-param"><span class="n">send_no</span></em>, <em class="sig-param"><span class="n">ack_yes</span></em>, <em class="sig-param"><span class="n">ack_no</span></em>, <em class="sig-param"><span class="n">initial_state</span></em>, <em class="sig-param"><span class="n">activation_callback</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/serial/serialtelnet.html#TelnetOption"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.serial.serialtelnet.TelnetOption" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Manages the state of a telnet option for a telnet session.</p>
+<dl class="py method">
+<dt id="akit.integration.serial.serialtelnet.TelnetOption.negotiate_option">
+<code class="sig-name descname">negotiate_option</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">command</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/serial/serialtelnet.html#TelnetOption.negotiate_option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.serial.serialtelnet.TelnetOption.negotiate_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>A DO/DONT/WILL/WONT was received for this option, update state and answer when needed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="akit.integration.serial.serialtelnet.TelnetOptionState">
+<em class="property">class </em><code class="sig-prename descclassname">akit.integration.serial.serialtelnet.</code><code class="sig-name descname">TelnetOptionState</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/integration/serial/serialtelnet.html#TelnetOptionState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.integration.serial.serialtelnet.TelnetOptionState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.IntEnum" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="akit.integration.serial.serialtelnet.TelnetOptionState.ACTIVE">
+<code class="sig-name descname">ACTIVE</code><em class="property"> = 2</em><a class="headerlink" href="#akit.integration.serial.serialtelnet.TelnetOptionState.ACTIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="akit.integration.serial.serialtelnet.TelnetOptionState.INACTIVE">
+<code class="sig-name descname">INACTIVE</code><em class="property"> = 3</em><a class="headerlink" href="#akit.integration.serial.serialtelnet.TelnetOptionState.INACTIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="akit.integration.serial.serialtelnet.TelnetOptionState.REALLY_INACTIVE">
+<code class="sig-name descname">REALLY_INACTIVE</code><em class="property"> = 4</em><a class="headerlink" href="#akit.integration.serial.serialtelnet.TelnetOptionState.REALLY_INACTIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="akit.integration.serial.serialtelnet.TelnetOptionState.REQUESTED">
+<code class="sig-name descname">REQUESTED</code><em class="property"> = 1</em><a class="headerlink" href="#akit.integration.serial.serialtelnet.TelnetOptionState.REQUESTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="akit.integration.serial.serialtelnet.TelnetOptionState.UNSET">
+<code class="sig-name descname">UNSET</code><em class="property"> = 0</em><a class="headerlink" href="#akit.integration.serial.serialtelnet.TelnetOptionState.UNSET" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-akit.integration.serial">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-akit.integration.serial" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="akit.integration.upnp.html" class="btn btn-neutral float-right" title="akit.integration.upnp package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="akit.integration.mdns.html" class="btn btn-neutral float-left" title="akit.integration.mdns package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Myron W. Walker
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

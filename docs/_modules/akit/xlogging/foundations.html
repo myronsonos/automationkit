@@ -1,35 +1,154 @@
 
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>akit.xlogging.foundations &mdash; Automation Kit 1.0.0.0 documentation</title>
+  
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>akit.xlogging.foundations &#8212; Automation Kit 1.0.0.0 documentation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/language_data.js"></script>
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Automation Kit
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_apidoc/modules.html">akit</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Automation Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>akit.xlogging.foundations</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <h1>Source code for akit.xlogging.foundations</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
@@ -61,7 +180,6 @@
 <span class="kn">import</span> <span class="nn">traceback</span>
 
 <span class="kn">from</span> <span class="nn">akit.environment.context</span> <span class="kn">import</span> <span class="n">Context</span>
-<span class="kn">from</span> <span class="nn">akit.environment.variables</span> <span class="kn">import</span> <span class="n">LOG_LEVEL_NAMES</span>
 
 <span class="n">logging</span><span class="o">.</span><span class="n">addLevelName</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;QUIET&quot;</span><span class="p">)</span>
 
@@ -76,6 +194,9 @@
 
 
 <div class="viewcode-block" id="format_log_section_header"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.format_log_section_header">[docs]</a><span class="k">def</span> <span class="nf">format_log_section_header</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Formats a log section header by centering the title inside of the section marker character string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">title_upper</span> <span class="o">=</span> <span class="s2">&quot; </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">title</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
     <span class="n">marker_count</span> <span class="o">=</span> <span class="n">LOGGING_SECTION_MARKER_LENGTH</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">title_upper</span><span class="p">)</span>
     <span class="n">marker_half</span> <span class="o">=</span> <span class="n">marker_count</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span>
@@ -87,6 +208,9 @@
 <span class="n">akit_logger</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="getAutomatonKitLogger"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.getAutomatonKitLogger">[docs]</a><span class="k">def</span> <span class="nf">getAutomatonKitLogger</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the automation kit logger.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">akit_logger</span>
     <span class="k">if</span> <span class="n">akit_logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">akit_logger</span> <span class="o">=</span> <span class="n">TestKitLoggerWrapper</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">LOGGER_NAME</span><span class="p">))</span>
@@ -95,11 +219,13 @@
 <span class="n">OTHER_LOGGER_FILTERS</span> <span class="o">=</span> <span class="p">[]</span>
 
 
-<div class="viewcode-block" id="LoggingManagerWrapper"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.LoggingManagerWrapper">[docs]</a><span class="k">class</span> <span class="nc">LoggingManagerWrapper</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Manager</span><span class="p">):</span>
+<div class="viewcode-block" id="LoggingManagerWrapper"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.LoggingManagerWrapper">[docs]</a><span class="k">class</span> <span class="nc">LoggingManagerWrapper</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        There is [under normal circumstances] just one Manager instance, which</span>
 <span class="sd">        holds the hierarchy of loggers.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pylint: disable=protected-access</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Initialize the manager with the root node of the logger hierarchy.</span>
@@ -109,26 +235,44 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">disable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Git if logging is disabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">disable</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">emittedNoHandlerWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Get if the emittion of handler warnings is turned off.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">emittedNoHandlerWarning</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">loggerClass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the logger Class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">loggerClass</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">loggerDict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns a dictionary of the loggers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">loggerDict</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">logRecordFactory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the log record factory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">logRecordFactory</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the root logger.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">root</span>
 
 <div class="viewcode-block" id="LoggingManagerWrapper.getLogger"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.LoggingManagerWrapper.getLogger">[docs]</a>    <span class="k">def</span> <span class="nf">getLogger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -224,10 +368,16 @@
         <span class="k">return</span></div>
 
 <div class="viewcode-block" id="LoggingDefaults"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.LoggingDefaults">[docs]</a><span class="k">class</span> <span class="nc">LoggingDefaults</span><span class="p">:</span>
-
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Makes all the default values associated with logging available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">DefaultFileLoggingHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span></div>
 
 <div class="viewcode-block" id="TestKitLoggerWrapper"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.TestKitLoggerWrapper">[docs]</a><span class="k">class</span> <span class="nc">TestKitLoggerWrapper</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        We utilize a log wrapper so we can re-initialize logging and switch out the logger</span>
+<span class="sd">        without invalidating references to the logger that we have given out.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logger</span>
@@ -271,6 +421,14 @@
         <span class="k">return</span></div>
 
 <div class="viewcode-block" id="TestKitLoggerWrapper.warn"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.TestKitLoggerWrapper.warn">[docs]</a>    <span class="k">def</span> <span class="nf">warn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Log &#39;msg % args&#39; with severity &#39;WARNING&#39;.</span>
+
+<span class="sd">            To pass exception information, use the keyword argument exc_info with</span>
+<span class="sd">            a true value, e.g.</span>
+
+<span class="sd">            logger.warning(&quot;Houston, we have a %s&quot;, &quot;bit of a problem&quot;, exc_info=1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span></div>
 
@@ -311,29 +469,48 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Logs a log section marker</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">format_log_section_header</span><span class="p">(</span><span class="n">title</span><span class="p">))</span>
+        <span class="n">marker</span> <span class="o">=</span> <span class="n">format_log_section_header</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
         <span class="k">return</span></div></div>
 
 <div class="viewcode-block" id="WarningFilter"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.WarningFilter">[docs]</a><span class="k">class</span> <span class="nc">WarningFilter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Filter</span><span class="p">):</span>
-<div class="viewcode-block" id="WarningFilter.filter"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.WarningFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rec</span><span class="p">):</span>
-        <span class="n">process_rec</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">levelno</span> <span class="o">&lt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filters records with a log level &lt; WARNING</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="WarningFilter.filter"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.WarningFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span> <span class="c1"># pylint: disable=no-self-use</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Performs the filtering of records.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">process_rec</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">levelno</span> <span class="o">&lt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span>
         <span class="k">return</span> <span class="n">process_rec</span></div></div>
 
 <div class="viewcode-block" id="OtherFilter"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.OtherFilter">[docs]</a><span class="k">class</span> <span class="nc">OtherFilter</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filters records with a name that match a prefix expression and marks them as other.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>
         <span class="k">return</span>
 
-<div class="viewcode-block" id="OtherFilter.filter"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.OtherFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rec</span><span class="p">):</span>
-        <span class="n">rec</span><span class="o">.</span><span class="n">is_other</span> <span class="o">=</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">rec</span><span class="o">.</span><span class="n">is_other</span></div></div>
+<div class="viewcode-block" id="OtherFilter.filter"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.OtherFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Performs the filtering of records.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">record</span><span class="o">.</span><span class="n">is_other</span> <span class="o">=</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">record</span><span class="o">.</span><span class="n">is_other</span></div></div>
 
 <div class="viewcode-block" id="RelevantFilter"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.RelevantFilter">[docs]</a><span class="k">class</span> <span class="nc">RelevantFilter</span><span class="p">:</span>
-
-<div class="viewcode-block" id="RelevantFilter.filter"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.RelevantFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rec</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allows records that are not marked as other.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="RelevantFilter.filter"><a class="viewcode-back" href="../../../_apidoc/akit.xlogging.html#akit.xlogging.foundations.RelevantFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span> <span class="c1"># pylint: disable=no-self-use</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Performs the filtering of records.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">process_rec</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="s2">&quot;is_other&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">rec</span><span class="o">.</span><span class="n">is_other</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s2">&quot;is_other&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">is_other</span><span class="p">:</span>
                 <span class="n">process_rec</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="n">process_rec</span></div></div>
 
@@ -400,7 +577,11 @@
     <span class="k">return</span></div>
 
 <span class="k">def</span> <span class="nf">_reinitialize_logging</span><span class="p">(</span><span class="n">consolelevel</span><span class="p">,</span> <span class="n">logfilelevel</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">logfile_basename</span><span class="p">,</span> <span class="n">log_branches</span><span class="p">):</span>
-
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Helper method to re-initialize the logging when the path to the output directory changes</span>
+<span class="sd">        shortly after startup of the framework.  This method also handles the configuration of</span>
+<span class="sd">        output levels, stdout and stderr file wrappers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NOTE: Console logging set to </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">consolelevel</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NOTE: outputdir=</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">output_dir</span><span class="p">)</span>
@@ -472,7 +653,7 @@
             <span class="n">log_level</span> <span class="o">=</span> <span class="n">binfo</span><span class="p">[</span><span class="s2">&quot;loglevel&quot;</span><span class="p">]</span>
 
             <span class="n">logging_create_branch_logger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">,</span> <span class="n">logfilename</span><span class="p">,</span> <span class="n">log_level</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">xcpt</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span> <span class="c1"># pylint: disable=broad-except</span>
             <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;Error configuration branch logger.&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
             <span class="n">errmsg</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
             <span class="n">root_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
@@ -480,72 +661,52 @@
     <span class="n">root_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">format_log_section_header</span><span class="p">(</span><span class="s2">&quot;Logging Initiaized&quot;</span><span class="p">))</span>
 
     <span class="k">return</span>
-
 </pre></div>
 
+           </div>
+           
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../../index.html">Automation Kit</a></h1>
+          <footer>
+  
 
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Myron W. Walker
 
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_apidoc/modules.html">akit</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Myron W. Walker.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-    </div>
 
-    
+    </section>
 
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-  </body>
+   
+
+</body>
 </html>

@@ -71,7 +71,7 @@
             "label": "Web Service - Documentation",
             "type": "shell",
             "options": {
-                "cwd": "${workspaceFolder}/docs/dirhtml"
+                "cwd": "${workspaceFolder}/docs"
             },
             "command": "${workspaceFolder}/.venv/bin/python",
             "args": [

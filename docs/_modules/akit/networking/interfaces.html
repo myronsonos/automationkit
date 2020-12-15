@@ -1,35 +1,154 @@
 
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>akit.networking.interfaces &mdash; Automation Kit 1.0.0.0 documentation</title>
+  
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>akit.networking.interfaces &#8212; Automation Kit 1.0.0.0 documentation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/language_data.js"></script>
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Automation Kit
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_apidoc/modules.html">akit</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Automation Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>akit.networking.interfaces</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <h1>Source code for akit.networking.interfaces</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
@@ -49,20 +168,32 @@
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Development&quot;</span> <span class="c1"># Prototype, Development or Production</span>
 <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
 <span class="kn">import</span> <span class="nn">socket</span>
 
 <span class="kn">import</span> <span class="nn">netifaces</span>
 
-<span class="kn">from</span> <span class="nn">akit.compat</span> <span class="kn">import</span> <span class="n">bytes_cast</span>
-
-
 <div class="viewcode-block" id="encode_address"><a class="viewcode-back" href="../../../_apidoc/akit.networking.html#akit.networking.interfaces.encode_address">[docs]</a><span class="k">def</span> <span class="nf">encode_address</span><span class="p">(</span><span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Encodes the address string to bytes</span>
+
+<span class="sd">        :param address: The IP address to encode.</span>
+
+<span class="sd">        :returns: A packed string suitable for use with low-level network functions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">is_ipv6</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">address</span>
     <span class="n">address_family</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">AF_INET6</span> <span class="k">if</span> <span class="n">is_ipv6</span> <span class="k">else</span> <span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span>
     <span class="k">return</span> <span class="n">socket</span><span class="o">.</span><span class="n">inet_pton</span><span class="p">(</span><span class="n">address_family</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="get_ipv4_address"><a class="viewcode-back" href="../../../_apidoc/akit.networking.html#akit.networking.interfaces.get_ipv4_address">[docs]</a><span class="k">def</span> <span class="nf">get_ipv4_address</span><span class="p">(</span><span class="n">ifname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="get_ipv4_address"><a class="viewcode-back" href="../../../_apidoc/akit.networking.html#akit.networking.interfaces.get_ipv4_address">[docs]</a><span class="k">def</span> <span class="nf">get_ipv4_address</span><span class="p">(</span><span class="n">ifname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the first IPv4 address associated with the specified interface name.</span>
 
+<span class="sd">        :param ifname: The interface name to lookup the IP address for.</span>
+
+<span class="sd">        :returns: The IPv4 address associated with the specified interface name or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">addr</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">address_info</span> <span class="o">=</span> <span class="n">netifaces</span><span class="o">.</span><span class="n">ifaddresses</span><span class="p">(</span><span class="n">ifname</span><span class="p">)</span>
@@ -72,7 +203,7 @@
 
     <span class="k">return</span> <span class="n">addr</span></div>
 
-<div class="viewcode-block" id="get_correspondance_interface"><a class="viewcode-back" href="../../../_apidoc/akit.networking.html#akit.networking.interfaces.get_correspondance_interface">[docs]</a><span class="k">def</span> <span class="nf">get_correspondance_interface</span><span class="p">(</span><span class="n">ref_ip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ref_port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">addr_family</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="get_correspondance_interface"><a class="viewcode-back" href="../../../_apidoc/akit.networking.html#akit.networking.interfaces.get_correspondance_interface">[docs]</a><span class="k">def</span> <span class="nf">get_correspondance_interface</span><span class="p">(</span><span class="n">ref_ip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ref_port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">addr_family</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Utilizes the TCP stack to make a connection to a remote computer and utilizes</span>
 <span class="sd">        gets the network interface that was used to connect to the remote computer.</span>
@@ -83,19 +214,15 @@
 <span class="sd">        :param ref_ip: An IP address of a computer that is on the subnet that you wish</span>
 <span class="sd">                       to find the correspondance ip address for and that is hosting a</span>
 <span class="sd">                       service that will accept a TCP connection from a client.</span>
-<span class="sd">        :type ref_ip: str</span>
 <span class="sd">        :param ref_port: The port number of a service on a computer that will accept a</span>
 <span class="sd">                         TCP connection so we can determine a path to the computer.</span>
-<span class="sd">        :type ref_port: int</span>
 <span class="sd">        :param addr_family: The socket address family to utilize when making a remote</span>
 <span class="sd">                            connection to a host socket.AF_INET or socket.AF_INET6.</span>
 <span class="sd">                            The address family used will determine the type of IP address</span>
 <span class="sd">                            returned from this function.</span>
-<span class="sd">        :type addr_family: int</span>
 
 <span class="sd">        :returns: The correspondance interface and IPAddress that can be used to setup a</span>
 <span class="sd">                  service that is visible to the reference IP address.</span>
-<span class="sd">        :rtype: (str, str)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">corr_iface</span> <span class="o">=</span> <span class="kc">None</span>
@@ -129,19 +256,15 @@
 <span class="sd">        :param ref_ip: An IP address of a computer that is on the subnet that you wish</span>
 <span class="sd">                       to find the correspondance ip address for and that is hosting a</span>
 <span class="sd">                       service that will accept a TCP connection from a client.</span>
-<span class="sd">        :type ref_ip: str</span>
 <span class="sd">        :param ref_port: The port number of a service on a computer that will accept a</span>
 <span class="sd">                         TCP connection so we can determine a path to the computer.</span>
-<span class="sd">        :type ref_port: int</span>
 <span class="sd">        :param addr_family: The socket address family to utilize when making a remote</span>
 <span class="sd">                            connection to a host socket.AF_INET or socket.AF_INET6.</span>
 <span class="sd">                            The address family used will determine the type of IP address</span>
 <span class="sd">                            returned from this function.</span>
-<span class="sd">        :type addr_family: int</span>
 
 <span class="sd">        :returns: The correspondance IP address that can be used to setup a service that</span>
 <span class="sd">                  is visible to the reference IP address.</span>
-<span class="sd">        :rtype: str</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">corr_ip</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -150,7 +273,7 @@
         <span class="n">sock</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
         <span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">ref_ip</span><span class="p">,</span> <span class="n">ref_port</span><span class="p">))</span>
         <span class="n">corr_ip</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">getsockname</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">xcpt</span><span class="p">:</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span> <span class="c1"># pylint: disable=broad-except</span>
         <span class="c1"># If an exception occurs, just return None</span>
         <span class="k">pass</span>
     <span class="k">finally</span><span class="p">:</span>
@@ -158,12 +281,13 @@
 
     <span class="k">return</span> <span class="n">corr_ip</span></div>
 
-<div class="viewcode-block" id="is_ipv6_address"><a class="viewcode-back" href="../../../_apidoc/akit.networking.html#akit.networking.interfaces.is_ipv6_address">[docs]</a><span class="k">def</span> <span class="nf">is_ipv6_address</span><span class="p">(</span><span class="n">candidate</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="is_ipv6_address"><a class="viewcode-back" href="../../../_apidoc/akit.networking.html#akit.networking.interfaces.is_ipv6_address">[docs]</a><span class="k">def</span> <span class="nf">is_ipv6_address</span><span class="p">(</span><span class="n">candidate</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks to see if &#39;candidate&#39; is an ipv6 address.</span>
 
 <span class="sd">        :param candidate: A string that is to be checked to see if it is a valid IPv6 address.</span>
-<span class="sd">        :type candidate: str</span>
+
+<span class="sd">        :returns: A boolean indicating if an IP address is an IPv6 address</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">is_ipv6</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span> <span class="o">==</span> <span class="mi">16</span><span class="p">:</span>
@@ -172,69 +296,50 @@
     <span class="k">return</span> <span class="n">is_ipv6</span></div>
 </pre></div>
 
+           </div>
+           
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../../index.html">Automation Kit</a></h1>
+          <footer>
+  
 
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Myron W. Walker
 
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_apidoc/modules.html">akit</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Myron W. Walker.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-    </div>
 
-    
+    </section>
 
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-  </body>
+   
+
+</body>
 </html>

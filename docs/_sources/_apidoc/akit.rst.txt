@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   akit.cli
    akit.cryptography
    akit.datum
    akit.environment
@@ -115,6 +116,14 @@ akit.xformatting module
 -----------------------
 
 .. automodule:: akit.xformatting
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+akit.xinspect module
+--------------------
+
+.. automodule:: akit.xinspect
    :members:
    :undoc-members:
    :show-inheritance:

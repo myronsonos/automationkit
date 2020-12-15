@@ -11,19 +11,10 @@ Subpackages
    akit.integration.clients
    akit.integration.cluster
    akit.integration.coordinators
+   akit.integration.landscaping
    akit.integration.mdns
+   akit.integration.serial
    akit.integration.upnp
-
-Submodules
-----------
-
-akit.integration.landscaping module
------------------------------------
-
-.. automodule:: akit.integration.landscaping
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 Module contents
 ---------------

@@ -26,6 +26,7 @@ from akit.integration.clients.linuxclientmixin import LinuxClientMixIn
 from akit.integration.clients.windowsclientmixin import WindowsClientMixIn
 from akit.integration.cluster.clustermixin import ClusterMixIn
 
+LITERAL_LANDSCAPE_TYPE = 'akit.integration.landscaping.landscape.Landscape'
 
 class LandscapeDescription:
     """
@@ -35,7 +36,7 @@ class LandscapeDescription:
     """
 
     @classmethod
-    def register_integration_points(cls, landscape):
+    def register_integration_points(cls, landscape: LITERAL_LANDSCAPE_TYPE):
         """
             Method called during the test framework ininitalization in order to register integartion mixins and their
             associated roles with the test framework.

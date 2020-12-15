@@ -12,6 +12,14 @@ akit.environment.activate module
    :undoc-members:
    :show-inheritance:
 
+akit.environment.command module
+-------------------------------
+
+.. automodule:: akit.environment.command
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 akit.environment.configuration module
 -------------------------------------
 

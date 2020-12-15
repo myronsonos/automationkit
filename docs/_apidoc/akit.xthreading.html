@@ -1,36 +1,198 @@
 
-<!DOCTYPE html>
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>akit.xthreading package &#8212; Automation Kit 1.0.0.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>akit.xthreading package &mdash; Automation Kit 1.0.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="akit.xlogging package" href="akit.xlogging.html" />
+    <link rel="prev" title="akit.xlogging package" href="akit.xlogging.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Automation Kit
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">akit</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="akit.html">akit package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="akit.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="akit.cli.html">akit.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.cryptography.html">akit.cryptography package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.datum.html">akit.datum package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.environment.html">akit.environment package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.integration.html">akit.integration package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.mixins.html">akit.mixins package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.networking.html">akit.networking package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.scripts.html">akit.scripts package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.tasking.html">akit.tasking package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.templates.html">akit.templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.testing.html">akit.testing package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="akit.xlogging.html">akit.xlogging package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">akit.xthreading package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.aspects">akit.aspects module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.compat">akit.compat module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.exceptions">akit.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.extensible">akit.extensible module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.metadata">akit.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.paths">akit.paths module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.recorders">akit.recorders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.results">akit.results module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.taskbase">akit.taskbase module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.timeouts">akit.timeouts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xcollections">akit.xcollections module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xformatting">akit.xformatting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xinspect">akit.xinspect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit.xtime">akit.xtime module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="akit.html#module-akit">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Automation Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">akit</a> &raquo;</li>
+        
+          <li><a href="akit.html">akit package</a> &raquo;</li>
+        
+      <li>akit.xthreading package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/_apidoc/akit.xthreading.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="akit-xthreading-package">
 <h1>akit.xthreading package<a class="headerlink" href="#akit-xthreading-package" title="Permalink to this headline">¶</a></h1>
@@ -69,7 +231,7 @@
 <span id="akit-xthreading-looperpool-module"></span><h2>akit.xthreading.looperpool module<a class="headerlink" href="#module-akit.xthreading.looperpool" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-looperpool"></span><dl class="py class">
 <dt id="akit.xthreading.looperpool.LooperPool">
-<em class="property">class </em><code class="sig-prename descclassname">akit.xthreading.looperpool.</code><code class="sig-name descname">LooperPool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">looper_type</span></em>, <em class="sig-param"><span class="n">group_name</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span> <span class="o">=</span> <span class="default_value">5</span></em>, <em class="sig-param"><span class="n">max</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span> <span class="o">=</span> <span class="default_value">10</span></em>, <em class="sig-param"><span class="n">highwater</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span> <span class="o">=</span> <span class="default_value">5</span></em>, <em class="sig-param"><span class="n">daemon</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xthreading/looperpool.html#LooperPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xthreading.looperpool.LooperPool" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">akit.xthreading.looperpool.</code><code class="sig-name descname">LooperPool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">looper_type</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#akit.xthreading.looper.Looper" title="akit.xthreading.looper.Looper">akit.xthreading.looper.Looper</a></span></em>, <em class="sig-param"><span class="n">group_name</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_loopers</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span> <span class="o">=</span> <span class="default_value">5</span></em>, <em class="sig-param"><span class="n">max_loopers</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span> <span class="o">=</span> <span class="default_value">10</span></em>, <em class="sig-param"><span class="n">highwater</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span> <span class="o">=</span> <span class="default_value">5</span></em>, <em class="sig-param"><span class="n">daemon</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xthreading/looperpool.html#LooperPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xthreading.looperpool.LooperPool" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The <a class="reference internal" href="#akit.xthreading.looperpool.LooperPool" title="akit.xthreading.looperpool.LooperPool"><code class="xref py py-class docutils literal notranslate"><span class="pre">LooperPool</span></code></a> provides a convenient way to setup a thread pool and worker threads.  The
 <a class="reference internal" href="#akit.xthreading.looperpool.LooperPool" title="akit.xthreading.looperpool.LooperPool"><code class="xref py py-class docutils literal notranslate"><span class="pre">LooperPool</span></code></a> is passed a type derived from <code class="xref py py-class docutils literal notranslate"><span class="pre">Looper</span></code> in order to customize the work
@@ -146,84 +308,99 @@ the queue is shutdown and to exit.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-akit.xthreading.readwritelock">
+<span id="akit-xthreading-readwritelock-module"></span><h2>akit.xthreading.readwritelock module<a class="headerlink" href="#module-akit.xthreading.readwritelock" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-0"></span><dl class="py class">
+<dt id="akit.xthreading.readwritelock.ReadWriteLock">
+<em class="property">class </em><code class="sig-prename descclassname">akit.xthreading.readwritelock.</code><code class="sig-name descname">ReadWriteLock</code><a class="reference internal" href="../_modules/akit/xthreading/readwritelock.html#ReadWriteLock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xthreading.readwritelock.ReadWriteLock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The <a class="reference internal" href="#akit.xthreading.readwritelock.ReadWriteLock" title="akit.xthreading.readwritelock.ReadWriteLock"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReadWriteLock</span></code></a> implements a lock with read/write semantics that allows multiple
+readers threads to hold read access to the lock at a time or that allows a single writer to
+hold write access to the lock.</p>
+<dl class="py method">
+<dt id="akit.xthreading.readwritelock.ReadWriteLock.acquire_read">
+<code class="sig-name descname">acquire_read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xthreading/readwritelock.html#ReadWriteLock.acquire_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xthreading.readwritelock.ReadWriteLock.acquire_read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method called by a thread to acquire read access on the <a class="reference internal" href="#akit.xthreading.readwritelock.ReadWriteLock" title="akit.xthreading.readwritelock.ReadWriteLock"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReadWriteLock</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="akit.xthreading.readwritelock.ReadWriteLock.acquire_write">
+<code class="sig-name descname">acquire_write</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xthreading/readwritelock.html#ReadWriteLock.acquire_write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xthreading.readwritelock.ReadWriteLock.acquire_write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method called by a thread to acquire write access on the <a class="reference internal" href="#akit.xthreading.readwritelock.ReadWriteLock" title="akit.xthreading.readwritelock.ReadWriteLock"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReadWriteLock</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="akit.xthreading.readwritelock.ReadWriteLock.release_read">
+<code class="sig-name descname">release_read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xthreading/readwritelock.html#ReadWriteLock.release_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xthreading.readwritelock.ReadWriteLock.release_read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method called by a thread to release read access on the <a class="reference internal" href="#akit.xthreading.readwritelock.ReadWriteLock" title="akit.xthreading.readwritelock.ReadWriteLock"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReadWriteLock</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="akit.xthreading.readwritelock.ReadWriteLock.release_write">
+<code class="sig-name descname">release_write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/akit/xthreading/readwritelock.html#ReadWriteLock.release_write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#akit.xthreading.readwritelock.ReadWriteLock.release_write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method called by a thread to release write access on the <a class="reference internal" href="#akit.xthreading.readwritelock.ReadWriteLock" title="akit.xthreading.readwritelock.ReadWriteLock"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReadWriteLock</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-akit.xthreading">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-akit.xthreading" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-xthreading"></span></div>
 </div>
 
 
+           </div>
+           
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">Automation Kit</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">akit</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="akit.html">akit package</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">akit</a><ul>
-  <li><a href="akit.html">akit package</a><ul>
-      <li>Previous: <a href="akit.xlogging.html" title="previous chapter">akit.xlogging package</a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="akit.xlogging.html" class="btn btn-neutral float-left" title="akit.xlogging package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+  
 
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Myron W. Walker
 
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Myron W. Walker.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/_apidoc/akit.xthreading.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
 
-    
+    </section>
 
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-  </body>
+   
+
+</body>
 </html>

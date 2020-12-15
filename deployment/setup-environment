@@ -144,6 +144,7 @@ if [ ! -f $INITIALIZED_FILE ]; then
 
             # Development Modules
             pip install sphinx
+            pip install sphinx_rtd_theme
 
             # Install pylint into the virtual environment
             pip install click
