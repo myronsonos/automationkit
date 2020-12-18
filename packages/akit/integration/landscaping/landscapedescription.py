@@ -26,6 +26,8 @@ from akit.integration.clients.linuxclientmixin import LinuxClientMixIn
 from akit.integration.clients.windowsclientmixin import WindowsClientMixIn
 from akit.integration.cluster.clustermixin import ClusterMixIn
 
+# Declare a literal UpnpFacotry type for use with typing
+# to allow for typing without creating circular reference
 LITERAL_LANDSCAPE_TYPE = 'akit.integration.landscaping.landscape.Landscape'
 
 class LandscapeDescription:

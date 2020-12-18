@@ -51,7 +51,7 @@ user_config = load_user_configuration()
 RUNTIME_CONFIGURATION.maps.insert(0, user_config)
 
 # Step 4 - Process environment options
-from akit.environment.options import process_environment_options
+from akit.environment.options import process_environment_options # pylint: disable=wrong-import-position
 output_dir, console_level, logfile_level, branch, build, flavor, start_time = process_environment_options()
 
 if console_level is None:
@@ -126,4 +126,4 @@ loglevels["logfile"] = logfile_level
 
 # Step 5 - Import the logging module so we get an initial configuration that
 # points to standard out
-import akit.xlogging.foundations # pylint: disable=unused-import
+import akit.xlogging.foundations # pylint: disable=unused-import,wrong-import-position

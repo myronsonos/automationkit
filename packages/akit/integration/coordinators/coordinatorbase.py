@@ -29,6 +29,8 @@ from akit.xlogging.foundations import getAutomatonKitLogger
 
 EMPTY_LIST = []
 
+# Declare a literal UpnpFacotry type for use with typing
+# to allow for typing without creating circular reference
 LITERAL_LANDSCAPE_TYPE = 'akit.integration.landscaping.landscape.Landscape'
 
 class CoordinatorBase:

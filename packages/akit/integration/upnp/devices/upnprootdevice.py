@@ -16,38 +16,42 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import List, Optional, Tuple, Union
+
 import os
 import re
 import threading
 import traceback
-import typing
 import weakref
 
 from urllib.parse import urlparse
 
 from xml.etree.ElementTree import tostring as xml_tostring
 from xml.etree.ElementTree import fromstring as xml_fromstring
-from xml.etree.ElementTree import ElementTree
+from xml.etree.ElementTree import Element, ElementTree
 from xml.etree.ElementTree import register_namespace
 
 import requests
 
 from requests.compat import urljoin
 
-from akit.exceptions import AKitCommunicationsProtocolError
+from akit.exceptions import AKitCommunicationsProtocolError, AKitNotOverloadedError
 from akit.extensible import generate_extension_key
 from akit.paths import normalize_name_for_path
 
 from akit.integration.landscaping.landscapedeviceextension import LandscapeDeviceExtension
 
-from akit.integration.upnp.upnpprotocol import MSearchKeys, MSearchRouteKeys
-from akit.integration.upnp.devices.upnpdevice import UpnpDevice, normalize_name_for_path
+from akit.integration.upnp.upnpprotocol import MSearchRouteKeys
+from akit.integration.upnp.devices.upnpdevice import UpnpDevice
+from akit.integration.upnp.devices.upnpembeddeddevice import UpnpEmbeddedDevice
+from akit.integration.upnp.upnpfactory import UpnpFactory
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE, UpnpDevice1Device, UpnpDevice1SpecVersion
 from akit.integration.upnp.soap import NS_UPNP_EVENT
 
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_EMBEDDEDDEVICES
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_ROOTDEVICES
 from akit.integration.upnp.paths import DIR_UPNP_GENERATOR_DYNAMIC_SERVICES
+from akit.integration.upnp.upnpprotocol import MSearchKeys
 
 from akit.integration.upnp.services.upnpserviceproxy import UpnpServiceProxy
 
@@ -61,7 +65,14 @@ UPNP_DIR = os.path.dirname(upnp_module.__file__)
 
 REGEX_SUBSCRIPTION_TIMEOUT = re.compile("^seconds-([0-9]+|infinite)", flags=re.IGNORECASE)
 
-def device_description_load(location):
+def device_description_load(location: str) -> Union[ElementTree, None]:
+    """
+        Gets the description document from the specified URL and loads the contents into an XML ElementTree.
+
+        :param location: The url of where to get the device description.
+
+        :returns: The XML ElementTree for the XML content from the device description or None.
+    """
     docTree = None
 
     resp = requests.get(location)
@@ -73,7 +84,19 @@ def device_description_load(location):
     return  docTree
 
 
-def device_description_find_components(location, docTree, namespaces={"": UPNP_DEVICE1_NAMESPACE}):
+def device_description_find_components(location: str, docTree: ElementTree, namespaces: dict = {"": UPNP_DEVICE1_NAMESPACE}) -> Tuple[Element, str, str, str, str, str]:
+    """
+        Processes the device description and find the device description components.  The device
+        description components are the manufacturer, modelName, modelNumber, modelDescription
+        and the device description node.
+
+        :param location: The URL location of where the device description document was obtained.
+        :param docTree: The XML document ElementTree object.
+        :param namespaces: A dictionary of namespaces to use when processing the device description document.
+
+        :returns: A tuple with the (device node, urlBase, manufacturer, modelName, modelNumber, modelDescription)
+    """
+    # pylint: disable=dangerous-default-value
 
     devNode = docTree.find("device", namespaces=namespaces)
 
@@ -170,23 +193,38 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
         return
 
     @property
-    def cachecontrol(self):
+    def cachecontrol(self) -> str:
+        """
+            The cache control timeout for the device from the MSEARCH response.
+        """
         return self._cachecontrol
 
     @property
-    def description(self):
+    def description(self) -> UpnpDevice1Device:
+        """
+            The UpnpDevice1Device device description.
+        """
         desc = self._description
         return desc
 
     @property
-    def device_descriptions(self):
+    def embedded_device_descriptions(self) -> List[UpnpDevice1Device]:
+        """
+            Returns the list of descriptions for the embedded device that are declared for this root device.
+        """
+        dev_desc_list = []
+
         dev_desc = self._device_descriptions
         if dev_desc is not None:
             dev_desc_list = [devdesc for devdesc in dev_desc.values()]
+
         return dev_desc_list
 
     @property
-    def devices(self):
+    def embedded_devices(self) -> List[UpnpEmbeddedDevice]:
+        """
+            Returns the list of embedded devices that are declared for this root device.
+        """
         devices_list = None
 
         devices = self._devices
@@ -196,19 +234,31 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
         return devices_list
 
     @property
-    def ext(self):
+    def ext(self) -> str:
+        """
+            Returns the EXT header reported by the device in the MSEARCH response.
+        """
         return self._ext
 
     @property
-    def extra(self):
+    def extra(self) -> dict:
+        """
+            Returns a dictionary that contains the extra thirdparty headers attached to UPNP MSEARCH responses.
+        """
         return self._extra
 
     @property
-    def IPAddress(self):
+    def IPAddress(self) -> str:
+        """
+            Returns the ip address of the root device that was found when the device responded with its MSEARCH response.
+        """
         return self._ip_address
 
     @property
-    def MACAddress(self):
+    def MACAddress(self) -> Union[str, None]:
+        """
+            The MAC address of the device if specified in the device description or None.
+        """
         macaddr = None
         desc = self.description
         if desc is not None:
@@ -216,11 +266,18 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
         return macaddr
 
     @property
-    def mode(self):
+    def mode(self) -> str:
+        """
+            The virtual mode assocatied with a device.  A device might present a different set of
+            services depending on its current mode of operation.
+        """
         return self._mode
 
     @property
-    def modelName(self):
+    def modelName(self) -> Union[str, None]:
+        """
+            The model name of the device as found in the device description or None.
+        """
         mname = None
         desc = self.description
         if desc is not None:
@@ -228,7 +285,10 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
         return mname
 
     @property
-    def modelNumber(self):
+    def modelNumber(self )-> Union[str, None]:
+        """
+            The model number of the device as found in the device description or None.
+        """
         mnumber = None
         desc = self.description
         if desc is not None:
@@ -236,15 +296,21 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
         return mnumber
 
     @property
-    def routes(self):
+    def routes(self) -> list:
+        """
+            A list of routes that can be used to communicate with the device.
+        """
         return self._routes
 
     @property
-    def server(self):
+    def server(self) -> str:
+        """
+            The 'SERVER' key specified in the MSEARCH response for this device.
+        """
         return self._server
 
     @property
-    def services(self):
+    def services(self) -> List[UpnpServiceProxy]:
         services_list = None
 
         services = self._services
@@ -253,19 +319,26 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
         return services_list
 
-        return self._services.values()
-
     @property
-    def serialNumber(self):
+    def serialNumber(self) -> str:
+        """
+            The serial number number of the device as found in the device description.
+        """
         desc = self.description
         return desc.serialNumber
 
     @property
-    def specVersion(self):
+    def specVersion(self) -> UpnpDevice1SpecVersion:
+        """
+            Returns the spec version of the device description.
+        """
         return self._specVersion
 
     @property
-    def USN(self):
+    def USN(self) -> str:
+        """
+            The USN identifier specified in the MSEARCH response for this device.
+        """
         return self._usn
 
     def initialize(self, coord_ref: weakref.ReferenceType, basedevice_ref: weakref.ReferenceType, extid: str, location: str, configinfo: dict, devinfo: dict):
@@ -279,6 +352,8 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
             :param configinfo: The UPNP configuration information associated with a device in the landscape configuration file.
             :param devinfo:  The device configuration information from the landscape configuration file.
         """
+        # pylint: disable=arguments-differ
+
         LandscapeDeviceExtension.initialize(self, coord_ref, basedevice_ref, extid, location, configinfo)
 
         self._cachecontrol = devinfo.pop(MSearchKeys.CACHE_CONTROL)
@@ -292,7 +367,14 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
         self._consume_upnp_extra(devinfo)
         return
 
-    def lookup_device(self, device_type):
+    def lookup_device(self, device_type: str) -> Union[UpnpEmbeddedDevice, None]:
+        """
+            Looks up an embedded device by its device type identifier.
+
+            :param device_type: The device type identifier of the embedded device to find.
+
+            :returns: The specified UpnpEmbeddedDevice or None
+        """
         device = None
 
         self._device_lock.acquire()
@@ -303,21 +385,28 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
         return device
 
-    def process_subscription_callback(self, sid, headers, body):
+    def process_subscription_callback(self, sid: str, headers: dict, body: str):
+        """
+            This is used by the subscription callback thread to handoff work packets to the a worker thread
+            and completes the processing of the subscription callback and routing to a UpnpRootDevice and
+            UpnpServiceProxy instance.
 
-        have_subscription = False
+            :param sid: The Subscription ID (sid) associated with the subscription callback
+            :param headers: The HTTP headers contained in the callback response.
+            :param body: The body content of the HTTP subscription callback.
+        """
+        # pylint: disable=unused-argument
 
         service = None
 
         self._device_lock.acquire()
         try:
-            service = self._sid_to_service_lookup[sid]
+            if sid in self._sid_to_service_lookup:
+                service = self._sid_to_service_lookup[sid]
         finally:
             self._device_lock.release()
 
         if service is not None:
-            service_type = service.SERVICE_TYPE
-
             docTree = ElementTree(xml_fromstring(body))
 
             psetNode = docTree.getroot()
@@ -325,11 +414,22 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
             if psetNode is not None and psetNode.tag == "{%s}propertyset" % NS_UPNP_EVENT:
                 propertyNodeList = psetNode.findall("{%s}property" % NS_UPNP_EVENT)
 
-                service._update_event_variables(propertyNodeList)
+                service._update_event_variables(propertyNodeList) # pylint: disable=protected-access
+
         return
 
-    def record_description(self, urlBase: str, manufacturer: str, modelName: str, docTree: typing.Any, devNode: typing.Any, namespaces: str, force_recording: bool = False):
+    def record_description(self, urlBase: str, manufacturer: str, modelName: str, docTree: ElementTree, devNode: Element, namespaces: str, force_recording: bool = False):
+        """
+            Called to record a description of a UPNP root device.
 
+            :param urlBase: The base url as detailed in the description document or if not specified as determined by looking at the host information.
+            :param manufacturer: The manufacturer of the device.
+            :param modelName: The model name of the device.
+            :param docTree: The XML document tree from the root of the device description.
+            :param devNode: The 'device' element node from the device description.
+            :param namespaces: A dictionary of namespaced to use when processing the XML document.
+            :param force_recording: Force the recording of the device description and will overwrite existing device descriptions.
+        """
         manufacturerNormalized = normalize_name_for_path(manufacturer)
         modelName = normalize_name_for_path(modelName)
 
@@ -357,8 +457,14 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
         return
 
-    def refresh_description(self, ipaddr, factory, docNode, namespaces=None):
+    def refresh_description(self, ipaddr: str, factory: UpnpFactory, docNode: Element, namespaces=Optional[dict]):
         """
+            Called by the UPNP coordinator to refresh the decription information for a device.
+
+            :param ipaddr: IP address of the device to update the description for.
+            :param factory: The UpnpFactory that can be used to instantiate devices.
+            :param docNode: The root node of the description document.
+            :param namespaces: A dictionary of namespaces to use when processing the device description.
         """
         try:
             self._ip_address = ipaddr
@@ -384,19 +490,22 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
             self._enhance_device_detail()
 
-        except Exception as xcpt:
+        except Exception:
             err_msg = traceback.format_exc()
             print(err_msg)
             raise
 
         return
 
-    def subscribe_to_events(self, service: UpnpServiceProxy, timeout: typing.Optional[float]):
-
+    def subscribe_to_events(self, service: UpnpServiceProxy, timeout: Optional[float] = None):
         """
             Creates a subscription to the event name specified and returns a
             UpnpEventVar object that can be used to read the current value for
             the given event.
+
+            :param service: A :class:`akit.integration.upnp.services.upnpserviceproxy.UpnpServiceProxy`
+                            for which to subscribe to events.
+            :param timeout: The timeout to pass as a header when creating the subscription.
         """
         sub_sid = None
         sub_timeout = None
@@ -481,33 +590,77 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
         return sub_sid, sub_timeout
 
-    def switchModes(self, mode):
+    def switchModes(self, mode: str):
+        """
+            Called to trigger the switching of a devices mode of operation.  This function is
+            device specific and needs to be overloaded by custom UPNP device implementations.
+        """
         self._mode = mode
-        return
+        raise AKitNotOverloadedError("UpnpRootDevice.switchModes must be overloaded by custom UPNP devices.")
 
-    def to_dict(self, brief=False):
+    def to_dict(self, brief=False) -> dict:
+        """
+            Returns a description of this device as a python dictionary.
+
+            :param brief: A booliean value which indicates if a brief or full description is desired.
+
+            :returns: The python dictionary description of the device.
+        """
         dval = super(UpnpRootDevice, self).to_dict(brief=brief)
         dval["IPAddress"] = self.IPAddress
         dval["USN"] = self.USN
         return dval
 
-    def to_json(self, brief=False):
+    def to_json(self, brief=False) -> str:
+        """
+            Returns a description of this device in JSON format.
+
+            :param brief: A booliean value which indicates if a brief or full description is desired.
+
+            :returns: The JSON description of the device.
+        """
         json_str = super(UpnpRootDevice, self).to_json(brief=brief)
         return json_str
 
-    def _consume_upnp_extra(self, extrainfo):
+    def _consume_upnp_extra(self, extrainfo: dict):
+        """
+            Called during the processing of MSEARCH responses for the device with
+            a dictionary of any non-standard HTTP headers.
+
+            :param extrainfo: A dictionary of extra headers found in the devices responses.  This
+                              allows custom devices to overload this method and consume these extra
+                              device response headers.
+        """
+        # pylint: disable=no-self-use
+
         self._extra = extrainfo
         return
 
-    def _create_device_description_node(self, devNode, namespaces=None):
+    def _create_device_description_node(self, devNode: Element, namespaces: Optional[dict] = None):
+        """
+            Called in order for a device description to be created.  This could be overloaded by
+            custom UPNP devices in order to create custome device description objects.
+
+            :param devNode: The XML element of the root node of the device description document.
+            :param namespaces: A dictionary of namespaces to use when processing the device description.
+        """
         dev_desc_node = UpnpDevice1Device(devNode, namespaces=namespaces)
         return dev_desc_node
 
     def _enhance_device_detail(self):
+        """
+            Can be implemented by custom devices in order to be able query for and enhance a devices
+            information during the device update process.
+        """
+        # pylint: disable=no-self-use
         return
 
-    def _locked_populate_embedded_device_descriptions(self, factory, description):
+    def _locked_populate_embedded_device_descriptions(self, factory: UpnpFactory, description: UpnpDevice1Device):
+        """
+            Called in order to process embedded device descriptions and to instantiate embedded device instances.
 
+            NOTE: This method should be called with the device lock held.
+        """
         for deviceInfo in description.deviceList:
             manufacturer = deviceInfo.manufacturer.strip()
             modelNumber = deviceInfo.modelNumber.strip()
@@ -524,32 +677,64 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
             dev_inst.update_description(self._host, self._urlBase, deviceInfo)
         return
 
-    def _locked_process_urlbase_node(self, urlBaseNode, namespaces=None):
+    def _locked_process_urlbase_node(self, urlBaseNode: Element, namespaces: Optional[dict] = None):
+        """
+            Called in order to process the base url information from the device description.
+
+            :param urlBaseNode: The XML Element node that contains the urlBaseNode information.
+            :param namespaces: A dictionary of namespaces to use when processing the device description.
+
+            NOTE: This method should be called with the device lock held.
+        """
+        # pylint: disable=unused-argument
+
         self._urlBase = urlBaseNode.text.rstrip("/")
         return
 
-    def _locked_process_version_node(self, verNode, namespaces=None):
+    def _locked_process_version_node(self, verNode: Element, namespaces: Optional[dict] = None):
+        """
+            Called in order to process the spec version information from the device description.
+
+            :param verNode: The XML Element node of the version node.
+            :param namespaces: A dictionary of namespaces to use when processing the device description.
+
+            NOTE: This method should be called with the device lock held.
+        """
         self._specVersion = UpnpDevice1SpecVersion(verNode, namespaces=namespaces)
         return
 
-    def _matches_model_name(self, modelName):
+    def _matches_model_name(self, modelName: str) -> bool:
+        """
+            Method used to determine if the modelName passed matches the model name of this device.
 
+            :param modelName: The modelName to evaluate for matching with this device.
+        """
         matches = False
-        if self.upnp.modelName == modelName:
+        if self.modelName == modelName:
             matches = True
 
         return matches
 
-    def _matches_model_number(self, modelNumber):
+    def _matches_model_number(self, modelNumber: str)-> bool:
+        """
+            Method used to determine if the modelNumber passed matches the model number of this device.
 
+            :param modelNumber: The modelNumber to evaluate for matching with this device.
+        """
         matches = False
-        if self.upnp.modelNumber == modelNumber:
+        if self.modelNumber == modelNumber:
             matches = True
 
         return matches
 
-    def _process_device_node(self, factory, devNode, namespaces=None):
+    def _process_device_node(self, factory: UpnpFactory, devNode: Element, namespaces: Optional[dict] = None):
+        """
+            Method called for processing the 'device' node of the XML description of a device.
 
+            :param factory: The UpnpFactory instance that is used to instantiate devices, embedded devices and service proxies.
+            :param devNode: The XML Element node of the 'device' node.
+            :param namespaces: A dictionary of namespaces to use when processing the device description.
+        """
         description = self._create_device_description_node(devNode, namespaces=namespaces)
 
         self._device_lock.acquire()
@@ -564,7 +749,17 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
         return
 
-    def _record_embedded_device(self, manufacturer: str, embDevNode: typing.Any, namespaces: str, force_recording: bool = False):
+    def _record_embedded_device(self, manufacturer: str, embDevNode: Element, namespaces: Optional[dict] = None, force_recording: bool = False):
+        """
+            Method called for recording the description of an embedded device from a device description.
+
+            :param manufacturer: The manufacturer of the device.
+            :param embDevNode: The XML element node of the embedded device.
+            :param namespaces: A dictionary of namespaces to use when processing the device description.
+            :param force_recording: A boolean value indicating if the embedded device description should be recorded regardless of whether
+                                    an existing description has been recorded.
+        """
+        # pylint: disable=no-self-use
 
         deviceTypeNode = embDevNode.find("deviceType", namespaces=namespaces)
         if deviceTypeNode is not None:
@@ -590,7 +785,18 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
         return
 
-    def _record_service(self, urlBase: str, manufacturer: str, svcNode: typing.Any, namespaces: str, force_recording: bool = False):
+    def _record_service(self, urlBase: str, manufacturer: str, svcNode: Element, namespaces: Optional[dict] = None, force_recording: bool = False):
+        """
+            Called to record the description of a device service.
+
+            :param urlBase: The base url of the device which is used to request further information based on relative URLs from the device description.
+            :param manufacturer: The manufacturer of the device.
+            :param svcNode: The XML Element for the 'service' description node.
+            :param namespaces: A dictionary of namespaces to use when processing the device description.
+            :param force_recording: A boolean value indicating if the embedded device description should be recorded regardless of whether
+                                    an existing description has been recorded.
+        """
+        # pylint: disable=broad-except
 
         serviceTypeNode = svcNode.find("serviceType", namespaces=namespaces)
         scpdUrlNode = svcNode.find("SCPDURL", namespaces=namespaces)
@@ -622,5 +828,8 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
         return
 
     def __str__(self):
+        """
+            Returns a brief description of the device as a string.
+        """
         rtnstr = "%s: USN:%s MAC=%s IP=%s" % (self.modelName, self.USN, self.MACAddress, self.IPAddress)
         return rtnstr

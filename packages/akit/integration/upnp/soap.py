@@ -16,13 +16,14 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+import re
 
 from xml.etree.ElementTree import Element, SubElement, QName, ParseError
 from xml.etree.ElementTree import tostring as xml_tostring
 from xml.etree.ElementTree import fromstring as xml_fromstring
 from xml.etree.ElementTree import register_namespace
 
-from akit.compat import bytes_cast, str_cast
+from akit.compat import str_cast
 
 from akit.exceptions import AKitCommunicationsProtocolError
 from akit.integration.upnp.upnperrors import UPNP_ERROR_TEST_LOOKUP
@@ -59,6 +60,17 @@ class SOAPProtocolError(AKitCommunicationsProtocolError):
     """
         Error that is raised when a Soap protocol error occurs.
     """
+
+def remove_extraneous_xml_declarations(xml_str):
+    """
+        Special method for correcting XML content that has an extra XML declaration.
+    """
+    xml_declaration = ''
+    if xml_str.startswith('<?xml'):
+        xml_declaration, xml_str = xml_str.split('?>', maxsplit=1)
+    xml_declaration += '?>'
+    xml_str = re.sub(r'<\?xml.*?\?>', '', xml_str, flags=re.I)
+    return xml_declaration + xml_str
 
 class SoapProcessor:
     """
@@ -106,7 +118,7 @@ class SoapProcessor:
                 soap_type = PYTHON_TO_SOAP_TYPE_MAP[py_type]
 
                 if soap_type == 'xsd:string':
-                    arg_val = arg_val
+                    arg_val = arg_val # pylint: disable=self-assigning-variable
                 elif soap_type == 'xsd:int' or soap_type == 'xsd:float':
                     arg_val = str(arg_val)
                 elif soap_type == 'xsd:boolean':
@@ -161,7 +173,7 @@ class SoapProcessor:
                 soap_type = PYTHON_TO_SOAP_TYPE_MAP[py_type]
 
                 if soap_type == 'xsd:string':
-                    arg_val = arg_val
+                    arg_val = arg_val # pylint: disable=self-assigning-variable
                 elif soap_type == 'xsd:int' or soap_type == 'xsd:float':
                     arg_val = str(arg_val)
                 elif soap_type == 'xsd:boolean':
@@ -197,11 +209,12 @@ class SoapProcessor:
 
         try:
             docNode = xml_fromstring(content)
-        except ParseError as perr:
+        except ParseError:
             # Try removing any extra XML declarations in case there are more than one.
             # This sometimes happens when a device sends its own XML config files.
-            docNode = xml_fromstring(self._remove_extraneous_xml_declarations(content))
-        except ValueError as verr:
+            content = remove_extraneous_xml_declarations(content)
+            docNode = xml_fromstring(content)
+        except ValueError:
             # This can occur when requests returns a `str` (unicode) but there's also an XML
             # declaration, which lxml doesn't like.
             docNode = xml_fromstring(content.encode('utf8'))
@@ -245,11 +258,12 @@ class SoapProcessor:
 
         try:
             docNode = xml_fromstring(content)
-        except ParseError as perr:
+        except ParseError:
             # Try removing any extra XML declarations in case there are more than one.
             # This sometimes happens when a device sends its own XML config files.
-            docNode = xml_fromstring(self._remove_extraneous_xml_declarations(content))
-        except ValueError as verr:
+            content = remove_extraneous_xml_declarations(content)
+            docNode = xml_fromstring(content)
+        except ValueError:
             # This can occur when requests returns a `str` (unicode) but there's also an XML
             # declaration, which lxml doesn't like.
             docNode = xml_fromstring(content.encode('utf8'))
@@ -275,11 +289,12 @@ class SoapProcessor:
             errorCode = int(upnpErrorNode.find(".//{%s}errorCode" % NS_UPNP_CONTROL).text)
             errorDescription = upnpErrorNode.find(".//{%s}errorDescription" % NS_UPNP_CONTROL)
             if errorDescription is None:
-                if errorCode in UPNP_ERROR_TEST_LOOKUP:
-                    errorDescription = UPNP_ERROR_TEST_LOOKUP[errorCode]
-                else:
-                    errorDescription = "Unknown error."
+                errorDescription = UPNP_ERROR_TEST_LOOKUP.get(errorCode, "Unknown error.")
+
         except Exception as xcpt:
-            raise SOAPProtocolError("Unable to process xml response:\n%s" % content) from xcpt
+            errmsg = "Unable to process xml response: status=%r\n%s" % (status_code, content)
+            if extra is not None:
+                errmsg += "EXTRA:\n%s" % extra
+            raise SOAPProtocolError(errmsg) from xcpt
 
         return errorCode, errorDescription

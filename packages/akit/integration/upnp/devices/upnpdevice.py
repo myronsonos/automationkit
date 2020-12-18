@@ -32,10 +32,12 @@ from akit.paths import normalize_name_for_path
 
 from akit.integration.upnp.services.upnpserviceproxy import UpnpServiceProxy
 from akit.integration.upnp.xml.upnpdevice1 import UpnpDevice1Device
-from akit.integration.upnp.upnpfactory import UpnpFactory
 
 UPNP_SERVICE1_NAMESPACE = "urn:schemas-upnp-org:service-1-0"
 
+# Declare a literal UpnpFacotry type for use with typing
+# to allow for typing without creating circular reference
+LITERAL_UPNPFACTORY_TYPE = 'akit.integration.upnp.upnpfactory.UpnpFactory'
 
 class UpnpDevice:
     """
@@ -205,24 +207,24 @@ class UpnpDevice:
 
         return json_str
 
-    def _locked_populate_embedded_device_descriptions(self, factory: UpnpFactory, description: UpnpDevice1Device):
+    def _locked_populate_embedded_device_descriptions(self, factory: LITERAL_UPNPFACTORY_TYPE, description: UpnpDevice1Device):
         """
+            Takes in a device description and processes it for embedded devices.
+
+            :param factory: The UpnpFactory that has registered exentsion types that is used to instantiate
+                            embedded devices when the UPNP device description is processed.
+            :param description: The UpnpDevice1Device object that contains information about the device and its embedded devices.
         """
         # pylint: disable=no-self-use,unused-argument
         raise AKitNotOverloadedError("UpnpDevice._populate_embedded_devices: must be overridden.")
 
-    def _locked_populate_icons(self):
-
-        desc = self._description
-
-        if desc is not None:
-            for icon in desc.iconList:
-                pass
-
-        return
-
-    def _locked_populate_services_descriptions(self, factory: UpnpFactory, description: UpnpDevice1Device):
+    def _locked_populate_services_descriptions(self, factory: LITERAL_UPNPFACTORY_TYPE, description: UpnpDevice1Device):
         """
+            Takes in a device description and processes it for service descriptions.
+
+            :param factory: The UpnpFactory that has registered exentsion types that is used to instantiate
+                            services when the UPNP device description is processed.
+            :param description: The UpnpDevice1Device object that contains information about the device and its services.
         """
         # pylint: disable=protected-access
         for serviceInfo in description.serviceList:
@@ -244,6 +246,11 @@ class UpnpDevice:
         return
 
     def _locked_process_full_service_description(self, sdurl: str):
+        """
+            Downloads and processes the service description document.
+
+            :param sdurl: The url of the service description document to process.
+        """
         svcdesc = None
 
         resp = requests.get(sdurl)
@@ -276,6 +283,13 @@ class UpnpDevice:
         return svcdesc
 
     def _locked_process_node_action_list(self, actionListNode: Element, namespaces: Optional[dict] = None) -> dict:
+        """
+            Processes the node action list and creates a dictionary of the actions supported by the service.
+
+            :param actionListNode: The parent node for all the action list node.
+            :param namespaces: A dictionary of namespaces to use when processing the XML.
+        """
+        # pylint: disable=no-self-use
         actionTable = {}
 
         actionNodeList = actionListNode.findall("action", namespaces=namespaces)
@@ -309,6 +323,7 @@ class UpnpDevice:
         return actionTable
 
     def _locked_process_node_spec_version(self, specVersionNode: Element, namespaces: Optional[dict] = None) -> dict:
+        # pylint: disable=no-self-use
         verInfo = {}
 
         verInfo["major"] = specVersionNode.find("major", namespaces=namespaces).text
@@ -317,6 +332,7 @@ class UpnpDevice:
         return verInfo
 
     def _locked_process_node_state_table(self, serviceStateTableNode: Element, namespaces: Optional[dict] = None) -> dict:
+        # pylint: disable=no-self-use
         variablesTable = {}
         typesTable = {}
         eventsTable = {}

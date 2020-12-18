@@ -25,20 +25,23 @@ import socket
 import threading
 import time
 
-from asyncio import Protocol
-
 import netifaces
-import ssdp
 
 from akit.exceptions import AKitTimeoutError
 
 REGEX_NOTIFY_HEADER = re.compile("NOTIFY[ ]+[*/]+[ ]+HTTP/1")
 
 class MSearchTargets:
+    """
+        MSearch target constants.
+    """
     ROOTDEVICE = "upnp:rootdevice"
     ALL="ssdp:all"
 
 class MSearchKeys:
+    """
+        MSearch dictionary or header keys that MSearch response data items are stored under.
+    """
     CACHE_CONTROL = "CACHE-CONTROL"
     EXT = "EXT"
     LOCATION = "LOCATION"
@@ -50,12 +53,17 @@ class MSearchKeys:
     ROUTES = "ROUTES"
 
 class MSearchRouteKeys:
+    """
+        The dictionary keys that MSearch interface routing information is stored under.
+    """
     IFNAME = "LOCAL_IFNAME"
     IP = "LOCAL_IP"
 
 
-class UpnpProtocol(ssdp.SimpleServiceDiscoveryProtocol):
-
+class UpnpProtocol:
+    """
+        UPnP Protocol constants.
+    """
     MULTICAST_ADDRESS = '239.255.255.250'
     PORT = 1900
 
@@ -64,46 +72,6 @@ class UpnpProtocol(ssdp.SimpleServiceDiscoveryProtocol):
         "Man": "ssdp:discover",
         "MX": "1"
     }
-
-    def __init__(self, notifyQueue, responseQueue):
-        if responseQueue is None:
-            print("oops")
-        self._notifyQueue = notifyQueue
-        self._responseQueue = responseQueue
-        return
-
-    def datagram_received(self, data, addr):
-        data = data.decode()
-
-        if data.startswith('HTTP/'):
-            self.response_received(ssdp.SSDPResponse.parse(data), addr)
-        elif data.startswith('M-SEARCH'):
-            self.request_msearch(ssdp.SSDPRequest.parse(data), addr)
-        elif data.startswith('NOTIFY'):
-            self.request_notify(ssdp.SSDPRequest.parse(data), addr)
-        else:
-            self.request_other(ssdp.SSDPRequest.parse(data), addr)
-
-    def response_received(self, response, addr):
-        if self._responseQueue is None:
-            print("oops")
-        self._responseQueue.put_nowait((response, addr))
-        return
-
-    def request_msearch(self, request, addr):
-        print(request, addr)
-        print()
-        return
-
-    def request_notify(self, request, addr):
-        print(request, addr)
-        print()
-        return
-
-    def request_other(self, request, addr):
-        print(request, addr)
-        print()
-        return
 
 class MQueryContext:
     """
@@ -121,7 +89,15 @@ class MQueryContext:
         return
 
     def register_query_result(self, ifname, usn, device_info, route_info):
+        """
+            Method called by msearch query threads to register msearch results for a specific network interface.
 
+            :param ifname: The interface name to register msearch results for.
+            :param usn: The UPNP usn to register msearch results for.
+            :param device_info: A dictionary containing the information about the device found by the msearch thread.
+            :param route_info: The route info about the interface that the device was found on.
+        """
+        # pylint: disable=unused-argument
         self.lock.acquire()
         try:
             device_info[MSearchKeys.ROUTES].append(route_info)
@@ -156,7 +132,15 @@ class MSearchScanContext:
         return
 
     def register_device(self, ifname, usn, device_info, route_info):
+        """
+            Method called by msearch scan threads to register msearch results for a specific network interface.
 
+            :param ifname: The interface name to register msearch results for.
+            :param usn: The UPNP usn to register msearch results for.
+            :param device_info: A dictionary containing the information about the device found by the msearch thread.
+            :param route_info: The route info about the interface that the device was found on.
+        """
+        # pylint: disable=unused-argument
         self.lock.acquire()
         try:
             if usn not in self.found_devices:
@@ -236,7 +220,7 @@ def msearch_parse_response(content: bytes) -> dict:
     return respinfo
 
 
-def mquery_on_interface(query_context: MSearchScanContext, ifname: str, ifaddress: str, mx: int = 1, st: str = MSearchTargets.ROOTDEVICE, response_timeout: float = 45, interval: float = 5, ttl: int = 3):
+def mquery_on_interface(query_context: MSearchScanContext, ifname: str, ifaddress: str, mx: int = 1, st: str = MSearchTargets.ROOTDEVICE, response_timeout: float = 45, ttl: int = 3):
     """
         The inline msearch function provides a mechanism to do a synchronous msearch
         in order to determine if a set of available devices are available and to
@@ -322,7 +306,7 @@ def mquery_on_interface(query_context: MSearchScanContext, ifname: str, ifaddres
 
             current_time = time.time()
 
-    except KeyboardInterrupt:
+    except KeyboardInterrupt: # pylint: disable=try-except-raise
         raise
     finally:
         sock.close()
@@ -330,7 +314,7 @@ def mquery_on_interface(query_context: MSearchScanContext, ifname: str, ifaddres
     return
 
 
-def msearch_on_interface(scan_context: MSearchScanContext, ifname: str, ifaddress: str, mx: int = 1, st: str = MSearchTargets.ROOTDEVICE, response_timeout: float = 45, interval: float = 5, ttl: int = 3):
+def msearch_on_interface(scan_context: MSearchScanContext, ifname: str, ifaddress: str, mx: int = 1, st: str = MSearchTargets.ROOTDEVICE, response_timeout: float = 45, ttl: int = 3):
     """
         The inline msearch function provides a mechanism to do a synchronous msearch
         in order to determine if a set of available devices are available and to
@@ -414,7 +398,7 @@ def msearch_on_interface(scan_context: MSearchScanContext, ifname: str, ifaddres
 
             current_time = time.time()
 
-    except KeyboardInterrupt:
+    except KeyboardInterrupt: # pylint: disable=try-except-raise
         raise
     finally:
         sock.close()
@@ -422,7 +406,7 @@ def msearch_on_interface(scan_context: MSearchScanContext, ifname: str, ifaddres
     return
 
 def mquery(expected_device: str, interface_list: List[str], response_timeout: float = 45, interval: float = 2, raise_exception: bool = False) -> dict:
-    """ 
+    """
         Performs a msearch across a list of interfaces for a specific expected device.  This method is typically used
         during a persistent search when a device was not found in a broad msearch.
 
@@ -469,7 +453,7 @@ def mquery(expected_device: str, interface_list: List[str], response_timeout: fl
         nxt_thread = search_threads.pop(0)
         nxt_thread.join()
 
-    if len(query_context.query_results) == 0:
+    if raise_exception and len(query_context.query_results) == 0:
         err_msg = "Failed to find expected UPNP device %r after a timeout of %s seconds.\n" % (expected_device, response_timeout)
         raise AKitTimeoutError(err_msg)
 
@@ -477,7 +461,7 @@ def mquery(expected_device: str, interface_list: List[str], response_timeout: fl
 
 
 def msearch_scan(expected_devices, interface_list=None, response_timeout=45, interval=2, raise_exception=False) -> Tuple[dict, dict]:
-    """ 
+    """
         Performs a msearch across a list of interfaces for a specific expected device.  This method is typically used
         during a persistent search when a device was not found in a broad msearch.
 

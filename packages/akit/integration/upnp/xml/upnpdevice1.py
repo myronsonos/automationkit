@@ -23,7 +23,6 @@ import json
 
 from xml.etree.ElementTree import tostring as xml_tostring
 from xml.etree.ElementTree import register_namespace
-from xml.etree.ElementTree import dump as dump_node
 from xml.etree.ElementTree import Element
 
 from akit.exceptions import AKitNotOverloadedError
@@ -79,10 +78,11 @@ class UpnpDevice1ElementBase:
         """
         return self._ref_node
 
-    def to_dict(self) -> dict:
+    def to_dict(self, brief=False) -> dict:
         """
             Converts the icon data to a python dictionary.
         """
+        # pylint: disable=no-self-use, unused-argument
         raise AKitNotOverloadedError("UpnpDevice1Base.to_dict: Must be overridden by derived classes.")
 
     def to_json(self) -> str:
@@ -197,10 +197,11 @@ class UpnpDevice1Icon(UpnpDevice1ElementBase):
         rtnval = self._find_value("width", namespaces=self._namespaces)
         return rtnval
 
-    def to_dict(self) -> dict:
+    def to_dict(self, brief=False) -> dict:
         """
             Converts the icon data to a python dictionary.
         """
+        # pylint: disable=unused-argument
         dval = {
             "depth": self.depth,
             "height": self.height,
@@ -289,10 +290,11 @@ class UpnpDevice1Service(UpnpDevice1ElementBase):
         rtnval = self._find_value("serviceType", namespaces=self._namespaces)
         return rtnval
 
-    def to_dict(self) -> dict:
+    def to_dict(self, brief=False) -> dict:
         """
             Converts the icon data to a python dictionary.
         """
+        # pylint: disable=unused-argument
         dval = {
             "controlURL": self.controlURL,
             "eventSubURL": self.eventSubURL,
@@ -345,10 +347,11 @@ class UpnpDevice1SpecVersion(UpnpDevice1ElementBase):
         rtnval = self._find_value("minor", namespaces=self._namespaces)
         return rtnval
 
-    def to_dict(self) -> dict:
+    def to_dict(self, brief=False) -> dict:
         """
             Converts the icon data to a python dictionary.
         """
+        # pylint: disable=unused-argument
         dval = {
             "major": self.major,
             "minor": self.minor

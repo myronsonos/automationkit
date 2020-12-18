@@ -17,22 +17,32 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-import requests
+from typing import Optional, Union
+
 import threading
 import traceback
+import weakref
 
 from xml.etree.ElementTree import fromstring as xml_fromstring
+
+import requests
 
 from akit.xlogging.foundations import getAutomatonKitLogger
 
 from akit.integration.upnp.soap import SoapProcessor, SOAPError, SOAPProtocolError, SOAP_TIMEOUT
 from akit.integration.upnp.upnperrors import UpnpError
 from akit.integration.upnp.services.upnpeventvar import UpnpEventVar
+from akit.integration.upnp.xml.upnpdevice1 import UpnpDevice1Service
 
 logger = getAutomatonKitLogger()
 
+LITERAL_UPNPDEVICE_TYPE = 'akit.integration.upnp.devices.upnpdevice.UpnpDevice'
+
 class UpnpServiceProxy:
     """
+        The :class:`UpnpServiceProxy` object provides that base data and functional methods for providing
+        inter-operability with a devices Service.  It provides methods for making calls on actions and
+        access to methods for making subscriptions.
     """
 
     SERVICE_ID = None
@@ -65,40 +75,66 @@ class UpnpServiceProxy:
         return
 
     @property
-    def baseUrl(self):
+    def baseUrl(self) -> str:
+        """
+            Returns the base URL for working with a service.
+        """
         return self._baseURL
 
     @property
-    def controlURL(self):
+    def controlURL(self) -> str:
+        """
+            Returns the control URL that is used making calls on actions on a device service.
+        """
         return self._controlURL
 
     @property
-    def device(self):
+    def device(self) -> LITERAL_UPNPDEVICE_TYPE:
+        """
+            Returns a reference to the parent device of this service.
+        """
         return self._device_ref()
 
     @property
-    def eventSubURL(self):
+    def eventSubURL(self) -> str:
+        """
+            Returns the URL that is used to subscribe to events.
+        """
         return self._eventSubURL
 
     @property
-    def host(self):
+    def host(self) -> str:
+        """
+            The host associated with the parent device.
+        """
         return self._host
 
     @property
-    def SCPDURL(self):
+    def SCPDURL(self) -> str:
+        """
+            The URL called to retrieve the service description document.
+        """
         return self._SCPDURL
 
     @property
-    def serviceId(self):
+    def serviceId(self) -> str:
+        """
+            Returns the service ID
+        """
         return self._serviceId
 
     @property
-    def serviceType(self):
+    def serviceType(self) -> str:
+        """
+            Returns the service Type ID.
+        """
         return self._serviceType
 
-    def lookup_event_variable(self, eventname):
+    def lookup_event_variable(self, eventname: str) -> Union[UpnpEventVar, None]:
         """
             Creates a subscription to the service events for this service.
+
+            :param eventname: The event name to find the :class:`UpnpEventVar` for.
         """
         varobj = None
 
@@ -112,9 +148,13 @@ class UpnpServiceProxy:
 
         return varobj
 
-    def subscribe_to_events(self, timeout=None):
+    def subscribe_to_events(self, timeout: Optional[float] = None) -> bool:
         """
             Creates a subscription to the service events for this service.
+
+            :param timeout: The timeout for subscribing to an event.
+
+            :returns: A boolean value indicating if a subscription was successfully made.
         """
         success = False
 
@@ -132,15 +172,25 @@ class UpnpServiceProxy:
 
         return success
 
-    def yield_service_lock(self):
+    def yield_service_lock(self) -> threading.RLock:
+        """
+            Yields the service lock in a way that it can be automatically release at the end of an
+            iteration scope.
+        """
         self._service_lock.acquire()
         try:
             yield
         finally:
             self._service_lock.release()
 
-    def _create_event_variable(self, event_name, data_type=None, default=None, allowed_list=None):
+    def _create_event_variable(self, event_name: str, data_type: Optional[str] = None, default: Optional[str] = None, allowed_list: Optional[list] = None):
+        """
+            Creates an event variable and stores a reference to it in the variables table.
 
+            :param event_name: The name of the event variable to create.
+            :param data_type: The type of the event variable to create.
+            :param default: The default value to set the new event variable to.
+        """
         variable_key = "{}/{}".format(self.SERVICE_TYPE, event_name)
         event_var = UpnpEventVar(variable_key, event_name, self, data_type=data_type, default=default, allowed_list=allowed_list)
         self._variables[variable_key] = event_var
@@ -148,14 +198,26 @@ class UpnpServiceProxy:
 
 
     def _create_event_variables_from_list(self):
-
+        """
+            Called by the constructor to create the event variables listed in the SERVICE_EVENT_VARIABLES list on creation
+            of the service proxy instance.  We pre-create the event variables because they can have default values.
+        """
         for event_name in self.SERVICE_EVENT_VARIABLES:
             event_info = self.SERVICE_EVENT_VARIABLES[event_name]
             self._create_event_variable(event_name, **event_info)
 
         return
 
-    def _proxy_link_service_to_device(self, device_ref, service_description):
+    def _proxy_link_service_to_device(self, device_ref: weakref.ReferenceType, service_description: UpnpDevice1Service):
+        """
+            Called to link a :class:`UpnpServiceProxy` instance to a :class:`UpnpDevice` instance.  The link to the parent
+            device allows device users to find the service instance and to link the service proxy with the host it interacts
+            with.  It is also utilized by the service proxy to setup event subscription callback routing in order to be
+            able to route updates to the :class:`UpnpEventVar` variables managed by this service proxy.
+
+            :param device_ref: A weak reference to the parent device that owns this device.
+            :param service_description: The service description for this service.
+        """
 
         device = device_ref()
 
@@ -172,8 +234,17 @@ class UpnpServiceProxy:
 
         return
 
-    def _proxy_set_call_parameters(self, host, baseURL, controlURL, eventSubURL, serviceId=None, serviceType=None):
+    def _proxy_set_call_parameters(self, host: str, baseURL: str, controlURL: str, eventSubURL: str, serviceId: Optional[str] = None, serviceType: Optional[str] = None):
+        """
+            Sets the call parameters that are used by the service for making calls on a remote service.
 
+            :param host: The host of the remote service.
+            :param baseURL: The base URL of the host and remote service.
+            :param controlURL: The URL use to make calls on service actions.
+            :param eventSubURL: The URL to use for creating service event variable subscriptions.
+            :param serviceId: The service ID of the service.
+            :param serviceType: The service Type ID of the service.
+        """
         self._host = host
 
         if serviceId is None:
@@ -190,7 +261,18 @@ class UpnpServiceProxy:
         self._serviceType = serviceType
         return
 
-    def _proxy_call_action(self, action_name: str, arguments: dict = {}, auth: dict = None, headers: dict = {} ):
+    def _proxy_call_action(self, action_name: str, arguments: dict = {}, auth: dict = None, headers: dict = {} ) -> dict:
+        """
+            Helper method utilize by derived service proxies to make calls on remote service actions.
+
+            :param action_name: The action name to make a call on.
+            :param arguments: The arguments to pass to the action.
+            :param auth: The authentication parameter to use when making a request on the remote action.
+            :param headers: The headers to use when making the request on the remote action.
+
+            :returns: Returns a dictionary which contains the returned response data.
+        """
+        # pylint: disable=dangerous-default-value
 
         call_url = self.controlURL
         if self._baseURL is not None:
@@ -216,7 +298,7 @@ class UpnpServiceProxy:
                 auth=auth
             )
             resp.raise_for_status()
-        except requests.exceptions.HTTPError as exc:
+        except requests.exceptions.HTTPError:
             if resp is not None:
                 # If the body of the error response contains XML then it should be a UPnP error,
                 # extract the UPnP error information and raise a UpnpError
@@ -232,7 +314,7 @@ class UpnpServiceProxy:
 
         resp_dict = None
         status_code = resp.status_code
-        if status_code >= 200 and status_code < 300:
+        if status_code >= 200 and status_code < 300: # pylint: disable=chained-comparison
             resp_dict = self._soap_processor.parse_response(action_name, resp_content, typed=self.serviceType)
         else:
             errorCode, errorDescription = self._soap_processor.parse_response_error_for_upnp(action_name, resp_content, status_code, typed=self.serviceType)
@@ -245,7 +327,7 @@ class UpnpServiceProxy:
 
         action_name = "Get" + var_name
 
-        resp_dict = self.proxy_call_action(action_name)
+        resp_dict = self._proxy_call_action(action_name)
 
         return var_value
 
@@ -253,7 +335,7 @@ class UpnpServiceProxy:
 
         action_name = "Set" + var_name
 
-        resp_dict = self.proxy_call_action(action_name)
+        resp_dict = self._proxy_call_action(action_name)
 
         return
 

@@ -17,7 +17,6 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 from akit.exceptions import AKitSemanticError
-from akit.integration.upnp.upnpprotocol import MSearchKeys
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 
 class UpnpEmbeddedDevice(UpnpDevice):
@@ -37,11 +36,17 @@ class UpnpEmbeddedDevice(UpnpDevice):
         return
 
     def update_description(self, host, baseUrl, description):
+        """
+            Updates the embedded devices description.
+        """
         self._host = host
         self._urlBase = baseUrl
         self._description = description
         return
 
     def _populate_embedded_devices(self, factory, description):
+        """
+            This method is overloaded to prohibit the poplulation of embedded devices insided embedded devices.
+        """
+        # pylint: disable=no-self-use,unused-argument
         raise AKitSemanticError("Embedded devices inside an embedded device is currently not supported.")
-        return
