@@ -34,6 +34,7 @@ from akit.xformatting import indent_lines
 from akit.xlogging.foundations import getAutomatonKitLogger
 from akit.xlogging.scopemonitoring import MonitoredScope
 
+from akit.integration.credentials.sshcredential import SshCredential
 from akit.integration.landscaping.landscapedeviceextension import LandscapeDeviceExtension
 
 import paramiko

@@ -15,19 +15,40 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
+import os
+import pprint
 import socket
 import weakref
 
+from akit.exceptions import AKitConfigurationError
 from akit.paths import get_expanded_path
 
+from akit.integration.credentials.basecredential import BaseCredential
 from akit.integration.coordinators.coordinatorbase import CoordinatorBase
 from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator
 
 from akit.integration.landscaping.landscapedevice import LandscapeDevice
 
 from akit.integration.agents.sshagent import SshAgent
+
+def format_ssh_device_configuration_error(message, sshdev_config):
+    """
+        Takes an error message and an SSH device configuration info dictionary and
+        formats a configuration error message.
+    """
+    error_lines = [
+        message,
+        "DEVICE:"
+    ]
+
+    dev_repr_lines = pprint.pformat(sshdev_config, indent=4).splitlines(False)
+    for dline in dev_repr_lines:
+        error_lines.append("    " + dline)
+    
+    errmsg = os.linesep.join(error_lines)
+    return errmsg
 
 class SshPoolCoordinator(CoordinatorBase):
     """
@@ -51,7 +72,7 @@ class SshPoolCoordinator(CoordinatorBase):
         self._cl_ip_to_host_lookup = {}
         return
 
-    def attach_to_devices(self, sshdevices: List[dict], upnp_coord: Optional[UpnpCoordinator]=None):
+    def attach_to_devices(self, sshdevices: List[Tuple[dict, List[BaseCredential]]], upnp_coord: Optional[UpnpCoordinator]=None):
         """
             Processes a list of device configs and creates and registers devices and SSH device extensions
             attached with the landscape for the devices not already registered.  If a device has already
@@ -66,46 +87,67 @@ class SshPoolCoordinator(CoordinatorBase):
 
         ssh_config_errors = []
 
-        for sshdev_config in sshdevices:
+        for sshdev_config, ssh_credenial_list in sshdevices:
+            if len(ssh_credenial_list) == 0:
+                errmsg = format_ssh_device_configuration_error(
+                        "All SSH devices must have at least one valid credential.", sshdev_config)
+                raise AKitConfigurationError(errmsg)
+
+            ssh_cred_by_role = {}
+            for ssh_cred in ssh_credenial_list:
+                cred_role = ssh_cred.role
+                if cred_role not in ssh_cred_by_role:
+                    ssh_cred_by_role[cred_role] = ssh_cred
+                else:
+                    errmsg = format_ssh_device_configuration_error(
+                        "The SSH device had more than one credentials with the role '{}'".format(cred_role), sshdev_config)
+                    raise AKitConfigurationError(errmsg)
+
+            if "priv" not in ssh_cred_by_role:
+                errmsg = format_ssh_device_configuration_error(
+                        "All SSH devices must have a 'priv' credential.", sshdev_config)
+                raise AKitConfigurationError(errmsg)
+
+            priv_cred = ssh_cred_by_role["priv"]
+
             devtype = sshdev_config["deviceType"]
-            sshinfo = sshdev_config["ssh"]
+
             host = None
             usn = None
-
-            if "host" in sshinfo:
-                host = sshinfo["host"]
+            if "host" in sshdev_config:
+                host = sshdev_config["host"]
             elif devtype == "network/upnp":
                 usn = sshdev_config["upnp"]["USN"]
                 if upnp_coord is not None:
                     dev = upnp_coord.lookup_device_by_usn(usn)
                     if dev is None:
                         dev = upnp_coord.lookup_device_by_usn(usn)
-                    ipaddr = dev.IPAddress
+                    ipaddr = dev.upnp.IPAddress
                     host = ipaddr
                     self._cl_usn_to_ip_lookup[usn] = ipaddr
                 else:
-                    ssh_config_errors.append(sshinfo)
+                    ssh_config_errors.append(sshdev_config)
 
             if host is not None:
-                username = sshinfo["username"]
-                password = sshinfo["password"]
+                username = priv_cred.username
+                password = priv_cred.password
 
                 keyfile = None
-                if "keyfile" in sshinfo:
-                    keyfile = get_expanded_path(sshinfo["keyfile"])
+                if priv_cred.keyfile is not None:
+                    keyfile = get_expanded_path(priv_cred.keyfile)
 
                 keypasswd = None
-                if "keypasswd" in sshinfo:
-                    keypasswd = sshinfo["keypasswd"]
+                if priv_cred.keypasswd is not None:
+                    keypasswd = priv_cred.keypasswd
 
                 allow_agent = False
-                if "allow_agent" in sshinfo:
-                    allow_agent = sshinfo["allow_agent"]
+                if priv_cred.allow_agent is not None:
+                    allow_agent = priv_cred.allow_agent
 
                 ip = socket.gethostbyname(host)
                 self._cl_ip_to_host_lookup[ip] = host
 
-                agent = SshAgent(host, username, password=password, keyfile=keyfile, keypasswd=keypasswd, allow_agent=allow_agent)
+                agent = SshAgent(host, username, password=password, keyfile=keyfile, keypasswd=keypasswd, allow_agent=allow_agent, users=ssh_cred_by_role)
 
                 self._cl_children[host] = agent
 
@@ -122,7 +164,7 @@ class SshPoolCoordinator(CoordinatorBase):
                 basedevice_ref = weakref.ref(basedevice)
                 agent.initialize(coord_ref, basedevice_ref, host, ip, sshdev_config)
             else:
-                ssh_config_errors.append(sshinfo)
+                ssh_config_errors.append(sshdev_config)
 
         return ssh_config_errors
 

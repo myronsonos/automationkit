@@ -129,8 +129,8 @@ class UpnpCoordinator(CoordinatorBase):
         self._queue_work = []
 
         self._match_table = {
-            "modelName": UpnpRootDevice._matches_model_name, # pylint: disable=protected-access
-            "modelNumber": UpnpRootDevice._matches_model_number # pylint: disable=protected-access
+            "modelName": ('upnp', UpnpRootDevice._matches_model_name), # pylint: disable=protected-access
+            "modelNumber": ('upnp', UpnpRootDevice._matches_model_number) # pylint: disable=protected-access
         }
 
         return
@@ -352,10 +352,10 @@ class UpnpCoordinator(CoordinatorBase):
             self._update_root_device(lscape, config_lookup, addr, location, dval, force_recording=force_recording)
 
         if watchlist is not None and len(watchlist) > 0:
-            for dev in self.children:
-                devusn = dev.USN
+            for wdev in self.children:
+                devusn = wdev.upnp.USN
                 if devusn in watchlist:
-                    self._cl_watched_devices[devusn] = dev
+                    self._cl_watched_devices[devusn] = wdev
 
         self._start_all_threads()
 
@@ -506,8 +506,8 @@ class UpnpCoordinator(CoordinatorBase):
         """
 
         ifacelist = []
-        for dev in self.watch_devices:
-            primary_route = dev.routes[0]
+        for wdev in self.watch_devices:
+            primary_route = wdev.upnp.routes[0]
             ifname = primary_route[MSearchRouteKeys.IFNAME]
             if ifname not in ifacelist:
                 ifacelist.append(ifname)
@@ -521,7 +521,7 @@ class UpnpCoordinator(CoordinatorBase):
 
             self._shutdown_gate = threading.Semaphore(self._worker_count + ifacecount + 1)
 
-            # Spin-up the worker thread first so they will be ready to handle work
+            # Spin-up the worker threads first so they will be ready to handle work packets
             for wkrid in range(0, self._worker_count):
                 sgate.clear()
                 wthread = threading.Thread(name="UpnpCoordinator - Worker(%d)" % wkrid, target=self._thread_entry_worker,

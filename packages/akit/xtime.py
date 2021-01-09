@@ -33,7 +33,8 @@ def current_time_millis() -> float:
         :returns: Time in milliseconds
         :rtype: float
     """
-    return time.time() * 1000
+    now_ms = time.time() * 1000
+    return now_ms
 
 def format_time_with_fractional(tsecs: float) -> str:
     """

@@ -29,6 +29,8 @@ import netifaces
 
 from akit.exceptions import AKitTimeoutError
 
+from akit.networking.multicast import create_multicast_socket_for_iface
+
 REGEX_NOTIFY_HEADER = re.compile("NOTIFY[ ]+[*/]+[ ]+HTTP/1")
 
 class MSearchTargets:
@@ -266,21 +268,10 @@ def mquery_on_interface(query_context: MSearchScanContext, ifname: str, ifaddres
         b''
     ])
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    sock = None
 
     try:
-        # Make sure other Automation processes can also bind to the UPNP address and port
-        # so they can also get responses.
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        # Set the IP protocol level socket opition binding the socket to the interface
-        # specified by the IP address provided
-        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(ifaddress))
-        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
-
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-
-        sock.settimeout(response_timeout)
+        sock = create_multicast_socket_for_iface(UpnpProtocol.MULTICAST_ADDRESS, ifname, UpnpProtocol.PORT, socket.AF_INET, ttl=ttl, timeout=5)
 
         sock.sendto(msearch_msg, (multicast_address, multicast_port))
 
@@ -359,21 +350,10 @@ def msearch_on_interface(scan_context: MSearchScanContext, ifname: str, ifaddres
         b''
     ])
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    sock = None
 
     try:
-        # Make sure other Automation processes can also bind to the UPNP address and port
-        # so they can also get responses.
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        # Set the IP protocol level socket opition binding the socket to the interface
-        # specified by the IP address provided
-        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(ifaddress))
-        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
-
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-
-        sock.settimeout(5)
+        sock = create_multicast_socket_for_iface(UpnpProtocol.MULTICAST_ADDRESS, ifname, UpnpProtocol.PORT, socket.AF_INET, ttl=ttl, timeout=5)
 
         sock.sendto(msearch_msg, (multicast_address, multicast_port))
 
@@ -443,7 +423,7 @@ def mquery(expected_device: str, interface_list: List[str], response_timeout: fl
             if ifaddress is not None:
                 thname = "mquery-%s" % ifname
                 thargs = (query_context, ifname, ifaddress)
-                thkwargs = { "response_timeout":response_timeout , "interval": interval}
+                thkwargs = { "response_timeout":response_timeout}
                 sthread = threading.Thread(name=thname, target=mquery_on_interface, args=thargs, kwargs=thkwargs)
                 sthread.start()
                 search_threads.append(sthread)
@@ -498,7 +478,7 @@ def msearch_scan(expected_devices, interface_list=None, response_timeout=45, int
             if ifaddress is not None:
                 thname = "msearch-%s" % ifname
                 thargs = (scan_context, ifname, ifaddress)
-                thkwargs = { "response_timeout":response_timeout , "interval": interval}
+                thkwargs = { "response_timeout":response_timeout}
                 sthread = threading.Thread(name=thname, target=msearch_on_interface, args=thargs, kwargs=thkwargs)
                 sthread.start()
                 search_threads.append(sthread)

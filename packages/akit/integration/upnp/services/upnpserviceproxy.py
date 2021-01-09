@@ -23,13 +23,11 @@ import threading
 import traceback
 import weakref
 
-from xml.etree.ElementTree import fromstring as xml_fromstring
-
 import requests
 
 from akit.xlogging.foundations import getAutomatonKitLogger
 
-from akit.integration.upnp.soap import SoapProcessor, SOAPError, SOAPProtocolError, SOAP_TIMEOUT
+from akit.integration.upnp.soap import SoapProcessor, SOAP_TIMEOUT
 from akit.integration.upnp.upnperrors import UpnpError
 from akit.integration.upnp.services.upnpeventvar import UpnpEventVar
 from akit.integration.upnp.xml.upnpdevice1 import UpnpDevice1Service
@@ -313,6 +311,7 @@ class UpnpServiceProxy:
         resp_content = resp.content.strip()
 
         resp_dict = None
+
         status_code = resp.status_code
         if status_code >= 200 and status_code < 300: # pylint: disable=chained-comparison
             resp_dict = self._soap_processor.parse_response(action_name, resp_content, typed=self.serviceType)
@@ -322,25 +321,14 @@ class UpnpServiceProxy:
 
         return resp_dict
 
-    def _proxy_get_variable_value(self, var_name):
-        var_value = None
-
-        action_name = "Get" + var_name
-
-        resp_dict = self._proxy_call_action(action_name)
-
-        return var_value
-
-    def _proxy_set_variable_value(self, var_name, var_value):
-
-        action_name = "Set" + var_name
-
-        resp_dict = self._proxy_call_action(action_name)
-
-        return
-
     def _update_event_variables(self, propertyNodeList):
+        """
+            Helper method called during the processing of a subscription callback in order
+            to update all of the event variables for this service instance.
 
+            :param propertyNodeList: An XML :class:`Element` object that contains a list
+                                     of child elements for each event variable.
+        """
         self._service_lock.acquire()
         try:
             for propNodeOuter in propertyNodeList:

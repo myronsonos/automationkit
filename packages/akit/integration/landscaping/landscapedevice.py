@@ -134,12 +134,15 @@ class LandscapeDevice:
         self._device_lock.acquire()
         try:
             if match_type in self._match_functions:
-                match_func = self._match_functions[match_type]
+                dext_attr, match_func = self._match_functions[match_type]
+                match_self = None
+                if hasattr(self, dext_attr):
+                    match_self = getattr(self, dext_attr)
         finally:
             self._device_lock.release()
 
-        if match_func is not None:
-            matches = match_func(self, *match_params)
+        if match_self is not None and match_func is not None:
+            matches = match_func(match_self, *match_params)
 
         return matches
 

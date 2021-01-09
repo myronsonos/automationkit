@@ -44,7 +44,6 @@ from akit.integration.landscaping.landscapedeviceextension import LandscapeDevic
 from akit.integration.upnp.upnpprotocol import MSearchRouteKeys
 from akit.integration.upnp.devices.upnpdevice import UpnpDevice
 from akit.integration.upnp.devices.upnpembeddeddevice import UpnpEmbeddedDevice
-from akit.integration.upnp.upnpfactory import UpnpFactory
 from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE, UpnpDevice1Device, UpnpDevice1SpecVersion
 from akit.integration.upnp.soap import NS_UPNP_EVENT
 
@@ -457,7 +456,7 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
         return
 
-    def refresh_description(self, ipaddr: str, factory: UpnpFactory, docNode: Element, namespaces=Optional[dict]):
+    def refresh_description(self, ipaddr: str, factory: 'UpnpFactory', docNode: Element, namespaces=Optional[dict]):
         """
             Called by the UPNP coordinator to refresh the decription information for a device.
 
@@ -644,6 +643,7 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
             :param devNode: The XML element of the root node of the device description document.
             :param namespaces: A dictionary of namespaces to use when processing the device description.
         """
+        # pylint: disable=no-self-use
         dev_desc_node = UpnpDevice1Device(devNode, namespaces=namespaces)
         return dev_desc_node
 
@@ -655,7 +655,7 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
         # pylint: disable=no-self-use
         return
 
-    def _locked_populate_embedded_device_descriptions(self, factory: UpnpFactory, description: UpnpDevice1Device):
+    def _locked_populate_embedded_device_descriptions(self, factory: 'UpnpFactory', description: UpnpDevice1Device):
         """
             Called in order to process embedded device descriptions and to instantiate embedded device instances.
 
@@ -727,7 +727,7 @@ class UpnpRootDevice(UpnpDevice, LandscapeDeviceExtension):
 
         return matches
 
-    def _process_device_node(self, factory: UpnpFactory, devNode: Element, namespaces: Optional[dict] = None):
+    def _process_device_node(self, factory: 'UpnpFactory', devNode: Element, namespaces: Optional[dict] = None):
         """
             Method called for processing the 'device' node of the XML description of a device.
 

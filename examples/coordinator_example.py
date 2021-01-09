@@ -18,10 +18,10 @@ def coordinator_example_main():
     lscape = Landscape()
     lscape.first_contact()
 
-    s17 = lscape.lookup_device_by_modelNumber("S17")
+    s17 = lscape.checkout_a_device_by_modelNumber("S17")
 
     upnpcoord = lscape.upnp_coord
-    firstdev = upnpcoord.watch_devices[0]
+    firstdev = upnpcoord.watch_devices[0].upnp
     print(type(firstdev))
     print(firstdev)
 

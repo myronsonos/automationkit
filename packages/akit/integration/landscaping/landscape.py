@@ -38,10 +38,50 @@ from akit.paths import get_expanded_path
 from akit.xformatting import split_and_indent_lines
 from akit.xlogging.foundations import getAutomatonKitLogger
 
+from akit.integration.credentials.musecredential import MuseCredential
+from akit.integration.credentials.sshcredential import SshCredential
 from akit.integration.landscaping.landscapedescription import LandscapeDescription
 from akit.integration.landscaping.landscapedevice import LandscapeDevice
 from akit.integration.landscaping.landscapedeviceextension import LandscapeDeviceExtension
 
+def filter_credentials(device_info, credential_lookup, category):
+    """
+        Looks up the credentials associated with a device and returns the credentials found
+        that match a given category.
+
+        :param device_info: Device information dictionary with credential names to reference.
+        :param credential_lookup: A credential lookup dictionary that is used to convert credential
+                                  names into credential objects loaded from the landscape.
+        :param category: The category of credentials to return when filtering credentials.
+    """
+    cred_found_list = []
+
+    cred_name_list = device_info["credentials"]
+    for cred_name in cred_name_list:
+        if cred_name in credential_lookup:
+            credential = credential_lookup[cred_name]
+            if credential.category == category:
+                cred_found_list.append(credential)
+        else:
+            error_lines = [
+                "The credential '{}' was not found in the credentials list.",
+                "DEVICE:"
+            ]
+
+            dev_repr_lines = pprint.pformat(device_info, indent=4).splitlines(False)
+            for dline in dev_repr_lines:
+                error_lines.append("    " + dline)
+
+            error_lines.append("CREDENTIALS:")
+            cred_available_list = [cname for cname in credential_lookup.keys()]
+            cred_available_list.sort()
+            for cred_avail in cred_available_list:
+                error_lines.append("    " + cred_avail)
+
+            errmsg = os.linesep.join(error_lines)
+            raise AKitConfigurationError(errmsg)
+
+    return cred_found_list
 
 class Landscape:
     """
@@ -109,11 +149,18 @@ class Landscape:
 
                 self._device_pool = {}
 
+                self._credentials = {}
+
                 self._initialize()
         finally:
             self.landscape_lock.release()
 
         return
+
+    @property
+    def credentials(self) -> dict:
+        self.landscape_initialized.wait()
+        return self._credentials
 
     @property
     def environment(self) -> dict:
@@ -342,7 +389,8 @@ class Landscape:
             self._logger.info("UPNP DEVICES:")
             for devinfo in available_upnp_devices:
                 usn = devinfo["upnp"]["USN"]
-                agent = self._ssh_coord.lookup_device_by_usn(usn)
+                ldev = self._ssh_coord.lookup_device_by_usn(usn)
+                agent = ldev.ssh
                 self._logger.info("    Verifying USN={} HOST={} IP={}".format(usn, agent.host, agent.ipaddr))
                 if not agent.verify_connectivity():
                     error_lists.append(devinfo)
@@ -597,6 +645,8 @@ class Landscape:
         if "label" not in self._environment_info:
             err_msg = "The landscape 'environment' decription must have a 'label' member (development, production, test). (%s)" % landscape_file
             raise AKitConfigurationError(err_msg)
+        if "credentials" not in self._environment_info:
+            err_msg = "There must be a 'environment/credentials' section."
 
         self._environment_label = self._environment_info["label"]
 
@@ -606,6 +656,9 @@ class Landscape:
                 err_msg = "The landscape 'environment/muse' decription must have both a 'envhost' and 'version' members. (%s)" % landscape_file
                 raise AKitConfigurationError(err_msg)
 
+        # We must initialize the credential store before we start initialized any devices or connectivity
+        self._initialize_credentials()
+
         self._initialize_device_coordinators()
 
         # Set the landscape_initialized even to allow other threads to use the APIs of the Landscape object
@@ -613,6 +666,34 @@ class Landscape:
 
         # We need to wait till we have initialized the landscape before we start registering integration points
         self.landscape_description.register_integration_points(self)
+
+        return
+
+    def _initialize_credentials(self):
+        """
+        """
+
+        credentials_list = self._environment_info["credentials"]
+        for credential in credentials_list:
+            if "identifier" not in credential:
+                raise AKitConfigurationError("Credential items in 'environment/credentials' must have an 'identifier' member.")
+            ident = credential["identifier"]
+
+            if "category" not in credential:
+                raise AKitConfigurationError("Credential items in 'environment/credentials' must have an 'category' member.")
+            category = credential["category"]
+
+            if category == "muse":
+                MuseCredential.validate(credential)
+                credobj = MuseCredential(**credential)
+                self._credentials[ident] = credobj
+            elif category == "ssh":
+                SshCredential.validate(credential)
+                credobj = SshCredential(**credential)
+                self._credentials[ident] = credobj
+            else:
+                errmsg = "Unknown category '{}' found in credential '{}'".format(category, ident)
+                raise AKitConfigurationError(errmsg)
 
         return
 
@@ -632,8 +713,10 @@ class Landscape:
                 upnp_device_list.append(dev_config_info)
                 if "muse" in dev_config_info:
                     muse_device_list.append(dev_config_info)
-                if "ssh" in dev_config_info:
-                    ssh_device_list.append(dev_config_info)
+                if "credentials" in dev_config_info:
+                    ssh_cred_list = filter_credentials(dev_config_info, self._credentials, "ssh")
+                    if len(ssh_cred_list) > 0:
+                        ssh_device_list.append((dev_config_info, ssh_cred_list))
             elif dev_type == "network/muse":
                 muse_device_list.append(dev_config_info)
             elif dev_type == "network/ssh":
@@ -798,16 +881,16 @@ class Landscape:
 
     def _locked_checkout_device(self, device) -> Optional[LandscapeDevice]:
 
-        device = None
+        rtn_device = None
 
         keyid = device.keyid
         if keyid not in self._device_pool:
             raise AKitSemanticError("A device is being checked out, that is not in the device pool.")
 
-        device = self._device_pool[keyid]
-        del self._device_pool
+        rtn_device = self._device_pool[keyid]
+        del self._device_pool[keyid]
 
-        return device
+        return rtn_device
 
 def is_subclass_of_landscape(cand_type):
     """

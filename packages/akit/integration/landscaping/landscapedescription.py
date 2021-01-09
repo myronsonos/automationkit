@@ -25,6 +25,7 @@ from akit.exceptions import AKitConfigurationError
 from akit.integration.clients.linuxclientmixin import LinuxClientMixIn
 from akit.integration.clients.windowsclientmixin import WindowsClientMixIn
 from akit.integration.cluster.clustermixin import ClusterMixIn
+from akit.integration.credentials.sshcredential import SshCredential
 
 # Declare a literal UpnpFacotry type for use with typing
 # to allow for typing without creating circular reference
@@ -134,38 +135,15 @@ class LandscapeDescription:
                     upnpinfo = devinfo["upnp"]
                     child_errors = self.validate_upnp_info(upnpinfo, prefix=prefix + "/upnp")
                     errors.extend(child_errors)
-                    if "ssh" in devinfo:
-                        sshinfo = devinfo["ssh"]
-                        child_errors = self.validate_ssh_info(sshinfo, require_host=False, prefix=prefix + "/ssh")
-                        errors.extend(child_errors)
                 else:
                     errors.append([prefix + "upnp", "Device type 'network/upnp' must have a 'upnp' data member."])
             if deviceType == "network/ssh":
-                if "ssh" in devinfo:
-                    sshinfo = devinfo["ssh"]
-                    child_errors = self.validate_ssh_info(sshinfo, prefix=prefix + "/ssh")
-                    errors.extend(child_errors)
-                else:
-                    errors.append([prefix + "ssh", "Device type 'network/ssh' must have a 'ssh' data member."])
+                if "host" not in devinfo:
+                    errors.append("SSH Devices must have a 'host' field.")
+                if "credentials" not in devinfo:
+                    errors.append("Device type 'network/ssh' must have a 'credentials' data member.")
         else:
             errors.append([prefix + "deviceType", "Device information is missing the required 'deviceType' data member."])
-
-        return errors
-
-    def validate_ssh_info(self, sshinfo, require_host=True, prefix=""): # pylint: disable=no-self-use,unused-argument
-        """
-            Verifies that a ssh info dictionary has valid data member combinations and can be used. Returns a
-            list of errors found.
-        """
-        errors = []
-
-        if require_host and "host" not in sshinfo:
-            errors.append([prefix + "host", "SSH information is missing a 'host' data member."])
-        if "username" not in sshinfo:
-            errors.append([prefix + "username", "SSH information is missing a 'username' data member."])
-
-        if not ("password" in sshinfo or "keyfile" in sshinfo):
-            errors.append([prefix + "password", "SSH information is missing a 'password' or 'keyfile' data member."])
 
         return errors
 
