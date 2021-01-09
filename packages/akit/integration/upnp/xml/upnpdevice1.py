@@ -102,6 +102,7 @@ class UpnpDevice1ElementBase:
 
             :returns: The text value of the node associated with the specified path or None.
         """
+        # pylint: disable=broad-except
         rtnval = None
 
         try:

@@ -23,7 +23,7 @@ import netifaces
 
 def encode_address(address: str) -> bytes:
     """
-        Encodes the address string to bytes
+        Encodes the address string to bytes.
 
         :param address: The IP address to encode.
 
@@ -45,6 +45,23 @@ def get_ipv4_address(ifname: str) -> Union[str, None]:
 
     address_info = netifaces.ifaddresses(ifname)
     if address_info is not None and netifaces.AF_INET in address_info:
+        addr_info = address_info[netifaces.AF_INET][0]
+        addr = addr_info["addr"]
+
+    return addr
+
+def get_ipv6_address(ifname: str) -> Union[str, None]:
+    """
+        Get the first IPv6 address associated with the specified interface name.
+
+        :param ifname: The interface name to lookup the IP address for.
+
+        :returns: The IPv6 address associated with the specified interface name or None
+    """
+    addr = None
+
+    address_info = netifaces.ifaddresses(ifname)
+    if address_info is not None and netifaces.AF_INET6 in address_info:
         addr_info = address_info[netifaces.AF_INET][0]
         addr = addr_info["addr"]
 

@@ -84,24 +84,6 @@ class %(class_name)s(UpnpServiceProxy, LoadableExtension):
     SERVICE_EVENT_VARIABLES = {%(service_variables)s}
 """
 
-TEMPLATE_GETTER = """
-    def get_%(var_name)s(self):
-        \"""
-            Gets the "%(var_name)s" variable.
-        \"""
-        rval = self._proxy_get_variable_value("%(var_name)s")
-        return rval
-"""
-
-TEMPLATE_SETTER = """
-    def set_%(var_name)s(self, val):
-        \"""
-            Sets the "%(var_name)s" variable.
-        \"""
-        self._proxy_set_variable_value("%(var_name)s", val)
-        return
-"""
-
 TEMPLATE_ACTION = """
     def action_%(action_name)s(self%(in_params_comma)s%(in_params_list)s, extract_returns=True):
         \"""
@@ -226,12 +208,6 @@ def generate_upnp_service_proxy(servicesDir: str, serviceManufacturer: str, serv
         spf.write('"""\n')
         spf.write('\n')
         spf.write(TEMPLATE_CLASS_PREFIX % class_fill_dict)
-
-            # Generate the getter
-            # spf.write(TEMPLATE_GETTER % var_fill_dict)
-
-            # Generate the setter
-            # spf.write(TEMPLATE_SETTER % var_fill_dict)
 
         action_names_sorted = [ k for k in actionsTable.keys() ]
         action_names_sorted.sort()
