@@ -16,7 +16,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Optional
+from typing import List, Optional
 
 import inspect
 import os
@@ -303,7 +303,7 @@ class Landscape:
 
         return device
 
-    def checkout_devices_by_match(self, match_type: str, *match_params, count=None) -> [LandscapeDevice]:
+    def checkout_devices_by_match(self, match_type: str, *match_params, count=None) -> List[LandscapeDevice]:
         """
             Checks out the devices that are found to correspond with the match criteria provided.  If the
             'count' parameter is passed, then the number of devices that are checked out is limited to
@@ -324,7 +324,7 @@ class Landscape:
 
         return device_list
 
-    def checkout_devices_by_modelName(self, modelName:str , count=None) -> [LandscapeDevice]:
+    def checkout_devices_by_modelName(self, modelName:str , count=None) -> List[LandscapeDevice]:
         """
             Checks out the devices that are found to correspond with the modelName match criteria provided.
             If the 'count' parameter is passed, the the number of devices that are checked out is limited to
@@ -336,7 +336,7 @@ class Landscape:
         return device_list
 
 
-    def checkout_devices_by_modelNumber(self, modelNumber: str, count=None) -> [LandscapeDevice]:
+    def checkout_devices_by_modelNumber(self, modelNumber: str, count=None) -> List[LandscapeDevice]:
         """
             Checks out the devices that are found to correspond with the modelNumber match criteria provided.
             If the 'count' parameter is passed, the the number of devices that are checked out is limited to
@@ -357,7 +357,7 @@ class Landscape:
         self.landscape_initialized.wait()
         return
 
-    def first_contact(self) -> [str]:
+    def first_contact(self) -> List[str]:
         """
             This method should be called as early as possible in order to ensure the entities in the
             automation landscape exist and the authentication credentials provided for these entities
@@ -409,7 +409,7 @@ class Landscape:
 
         return error_lists
 
-    def get_available_devices(self) -> [LandscapeDevice]:
+    def get_available_devices(self) -> List[LandscapeDevice]:
         """
             Returns the list of devices from the landscape device pool.  This will
             skip any device that has a "skip": true member.
@@ -426,7 +426,7 @@ class Landscape:
 
         return device_list
 
-    def get_devices(self) -> [LandscapeDevice]:
+    def get_devices(self) -> List[LandscapeDevice]:
         """
             Returns the list of devices from the landscape.  This will
             skip any device that has a "skip": true member.
@@ -443,7 +443,7 @@ class Landscape:
 
         return device_list
 
-    def get_device_configs(self) -> [dict]:
+    def get_device_configs(self) -> List[dict]:
         """
             Returns the list of device configurations from the landscape.  This will
             skip any device that has a "skip": true member.
@@ -454,7 +454,7 @@ class Landscape:
 
         return device_config_list
 
-    def get_muse_device_configs(self, exclude_upnp=False) -> [dict]:
+    def get_muse_device_configs(self, exclude_upnp=False) -> List[dict]:
         """
             Returns a list of devices that support Sonos muse protocol.
         """
@@ -473,7 +473,7 @@ class Landscape:
 
         return muse_device_config_list
 
-    def get_ssh_device_configs(self, exclude_upnp=False) -> [dict]:
+    def get_ssh_device_configs(self, exclude_upnp=False) -> List[dict]:
         """
             Returns a list of devices that support ssh.
         """
@@ -492,7 +492,7 @@ class Landscape:
 
         return ssh_device_config_list
 
-    def get_upnp_device_configs(self, ssh_only=False) -> [dict]:
+    def get_upnp_device_configs(self, ssh_only=False) -> List[dict]:
         """
             Returns a list of UPNP device information dictionaries.
         """
@@ -512,7 +512,7 @@ class Landscape:
 
         return upnp_device_table
 
-    def list_available_devices_by_match(self, match_type, *match_params, count=None) -> [LandscapeDevice]:
+    def list_available_devices_by_match(self, match_type, *match_params, count=None) -> List[LandscapeDevice]:
         """
             Creates and returns a list of devices from the available devices pool that are found
             to correspond to the match criteria provided.  If a 'count' parameter is passed
@@ -532,7 +532,7 @@ class Landscape:
 
         return matching_devices
 
-    def list_devices_by_match(self, match_type, *match_params, count=None) -> [LandscapeDevice]:
+    def list_devices_by_match(self, match_type, *match_params, count=None) -> List[LandscapeDevice]:
         """
             Creates and returns a list of devices that are found to correspond to the match
             criteria provided.  If a 'count' parameter is passed then the number of devices
@@ -549,7 +549,7 @@ class Landscape:
 
         return matching_devices
 
-    def list_devices_by_modelName(self, modelName, count=None) -> [LandscapeDevice]:
+    def list_devices_by_modelName(self, modelName, count=None) -> List[LandscapeDevice]:
         """
             Creates and returns a list of devices that are found to correspond to the modelName
             match criteria provided.  If a 'count' parameter is passed then the number of devices
@@ -560,7 +560,7 @@ class Landscape:
 
         return matching_devices
 
-    def list_devices_by_modelNumber(self, modelNumber, count=None) -> [LandscapeDevice]:
+    def list_devices_by_modelNumber(self, modelNumber, count=None) -> List[LandscapeDevice]:
         """
             Creates and returns a list of devices that are found to correspond to the modelNumber
             match criteria provided.  If a 'count' parameter is passed then the number of devices
@@ -628,8 +628,8 @@ class Landscape:
         self._integrations = {}
 
         context = Context()
+        landscape_file = get_expanded_path(context.lookup("/environment/configuration/paths/landscape"))
         try:
-            landscape_file = get_expanded_path(context.lookup("/environment/configuration/paths/landscape"))
             lscape_desc = self.landscape_description()
             self._landscape_info = lscape_desc.load(landscape_file)
         except Exception as xcpt:
@@ -763,7 +763,7 @@ class Landscape:
 
         return
 
-    def _internal_get_device_configs(self) -> [dict]:
+    def _internal_get_device_configs(self) -> List[dict]:
         """
             Returns the list of devices from the landscape.  This will
             skip any device that has a "skip": true member.
@@ -791,7 +791,7 @@ class Landscape:
 
         return device_config_list
 
-    def _internal_get_upnp_device_configs(self, ssh_only=False) -> [dict]:
+    def _internal_get_upnp_device_configs(self, ssh_only=False) -> List[dict]:
         """
             Returns a list of UPNP device information dictionaries.
 
