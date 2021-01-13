@@ -130,6 +130,7 @@ class LandscapeDevice:
         """
         matches = False
         match_func = None
+        match_self = None
 
         self._device_lock.acquire()
         try:

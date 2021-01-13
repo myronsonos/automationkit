@@ -13,6 +13,9 @@
         "python.venvPath": "./.venv",
         "terminal.integrated.env.linux": {
             "PYTHONPATH": "$PYTHONPATH:${workspaceFolder}/packages"
-        }
+        },
+        "python.analysis.extraPaths": [
+            "packages"
+        ]
     }
 }

@@ -17,7 +17,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
-from typing import cast
+from typing import cast, List, Optional
 
 import struct
 
@@ -28,6 +28,7 @@ from akit.integration.dns.dnsaddress import DnsAddress
 from akit.integration.dns.dnshostinfo import DnsHostInfo
 from akit.integration.dns.dnspointer import DnsPointer
 from akit.integration.dns.dnsquestion import DnsQuestion
+from akit.integration.dns.dnsrecord import DnsRecord
 from akit.integration.dns.dnsservice import DnsService
 from akit.integration.dns.dnstext import DnsText
 

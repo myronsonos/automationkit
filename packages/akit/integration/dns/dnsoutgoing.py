@@ -16,7 +16,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Any, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import enum
 import struct
@@ -26,6 +26,7 @@ from akit.integration.dns.dnsconst import DnsRecordClass, DnsRecordType, MAX_MSG
 from akit.integration.dns.dnserrors import DnsNamePartTooLongException
 from akit.integration.dns.dnsincoming import DnsIncoming
 from akit.integration.dns.dnsquestion import DnsQuestion
+from akit.integration.dns.dnsrecord import DnsRecord
 from akit.integration.dns.dnspointer import DnsPointer
 
 from akit.xlogging.foundations import getAutomatonKitLogger

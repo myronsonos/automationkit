@@ -16,6 +16,8 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import List
+
 import re
 import os
 import typing
@@ -28,7 +30,7 @@ from akit.environment.configuration import RUNTIME_CONFIGURATION
 
 REGEX_PATH_VALIDATOR = re.compile("/{1}([a-zA-Z0-9_]+)")
 
-def validate_path_name(path: str) -> [str]:
+def validate_path_name(path: str) -> List[str]:
     """
         Validates a context pathname.
     """
@@ -118,7 +120,7 @@ class ContextCursor:
 
         return found_node
 
-    def _insert(self, dref: dict, path: str, path_parts: [str], obj: typing.Any):
+    def _insert(self, dref: dict, path: str, path_parts: List[str], obj: typing.Any):
 
         if len(path_parts) > 0:
             leaf_name = path_parts[0]
@@ -134,7 +136,7 @@ class ContextCursor:
 
         return
 
-    def _lookup(self, dref: dict, path: str, path_parts: [str]) -> typing.Any:
+    def _lookup(self, dref: dict, path: str, path_parts: List[str]) -> typing.Any:
 
         found_node = None
 
@@ -157,7 +159,7 @@ class ContextCursor:
 
         return found_node
 
-    def _remove(self, dref: dict, path: str, path_parts: [str]) -> typing.Any:
+    def _remove(self, dref: dict, path: str, path_parts: List[str]) -> typing.Any:
 
         found_node = None
 
@@ -275,7 +277,7 @@ class Context:
 
         return found_node
 
-    def _insert(self, dref: dict, path: str, path_parts: [str], obj: typing.Any) -> typing.Any:
+    def _insert(self, dref: dict, path: str, path_parts: List[str], obj: typing.Any) -> typing.Any:
 
         if len(path_parts) > 0:
             leaf_name = path_parts[0]
@@ -291,7 +293,7 @@ class Context:
 
         return
 
-    def _lookup(self, dref: dict, path: str, path_parts: [str]) -> typing.Any:
+    def _lookup(self, dref: dict, path: str, path_parts: List[str]) -> typing.Any:
 
         found_node = None
 
