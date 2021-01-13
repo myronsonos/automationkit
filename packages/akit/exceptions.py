@@ -117,12 +117,12 @@ class AKitError(Exception):
             traceback_list.append(items)
             last_items = items
 
-        if os.path.exists(co_filename) and co_filename.endswith(".py"):
-            context_lines, context_startline = inspect.getsourcelines(tb_code)
-            context_lines = [cline.rstrip() for cline in context_lines]
-            clindex = (tb_lineno - context_startline)
-            last_items[-2] = context_lines[clindex].strip()
-            last_items[-1] = context_lines
+            if os.path.exists(co_filename) and co_filename.endswith(".py"):
+                context_lines, context_startline = inspect.getsourcelines(tb_code)
+                context_lines = [cline.rstrip() for cline in context_lines]
+                clindex = (tb_lineno - context_startline)
+                last_items[-2] = context_lines[clindex].strip()
+                last_items[-1] = context_lines
 
         return traceback_list
 
