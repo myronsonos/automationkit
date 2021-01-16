@@ -112,6 +112,10 @@ if jobtype == "unkownjob" or jobtype == "testrun":
     outdir_template = conf.lookup("/paths/testresults")
     outdir_full = os.path.abspath(os.path.expandvars(os.path.expanduser(outdir_template % fill_dict)))
     env["output_directory"] = outdir_full
+    env["behaviors"] = {
+        "log-landscape-declaration": True,
+        "log-landscape-scan": True
+    }
 elif jobtype == "console":
     outdir_template = conf.lookup("/paths/consoleresults")
     outdir_full = os.path.abspath(os.path.expandvars(os.path.expanduser(outdir_template % fill_dict)))

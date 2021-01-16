@@ -16,12 +16,16 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from os.path import basename
 from typing import List, Optional
 
+import copy
 import inspect
+import json
 import os
 import threading
 import traceback
+import yaml
 
 import pprint
 
@@ -32,7 +36,7 @@ from akit.environment.context import Context
 
 from akit.exceptions import AKitConfigurationError, AKitSemanticError
 
-from akit.paths import get_expanded_path
+from akit.paths import get_expanded_path, get_path_for_testresults
 
 
 from akit.xformatting import split_and_indent_lines
@@ -43,6 +47,26 @@ from akit.integration.credentials.sshcredential import SshCredential
 from akit.integration.landscaping.landscapedescription import LandscapeDescription
 from akit.integration.landscaping.landscapedevice import LandscapeDevice
 from akit.integration.landscaping.landscapedeviceextension import LandscapeDeviceExtension
+
+PASSWORD_MASK = "(hidden)"
+
+def mask_passwords (context):
+    """
+        Takes a dictionary context object and will recursively mask any password members found
+        in the dictionary.
+    """
+    for key, val in context.items():
+        if key == "password":
+            context[key] = PASSWORD_MASK
+
+        if isinstance(val, dict):
+            mask_passwords(val)
+        elif isinstance(val, list):
+            for item in val:
+                if isinstance(item, dict):
+                    mask_passwords(item)
+
+    return
 
 def filter_credentials(device_info, credential_lookup, category):
     """
@@ -130,6 +154,7 @@ class Landscape:
                 thisType._initialized = True
 
                 self._landscape_info = None
+                self._landscape_file = None
 
                 self._environment_info = None
                 self._environment_label = None
@@ -628,22 +653,42 @@ class Landscape:
         self._integrations = {}
 
         context = Context()
-        landscape_file = get_expanded_path(context.lookup("/environment/configuration/paths/landscape"))
+        log_landscape_declaration = context.lookup("/environment/behaviors/log-landscape-declaration")
+
+        self._landscape_file = get_expanded_path(context.lookup("/environment/configuration/paths/landscape"))
+        landscape_file_basename = os.path.basename(self._landscape_file)
+        landscape_file_basename, landscape_file_ext = os.path.splitext(landscape_file_basename)
+
         try:
             lscape_desc = self.landscape_description()
-            self._landscape_info = lscape_desc.load(landscape_file)
+            self._landscape_info = lscape_desc.load(self._landscape_file)
+
+            if log_landscape_declaration:
+                results_dir = get_path_for_testresults()
+
+                landscape_info_copy = copy.deepcopy(self._landscape_info)
+                mask_passwords(landscape_info_copy)
+
+                landscape_file_copy = os.path.join(results_dir, "{}-declared{}".format(landscape_file_basename, landscape_file_ext))
+                with open(landscape_file_copy, 'w') as lsf:
+                    yaml.dump(landscape_info_copy, lsf, indent=4)
+
+                landscape_file_copy = os.path.join(results_dir, "{}-declared{}".format(landscape_file_basename, ".json"))
+                with open(landscape_file_copy, 'w') as lsf:
+                    json.dump(landscape_info_copy, lsf, indent=4)
+
         except Exception as xcpt:
             err_msg = "Error loading the landscape file from (%s)%s%s" % (
-                landscape_file, os.linesep, traceback.format_exc())
+                self._landscape_file, os.linesep, traceback.format_exc())
             raise AKitConfigurationError(err_msg) from xcpt
 
         if "environment" not in self._landscape_info:
-            err_msg = "The landscape file must have an 'environment' decription. (%s)" % landscape_file
+            err_msg = "The landscape file must have an 'environment' decription. (%s)" % self._landscape_file
             raise AKitConfigurationError(err_msg)
 
         self._environment_info = self._landscape_info["environment"]
         if "label" not in self._environment_info:
-            err_msg = "The landscape 'environment' decription must have a 'label' member (development, production, test). (%s)" % landscape_file
+            err_msg = "The landscape 'environment' decription must have a 'label' member (development, production, test). (%s)" % self._landscape_file
             raise AKitConfigurationError(err_msg)
         if "credentials" not in self._environment_info:
             err_msg = "There must be a 'environment/credentials' section."
@@ -653,7 +698,7 @@ class Landscape:
         if "muse" in self._environment_info:
             self._environment_muse = self._environment_info["muse"]
             if ("authhost" not in self._environment_muse) or ("ctlhost" not in self._environment_muse) or ("version" not in self._environment_muse):
-                err_msg = "The landscape 'environment/muse' decription must have both a 'envhost' and 'version' members. (%s)" % landscape_file
+                err_msg = "The landscape 'environment/muse' decription must have both a 'envhost' and 'version' members. (%s)" % self._landscape_file
                 raise AKitConfigurationError(err_msg)
 
         # We must initialize the credential store before we start initialized any devices or connectivity

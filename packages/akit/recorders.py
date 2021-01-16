@@ -28,6 +28,8 @@ import shutil
 from datetime import datetime
 
 from akit.exceptions import AKitNotOverloadedError
+
+from akit.jsos import CHAR_RECORD_SEPERATOR
 from akit.results import ResultCode, ResultType
 from akit.templates import TEMPLATE_TESTSUMMARY
 from akit.testing.utilities import catalog_tree
@@ -137,7 +139,7 @@ class ResultRecorder:
 
         json_str = result.to_json()
 
-        self._rout.write("\30\n")
+        self._rout.write(CHAR_RECORD_SEPERATOR)
         self._rout.write(json_str)
         return
 

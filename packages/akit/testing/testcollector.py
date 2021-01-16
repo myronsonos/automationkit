@@ -154,17 +154,13 @@ def parse_include_expression(expression: str, testmodule: Optional[ModuleType], 
         if expression.find("@") > -1:
             expression, expr_testclass = expression.split("@")
 
-            comb_expr_comp = expression.split(".")
-            if len(comb_expr_comp) > 1:
-                expr_package = ".".join(comb_expr_comp[:-1])
-                expr_module = comb_expr_comp[-1]
-            else:
-                expr_package = None
-                expr_module = expression
+        comb_expr_comp = expression.split(".")
+        if len(comb_expr_comp) > 1:
+            expr_package = ".".join(comb_expr_comp[:-1])
+            expr_module = comb_expr_comp[-1]
         else:
-            # If we did not find a @ then we were not given a package and module components.
-            errmsg = "parse_include_expression: The (package).(module) components of the include must be provided when you specify a Classname with @."
-            raise ValueError(errmsg)
+            expr_package = None
+            expr_module = expression
 
     return expr_package, expr_module, expr_testclass, expr_testname
 
@@ -258,6 +254,7 @@ class TestCollector:
         # TestContainer objects that match the specified include expression criteria
         rootlen = len(self._root)
         for ifile in included_files:
+            modname = None
             try:
                 ifilebase, _ = os.path.splitext(ifile)
                 ifileleaf = ifilebase[rootlen:].strip("/")
@@ -460,17 +457,18 @@ class TestCollector:
             searchin = tpack_obj.searchin
             if searchin is None:
                 # If searchin was None, then we scan utilize the descendant directories of root
-                searchin = self._directories_in_root()
+                searchin = [ dir for dir in self._directories_in_root() if not dir.endswith("__pycache__") ]
 
             scanfiles = []
             for sdir in searchin:
-                scanfiles = collect_python_modules(sdir)
+                scanfiles = collect_python_modules(sdir, max_depth=0)
 
                 rootlen = len(self._root)
                 for ifile in scanfiles:
                     _, fext = os.path.splitext(ifile)
                     if fext == ".py":
                         ifile_full = os.path.join(sdir, ifile)
+                        modname = None
                         try:
                             ifilebase, _ = os.path.splitext(ifile_full)
                             ifileleaf = ifilebase[rootlen:].strip("/")

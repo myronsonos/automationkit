@@ -28,7 +28,7 @@ DIR_TESTRESULTS = None
 
 TRANSLATE_TABLE_NORMALIZE_FOR_PATH = str.maketrans(",.:;", "    ")
 
-def collect_python_modules(search_dir: str) -> List[str]:
+def collect_python_modules(search_dir: str, max_depth=None) -> List[str]:
     """
         Walks a directory tree of python modules and collects the names
         of all of the python module files or .py files.  This method allows
@@ -39,7 +39,20 @@ def collect_python_modules(search_dir: str) -> List[str]:
     """
     pyfiles = []
 
+    search_dir = os.path.abspath(search_dir)
+    search_dir_len = len(search_dir)
+
     for root, _, files in os.walk(search_dir, topdown=True):
+
+        if max_depth is not None:
+            dir_leaf = root[search_dir_len:].strip(os.path.sep)
+            depth = 0
+            if dir_leaf != '':
+                dir_leaf_parts = dir_leaf.split(os.path.sep)
+                depth = len(dir_leaf_parts)
+                if depth > max_depth:
+                    break
+
         for fname in files:
             fbase, fext = os.path.splitext(fname)
             if fext == '.py' and fbase != "__init__":
@@ -111,7 +124,7 @@ def get_path_for_artifacts(label: str) -> str:
 
 def get_path_for_testresults() -> str:
     """
-        Returns a the timestamped path where test results and artifacts are deposited to
+        Returns the timestamped path where test results and artifacts are deposited to
     """
     global DIR_TESTRESULTS
 

@@ -132,6 +132,16 @@
                 padding-left: 5px;
             }
 
+            .landscape-table {
+                display: block;
+                flex-grow: 1;
+                border: black;
+                border-style: solid;
+                border-width: 1.5px;
+                padding-top: 5px;
+                padding-left: 5px;
+            }
+
             .results-headers {
                 font-weight: bolder;
                 font-size: 14pt;
@@ -926,6 +936,12 @@
         </div>
         <br />
         <div class='section-body'>
+            <h2 id='test-landscape-title' class='body-title'>Landscape</h2>
+            <div id='test-landscape-header'>
+
+            </div>
+            <div id='test-landscape-body' class='landscape-table'>
+            </div>
             <h2 id='test-results-title' class='body-title'>Test Cases</h2>
             <div id='test-results-header' class='results-headers'>
                 <div class='results-hdr-start'>Start</div>
@@ -939,7 +955,7 @@
             </div>
             <br />
             <h2 id='import-errors-title' class='body-title'>Import Failures</h2>
-            <div id='test-results-header' class='imp-error-headers'>
+            <div id='import-errors-header' class='imp-error-headers'>
                 <div class='imp-error-hdr-filename'>Filename</div>
             </div>
             <div id='import-errors-body' class='imp-error-table' >

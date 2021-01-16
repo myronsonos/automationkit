@@ -17,6 +17,7 @@ __license__ = "MIT"
 
 from typing import List, Optional, Union
 
+import json
 import os
 import socket
 import threading
@@ -28,6 +29,7 @@ from io import BytesIO
 import netifaces
 
 from akit.exceptions import AKitConfigurationError, AKitRuntimeError, AKitTimeoutError
+from akit.environment.context import Context
 
 from akit.integration import upnp as upnp_module
 from akit.integration.landscaping.landscapedevice import LandscapeDevice
@@ -45,6 +47,8 @@ from akit.integration.upnp.xml.upnpdevice1 import UPNP_DEVICE1_NAMESPACE
 from akit.integration.coordinators.coordinatorbase import CoordinatorBase
 
 from akit.networking.interfaces import get_ipv4_address
+
+from akit.paths import get_path_for_testresults
 
 EMPTY_LIST = []
 
@@ -384,6 +388,30 @@ class UpnpCoordinator(CoordinatorBase):
             :param matching_devices: A list of devices matching the expected devices listed in the upnp_hint_list.
             :param missing_devices: A list of USN(s) for devices that were not found.
         """
+        context = Context()
+        log_landscape_scan = context.lookup("/environment/behaviors/log-landscape-scan")
+        if log_landscape_scan:
+            found_device_results = []
+            for dkey, dval in found_devices.items():
+                found_device_results.append(dval)
+
+            matching_device_results = []
+            for dkey, dval in matching_devices.items():
+                matching_device_results.append(dval)
+
+            missing_device_results = []
+            for dkey, dval in missing_devices:
+                missing_device_results.append(dval)
+
+            scan_results = {
+                "found_devices": found_device_results,
+                "matching_devices": matching_device_results,
+                "missing_devices": missing_device_results
+            }
+
+            landscape_scan_result_file = os.path.join(get_path_for_testresults(), "landscape-scan.json")
+            with open(landscape_scan_result_file, 'w') as srf:
+                json.dump(scan_results, srf, indent=4)
 
         devmsg_lines = ["FOUND DEVICES:"]
         for dkey, _ in found_devices.items():

@@ -26,6 +26,7 @@ import akit.environment.activate # pylint: disable=unused-import
 from akit.environment.context import ContextUser
 
 from akit.mixins.scope import inherits_from_scope_mixin
+from akit.jsos import CHAR_RECORD_SEPERATOR
 from akit.results import ResultContainer, ResultType
 from akit.testing.testcollector import TestCollector
 
@@ -198,6 +199,7 @@ class TestSequencer(ContextUser):
         """
         with open(outputfilename, 'w') as ief:
             for modname, filename, errmsg in self._import_errors:
+                ief.write(CHAR_RECORD_SEPERATOR)
                 ieitem = {
                     "module": modname,
                     "filename": filename,
