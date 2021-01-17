@@ -190,7 +190,7 @@ class TestCollector:
         self._test_module = test_module
         self._references = {}
         self._test_packages = {}
-        self._import_errors = []
+        self._import_errors = {}
         return
 
     @property
@@ -198,7 +198,7 @@ class TestCollector:
         """
             A list of import errors that were encountered while collecting test references.
         """
-        return self._import_errors
+        return self._import_errors.values()
 
     @property
     def references(self):
@@ -248,7 +248,7 @@ class TestCollector:
         elif expr_package is not None:
             included_files = find_included_test_modules_under_root(self._root, expr_package, expr_module)
 
-        import_errors = []
+        import_errors = {}
 
         # Go through the files and import them, then go through the classes and find the TestPack and
         # TestContainer objects that match the specified include expression criteria
@@ -319,11 +319,11 @@ class TestCollector:
             except ImportError:
                 errmsg = traceback.format_exc()
                 print(errmsg)
-                import_errors.append((modname, ifile, errmsg))
+                import_errors[ifile] = (modname, ifile, errmsg)
 
-        self._import_errors.extend(import_errors)
+        self._import_errors.update(import_errors)
 
-        for modname, ifile, errmsg in import_errors:
+        for modname, ifile, errmsg in import_errors.values():
             logger.error("TestCase: Import error filename=%r" % ifile)
 
         return
@@ -451,7 +451,7 @@ class TestCollector:
 
         # Go through all of the test package references and load the tests that are associated with the
         # test package
-        import_errors = []
+        import_errors = {}
 
         for tpack_name, tpack_obj in self._test_packages.items():
             searchin = tpack_obj.searchin
@@ -490,11 +490,11 @@ class TestCollector:
                         except ImportError:
                             errmsg = traceback.format_exc()
                             print(errmsg)
-                            import_errors.append((modname, ifile, errmsg))
+                            import_errors[ifile] = (modname, ifile, errmsg)
 
-        self._import_errors.extend(import_errors)
+        self._import_errors.update(import_errors)
 
-        for modname, ifile, errmsg in import_errors:
+        for modname, ifile, errmsg in import_errors.values():
             logger.error("TestPack: Import error filename=%r" % ifile)
 
         return

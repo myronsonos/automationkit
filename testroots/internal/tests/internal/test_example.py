@@ -1,17 +1,10 @@
 """
 """
 
-import traceback
-
 import akit.environment.activate # pylint: disable=unused-import
 
-from akit.exceptions import AKitOutOfScopeError
-from akit.metadata import Keywords
-from akit.mixins.integration import IntegrationMixIn
-from akit.mixins.scope import ScopeMixIn
-
 from akit.testing.testpack import TestPack
-from akit.testing.testcontainer import TestContainer, PositiveTestContainer
+from akit.testing.testcontainer import PositiveTestContainer
 
 from internal.scopes.examplescopes import ExampleScopeAMixIn, ExampleScopeAAMixIn, ExampleScopeABMixIn, ExampleScopeBMixIn
 
@@ -28,19 +21,19 @@ class TestPackB(TestPack, ExampleScopeBMixIn):
     """
     """
 
-class TestExampleAA(TestContainer, TestPackageAA):
+class TestExampleAA(PositiveTestContainer, TestPackageAA):
 
     def test_hello_world_aa(self):
         print("Hello World, AA")
         return
 
-class TestExampleAB(TestContainer, TestPackageAB):
+class TestExampleAB(PositiveTestContainer, TestPackageAB):
 
     def test_hello_world_ab(self):
         print("Hello World, AB")
         return
 
-class TestExampleB(TestContainer, TestPackB):
+class TestExampleB(PositiveTestContainer, TestPackB):
 
     def test_hello_world_b(self):
         print("Hello World, B")

@@ -271,6 +271,94 @@
                 padding-right: 10px;
             }
 
+            .tab {
+                overflow: hidden;
+                border: 1px solid #ccc;
+                background-color: #f1f1f1;
+            }
+
+            .tab button {
+                background-color: inherit;
+                float: left;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+            }
+
+            .tab button:hover {
+                background-color: #ddd;
+            }
+
+            .tab button.active {
+                background-color: #ccc;
+            }
+
+            .tabcontent {
+                display: none;
+                padding: 6px 12px;
+                border: 1px solid #ccc;
+                border-top: none;
+                width: 100%;
+                height: 600px;
+                margin-right: 20px;
+            }
+
+            .tree-node {
+                display: block;
+                width: 100%;
+            }
+
+            .tree-node-hdr {
+                width: 100%;
+                display: flex;
+                flex-direction: row nowrap;
+                font-size: 14pt;
+                font-weight: bolder
+            }
+
+            .tree-node-body {
+                display: block;
+                margin-top: 10px;
+            }
+
+            .tree-node-table {
+                display: table;
+                border-style: solid;
+                border-color: black;
+                border-width: 1px;
+                margin-bottom: 10px;
+                margin-left: 25px;
+            }
+
+            .tree-node-row {
+                margin-left: 20px;
+                border-style: solid;
+                border-color: black;
+                border-width: 1px;
+            }
+
+            .tree-node-key {
+                background-color: lightgray;
+                font-weight: bolder;
+                font-size: 12pt;
+                padding-left: 25px;
+                padding-right: 10px;
+                border-style: solid;
+                border-color: black;
+                border-width: 1px;
+            }
+
+            .tree-node-val {
+                font-size: 12pt;
+                padding-left: 10px;
+                padding-right: 10px;
+                border-style: solid;
+                border-color: black;
+                border-width: 1px;
+            }
+
             .dtl-body {
                 background: whitesmoke;
                 margin-left: 20px;
@@ -379,6 +467,10 @@
                 background-image : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAV0lEQVR4Ae3NMQ6AMAxDUbggvRKnbPfCOWI8ZEOZnKGq8qU3efCxVNVFnRC4SeolxPQTIyTo1MKDJE98oAcXDUJ1UAfmTpG5DQ8mIcmkX40GQTSo0SJVH6+QhcXQlIzJAAAAAElFTkSuQmCC)
             }
 
+            details details {
+                margin-left:20pt;
+                display:block;
+            } 
         </style>
         <script type="text/javascript">
 
@@ -386,9 +478,14 @@
             var g_display_mode = "LIST";
             var g_filter_mode = "NONE";
             var g_summary = null;
+            var g_landscape_declared = null;
             var g_results = null;
             var g_catalog = null;
             var g_import_errors = null;
+            var g_artifacts_catalog = null;
+            var g_artifacts_sub_catalogs = null;
+            var g_artifacts_buttons = null;
+            var g_artifacts_tabs = null;
 
             var g_counter_passed = 1;
             var g_counter_failed = 2;
@@ -396,14 +493,68 @@
             var g_counter_skipped = 4;
             var g_counter_total = 10;
 
+            /*************************************************************************************
+             *************************************************************************************
+             *
+             *                                  HELPER FUNCTIONS
+             * 
+             *************************************************************************************
+             *************************************************************************************/
+
+            function isDict(value) {
+                rtnval = false;
+                if (value.constructor == Object) {
+                    rtnval = true;
+                }
+                return rtnval
+            }
+
+            function isString(value) {
+                rtnval = false;
+                if (value.constructor == String) {
+                    rtnval = true;
+                }
+                return rtnval
+            }
+
+            async function load_http(url) {
+                var promise = new Promise((resolve, reject) => {
+                    var xmlhttp = new XMLHttpRequest();
+                    
+                    xmlhttp.onreadystatechange = function() {
+                        if (this.readyState == 4) {
+                            if (this.status == 200) {
+                                resolve(this.responseText);
+                            } else {
+                                reject(this.statusText);
+                            }
+                        }
+                    };
+
+                    xmlhttp.onerror = function (){
+                        reject(this.statusText);
+                    };
+
+                    xmlhttp.open("GET", url, true);
+                    xmlhttp.send();
+
+                });
+
+                return promise;
+            }
+
             async function load_json(url) {
                 var promise = new Promise((resolve, reject) => {
                     var xmlhttp = new XMLHttpRequest();
                     
                     xmlhttp.onreadystatechange = function() {
-                        if (this.readyState == 4 && this.status == 200) {
-                            var robj = JSON.parse(this.responseText);
-                            resolve(robj);
+                        if (this.readyState == 4) {
+                            if (this.status == 200) {
+                                var robj = JSON.parse(this.responseText);
+                                resolve(robj);
+                            } else {
+                                reject(this.statusText);
+                            }
                         }
                     };
 
@@ -424,21 +575,25 @@
                     var xmlhttp = new XMLHttpRequest();
                     
                     xmlhttp.onreadystatechange = function() {
-                        if (this.readyState == 4 && this.status == 200) {
-                            var json_objects = [];
+                        if (this.readyState == 4) {
+                            if (this.status == 200) {
+                                var json_objects = [];
 
-                            var split_responses = this.responseText.split("\30");
-                            var srlength = split_responses.length;
-                            while (srlength > 0) {
-                                var ritem = split_responses.pop();
-                                if (ritem.length > 0) {
-                                    var robj = JSON.parse(ritem);
-                                    json_objects.unshift(robj);
+                                var split_responses = this.responseText.split("\30");
+                                var srlength = split_responses.length;
+                                while (srlength > 0) {
+                                    var ritem = split_responses.pop();
+                                    if (ritem.length > 0) {
+                                        var robj = JSON.parse(ritem);
+                                        json_objects.unshift(robj);
+                                    }
+                                    srlength = srlength - 1;
                                 }
-                                srlength = srlength - 1;
-                            }
 
-                            resolve(json_objects);
+                                resolve(json_objects);
+                            } else {
+                                reject(this.statusText);
+                            }
                         }
                     };
 
@@ -454,8 +609,61 @@
                 return promise;
             }
 
-            async function load_summary() {
-                g_summary = await load_json("testrun_summary.json");
+            /*************************************************************************************
+             *************************************************************************************
+             *
+             *                                  ENABLE FUNCTIONS
+             * 
+             *************************************************************************************
+             *************************************************************************************/
+
+            function enable_artifacts_section() {
+                document.getElementById('artifacts-title').style = "display: block";
+                document.getElementById('artifacts-tab-bar').style = "display: block";
+                document.getElementById('artifacts-tab-content').style = "display: block";
+            }
+
+            /*************************************************************************************
+             *************************************************************************************
+             *
+             *                                   LOAD FUNCTIONS
+             * 
+             *************************************************************************************
+             *************************************************************************************/
+
+            async function load_artifact_folders()
+            {
+                g_artifacts_catalog = await load_json("artifacts/catalog.json");
+
+                if ((g_artifacts_catalog != null) && (g_artifacts_catalog.folders.length > 0)) {
+                    enable_artifacts_section();
+
+                    g_artifacts_sub_catalogs = {};
+
+                    for (var findex in g_artifacts_catalog.folders) {
+                        var folder = g_artifacts_catalog.folders[findex];
+
+                        artifact_catalog = await load_http("artifacts/" + folder + "/catalog.json").catch(err => {
+                            console.log("The '" + folder + "' artifacts folder does not have a 'catalog.json' file.")
+                        });
+
+                        if ((artifact_catalog != null) && (artifact_catalog != "")) {
+                            g_artifacts_sub_catalogs[folder] = artifact_catalog;
+                        }
+                    }
+                }
+            }
+
+            async function load_catalog() {
+                g_catalog = await load_json("catalog.json");
+            }
+
+            async function load_configuration() {
+                g_landscape_declared = await load_json("landscape-declared.json");
+            }
+
+            async function load_import_errors() {
+                g_import_errors = await load_json_stream("import_errors.jsos")
             }
 
             async function load_results() {
@@ -523,12 +731,167 @@
 
             }
 
-            async function load_import_errors() {
-                g_import_errors = await load_json_stream("import_errors.jsos")
+            async function load_summary() {
+                g_summary = await load_json("testrun_summary.json");
             }
 
-            async function load_catalog() {
-                g_catalog = await load_json("catalog.json");
+            /*************************************************************************************
+             *************************************************************************************
+             *
+             *                                 ELEMENT CREATION
+             * 
+             *************************************************************************************
+             *************************************************************************************/
+
+            function create_failures_table(failuresList) {
+                failuresTable = document.createElement("div");
+                failuresTable.classList.add("f-list");
+                for (var fidx in failuresList) {
+                    var fitem = failuresList[fidx];
+                    var preElement = document.createElement("pre");
+                    var msg = "";
+                    for (var lidx in fitem) {
+                        var lstr = fitem[lidx];
+                        msg = msg + lstr + "\n";
+                    }
+                    preElement.innerHTML = msg;
+                    failuresTable.appendChild(preElement);
+                }
+
+                return failuresTable
+            }
+
+            function create_landscape_array_items(bodyElement, arrayItems) {
+                arrayItems.forEach( kvpair => {
+                    const [key, value] = kvpair;
+
+                    var itemElement = create_landscape_array_node(key, value);
+                    bodyElement.appendChild(itemElement);
+                });
+            }
+
+            function create_landscape_dict_items(bodyElement, dictItems) {
+                dictItems.forEach( kvpair => {
+                    const [key, value] = kvpair;
+                    var childNode = create_landscape_tree_node(key, value);
+                    bodyElement.appendChild(childNode);
+                });
+            }
+
+            function create_landscape_table(bodyElement, rowItems) {
+                var tableElement = document.createElement("table");
+                tableElement.classList.add("tree-node-table");
+
+                rowItems.forEach( kvpair => {
+                    const [key, value] = kvpair;
+
+                    var rowElement = document.createElement("tr");
+                    rowElement.classList.add("tree-node-row");
+
+                    var keyElement = document.createElement("td");
+                    keyElement.classList.add("tree-node-key");
+                    keyElement.innerHTML = key;
+
+                    var valElement = document.createElement("td");
+                    valElement.classList.add("tree-node-val");
+                    valElement.innerHTML = value;
+
+                    rowElement.appendChild(keyElement);
+                    rowElement.appendChild(valElement);
+                    tableElement.appendChild(rowElement);
+                });
+
+                bodyElement.appendChild(tableElement);
+            }
+
+            function create_landscape_array_node(name, adata) {
+
+                var nodeElement = document.createElement("details");
+                nodeElement.classList.add("tree-node");
+
+                var nodeElementTitle = document.createElement("summary");
+                nodeElementTitle.classList.add("tree-node-hdr");
+                nodeElementTitle.innerHTML = name;
+                nodeElement.appendChild(nodeElementTitle);
+
+                var nodeElementBody = document.createElement("div");
+                nodeElementBody.classList.add("tree-node-body")
+                nodeElement.appendChild(nodeElementBody);
+
+                var arrayItems = [];
+                var dictItems = [];
+                var rowItems = [];
+
+                for (var index in adata) {
+                    var item = adata[index];
+                    if (isString(item)) {
+                        rowItems.push([index, item]);
+                    } else if (Array.isArray(item)) {
+                        arrayItems.push([index, item]);
+                    } else if (isDict(item)) {
+                        dictItems.push([index, item]);
+                    } else {
+                        rowItems.push([index, item]);
+                    }
+                };
+
+                if (rowItems.length > 0) {
+                    create_landscape_table(nodeElementBody, rowItems);
+                }
+
+                if (arrayItems.length > 0) {
+                    create_landscape_array_items(nodeElementBody, arrayItems);
+                }
+
+                if (dictItems.length > 0) {
+                    create_landscape_dict_items(nodeElementBody, dictItems);
+                }
+
+                return nodeElement;
+            }
+
+            function create_landscape_tree_node(name, ndata) {
+                var nodeElement = document.createElement("details");
+                nodeElement.classList.add("tree-node");
+
+                var nodeElementTitle = document.createElement("summary");
+                nodeElementTitle.classList.add("tree-node-hdr");
+                nodeElementTitle.innerHTML = name;
+                nodeElement.appendChild(nodeElementTitle);
+
+                var nodeElementBody = document.createElement("div");
+                nodeElementBody.classList.add("tree-node-body")
+                nodeElement.appendChild(nodeElementBody);
+
+                var arrayItems = [];
+                var dictItems = [];
+                var rowItems = [];
+
+                for (const [key, value] of Object.entries(ndata)) {
+                    if (isString(value)) {
+                        rowItems.push([key, value]);
+                    } else if (Array.isArray(value)) {
+                        arrayItems.push([key, value]);
+                    } else if (isDict(value)) {
+                        dictItems.push([key, value]);
+                    } else {
+                        rowItems.push([key, value]);
+                    }
+                }
+
+                if (rowItems.length > 0) {
+                    create_landscape_table(nodeElementBody, rowItems);
+                }
+
+                if (arrayItems.length > 0) {
+                    create_landscape_array_items(nodeElementBody, arrayItems);
+                }
+
+                if (dictItems.length > 0) {
+                    create_landscape_dict_items(nodeElementBody, dictItems);
+                }
+
+                return nodeElement;
             }
 
             function create_result_item_content(ritem) {
@@ -643,19 +1006,7 @@
                     failuresHeader.innerHTML = "FAILURES";
                     detailContainer.appendChild(failuresHeader);
 
-                    failuresTable = document.createElement("div");
-                    failuresTable.classList.add("f-list");
-                    for (var fidx in failuresList) {
-                        var fitem = failuresList[fidx];
-                        var preElement = document.createElement("pre");
-                        var msg = "";
-                        for (var lidx in fitem) {
-                            var lstr = fitem[lidx];
-                            msg = msg + lstr + "\n";
-                        }
-                        preElement.innerHTML = msg;
-                        failuresTable.appendChild(preElement);
-                    }
+                    var failuresTable = create_failures_table(failuresList);
                     detailContainer.appendChild(failuresTable);
 
                     detailContainer.appendChild(document.createElement("br"));
@@ -682,7 +1033,58 @@
                 
             }
 
-            function create_import_error_item_content(imp_err_item) {
+            function select_tab(name) {
+                var tabIndex = null;
+
+                for (var tindex in g_artifacts_buttons) {
+                    var tabButton = g_artifacts_buttons[tindex];
+                    var buttonName = tabButton.getAttribute("name");
+                    if (buttonName == name) {
+                        tabIndex = tindex;
+                    }
+                }
+
+                if (tabIndex != null) {
+
+                    for (var tindex in g_artifacts_buttons) {
+                        g_artifacts_buttons[tindex].active = false;
+                        g_artifacts_tabs[tindex].style = "display: none;";
+                    }
+
+                    var tabButton = g_artifacts_buttons[tabIndex];
+                    tabButton.active = true;
+
+                    var tabContent = g_artifacts_tabs[tabIndex];
+                    tabContent.style = "display: block";
+                }
+            }
+
+            function on_tab_click(event) {
+                var tabName = this.getAttribute("name");
+
+                select_tab(tabName);
+                console.log("Tab '" + tabName + "' clicked.")
+            }
+
+            function render_artifact_tab(tabBarContainer, tabContentContainer, name, contentUrl) {
+                var tabButtonElement = document.createElement('button');
+                tabButtonElement.setAttribute("name", name);
+                tabButtonElement.innerHTML = name;
+                tabButtonElement.classList.add("tab");
+                tabButtonElement.onclick = on_tab_click;
+                tabBarContainer.appendChild(tabButtonElement);
+
+                g_artifacts_buttons.push(tabButtonElement);
+
+                var tabContentElement = document.createElement('iframe');
+                tabContentElement.src = contentUrl;
+                tabContentElement.classList.add("tabcontent")
+                tabContentContainer.appendChild(tabContentElement);
+
+                g_artifacts_tabs.push(tabContentElement);
+            }
+
+            function render_import_error_item_content(container, imp_err_item) {
 
                 var imp_err_item_row = document.createElement("details");
                 imp_err_item_row.classList.add("ierr-item-hdr");
@@ -706,24 +1108,127 @@
                 st_list.classList.add('ff-list');
                 detail_body.appendChild(st_list);
 
-                var st_row = document.createElement('div');
-                st_row.classList.add('ff-row');
-                st_content = document.createElement('pre');
-                var trace = imp_err_item.trace;
-                var msg = "";
-                for (var lidx in trace) {
-                    var lstr = trace[lidx];
-                    msg = msg + lstr + "\n";
-                }
-                st_content.innerHTML = msg;
-                st_row.appendChild(st_content);
-                st_list.appendChild(st_row);
+                var failuresTable = create_failures_table([imp_err_item.trace]);
 
-                imp_err_item_row.appendChild(st_list);
+                imp_err_item_row.appendChild(failuresTable);
                 imp_err_item_row.appendChild(summary_item);
 
-                return imp_err_item_row;
+                container.appendChild(imp_err_item_row);
 
+            }
+
+            function render_file_element(container, name, ref) {
+                var nxtRow = document.createElement("div");
+                nxtRow.classList.add('ff-row');
+
+                var iconCont = document.createElement("div");
+                iconCont.classList.add('ff-icon');
+                var imgElmnt = document.createElement("img");
+                imgElmnt.classList.add("icon-file");
+                iconCont.appendChild(imgElmnt);
+                nxtRow.appendChild(iconCont);
+
+                var linkCont = document.createElement("div");
+                linkCont.classList.add('ff-name');
+                var linkElmnt = document.createElement("a");
+                linkElmnt.href = ref;
+                linkElmnt.innerHTML = name;
+                linkCont.appendChild(linkElmnt);
+                nxtRow.appendChild(linkCont);
+
+                container.appendChild(nxtRow);
+            }
+
+            function render_folder_element(container, name, ref) {
+
+                var nxtRow = document.createElement("div");
+                nxtRow.classList.add('ff-row');
+
+                var iconCont = document.createElement("div");
+                iconCont.classList.add('ff-icon');
+                var imgElmnt = document.createElement("img");
+                imgElmnt.classList.add("icon-folder");
+                iconCont.appendChild(imgElmnt);
+                nxtRow.appendChild(iconCont);
+
+                var linkCont = document.createElement("div");
+                linkCont.classList.add('ff-name');
+                var linkElmnt = document.createElement("a");
+                linkElmnt.href = ref;
+                linkElmnt.innerHTML = name;
+                linkCont.appendChild(linkElmnt);
+                nxtRow.appendChild(linkCont);
+
+                container.appendChild(nxtRow);
+
+            }
+
+            /*************************************************************************************
+             *************************************************************************************
+             *
+             *                                   SECTION REFRESH
+             * 
+             *************************************************************************************
+             *************************************************************************************/
+
+            function refresh_artifacts() {
+                var artifactsBarElement = document.getElementById("artifacts-tab-bar");
+                var artifactsContentElement = document.getElementById("artifacts-tab-content");
+
+                g_artifacts_buttons = [];
+                g_artifacts_tabs = [];
+
+                for (var findex in g_artifacts_catalog.folders) {
+                    var folder = g_artifacts_catalog.folders[findex];
+                    var subCatalog = g_artifacts_sub_catalogs[folder];
+                    if (subCatalog != undefined) {
+                        var folderURL = "artifacts/" + folder + "/tab.html";
+                        render_artifact_tab(artifactsBarElement, artifactsContentElement, folder, folderURL);
+                    }
+                }
+
+                if (g_artifacts_buttons.length > 0) {
+                    var firstButton = g_artifacts_buttons[0];
+
+                    var tabName = firstButton.getAttribute("name");
+                    select_tab(tabName);
+                }
+            }
+
+            function refresh_catalog() {
+
+                var container = document.getElementById("container-folders");
+                render_folder_element(container, "Parent", "..")
+
+                var folders_list = g_catalog.folders;
+                for (var idx in folders_list) {
+                    var nxt = folders_list[idx];
+
+                    render_folder_element(container, nxt, nxt)
+                }
+
+                var container = document.getElementById("container-files");
+                var file_list = g_catalog.files;
+                for (var idx in file_list) {
+                    var nxt = file_list[idx];
+
+                    render_file_element(container, nxt, nxt)
+                }
+            }
+
+            function refresh_configuration() {
+                var landscapeNodeElement = create_landscape_tree_node("landscape", g_landscape_declared);
+                var landscapeBodyElement = document.getElementById("test-configuration-body");
+                landscapeBodyElement.appendChild(landscapeNodeElement);
+            }
+
+            function refresh_import_errors() {
+                var ierrbody = document.getElementById("import-errors-body");
+
+                for (var idx in g_import_errors) {
+                    var imp_err_item = g_import_errors[idx];
+                    render_import_error_item_content(ierrbody, imp_err_item);
+                }
             }
 
             function refresh_summary() {
@@ -783,88 +1288,25 @@
                 document.getElementById("summary-total").innerHTML = g_counter_total;
             }
 
-            function refresh_import_errors() {
-                var ierrbody = document.getElementById("import-errors-body");
-
-                for (var idx in g_import_errors) {
-                    var imp_err_item = g_import_errors[idx];
-                    var eitem = create_import_error_item_content(imp_err_item);
-                    ierrbody.appendChild(eitem);
-                }
-            }
-
-            function render_file_element(container, name, ref) {
-                var nxtRow = document.createElement("div");
-                nxtRow.classList.add('ff-row');
-
-                var iconCont = document.createElement("div");
-                iconCont.classList.add('ff-icon');
-                var imgElmnt = document.createElement("img");
-                imgElmnt.classList.add("icon-file");
-                iconCont.appendChild(imgElmnt);
-                nxtRow.appendChild(iconCont);
-
-                var linkCont = document.createElement("div");
-                linkCont.classList.add('ff-name');
-                var linkElmnt = document.createElement("a");
-                linkElmnt.href = ref;
-                linkElmnt.innerHTML = name;
-                linkCont.appendChild(linkElmnt);
-                nxtRow.appendChild(linkCont);
-
-                container.appendChild(nxtRow);
-            }
-
-            function render_folder_element(container, name, ref) {
-
-                var nxtRow = document.createElement("div");
-                nxtRow.classList.add('ff-row');
-
-                var iconCont = document.createElement("div");
-                iconCont.classList.add('ff-icon');
-                var imgElmnt = document.createElement("img");
-                imgElmnt.classList.add("icon-folder");
-                iconCont.appendChild(imgElmnt);
-                nxtRow.appendChild(iconCont);
-
-                var linkCont = document.createElement("div");
-                linkCont.classList.add('ff-name');
-                var linkElmnt = document.createElement("a");
-                linkElmnt.href = ref;
-                linkElmnt.innerHTML = name;
-                linkCont.appendChild(linkElmnt);
-                nxtRow.appendChild(linkCont);
-
-                container.appendChild(nxtRow);
-
-            }
-
-            function refresh_catalog() {
-
-                var container = document.getElementById("container-folders");
-                render_folder_element(container, "Parent", "..")
-
-                var folders_list = g_catalog.folders;
-                for (var idx in folders_list) {
-                    var nxt = folders_list[idx];
-
-                    render_folder_element(container, nxt, nxt)
-                }
-
-                var container = document.getElementById("container-files");
-                var file_list = g_catalog.files;
-                for (var idx in file_list) {
-                    var nxt = file_list[idx];
-
-                    render_file_element(container, nxt, nxt)
-                }
-            }
+            /*************************************************************************************
+             *************************************************************************************
+             *
+             *                                      PAGE LOAD
+             * 
+             *************************************************************************************
+             *************************************************************************************/
 
             async function refresh_page() {
                 await load_summary();
+                await load_configuration();
                 await load_results();
                 await load_import_errors();
                 await load_catalog();
+
+                if (g_catalog.folders.indexOf("artifacts") > -1) {
+                    await load_artifact_folders();
+                }
+                
 
                 var result_content = null;
                 
@@ -882,7 +1324,13 @@
                 }
 
                 await refresh_summary();
+                await refresh_configuration();
                 await refresh_import_errors();
+
+                if (g_artifacts_catalog != null) {
+                    await refresh_artifacts();
+                }
+
                 await refresh_catalog();
             }
 
@@ -890,6 +1338,7 @@
                 console.log("Page loaded");
             }, function(err) {
                 console.log("ERROR:\n" + err);
+                console.log(err.stack)
             });
 
         </script>
@@ -936,11 +1385,11 @@
         </div>
         <br />
         <div class='section-body'>
-            <h2 id='test-landscape-title' class='body-title'>Landscape</h2>
-            <div id='test-landscape-header'>
+            <h2 id='test-configuration-title' class='body-title'>Configuration</h2>
+            <div id='test-configuration-header'>
 
             </div>
-            <div id='test-landscape-body' class='landscape-table'>
+            <div id='test-configuration-body' class='landscape-table'>
             </div>
             <h2 id='test-results-title' class='body-title'>Test Cases</h2>
             <div id='test-results-header' class='results-headers'>
@@ -960,6 +1409,11 @@
             </div>
             <div id='import-errors-body' class='imp-error-table' >
                 
+            </div>
+            <h2 id='artifacts-title' class='body-title' style="display: none">Artifacts</h2>
+            <div id='artifacts-tab-bar' style="display: none">
+            </div>
+            <div id='artifacts-tab-content' style="display: none">
             </div>
         </div>
         <br />

@@ -120,6 +120,10 @@ def get_path_for_artifacts(label: str) -> str:
     """
     trdir = get_path_for_testresults()
     afdir = os.path.join(trdir, "artifacts", label)
+
+    if not os.path.exists(afdir):
+        os.makedirs(afdir)
+
     return afdir
 
 def get_path_for_testresults() -> str:

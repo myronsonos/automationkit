@@ -18,6 +18,11 @@ __license__ = "MIT"
 
 import os
 
-TEMPLATE_DIR = os.path.dirname(__file__)
+DIR_TEMPLATES = os.path.dirname(os.path.abspath(__file__))
 
-TEMPLATE_TESTSUMMARY = os.path.join(TEMPLATE_DIR, "testsummary.html")
+TEMPLATE_TESTSUMMARY = os.path.join(DIR_TEMPLATES, "testsummary.html")
+
+DIR_TAB_TEMPLATES = os.path.join(DIR_TEMPLATES, "tabs")
+
+TABS_TEMPLATE_IMAGES = os.path.join(DIR_TAB_TEMPLATES, "tab-images.html")
+TABS_TEMPLATE_SOUNDS = os.path.join(DIR_TAB_TEMPLATES, "tab-sounds.html")

@@ -11,7 +11,8 @@ class ExampleJob(TestJob):
 
     # The test packs or tests that are included in this TestJob
     includes = [
-        "tests.internal.test_example"
+        "tests.internal.test_example",
+        "tests.internal.tabs.test_tabs"
     ]
 
     # The tests that are to be excluded from this TestJob
