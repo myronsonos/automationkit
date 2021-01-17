@@ -478,7 +478,7 @@
             var g_display_mode = "LIST";
             var g_filter_mode = "NONE";
             var g_summary = null;
-            var g_landscape_declared = null;
+            var g_startup_configuration = null;
             var g_results = null;
             var g_catalog = null;
             var g_import_errors = null;
@@ -659,7 +659,17 @@
             }
 
             async function load_configuration() {
-                g_landscape_declared = await load_json("landscape-declared.json");
+                g_startup_configuration = {}
+
+                landscape = await load_json("landscape-declared.json").catch(err => {
+                    console.log("Unable to load the landscape declaration file='landscape-declared.json'.")
+                });
+                startup = await load_json("startup-configuration.json").catch(err => {
+                    console.log("Unable to load the landscape declaration file='startup-configuration.json'.")
+                });
+
+                g_startup_configuration["landscape"] = landscape;
+                g_startup_configuration["startup"] = startup;
             }
 
             async function load_import_errors() {
@@ -743,42 +753,46 @@
              *************************************************************************************
              *************************************************************************************/
 
-            function create_failures_table(failuresList) {
-                failuresTable = document.createElement("div");
-                failuresTable.classList.add("f-list");
-                for (var fidx in failuresList) {
-                    var fitem = failuresList[fidx];
-                    var preElement = document.createElement("pre");
-                    var msg = "";
-                    for (var lidx in fitem) {
-                        var lstr = fitem[lidx];
-                        msg = msg + lstr + "\n";
+            function adjust_index_identifier(path, name, value) {
+                var display_name = name;
+
+                var modpath = path.join("/")
+                if (modpath == "landscape/environment/credentials") {
+                    display_name = display_name + " - " + value["identifier"]
+                } else if (modpath == "landscape/pod/devices") {
+                    devtype = value["deviceType"]
+                    if (devtype == "network/upnp") {
+                        upnpinfo = value["upnp"]
+                        display_name = display_name + " - " + upnpinfo["modelNumber"] + ", " + upnpinfo["modelName"] + " " + upnpinfo["USN"];
+                    } else if (devtype == "network/ssh") {
+                        display_name = display_name + " - " + value["host"];
                     }
-                    preElement.innerHTML = msg;
-                    failuresTable.appendChild(preElement);
+                    
+                } else if ((modpath == "landscape/pod/power") || (modpath == "landscape/pod/serial")) {
+                    display_name = display_name + " - " + value["name"]
                 }
 
-                return failuresTable
+                return display_name;
             }
 
-            function create_landscape_array_items(bodyElement, arrayItems) {
+            function append_configuration_array_items(bodyElement, arrayItems, path=[]) {
                 arrayItems.forEach( kvpair => {
                     const [key, value] = kvpair;
-
-                    var itemElement = create_landscape_array_node(key, value);
-                    bodyElement.appendChild(itemElement);
+                    append_configuration_array_node(bodyElement, key, value, path);
                 });
             }
 
-            function create_landscape_dict_items(bodyElement, dictItems) {
+            function append_configuration_dict_items(bodyElement, dictItems, path=[]) {
                 dictItems.forEach( kvpair => {
                     const [key, value] = kvpair;
-                    var childNode = create_landscape_tree_node(key, value);
+                    var displayname = adjust_index_identifier(path, key, value);
+                    var childNode = create_configuration_tree_node(displayname, value, path);
                     bodyElement.appendChild(childNode);
                 });
             }
 
-            function create_landscape_table(bodyElement, rowItems) {
+            function append_configuration_table(bodyElement, rowItems, path=[]) {
+
                 var tableElement = document.createElement("table");
                 tableElement.classList.add("tree-node-table");
 
@@ -804,7 +818,9 @@
                 bodyElement.appendChild(tableElement);
             }
 
-            function create_landscape_array_node(name, adata) {
+            function append_configuration_array_node(bodyElement, name, adata, path=[]) {
+
+                path.push(name);
 
                 var nodeElement = document.createElement("details");
                 nodeElement.classList.add("tree-node");
@@ -836,21 +852,27 @@
                 };
 
                 if (rowItems.length > 0) {
-                    create_landscape_table(nodeElementBody, rowItems);
+                    append_configuration_table(nodeElementBody, rowItems, path);
                 }
 
                 if (arrayItems.length > 0) {
-                    create_landscape_array_items(nodeElementBody, arrayItems);
+                    append_configuration_array_items(nodeElementBody, arrayItems, path);
                 }
 
                 if (dictItems.length > 0) {
-                    create_landscape_dict_items(nodeElementBody, dictItems);
+                    append_configuration_dict_items(nodeElementBody, dictItems, path);
                 }
 
-                return nodeElement;
+                bodyElement.appendChild(nodeElement);
+
+                path.pop();
+
             }
 
-            function create_landscape_tree_node(name, ndata) {
+            function create_configuration_tree_node(name, ndata, path=[]) {
+
+                path.push(name);
+
                 var nodeElement = document.createElement("details");
                 nodeElement.classList.add("tree-node");
 
@@ -880,18 +902,38 @@
                 }
 
                 if (rowItems.length > 0) {
-                    create_landscape_table(nodeElementBody, rowItems);
+                    append_configuration_table(nodeElementBody, rowItems, path);
                 }
 
                 if (arrayItems.length > 0) {
-                    create_landscape_array_items(nodeElementBody, arrayItems);
+                    append_configuration_array_items(nodeElementBody, arrayItems, path);
                 }
 
                 if (dictItems.length > 0) {
-                    create_landscape_dict_items(nodeElementBody, dictItems);
+                    append_configuration_dict_items(nodeElementBody, dictItems, path);
                 }
 
+                path.pop();
+
                 return nodeElement;
+            }
+
+            function create_failures_table(failuresList) {
+                failuresTable = document.createElement("div");
+                failuresTable.classList.add("f-list");
+                for (var fidx in failuresList) {
+                    var fitem = failuresList[fidx];
+                    var preElement = document.createElement("pre");
+                    var msg = "";
+                    for (var lidx in fitem) {
+                        var lstr = fitem[lidx];
+                        msg = msg + lstr + "\n";
+                    }
+                    preElement.innerHTML = msg;
+                    failuresTable.appendChild(preElement);
+                }
+
+                return failuresTable
             }
 
             function create_result_item_content(ritem) {
@@ -1217,9 +1259,13 @@
             }
 
             function refresh_configuration() {
-                var landscapeNodeElement = create_landscape_tree_node("landscape", g_landscape_declared);
-                var landscapeBodyElement = document.getElementById("test-configuration-body");
-                landscapeBodyElement.appendChild(landscapeNodeElement);
+                var configurationBodyElement = document.getElementById("test-configuration-body");
+
+                var landscapeNodeElement = create_configuration_tree_node("landscape", g_startup_configuration["landscape"]);
+                configurationBodyElement.appendChild(landscapeNodeElement);
+
+                var startupNodeElement = create_configuration_tree_node("startup", g_startup_configuration["startup"]);
+                configurationBodyElement.appendChild(startupNodeElement);
             }
 
             function refresh_import_errors() {

@@ -20,13 +20,16 @@ from typing import Sequence
 
 import logging
 import json
+import os
+import sys
 import uuid
 
 import akit.environment.activate # pylint: disable=unused-import
 from akit.environment.context import ContextUser
 
-from akit.mixins.scope import inherits_from_scope_mixin
 from akit.jsos import CHAR_RECORD_SEPERATOR
+from akit.mixins.scope import inherits_from_scope_mixin
+from akit.paths import get_path_for_testresults
 from akit.results import ResultContainer, ResultType
 from akit.testing.testcollector import TestCollector
 
@@ -103,6 +106,24 @@ class TestSequencer(ContextUser):
             Goes through all the integrations and provides them with an opportunity to
             attach to the test environment.
         """
+
+        results_dir = get_path_for_testresults()
+        
+        environment_dict = {}
+        environment_dict.update(os.environ)
+        
+        for key in environment_dict.keys():
+            if key.find("PASSWORD") > -1:
+                environment_dict[key] = "(hidden)"
+
+        startup_dict = {
+            "environment": environment_dict,
+            "command": " ".join(sys.argv)
+        }
+
+        startup_full = os.path.join(results_dir, "startup-configuration.json")
+        with open(startup_full, 'w') as suf:
+            json.dump(startup_dict, suf, indent=True)
 
         for integ, _ in self._integrations:
             integ.attach_to_environment(landscape)
