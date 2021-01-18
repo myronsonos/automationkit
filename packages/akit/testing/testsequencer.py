@@ -116,9 +116,15 @@ class TestSequencer(ContextUser):
             if key.find("PASSWORD") > -1:
                 environment_dict[key] = "(hidden)"
 
+        packages = {}
+        for mname, mobj in sys.modules.items():
+            if mname.find(".") == -1 and hasattr(mobj, "__file__"):
+                packages[mname] = mobj.__file__
+
         startup_dict = {
             "environment": environment_dict,
-            "command": " ".join(sys.argv)
+            "command": " ".join(sys.argv),
+            "packages": packages
         }
 
         startup_full = os.path.join(results_dir, "startup-configuration.json")

@@ -13,7 +13,7 @@
     <head>
         <style>
             .section-header {
-                background: lightgrey;
+                background: #ececec;
             }
 
             .section-body {
@@ -93,7 +93,7 @@
                 border: black;
                 border-style: solid;
                 border-width: 1.5px;
-                background: lightgrey;
+                background: #ececec;
             }
 
             .imp-error-hdr-filename {
@@ -151,7 +151,7 @@
                 border: black;
                 border-style: solid;
                 border-width: 1.5px;
-                background: lightgrey;
+                background: #ececec;
             }
 
             .results-table {
@@ -187,6 +187,7 @@
                 text-align: center;
                 font-size: 14pt;
                 font-weight: bolder;
+                color: maroon;
                 width: 60px;
                 padding-left: 10px;
                 padding-right: 10px;
@@ -196,6 +197,7 @@
                 text-align: center;
                 font-size: 14pt;
                 font-weight: bolder;
+                color: red;
                 width: 60px;
                 padding-left: 10px;
                 padding-right: 10px;
@@ -205,6 +207,7 @@
                 text-align: center;
                 font-size: 14pt;
                 font-weight: bolder;
+                color: gray;
                 width: 60px;
                 padding-left: 10px;
                 padding-right: 10px;
@@ -214,6 +217,17 @@
                 text-align: center;
                 font-size: 14pt;
                 font-weight: bolder;
+                color: green;
+                width: 60px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .results-hdr-w {
+                text-align: center;
+                font-size: 14pt;
+                font-weight: bolder;
+                color: orange;
                 width: 60px;
                 padding-left: 10px;
                 padding-right: 10px;
@@ -275,6 +289,7 @@
                 overflow: hidden;
                 border: 1px solid #ccc;
                 background-color: #f1f1f1;
+                font-size: 14pt;
             }
 
             .tab button {
@@ -288,11 +303,11 @@
             }
 
             .tab button:hover {
-                background-color: #ddd;
+                background-color: #ccc;
             }
 
             .tab button.active {
-                background-color: #ccc;
+                background-color: #ddd;
             }
 
             .tabcontent {
@@ -300,9 +315,8 @@
                 padding: 6px 12px;
                 border: 1px solid #ccc;
                 border-top: none;
-                width: 100%;
+                width: -webkit-fill-available;
                 height: 600px;
-                margin-right: 20px;
             }
 
             .tree-node {
@@ -890,15 +904,20 @@
                 var rowItems = [];
 
                 for (const [key, value] of Object.entries(ndata)) {
-                    if (isString(value)) {
-                        rowItems.push([key, value]);
-                    } else if (Array.isArray(value)) {
-                        arrayItems.push([key, value]);
-                    } else if (isDict(value)) {
-                        dictItems.push([key, value]);
+                    if (value != null) {
+                        if (isString(value)) {
+                            rowItems.push([key, value]);
+                        } else if (Array.isArray(value)) {
+                            arrayItems.push([key, value]);
+                        } else if (isDict(value)) {
+                            dictItems.push([key, value]);
+                        } else {
+                            rowItems.push([key, value]);
+                        }
                     } else {
-                        rowItems.push([key, value]);
+                        console.log("Null value encountered key=" + key + " .");
                     }
+
                 }
 
                 if (rowItems.length > 0) {
@@ -1078,6 +1097,18 @@
             function select_tab(name) {
                 var tabIndex = null;
 
+                var tab_count = g_artifacts_buttons.length;
+                var tindex = 0;
+                while(tindex < tab_count) {
+                    var tabButton = g_artifacts_buttons[tindex];
+                    var buttonName = tabButton.getAttribute("name");
+                    if (buttonName == name) {
+                        tabIndex = tindex;
+                    }
+
+                    tindex += 1;
+                }
+
                 for (var tindex in g_artifacts_buttons) {
                     var tabButton = g_artifacts_buttons[tindex];
                     var buttonName = tabButton.getAttribute("name");
@@ -1088,16 +1119,23 @@
 
                 if (tabIndex != null) {
 
-                    for (var tindex in g_artifacts_buttons) {
-                        g_artifacts_buttons[tindex].active = false;
-                        g_artifacts_tabs[tindex].style = "display: none;";
+                    var tab_count = g_artifacts_buttons.length;
+                    var tindex = 0;
+                    while(tindex < tab_count) {
+                        var tabButton = g_artifacts_buttons[tindex];
+                        tabButton.classList.remove("active");
+
+                        var tabTab = g_artifacts_tabs[tindex];
+                        tabTab.style = "display: none;";
+
+                        tindex += 1;
                     }
 
                     var tabButton = g_artifacts_buttons[tabIndex];
-                    tabButton.active = true;
+                    tabButton.classList.add("active");
 
                     var tabContent = g_artifacts_tabs[tabIndex];
-                    tabContent.style = "display: block";
+                    tabContent.style = "display: block;";
                 }
             }
 
@@ -1456,8 +1494,9 @@
             <div id='import-errors-body' class='imp-error-table' >
                 
             </div>
+            <br />
             <h2 id='artifacts-title' class='body-title' style="display: none">Artifacts</h2>
-            <div id='artifacts-tab-bar' style="display: none">
+            <div id='artifacts-tab-bar' class='tab' style="display: none">
             </div>
             <div id='artifacts-tab-content' style="display: none">
             </div>
