@@ -56,7 +56,7 @@ def mask_passwords (context):
         in the dictionary.
     """
     for key, val in context.items():
-        if key == "password":
+        if (key == "password" or key == "secret"):
             context[key] = PASSWORD_MASK
 
         if isinstance(val, dict):
