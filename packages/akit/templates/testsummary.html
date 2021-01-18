@@ -259,6 +259,7 @@
 
             .ritem-hdr-e {
                 text-align: center;
+                color: maroon;
                 width: 60px;
                 padding-left: 10px;
                 padding-right: 10px;
@@ -266,6 +267,7 @@
 
             .ritem-hdr-f {
                 text-align: center;
+                color: red;
                 width: 60px;
                 padding-left: 10px;
                 padding-right: 10px;
@@ -273,6 +275,7 @@
 
             .ritem-hdr-s {
                 text-align: center;
+                color: gray;
                 width: 60px;
                 padding-left: 10px;
                 padding-right: 10px;
@@ -280,6 +283,23 @@
 
             .ritem-hdr-p {
                 text-align: center;
+                color: green;
+                width: 60px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .ritem-hdr-w {
+                text-align: center;
+                color: orange;
+                width: 60px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .ritem-hdr-z {
+                text-align: center;
+                color: lightgray;
                 width: 60px;
                 padding-left: 10px;
                 padding-right: 10px;
@@ -973,24 +993,29 @@
 
                 var detail = ritem.detail;
 
+                var error_count = detail.errors.length;
+                var failure_count = detail.failures.length;
+                var skip_count = detail.skipped.length;
+                var pass_count = detail.passed ? 1 : 0;
+
                 var summaryE = document.createElement("div");
-                summaryE.innerHTML = detail.errors.length;
-                summaryE.classList.add("ritem-hdr-e");
+                summaryE.innerHTML = error_count;
+                summaryE.classList.add(error_count > 0 ? "ritem-hdr-e" : "ritem-hdr-z");
                 summaryContainer.appendChild(summaryE);
 
                 var summaryF = document.createElement("div");
-                summaryF.innerHTML = detail.failures.length;
-                summaryF.classList.add("ritem-hdr-f");
+                summaryF.innerHTML = failure_count;
+                summaryF.classList.add(failure_count > 0 ? "ritem-hdr-f" : "ritem-hdr-z");
                 summaryContainer.appendChild(summaryF);
 
                 var summaryS = document.createElement("div");
-                summaryS.innerHTML = detail.skipped.length;
-                summaryS.classList.add("ritem-hdr-s");
+                summaryS.innerHTML = skip_count;
+                summaryS.classList.add(skip_count > 0 ? "ritem-hdr-s" : "ritem-hdr-z");
                 summaryContainer.appendChild(summaryS);
 
                 var summaryP = document.createElement("div");
-                summaryP.innerHTML = detail.passed ? 1 : 0;
-                summaryP.classList.add("ritem-hdr-p");
+                summaryP.innerHTML = pass_count;
+                summaryP.classList.add(pass_count > 0 ? "ritem-hdr-p" : "ritem-hdr-z");
                 summaryContainer.appendChild(summaryP);
 
                 var detailContainer = document.createElement("div");
