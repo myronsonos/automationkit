@@ -723,7 +723,7 @@ class SshBase:
 
         pkey = None
         if self._keyfile is not None:
-            pkey = paramiko.pkey.PKey.from_private_key_file(cl_keyfile, password=cl_keypasswd)
+            pkey = paramiko.rsakey.RSAKey.from_private_key_file(cl_keyfile, password=cl_keypasswd)
 
         ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())

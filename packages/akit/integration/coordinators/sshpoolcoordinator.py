@@ -22,6 +22,7 @@ import pprint
 import socket
 import weakref
 
+from akit.environment.context import Context
 from akit.exceptions import AKitConfigurationError
 from akit.paths import get_expanded_path
 
@@ -87,14 +88,17 @@ class SshPoolCoordinator(CoordinatorBase):
 
         ssh_config_errors = []
 
-        for sshdev_config, ssh_credenial_list in sshdevices:
-            if len(ssh_credenial_list) == 0:
+        ssh_devices_available = []
+        ssh_devices_unavailable = []
+
+        for sshdev_config, ssh_credential_list in sshdevices:
+            if len(ssh_credential_list) == 0:
                 errmsg = format_ssh_device_configuration_error(
                         "All SSH devices must have at least one valid credential.", sshdev_config)
                 raise AKitConfigurationError(errmsg)
 
             ssh_cred_by_role = {}
-            for ssh_cred in ssh_credenial_list:
+            for ssh_cred in ssh_credential_list:
                 cred_role = ssh_cred.role
                 if cred_role not in ssh_cred_by_role:
                     ssh_cred_by_role[cred_role] = ssh_cred
@@ -124,6 +128,7 @@ class SshPoolCoordinator(CoordinatorBase):
                         dev = upnp_coord.lookup_device_by_usn(usn)
                     ipaddr = dev.upnp.IPAddress
                     host = ipaddr
+                    sshdev_config["host"] = host
                     self._cl_usn_to_ip_lookup[usn] = ipaddr
                 else:
                     ssh_config_errors.append(sshdev_config)
@@ -149,6 +154,16 @@ class SshPoolCoordinator(CoordinatorBase):
 
                 agent = SshAgent(host, username, password=password, keyfile=keyfile, keypasswd=keypasswd, allow_agent=allow_agent, users=ssh_cred_by_role)
 
+                sshdev_config["ipaddr"] = agent.ipaddr
+                try:
+                    status, stdout, stderr = agent.run_cmd("echo Hello")
+                    if status == 0 and stdout.strip() == "Hello":
+                        ssh_devices_available.append(sshdev_config)
+                    else:
+                        ssh_devices_unavailable.append(sshdev_config)
+                except:
+                    ssh_devices_unavailable.append(sshdev_config)
+
                 self._cl_children[host] = agent
 
                 coord_ref = weakref.ref(self)
@@ -166,7 +181,10 @@ class SshPoolCoordinator(CoordinatorBase):
             else:
                 ssh_config_errors.append(sshdev_config)
 
-        return ssh_config_errors
+        self._available_devices = ssh_devices_available
+        self._unavailable_devices = ssh_devices_unavailable
+
+        return ssh_config_errors, ssh_devices_available, ssh_devices_unavailable
 
     def lookup_device_by_host(self, host: str) -> Union[LandscapeDevice, None]:
         """

@@ -406,7 +406,6 @@ class Landscape:
         self._logger.info("===================== Initiating SSH First Contact with Landscape Devices =====================")
         self._logger.info("")
 
-
         if len(available_upnp_devices) == 0 and len(available_ssh_devices) == 0:
             self._logger.info("No SSH Devices Found...")
 
@@ -765,7 +764,10 @@ class Landscape:
             elif dev_type == "network/muse":
                 muse_device_list.append(dev_config_info)
             elif dev_type == "network/ssh":
-                ssh_device_list.append(dev_config_info)
+                if "credentials" in dev_config_info:
+                    ssh_cred_list = filter_credentials(dev_config_info, self._credentials, "ssh")
+                    if len(ssh_cred_list) > 0:
+                        ssh_device_list.append((dev_config_info, ssh_cred_list))
             else:
                 errmsg_lines = [
                     "Unknown device type %r in configuration file." % dev_type,
@@ -779,20 +781,44 @@ class Landscape:
         # Setup to pass the landscape to attach_to_devices calls
         lscape = self
 
+        context = Context()
+        log_landscape_scan = context.lookup("/environment/behaviors/log-landscape-scan")
+
+        found_device_results = []
+        matching_device_results = []
+        missing_device_results = []
+
+        ssh_scan_results = {}
+        upnp_scan_results = {}
+
         if len(upnp_device_list) > 0:
             from akit.integration.coordinators.upnpcoordinator import UpnpCoordinator # pylint: disable=import-outside-toplevel
 
             self._has_upnp_devices = True
             upnp_hint_list = self._internal_get_upnp_device_config_lookup_table()
             self._upnp_coord = UpnpCoordinator(lscape)
-            self._upnp_coord.startup_scan(upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=["lo"])
+            found_device_results, matching_device_results, missing_device_results = self._upnp_coord.startup_scan(
+                upnp_hint_list, watchlist=upnp_hint_list, exclude_interfaces=["lo"])
+
+            if log_landscape_scan:
+                upnp_scan_results = {
+                    "found_devices": found_device_results,
+                    "matching_devices": matching_device_results,
+                    "missing_devices": missing_device_results
+                }
 
         if len(ssh_device_list) > 0:
             from akit.integration.coordinators.sshpoolcoordinator import SshPoolCoordinator # pylint: disable=import-outside-toplevel
 
             self._has_ssh_devices = True
             self._ssh_coord = SshPoolCoordinator(lscape)
-            self._ssh_coord.attach_to_devices(ssh_device_list, upnp_coord=self._upnp_coord)
+            ssh_config_errors, matching_device_results, missing_device_results = self._ssh_coord.attach_to_devices(
+                ssh_device_list, upnp_coord=self._upnp_coord)
+
+            ssh_scan_results = {
+                "matching_devices": matching_device_results,
+                "missing_devices": missing_device_results
+            }
 
         if len(muse_device_list) > 0 and self._environment_muse is not None:
             envlabel = self._environment_label
@@ -805,6 +831,16 @@ class Landscape:
             self._has_muse_devices = True
             self._muse_coord = MuseCoordinator(lscape)
             self._muse_coord.attach_to_devices(envlabel, muse_authhost, muse_ctlhost, muse_version, muse_device_list, upnp_coord=self._upnp_coord)
+
+        if log_landscape_scan:
+            scan_results = {
+                "ssh": ssh_scan_results,
+                "upnp": upnp_scan_results
+            }
+
+            landscape_scan_result_file = os.path.join(get_path_for_testresults(), "landscape-startup-scan.json")
+            with open(landscape_scan_result_file, 'w') as srf:
+                json.dump(scan_results, srf, indent=4)
 
         return
 

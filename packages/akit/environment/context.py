@@ -98,7 +98,7 @@ class ContextCursor:
 
         return found_node
 
-    def remove(self, path: str) -> typing.Any:
+    def remove(self, path: str, raise_error=False) -> typing.Any:
         """
             Remove an object at the specified path
 
@@ -110,13 +110,17 @@ class ContextCursor:
         """
         found_node = None
 
-        if isinstance(path, (tuple, list)):
-            path_parts = path
-            path = "/%s" %  "/".join(path_parts)
-        else:
-            path_parts = validate_path_name(path.rstrip("/"))
+        try:
+            if isinstance(path, (tuple, list)):
+                path_parts = path
+                path = "/%s" %  "/".join(path_parts)
+            else:
+                path_parts = validate_path_name(path.rstrip("/"))
 
-        found_node = self._remove(self._storeref, path, path_parts)
+            found_node = self._remove(self._storeref, path, path_parts)
+        except LookupError as luerr:
+            if raise_error:
+                raise
 
         return found_node
 
@@ -232,7 +236,7 @@ class Context:
 
         return
 
-    def lookup(self, path: str) -> typing.Any:
+    def lookup(self, path: str, raise_error=False) -> typing.Any:
         """
             Lookup an object at the path specified.
 
@@ -245,13 +249,17 @@ class Context:
         """
         found_node = None
 
-        if isinstance(path, (list, tuple)):
-            path_parts = path
-            path = "/%s" %  "/".join(path_parts)
-        else:
-            path_parts = validate_path_name(path.rstrip("/"))
+        try:
+            if isinstance(path, (list, tuple)):
+                path_parts = path
+                path = "/%s" %  "/".join(path_parts)
+            else:
+                path_parts = validate_path_name(path.rstrip("/"))
 
-        found_node = self._lookup(self._store, path, path_parts)
+            found_node = self._lookup(self._store, path, path_parts)
+        except LookupError:
+            if raise_error:
+                raise
 
         return found_node
 

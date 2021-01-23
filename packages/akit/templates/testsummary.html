@@ -695,15 +695,21 @@
             async function load_configuration() {
                 g_startup_configuration = {}
 
-                landscape = await load_json("landscape-declared.json").catch(err => {
+                var landscape = await load_json("landscape-declared.json").catch(err => {
                     console.log("Unable to load the landscape declaration file='landscape-declared.json'.")
                 });
-                startup = await load_json("startup-configuration.json").catch(err => {
+                var startup = await load_json("startup-configuration.json").catch(err => {
                     console.log("Unable to load the landscape declaration file='startup-configuration.json'.")
                 });
 
                 g_startup_configuration["landscape"] = landscape;
                 g_startup_configuration["startup"] = startup;
+
+                var upnp_startup_scan = await load_json("landscape-startup-scan.json").catch(err => {
+                    console.log("Unable to load the landscape declaration file='landscape-startup-scan.json'.")
+                });
+
+                startup["scans"] = upnp_startup_scan;
             }
 
             async function load_import_errors() {
@@ -792,19 +798,33 @@
 
                 var modpath = path.join("/")
                 if (modpath == "landscape/environment/credentials") {
-                    display_name = display_name + " - " + value["identifier"]
+                    display_name = display_name + " - " + value["identifier"];
                 } else if (modpath == "landscape/pod/devices") {
-                    devtype = value["deviceType"]
+                    var devtype = value["deviceType"];
                     if (devtype == "network/upnp") {
-                        upnpinfo = value["upnp"]
-                        display_name = display_name + " - " + upnpinfo["modelNumber"] + ", " + upnpinfo["modelName"] + " " + upnpinfo["USN"];
+                        var upnpinfo = value["upnp"];
+                        display_name = display_name + " - " + upnpinfo["modelNumber"] + ", " + upnpinfo["modelName"] + " - " + upnpinfo["IP"] + " - " + upnpinfo["USN"];
                     } else if (devtype == "network/ssh") {
                         display_name = display_name + " - " + value["host"];
                     }
                     
                 } else if ((modpath == "landscape/pod/power") || (modpath == "landscape/pod/serial")) {
                     display_name = display_name + " - " + value["name"]
+                } else if ((modpath == "startup/scans/upnp/found_devices") ||
+                           (modpath == "startup/scans/upnp/matching_devices") ||
+                           (modpath == "startup/scans/upnp/missing_devices")) {
+                    display_name = display_name + " - " + value["IP"] + " - " + value["USN"];
+                } else if ((modpath == "startup/scans/ssh/matching_devices") ||
+                           (modpath == "startup/scans/ssh/missing_devices")) {
+                    var devtype = value["deviceType"];
+                    if (devtype == "network/upnp") {
+                        var upnpinfo = value["upnp"];
+                        display_name = display_name + " - " + value["host"] + " - " + upnpinfo["modelNumber"] + ", " + upnpinfo["modelName"] + " - " + upnpinfo["USN"];
+                    } else if (devtype == "network/ssh") {
+                        display_name = display_name + " - " + value["host"];
+                    }
                 }
+
 
                 return display_name;
             }

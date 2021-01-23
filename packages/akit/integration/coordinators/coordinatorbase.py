@@ -75,6 +75,10 @@ class CoordinatorBase:
 
             self._cl_children = {}
 
+            self._found_devices = []
+            self._available_devices = []
+            self._unavailable_devices = []
+
             self._initialize(*args, **kwargs)
         return
 
@@ -85,6 +89,13 @@ class CoordinatorBase:
         """
         # pylint: disable=no-self-use
         raise AKitNotOverloadedError("_initialize: must be overloaded by derived coordinator classes")
+
+    @property
+    def available_devices(self):
+        """
+            The devices that the coordinator found to be available during startup.
+        """
+        return self._available_devices
 
     @property
     def children(self) -> List[LandscapeDevice]:
@@ -102,14 +113,6 @@ class CoordinatorBase:
         return chlist
 
     @property
-    def landscape(self):
-        """
-            Returns a hard reference to the Landscape singleton instance.
-        """
-        lscape = self._lscape_ref()
-        return lscape
-
-    @property
     def children_as_extension(self) -> List[LandscapeDeviceExtension]:
         """
             Returns a list of the device protocol extensions created by this coordinator that have been attached to a landscape device.
@@ -123,6 +126,28 @@ class CoordinatorBase:
             self._coord_lock.release()
 
         return chlist
+
+    @property
+    def landscape(self):
+        """
+            Returns a hard reference to the Landscape singleton instance.
+        """
+        lscape = self._lscape_ref()
+        return lscape
+
+    @property
+    def found_devices(self):
+        """
+            The devices that were dynamically discovery by the coordinators discovery protocol.
+        """
+        return self._found_devices
+
+    @property
+    def unavailable_devices(self):
+        """
+            The devices that the coordinator found to be unavailable during startup.
+        """
+        return self._unavailable_devices
 
     def lookup_device_by_key(self, key) -> LandscapeDevice:
         """
