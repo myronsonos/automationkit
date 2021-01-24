@@ -521,11 +521,11 @@
             var g_artifacts_buttons = null;
             var g_artifacts_tabs = null;
 
-            var g_counter_passed = 1;
-            var g_counter_failed = 2;
-            var g_counter_errors = 3;
-            var g_counter_skipped = 4;
-            var g_counter_total = 10;
+            var g_counter_passed = 0;
+            var g_counter_failed = 0;
+            var g_counter_errors = 0;
+            var g_counter_skipped = 0;
+            var g_counter_total = 0;
 
             /*************************************************************************************
              *************************************************************************************
@@ -1414,11 +1414,18 @@
                     g_counter_total = g_counter_errors + g_counter_failed + g_counter_skipped + g_counter_passed;
                 }
 
+                var relevant_test_counter = (g_counter_total - g_counter_skipped);
+                var summary_score = "(error)";
+                if (relevant_test_counter > 0) {
+                    summary_score = (g_counter_passed / (g_counter_total - g_counter_skipped)) * 100;
+                }
+
                 document.getElementById("summary-error").innerHTML = g_counter_errors;
                 document.getElementById("summary-fail").innerHTML = g_counter_failed;
                 document.getElementById("summary-skip").innerHTML = g_counter_skipped;
                 document.getElementById("summary-pass").innerHTML = g_counter_passed;
                 document.getElementById("summary-total").innerHTML = g_counter_total;
+                document.getElementById("summary-score").innerHTML = summary_score.toFixed(2);
             }
 
             /*************************************************************************************
@@ -1511,7 +1518,7 @@
                             <td class='summary-label'></td><td class='summary-value'></td>
                             <td class='summary-label'></td><td class='summary-value'></td>
                             <td class='summary-label'></td><td class='summary-value'></td>
-                            <td class='summary-label'>Score</td><td class='summary-value'>100.0</td>
+                            <td class='summary-label'>Score</td><td id='summary-score' class='summary-value'>0.0</td>
                         </tr>
                     </tbody>
                 </table>
