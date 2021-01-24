@@ -813,7 +813,11 @@
                 } else if ((modpath == "startup/scans/upnp/found_devices") ||
                            (modpath == "startup/scans/upnp/matching_devices") ||
                            (modpath == "startup/scans/upnp/missing_devices")) {
-                    display_name = display_name + " - " + value["IP"] + " - " + value["USN"];
+                    display_name = display_name + " - " + value["IP"];
+                    var usn = value["USN"];
+                    if (usn != undefined) {
+                        display_name = display_name +  " - " + usn;
+                    }
                 } else if ((modpath == "startup/scans/ssh/matching_devices") ||
                            (modpath == "startup/scans/ssh/missing_devices")) {
                     var devtype = value["deviceType"];
