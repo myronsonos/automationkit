@@ -124,12 +124,11 @@ class SshPoolCoordinator(CoordinatorBase):
                 usn = sshdev_config["upnp"]["USN"]
                 if upnp_coord is not None:
                     dev = upnp_coord.lookup_device_by_usn(usn)
-                    if dev is None:
-                        dev = upnp_coord.lookup_device_by_usn(usn)
-                    ipaddr = dev.upnp.IPAddress
-                    host = ipaddr
-                    sshdev_config["host"] = host
-                    self._cl_usn_to_ip_lookup[usn] = ipaddr
+                    if dev is not None:
+                        ipaddr = dev.upnp.IPAddress
+                        host = ipaddr
+                        sshdev_config["host"] = host
+                        self._cl_usn_to_ip_lookup[usn] = ipaddr
                 else:
                     ssh_config_errors.append(sshdev_config)
 

@@ -350,7 +350,7 @@ class UpnpCoordinator(CoordinatorBase):
             errmsg = os.linesep.join(errmsg_list)
             raise AKitConfigurationError(errmsg)
 
-        for _, dval in found_devices.items():
+        for _, dval in matching_devices.items():
             addr = dval[MSearchKeys.IP]
             location = dval[MSearchKeys.LOCATION]
             self._update_root_device(lscape, config_lookup, addr, location, dval, force_recording=force_recording)

@@ -310,8 +310,8 @@ class TestSequencer(ContextUser):
                 # implemented on
                 if "scope_exit" in nxt_cls.__dict__:
                     nxt_cls.scope_exit()
-                    if hasattr(nxt_cls, "refcount"):
-                        nxt_cls.refcount -= 1
-                    else:
-                        logger.error("ERROR: Every scope should have a 'refcount' class variable.")
+                if hasattr(nxt_cls, "scope_enter_count"):
+                    nxt_cls.scope_enter_count -= 1
+                else:
+                    logger.error("ERROR: Every scope should have a 'scope_enter_count' class variable.")
         return
