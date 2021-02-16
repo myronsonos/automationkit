@@ -791,7 +791,8 @@ class UpnpCoordinator(CoordinatorBase):
 
                                 coord_ref = weakref.ref(self)
 
-                                basedevice = LandscapeDevice(usn, "network/upnp", deviceinfo)
+                                basedevice = LandscapeDevice(lscape, usn, "network/upnp", configinfo)
+                                basedevice.initialize_features()
                                 basedevice.update_match_table(self._match_table)
 
                                 basedevice_ref = weakref.ref(basedevice)

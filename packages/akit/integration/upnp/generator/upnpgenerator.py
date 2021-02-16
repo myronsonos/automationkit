@@ -438,9 +438,9 @@ def upnpgenerator_main():
     excluded_interfaces = [iface for iface in args.interfaces_excluded]
 
     if action == "scan":
-        # The UpnpCoordinator scan will download and update device descriptions for us
-        ucoord = UpnpCoordinator()
-        ucoord.startup_scan(None, exclude_interfaces=excluded_interfaces, response_timeout=60, force_recording=True)
+        from akit.integration.landscaping.landscape import Landscape
+
+        lscape = Landscape()
 
     elif action == "generate":
         if os.path.exists(DIR_UPNP_GENERATOR_DYNAMIC_SERVICES):

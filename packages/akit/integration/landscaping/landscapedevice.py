@@ -18,6 +18,11 @@ __license__ = "MIT"
 
 
 import threading
+import weakref
+
+from dlipower import PowerSwitch
+
+from akit.exceptions import AKitConfigurationError
 
 class LandscapeDevice:
     """
@@ -26,7 +31,8 @@ class LandscapeDevice:
         the :class:`LandscapeDevice` device.
     """
 
-    def __init__(self, keyid, device_type, device_config):
+    def __init__(self, lscape, keyid, device_type, device_config):
+        self._lscape_ref = weakref.ref(lscape)
         self._keyid = keyid
         self._device_type = device_type
         self._device_config = device_config
@@ -40,6 +46,8 @@ class LandscapeDevice:
         self._upnp = None
         self._muse = None
         self._ssh = None
+        self._power = None
+        self._serial = None
 
         self._match_functions = {}
         return
@@ -102,6 +110,20 @@ class LandscapeDevice:
         return self._muse
 
     @property
+    def power(self):
+        """
+            The power agent associated with this device.
+        """
+        return self._power
+
+    @property
+    def serial(self):
+        """
+            The serial agent associated with this device.
+        """
+        return self._serial
+
+    @property
     def ssh(self):
         """
             The 'SSH' :class:`LandscapeDeviceExtension` attached to this device or None.
@@ -159,7 +181,7 @@ class LandscapeDevice:
 
         return
 
-    def _initialize_features(self):
+    def initialize_features(self):
         """
             Initializes the features of the device based on the feature declarations and the information
             found in the feature config.
@@ -169,14 +191,26 @@ class LandscapeDevice:
             for fkey, fval in feature_info.items():
                 if fkey == "isolation":
                     self._is_isolated = fval
+                elif fkey == "power":
+                    self._intitialize_power(fval)
                 elif fkey == "serial":
                     self._intitialize_serial(fval)
                 elif fkey == "":
                     pass
         return
 
-    def _intitialize_serial(self, serial_info): # pylint: disable=no-self-use,unused-argument
+    def _intitialize_power(self, power_mapping): # pylint: disable=no-self-use
         """
             Initializes the serial port connectivity for this device.
         """
+        lscape = self._lscape_ref()
+        self._power = lscape.lookup_power_agent(power_mapping)
+        return
+
+    def _intitialize_serial(self, serial_mapping): # pylint: disable=no-self-use
+        """
+            Initializes the serial port connectivity for this device.
+        """
+        #lscape = self._lscape_ref()
+        #self._serial = lscape.lookup_serial_agent(serial_mapping)
         return

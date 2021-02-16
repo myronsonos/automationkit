@@ -25,15 +25,26 @@ def coordinator_example_main():
     print(type(firstdev))
     print(firstdev)
 
+    powerdev = None
+    for upnpdev in upnpcoord.watch_devices:
+        if upnpdev.power is not None:
+            powerdev = upnpdev.power
+            break
+
+    if powerdev is not None:
+        powerdev.off()
+        time.sleep(2)
+        powerdev.on()
+        time.sleep(2)
+        powerdev.off()
+        time.sleep(2)
+        powerdev.on()
+
     devProps = firstdev.serviceDeviceProperties()
 
     value = devProps.action_GetLEDState()
 
     if devProps.subscribe_to_events():
-        var_mic_enabled = devProps.lookup_event_variable("MicEnabled")
-        meval = var_mic_enabled.wait_for_value(timeout=600)
-        print (var_mic_enabled)
-
         var_zonename = devProps.lookup_event_variable("ZoneName")
         znval = var_zonename.wait_for_value(timeout=600)
         print (var_zonename)
