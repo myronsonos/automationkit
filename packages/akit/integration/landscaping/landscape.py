@@ -17,7 +17,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 from os.path import basename
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import copy
 import inspect
@@ -35,6 +35,7 @@ from akit.environment.variables import VARIABLES
 from akit.environment.context import Context
 
 from akit.exceptions import AKitConfigurationError, AKitSemanticError
+from akit.integration.credentials.basiccredential import BasicCredential
 
 from akit.paths import get_expanded_path, get_path_for_testresults
 
@@ -42,6 +43,7 @@ from akit.paths import get_expanded_path, get_path_for_testresults
 from akit.xformatting import split_and_indent_lines
 from akit.xlogging.foundations import getAutomatonKitLogger
 
+from akit.integration.coordinators.powercoordinator import PowerCoordinator
 from akit.integration.credentials.musecredential import MuseCredential
 from akit.integration.credentials.sshcredential import SshCredential
 from akit.integration.landscaping.landscapedescription import LandscapeDescription
@@ -175,6 +177,11 @@ class Landscape:
                 self._device_pool = {}
 
                 self._credentials = {}
+
+                self._serial_config_lookup_table = {}
+
+                self._power_coordinator = None
+                self._serial_coordinator = None
 
                 self._initialize()
         finally:
@@ -414,10 +421,11 @@ class Landscape:
             for devinfo in available_upnp_devices:
                 usn = devinfo["upnp"]["USN"]
                 ldev = self._ssh_coord.lookup_device_by_usn(usn)
-                agent = ldev.ssh
-                self._logger.info("    Verifying USN={} HOST={} IP={}".format(usn, agent.host, agent.ipaddr))
-                if not agent.verify_connectivity():
-                    error_lists.append(devinfo)
+                if ldev is not None:
+                    agent = ldev.ssh
+                    self._logger.info("    Verifying USN={} HOST={} IP={}".format(usn, agent.host, agent.ipaddr))
+                    if not agent.verify_connectivity():
+                        error_lists.append(devinfo)
             self._logger.info("")
 
         if len(available_ssh_devices) > 0:
@@ -595,6 +603,17 @@ class Landscape:
 
         return matching_devices
 
+    def lookup_credential(self, credential_name) -> Union[str, None]:
+        """
+            Looks up a credential.
+        """
+        cred_info = None
+        
+        if credential_name in self._credentials:
+            cred_info = self._credentials[credential_name]
+
+        return cred_info
+
     def lookup_device_by_modelName(self, modelName) -> Optional[LandscapeDevice]:
         """
             Looks up a single device that is found to correspond to the modelName match criteria
@@ -620,6 +639,44 @@ class Landscape:
             device = matching_devices[0]
 
         return device
+
+    def lookup_power_agent(self, power_mapping: str) -> Union[dict, None]:
+        """
+            Looks up a power agent by name.
+        """
+        power_agent = self._power_coordinator.lookup_agent(power_mapping)
+        return power_agent
+
+    def lookup_serial_agent(self, serial_mapping: str) -> Union[dict, None]:
+        """
+            Looks up a serial agent name.
+        """
+        serial_agent = self._serial_coordinator.lookup_agent(serial_mapping)
+        return serial_agent
+
+    def lookup_serial_config(self, serial_service_name: str):
+        """
+            Looks up the configuration dictionary for the serial service specified.
+        """
+        serial_config = None
+
+        pod_config = self._landscape_info["pod"]
+
+        if "serial" in pod_config:
+            if self._serial_config_lookup_table is not None:
+                serial_config_lookup_table = self._serial_config_lookup_table
+            else:
+                serial_config_lookup_table = {}
+
+                serial_config_list = pod_config["serial"]
+                for serial_config in serial_config_list:
+                    cfgname = serial_config["name"]
+                    serial_config_lookup_table[cfgname] = serial_config
+
+            if serial_service_name in self._serial_config_lookup_table:
+                serial_config = self._serial_config_lookup_table[serial_service_name]
+
+        return serial_config
 
     def register_integration_point(self, role: str, mixin: type):
         """
@@ -727,7 +784,11 @@ class Landscape:
                 raise AKitConfigurationError("Credential items in 'environment/credentials' must have an 'category' member.")
             category = credential["category"]
 
-            if category == "muse":
+            if category == "basic":
+                BasicCredential.validate(credential)
+                credobj = BasicCredential(**credential)
+                self._credentials[ident] = credobj
+            elif category == "muse":
                 MuseCredential.validate(credential)
                 credobj = MuseCredential(**credential)
                 self._credentials[ident] = credobj
@@ -746,6 +807,20 @@ class Landscape:
             Initializes the device coordinators according the the information specified in the
             'devices' portion of the configuration file.
         """
+
+        pod_info = self._landscape_info["pod"]
+
+        # We need to initialize the power and serial coordinators before attempting to
+        # initialize any devices, so the devices will be able to lookup power and
+        # serial connections as they are initialized
+        if "power" in pod_info:
+            power_config = pod_info["power"]
+            self._power_coordinator = PowerCoordinator(self, power_config)
+
+        if "serial" in pod_info:
+            serial_config = pod_info["serial"]
+            # TODO: Add creation of SerialCoordinator
+            self._serial_coordinator = None
 
         upnp_device_list = []
         ssh_device_list = []

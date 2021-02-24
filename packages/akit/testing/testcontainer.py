@@ -26,7 +26,7 @@ import sys
 import traceback
 import uuid
 
-from akit.metadata import Category
+from akit.metadata import Category, Priority
 from akit.exceptions import AKitSkipError
 from akit.results import ResultType, ResultNode
 from akit.recorders import ResultRecorder
@@ -281,6 +281,7 @@ class StressTestContainer(TestContainer):
         'STRESS' category to the tests that reside in the container.
     """
 
+@Priority(0)
 @Category(TEST_CATEGORIES.SMOKE)
 class SmokeTestContainer(TestContainer):
     """

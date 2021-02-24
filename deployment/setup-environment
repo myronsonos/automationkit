@@ -151,6 +151,7 @@ if [ ! -f $INITIALIZED_FILE ]; then
             pip install coverage
             pip install ipython
             pip install netifaces
+            pip install pyserial
             pip install paramiko
             pip install psycopg2
             pip install pylint

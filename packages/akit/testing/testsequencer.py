@@ -280,7 +280,7 @@ class TestSequencer(ContextUser):
                 logger.exception("Error exiting testpack.")
                 raise
 
-            logger.info("TESTPACK EXIT: %s" % testpack_key)
+            logger.info("TESTPACK EXIT: %s%s" % (testpack_key, os.linesep))
 
         return
 
@@ -306,12 +306,17 @@ class TestSequencer(ContextUser):
 
         for nxt_cls in norm_mro:
             if inherits_from_scope_mixin(nxt_cls):
-                # We only want to call scope_enter when we find the type it is directly
-                # implemented on
-                if "scope_exit" in nxt_cls.__dict__:
-                    nxt_cls.scope_exit()
-                    if hasattr(nxt_cls, "refcount"):
-                        nxt_cls.refcount -= 1
+                if "scope_enter" in nxt_cls.__dict__:
+                    # We only want to call scope_enter when we find the type it is directly
+                    # implemented on
+                    if "scope_exit" in nxt_cls.__dict__:
+                        nxt_cls.scope_exit()
+
+                    if hasattr(nxt_cls, "scope_enter_count"):
+                        nxt_cls.scope_enter_count -= 1
                     else:
-                        logger.error("ERROR: Every scope should have a 'refcount' class variable.")
+                        logger.error("The scope class '%s' should have had a 'scope_enter_count' class variable." % nxt_cls.__name__)
+                elif "scope_exit" in nxt_cls.__dict__:
+                    nxt_cls.scope_exit()
+                    logger.warn("Found 'scope_exit' on class '%s' which did not have a 'scope_enter'." % nxt_cls.__name__)
         return

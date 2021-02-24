@@ -109,7 +109,8 @@ class MuseCoordinator(CoordinatorBase):
                     basedevice = lscape._internal_lookup_device_by_keyid(usn)
                     basedevice.attach_extension("muse", agent)
                 else:
-                    basedevice = LandscapeDevice(host, "network/muse", musedev_config)
+                    basedevice = LandscapeDevice(lscape, host, "network/muse", musedev_config)
+                    basedevice.initialize_features()
                     basedevice.attach_extension("muse", agent)
                     lscape._internal_register_device(host, basedevice)
 

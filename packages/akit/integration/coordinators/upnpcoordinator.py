@@ -350,7 +350,7 @@ class UpnpCoordinator(CoordinatorBase):
             errmsg = os.linesep.join(errmsg_list)
             raise AKitConfigurationError(errmsg)
 
-        for _, dval in found_devices.items():
+        for _, dval in matching_devices.items():
             addr = dval[MSearchKeys.IP]
             location = dval[MSearchKeys.LOCATION]
             self._update_root_device(lscape, config_lookup, addr, location, dval, force_recording=force_recording)
@@ -791,7 +791,8 @@ class UpnpCoordinator(CoordinatorBase):
 
                                 coord_ref = weakref.ref(self)
 
-                                basedevice = LandscapeDevice(usn, "network/upnp", deviceinfo)
+                                basedevice = LandscapeDevice(lscape, usn, "network/upnp", configinfo)
+                                basedevice.initialize_features()
                                 basedevice.update_match_table(self._match_table)
 
                                 basedevice_ref = weakref.ref(basedevice)

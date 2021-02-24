@@ -59,3 +59,22 @@ class Keywords:
         else:
             obj_to_decorate._metadata_["keywords"] = self._keywords
         return obj_to_decorate
+
+class Priority:
+    """
+        The 'Priority' decorator allows test engineers to associate a test priority with
+        individual test cases or collections of tests.
+    """
+
+    def __init__(self, priority):
+        self._priority = priority
+        return
+
+    def __call__(self, obj_to_decorate):
+        if not hasattr(obj_to_decorate, "_metadata_"):
+            obj_to_decorate._metadata_ = {}
+        if "priority" in obj_to_decorate._metadata_:
+            obj_to_decorate._metadata_["priority"].extend(self._priority)
+        else:
+            obj_to_decorate._metadata_["priority"] = self._priority
+        return obj_to_decorate
